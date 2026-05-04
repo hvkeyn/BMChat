@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Initial BMChat fork setup plan is complete.
+Initial BMChat fork setup plan is complete and pushed to GitHub.
 
 ## Completed
 
@@ -28,10 +28,12 @@ Initial BMChat fork setup plan is complete.
 - Verified desktop `pnpm -w build:electron` with `VERSION_INFO_GIT_REF=bmchat-initial`; it passed.
 - Verified Android `./gradlew.bat assembleDebug`; it passed and produced foss/gplay debug APKs.
 - Confirmed iOS build cannot run in this Windows environment because `xcodebuild` is unavailable.
+- Created private GitHub repository `hvkeyn/BMChat`.
+- Pushed root monorepo branch `main` to `https://github.com/hvkeyn/BMChat`.
 
 ## In Progress
 
-Creating and pushing the private GitHub repository.
+None.
 
 ## Not Started
 
