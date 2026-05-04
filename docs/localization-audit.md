@@ -6,6 +6,13 @@ Audit date: 2026-05-04.
 
 Russian localization exists in all three clients, but it is still Delta Chat-branded and not complete enough for a BMChat release without a focused pass.
 
+First implementation pass target:
+
+- Normal UI uses `BMChat`.
+- Marketing/about copy may use `BroMoreChat`.
+- Russian group creation labels use «общий чат» where that improves clarity for the BMChat concept, while preserving the existing group-chat behavior.
+- License, upstream, and protocol compatibility references can still mention Delta Chat when they are not normal user-facing product identity.
+
 ## File Coverage
 
 | Platform | Russian files found | Baseline files | Approximate key count |
@@ -72,3 +79,12 @@ Create a strict localization checker before release:
 - Search for visible English strings in Russian files.
 - Search for `Delta Chat`, `Deltachat`, `DeltaChat`, `delta.chat`, `chat.delta`, and store/help links.
 - Produce a report that separates user-visible branding, legal attribution, and protocol/compatibility strings.
+
+## First-Pass Verification Scope
+
+After the initial rebrand, verify at least these normal flows in Russian:
+
+- App name, welcome/onboarding, about/help entry points.
+- New chat, new shared/group chat, add members, QR invite.
+- Account setup/import, multi-device setup, settings, notifications.
+- Android store metadata and desktop packaging names.

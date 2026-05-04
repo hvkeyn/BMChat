@@ -13,7 +13,16 @@ This file tracks every platform surface that must become BMChat-specific.
 | iOS bundle ID placeholder | `chat.bromore.bmchat` |
 | Public website placeholder | `https://bmchat.example` |
 
-Final identifiers must be confirmed before public release.
+First-pass identifiers and design tokens are now implementation defaults. Final production domains, signing identities, Firebase/APNs projects, and store metadata still need release approval before public distribution.
+
+## Visual Direction
+
+BMChat uses the `Tech Utility + friendly messenger` direction documented in `DESIGN.md`:
+
+- Primary blue `#2563EB` for trust, transport, and primary actions.
+- Accent green `#10B981` for connection and successful communication.
+- Light canvas `#F8FAFC` and dark canvas `#0F172A`.
+- Native system typography and restrained rounded surfaces.
 
 ## Desktop Surfaces
 
@@ -32,6 +41,8 @@ Audited after cloning:
 - `clients/desktop/static/help/*/help.html`: local help pages with visible Delta Chat references.
 - `clients/desktop/README.md`, `clients/desktop/RELEASE.md`, `clients/desktop/docs/*`: developer and release references.
 
+First-pass implementation keeps upstream workspace package scopes where changing them would be merge-heavy, but changes visible product metadata, app IDs, data folders, theme colors, icons, local strings, and packaging names.
+
 ## Android Surfaces
 
 Audited after cloning:
@@ -46,6 +57,8 @@ Audited after cloning:
 - `clients/android/google-services.json`: must be replaced for a BMChat Google/Firebase project before gplay builds.
 - `clients/android/jni/deltachat-core-rust`: submodule contains many Delta Chat references; treat as upstream core and avoid brand edits unless a user-facing stock string is proven to come from core.
 
+First-pass implementation changes install identity, visible labels, strings, colors, launcher resources, and store metadata while keeping Java package names stable.
+
 ## iOS Surfaces
 
 Audited after cloning:
@@ -59,6 +72,8 @@ Audited after cloning:
 - `clients/ios/deltachat-ios/*.lproj/InfoPlist.strings`: localized app names and permission prompts, including Russian.
 - `clients/ios/deltachat-ios/*.lproj/Localizable.strings` and `.stringsdict`: localized UI strings, including Russian.
 - `clients/ios/deltachat-ios/libraries/deltachat-core-rust`: submodule contains many Delta Chat references; treat as upstream core and avoid brand edits unless a user-facing stock string is proven to come from core.
+
+First-pass implementation changes visible app names, permission prompts, bundle IDs, extension labels, and app groups. Full iOS build verification remains macOS/Xcode-only.
 
 ## First Implementation Order
 

@@ -28,19 +28,19 @@ const env = process.env
 
 /** @type {import('./types').DeepWriteable<import('electron-builder').Configuration>} */
 const build = {}
-build['appId'] = 'chat.delta.desktop.electron'
+build['appId'] = 'chat.bromore.bmchat.desktop'
 build['extraMetadata'] = {
   //@ts-ignore
   // restore old name before mono-repo
-  name: 'deltachat-desktop',
+  name: 'bmchat-desktop',
 }
 
 if (previewBuild) {
-  build.appId = 'chat.delta.desktop.electron.dev'
+  build.appId = 'chat.bromore.bmchat.desktop.dev'
   //@ts-ignore
-  build.extraMetadata.name = 'deltachat-desktop-dev'
+  build.extraMetadata.name = 'bmchat-desktop-dev'
   //@ts-ignore
-  build.extraMetadata.productName = 'DeltaChat-DevBuild'
+  build.extraMetadata.productName = 'BMChat-DevBuild'
   const p = JSON.parse(
     readFileSync(join(__dirname, '../package.json'), { encoding: 'utf-8' })
   )
@@ -94,8 +94,8 @@ const PREBUILD_FILTERS = {
 
 build['mac'] = {
   appId: previewBuild
-    ? 'chat.delta.desktop.electron.devbuild'
-    : 'chat.delta.desktop.electron',
+    ? 'chat.bromore.bmchat.desktop.devbuild'
+    : 'chat.bromore.bmchat.desktop',
   category: 'public.app-category.social-networking',
   entitlements: 'build/entitlements.mac.plist',
   entitlementsInherit: 'build/entitlements.mac.plist',
@@ -151,13 +151,14 @@ build['linux'] = {
   category: 'Network;Chat;InstantMessaging;',
   desktop: {
     entry: {
-      Comment: 'Delta Chat email-based messenger',
-      Keywords: 'dc;chat;delta;messaging;messenger;email',
+      Comment: 'BMChat email-based messenger',
+      Keywords: 'bmchat;bromorechat;chat;messaging;messenger;email',
     },
   },
   files: [...files, PREBUILD_FILTERS.NOT_MAC, PREBUILD_FILTERS.NOT_WINDOWS],
   icon: 'build/icon.icns', // electron builder gets the icon out of the mac icon archive
-  description: 'The Email messenger (https://delta.chat)',
+  description:
+    'BMChat messenger for communication through email systems (https://bmchat.example)',
 }
 
 build['appImage'] = {
@@ -165,7 +166,7 @@ build['appImage'] = {
 }
 
 build['deb'] = {
-  packageName: previewBuild ? 'deltachat-desktop-preview' : 'deltachat-desktop',
+  packageName: previewBuild ? 'bmchat-desktop-preview' : 'bmchat-desktop',
   depends: [
     'libasound2',
     'libgtk-3-0',
@@ -249,8 +250,8 @@ if (unsupported_languages.length > 0) {
 build['appx'] = {
   applicationId: build['appId'],
   publisher: 'CN=C13753E5-D590-467C-9FCA-6799E1A5EC1E',
-  publisherDisplayName: 'merlinux',
-  identityName: 'merlinux.DeltaChat',
+  publisherDisplayName: 'BMChat',
+  identityName: 'BMChat.BMChat',
   languages,
   artifactName: '${productName}-${version}-Package.${arch}.${ext}',
   addAutoLaunchExtension: true,

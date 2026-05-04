@@ -3,31 +3,31 @@
   "type": "module",
   "name": "@deltachat-desktop/target-electron",
   "version": "2.49.1",
-  "description": "Desktop Application for delta.chat",
+  "description": "BMChat desktop messenger for communication through email systems",
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/deltachat/deltachat-desktop.git"
+    "url": "git+ssh://git@github.com/hvkeyn/BMChat.git"
   },
   "keywords": [
-    "deltachat",
+    "bmchat",
+    "bromorechat",
     "email",
     "messaging",
     "desktop"
   ],
   "author": {
-    "name": "DeltaChat Developers",
-    "email": "delta-systems@codespeak.net"
+    "name": "BMChat Developers"
   },
   "main": "index.js",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/deltachat/deltachat-desktop/issues"
+    "url": "https://github.com/hvkeyn/BMChat/issues"
   },
   "engines": {
     "node": ">=20.0.0"
   },
-  "productName": "DeltaChat",
-  "homepage": "https://delta.chat",
+  "productName": "BMChat",
+  "homepage": "https://bmchat.example",
   "scripts": {
     "check:types": "tsc --noEmit && tsc --noEmit -p runtime-electron || node ./bin/printCheckWarning.js",
     "build4production": "NODE_ENV=production pnpm build && pnpm -w check:types",

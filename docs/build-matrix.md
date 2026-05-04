@@ -39,6 +39,10 @@ Notes:
 - Linux packaging includes AppImage and deb targets.
 - Current catalog pins Delta Chat core npm packages at `2.49.0`.
 - Branding-sensitive package files include `package.json`, `packages/target-electron/package.json`, generated `electron-builder.json5`, and Tauri config.
+- Current BMChat Windows test artifacts:
+  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Setup.x64.exe`
+  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Portable.x64.exe`
+- Electron Builder currently exits after producing local Windows artifacts if `GH_TOKEN` is not set, because GitHub auto-publish is detected. The EXE files are still generated locally.
 
 ## Android
 
@@ -62,12 +66,17 @@ scripts/ndk-make.sh
 
 Notes:
 - Windows may need path/script adjustments for shell scripts.
+- Android APKs must include `libnative-utils.so` for all supported ABIs. A Gradle-only build can produce APKs that install but crash immediately on startup because `System.loadLibrary("native-utils")` fails.
+- The current repaired test APKs were rebuilt after restoring native libraries from the official Delta Chat `2.49.0` APK. Future reproducible builds should run `scripts/ndk-make.sh` in the Linux/Nix/Docker build environment before Gradle packaging.
 - gplay builds require BMChat Firebase configuration.
 - Release builds require BMChat keystore credentials.
 - Current `compileSdk` and `targetSdkVersion` are 36.
 - Current `minSdkVersion` is 21.
 - Current upstream version is `versionName "2.49.0"` and `versionCode 747`.
-- `foss` and `gplay` flavors produce different app identities; BMChat must set both deliberately.
+- `foss` and `gplay` flavors produce different app identities: `chat.bromore.bmchat.foss` and `chat.bromore.bmchat`.
+- Current BMChat Android test artifacts:
+  - `clients/android/build/outputs/apk/foss/debug/BMChat-foss-debug-2.49.0.apk`
+  - `clients/android/build/outputs/apk/gplay/debug/BMChat-gplay-debug-2.49.0.apk`
 
 ## iOS
 

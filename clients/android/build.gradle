@@ -31,7 +31,7 @@ android {
         versionCode 747
         versionName "2.49.0"
 
-        applicationId "com.b44t.messenger"
+        applicationId "chat.bromore.bmchat.foss"
         multiDexEnabled true
 
         minSdkVersion 21
@@ -40,7 +40,7 @@ android {
         vectorDrawables.useSupportLibrary = true
 
         // base name of the generated apk
-        project.ext.set("archivesBaseName", "deltachat");
+        project.ext.set("archivesBaseName", "bmchat");
 
         buildConfigField "boolean", "DEV_BUILD", "false"
 
@@ -128,7 +128,7 @@ android {
         }
         gplay {
             dimension "none"
-            applicationId "chat.delta"
+            applicationId "chat.bromore.bmchat"
             apply plugin: "com.google.gms.google-services"
             buildConfigField "boolean", "USE_PLAY_SERVICES", "true"
         }
@@ -136,9 +136,7 @@ android {
 
     android.applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = outputFileName
-                    .replace("deltachat-android", "deltachat")
-                    .replace(".apk", "-${variant.versionName}.apk")
+            outputFileName = "BMChat-${variant.flavorName}-${variant.buildType.name}-${variant.versionName}.apk"
         }
     }
 

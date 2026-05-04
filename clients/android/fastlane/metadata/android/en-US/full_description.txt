@@ -1,19 +1,14 @@
-Delta Chat is a reliable decentralized instant messenger that is easy and fun to use for friends, family, groups and organizations. Delta Chat is developed by a dedicated FOSS contributor community that jointly releases refinements and new features several times a year, across many stores and platforms world-wide.
+BMChat / BroMoreChat is a free messenger for communication through email systems.
 
-Features at a glance:
+It keeps familiar private chat, shared chat, attachment, and QR invite workflows while using decentralized email/chatmail infrastructure instead of one central service.
 
-• Private. Instant on-boarding without a phone number or other private data.
+First-pass capabilities:
 
-• Friends & Family: Only chat with people you know. Unknown users cannot message or follow you without mutual consent.
+* Communication through existing email and chatmail servers
+* Private chats and shared chats with members
+* QR invites and second-device setup
+* Attachments, media, and voice messages
+* End-to-end encryption and contact verification inherited from Delta Chat
+* Open source code and compatibility with internet standards
 
-• Flexible. Supports multiple chat profiles and is easy to setup on multiple devices.
-
-• Extensible. Add tools like shopping lists, calendars or gaming apps to any chat.
-
-• Reliable. Works under bad and adversarial network conditions.
-
-• Secure. Audited End-to-End encryption safe against network and server attacks.
-
-• Sovereign. Can be run with your own e-mail address or server.
-
-• FOSS. Fully Open Source/Free Software, built on Internet Standards.
+BMChat is a fork of Delta Chat and preserves required upstream attribution.

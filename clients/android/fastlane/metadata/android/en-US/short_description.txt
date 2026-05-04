@@ -1,1 +1,1 @@
-Decentralized private messenger with chat-shared tools and games.
+Free messenger for communication through email systems.

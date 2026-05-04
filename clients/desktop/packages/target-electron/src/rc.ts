@@ -17,7 +17,7 @@ const defaults: RC_Config = {
   'allow-unsafe-core-replacement': false,
 }
 
-const config = rc('DeltaChat', defaults) as RC_Config
+const config = rc('BMChat', defaults) as RC_Config
 
 if (config.version || config.v) {
   config.version = true

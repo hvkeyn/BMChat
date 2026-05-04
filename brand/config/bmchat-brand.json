@@ -3,7 +3,9 @@
     "shortName": "BMChat",
     "longName": "BroMoreChat",
     "desktopPackageName": "bmchat-desktop",
-    "website": "https://bmchat.example"
+    "website": "https://bmchat.example",
+    "tagline": "Свободный мессенджер через почтовые системы",
+    "description": "BMChat combines familiar messenger workflows with decentralized email/chatmail transport."
   },
   "identifiers": {
     "androidApplicationId": "chat.bromore.bmchat",
@@ -11,10 +13,18 @@
     "desktopAppId": "chat.bromore.bmchat.desktop"
   },
   "theme": {
-    "primaryColor": "#2563eb",
-    "accentColor": "#16a34a",
-    "backgroundLight": "#f8fafc",
-    "backgroundDark": "#0f172a"
+    "primaryColor": "#2563EB",
+    "primaryDark": "#172554",
+    "primarySoft": "#DBEAFE",
+    "accentColor": "#10B981",
+    "accentDark": "#047857",
+    "backgroundLight": "#F8FAFC",
+    "backgroundDark": "#0F172A",
+    "surfaceLight": "#FFFFFF",
+    "surfaceDark": "#111827",
+    "textPrimary": "#0F172A",
+    "textInverse": "#F8FAFC",
+    "borderLight": "#D8E2F1"
   },
   "locales": {
     "default": "ru",

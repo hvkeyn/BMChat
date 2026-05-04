@@ -505,7 +505,7 @@
 					"$(PROJECT_DIR)/../deltachat-ios/libraries/deltachat-core-rust/deltachat-ffi",
 					"$(PROJECT_DIR)/../deltachat-ios/libraries",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcCore;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
@@ -539,7 +539,7 @@
 					"$(PROJECT_DIR)/../deltachat-ios/libraries/deltachat-core-rust/deltachat-ffi",
 					"$(PROJECT_DIR)/../deltachat-ios/libraries",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcCore;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "";

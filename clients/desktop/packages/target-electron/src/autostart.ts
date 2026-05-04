@@ -70,8 +70,8 @@ async function getLinuxAutostartRegisteredState(): Promise<boolean> {
 function getLinuxDesktopFileContent(): string {
   return `[Desktop Entry]
 Type=Application
-Name=Delta Chat
-Comment=Delta Chat decentralized private messenger
+Name=BMChat
+Comment=BMChat email-based messenger
 Exec=${escapeDesktopExecArg(getLinuxExecPath())} -- --minimized
 Hidden=false
 NoDisplay=false

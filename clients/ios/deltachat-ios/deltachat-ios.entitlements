@@ -18,11 +18,11 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.chat.delta.ios</string>
+		<string>group.chat.bromore.bmchat.ios</string>
 	</array>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)group.chat.delta.ios</string>
+		<string>$(AppIdentifierPrefix)group.chat.bromore.bmchat.ios</string>
 	</array>
 </dict>
 </plist>
