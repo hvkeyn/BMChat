@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>n_minutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d minúta</string>
+			<key>few</key>
+			<string>%d minút</string>
+			<key>many</key>
+			<string>%d minút</string>
+			<key>other</key>
+			<string>%d minúty</string>
+		</dict>
+	</dict>
+	<key>n_hours</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d hodina</string>
+			<key>few</key>
+			<string>%d hodín</string>
+			<key>many</key>
+			<string>%d hodín</string>
+			<key>other</key>
+			<string>%d hodina</string>
+		</dict>
+	</dict>
+	<key>n_chats</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d čet</string>
+			<key>few</key>
+			<string>%d konverzácie</string>
+			<key>many</key>
+			<string>%d konverzácií</string>
+			<key>other</key>
+			<string>%d konverzácia</string>
+		</dict>
+	</dict>
+	<key>n_contacts</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d kontakt</string>
+			<key>few</key>
+			<string>%d kontakty</string>
+			<key>many</key>
+			<string>%d kontakty</string>
+			<key>other</key>
+			<string>%d kontakt</string>
+		</dict>
+	</dict>
+	<key>n_messages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d správa</string>
+			<key>few</key>
+			<string>%d správy</string>
+			<key>many</key>
+			<string>%d správy</string>
+			<key>other</key>
+			<string>%d správa</string>
+		</dict>
+	</dict>
+	<key>n_reactions</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d reakcia</string>
+			<key>few</key>
+			<string>%d reakcie</string>
+			<key>many</key>
+			<string>%d reakcií</string>
+			<key>other</key>
+			<string>%d reakcií</string>
+		</dict>
+	</dict>
+	<key>n_members</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d používateľ</string>
+			<key>few</key>
+			<string>%d používatelia</string>
+			<key>many</key>
+			<string>%d používatelia</string>
+			<key>other</key>
+			<string>%d používateľ</string>
+		</dict>
+	</dict>
+	<key>n_recipients</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d príjemca</string>
+			<key>few</key>
+			<string>%d príjemcovia</string>
+			<key>many</key>
+			<string>%d príjemcovia</string>
+			<key>other</key>
+			<string>%d príjemcovia</string>
+		</dict>
+	</dict>
+	<key>n_selected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d vybraný</string>
+			<key>few</key>
+			<string>%d vybrané</string>
+			<key>many</key>
+			<string>%d vybraných</string>
+			<key>other</key>
+			<string>%d vybraných</string>
+		</dict>
+	</dict>
+	<key>ask_send_following_n_files_to</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Odoslať nasledujúci súbor %s používateľovi?</string>
+			<key>few</key>
+			<string>Odoslať nasledujúce %d súbory %s používateľovi?</string>
+			<key>many</key>
+			<string>Odoslať nasledujúce %d súbory %s používateľovi?</string>
+			<key>other</key>
+			<string>Odoslať nasledujúce %d súbory %s používateľovi?</string>
+		</dict>
+	</dict>
+	<key>ask_delete_chat</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Odstrániť %d konverzáciu zo všetkých vašich zariadení?</string>
+			<key>few</key>
+			<string>Odstrániť %d konverzácie zo všetkých vašich zariadení?</string>
+			<key>many</key>
+			<string>Odstrániť %d konverzácii zo všetkých vašich zariadení?</string>
+			<key>other</key>
+			<string>Odstrániť %d konverzácii zo všetkých vašich zariadení?</string>
+		</dict>
+	</dict>
+	<key>ask_delete_messages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Odstrániť %d správu zo všetkých vašich zariadení?</string>
+			<key>few</key>
+			<string>Odstrániť %d správy zo všetkých vašich zariadení?</string>
+			<key>many</key>
+			<string>Odstrániť %d správ zo všetkých vašich zariadení?</string>
+			<key>other</key>
+			<string>Odstrániť %d správ zo všetkých vašich zariadení?</string>
+		</dict>
+	</dict>
+	<key>chat_archived</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d konverzácia bola archivovaná</string>
+			<key>few</key>
+			<string>%d konverzácie boli archivované</string>
+			<key>many</key>
+			<string>%d konverzácií bolo archivovaných</string>
+			<key>other</key>
+			<string>%d konverzácií bolo archivovaných</string>
+		</dict>
+	</dict>
+	<key>chat_unarchived</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d konverzácia bola vrátená z archívu</string>
+			<key>few</key>
+			<string>%d konverzácie boli vrátené z archívu</string>
+			<key>many</key>
+			<string>%d konverzácií bolo vrátených z archívu</string>
+			<key>other</key>
+			<string>%d konverzácií bolo vrátených z archívu</string>
+		</dict>
+	</dict>
+	<key>chat_n_new_messages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%dnová správa</string>
+			<key>few</key>
+			<string>%dnových správ</string>
+			<key>many</key>
+			<string>%dnové správy</string>
+			<key>other</key>
+			<string>%d nové správy</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

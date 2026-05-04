@@ -1,0 +1,23 @@
+{
+  "product": {
+    "shortName": "BMChat",
+    "longName": "BroMoreChat",
+    "desktopPackageName": "bmchat-desktop",
+    "website": "https://bmchat.example"
+  },
+  "identifiers": {
+    "androidApplicationId": "chat.bromore.bmchat",
+    "iosBundleId": "chat.bromore.bmchat",
+    "desktopAppId": "chat.bromore.bmchat.desktop"
+  },
+  "theme": {
+    "primaryColor": "#2563eb",
+    "accentColor": "#16a34a",
+    "backgroundLight": "#f8fafc",
+    "backgroundDark": "#0f172a"
+  },
+  "locales": {
+    "default": "ru",
+    "supportedFirstPass": ["ru", "en"]
+  }
+}

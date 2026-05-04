@@ -1,0 +1,6 @@
+NSCameraUsageDescription = "Delta Chat používa váš fotoaparát na snímanie a odosielanie fotografií a videí a na skenovanie QR kódov.";
+NSLocationAlwaysAndWhenInUseUsageDescription = "Delta Chat vyžaduje oprávnenia na získanie polohy, aby ste mohli zdieľať Vašu polohu počas doby, ktorú ste stanovili.";
+NSLocationWhenInUseUsageDescription = "Delta Chat vyžaduje oprávnenia na zdieľanie vašej polohy počas doby, kedy bude zdieľanie polohy zapnuté.";
+NSMicrophoneUsageDescription = "Aplikácia Delta Chat používa váš mikrofón na zaznamenávanie a odosielanie hlasových správ a videí so zvukom.";
+NSPhotoLibraryUsageDescription = "Delta Chat vám umožní zvoliť si, ktoré fotografie z vašej knižnice chcete odoslať.";
+NSPhotoLibraryAddUsageDescription = "Delta Chat chce uložiť obrázky do vašej knižnice fotografií.";

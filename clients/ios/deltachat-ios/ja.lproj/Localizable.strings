@@ -1,0 +1,555 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "了承";
+"cancel" = "取消";
+"clear_search" = "検索履歴を消す";
+"yes" = "はい";
+"no" = "いいえ";
+"select" = "選択";
+"on" = "入";
+"off" = "切";
+"def" = "標準";
+"default_value" = "初期値（%1$@）";
+"custom" = "カスタム";
+"none" = "無し";
+"automatic" = "自動";
+"strict" = "厳重";
+"open" = "開く";
+"download" = "ダウンロード";
+"downloading" = "ダウンロード中";
+"open_attachment" = "添付ファイルを開く";
+"join" = "参加";
+"rejoin" = "参加";
+"delete" = "削除";
+"info" = "情報";
+"update" = "アップデート";
+"emoji" = "絵文字";
+"attachment" = "添付ファイル";
+"back" = "前へ";
+"close" = "閉じる";
+"forward" = "転送";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "アーカイブ";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "元に戻す";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "ミュート";
+"ephemeral_messages" = "消えるメッセージ";
+"ephemeral_messages_hint" = "この設定は、Delta Chatの利用する参加者に適用されます。ただし、参加者はメッセージをコピーしたり、保存したり、転送したり、他のアプリを利用したりすることができます。";
+"save" = "保存";
+"chat" = "チャット";
+"media" = "メディア";
+"profile" = "プロファイル";
+"main_menu" = "メインメニュー";
+"start_chat" = "チャットを開始する";
+"show_full_message" = "メッセージ全体を表示";
+// Placeholder text when something is loading
+"loading" = "読み込み中";
+"hide" = "非表示";
+"load_remote_content" = "リモート画像を読み込む";
+// Possible answers to the question are: Never, Always, Once
+"load_remote_content_ask" = "リモート画像で追跡ができる。\n\nこの設定はフォントや他のコンテツを読み込むことも許可する。無効にしても埋め込まれた画像やキャッシュされた画像を表示されます。\n\nリモート画像を読み込む？";
+"always" = "常に";
+"once" = "一回のみ";
+"not_now" = "今はしない";
+"never" = "しない";
+"one_moment" = "お待ち下さい…";
+"done" = "完了";
+"undo" = "元に戻す";
+"offline" = "オフライン";
+// For the next view or as "continue". Should be as short as possible.
+"next" = "次へ";
+"error" = "エラー";
+"error_x" = "エラー：%1$@";
+"no_app_to_handle_data" = "この種類のファイルを開くためのアプリが見つかりません。";
+"no_browser_installed" = "ブラウザーが見つかりません";
+"file_not_found" = "%1$@を見付けられません";
+"copied_to_clipboard" = "クリップボードにコピーしました";
+"contacts_headline" = "連絡先";
+"email_address" = "メールアドレス";
+"bad_email_address" = "メールアドレスが不正です。";
+"password" = "パスワード";
+"existing_password" = "既存のパスワード";
+"now" = "現在";
+// Headline for destructive actions with no undo. Could also be "Caution" or "Warning".
+"danger" = "危険";
+"today" = "今日";
+"yesterday" = "昨日";
+"this_week" = "今週";
+"this_month" = "今月";
+"last_week" = "先週";
+"last_month" = "先月";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+"self" = "自分";
+"draft" = "下書き";
+"image" = "画像";
+// Used in summaries as "Draft: Reply", similar as "Draft: Image". Use a noun here, not a verb (not: "to reply")
+"reply_noun" = "返信";
+"gif" = "Gif";
+"images" = "画像";
+// a noun, used for "Music" and other "Audio" files
+"audio" = "音楽";
+"voice_message" = "音声メッセージ";
+"forwarded" = "転送された";
+"forwarded_message" = "転送されたメッセージ";
+// %1$s will be replaced by the name of the person who forwarded the message
+"forwarded_by" = "%1$@が転送しました";
+"video" = "動画";
+"documents" = "文章";
+"contact" = "連絡先";
+"camera" = "カメラ";
+// As in "start a video recording" or "take a photo"; eg. the description of the "shutter button" in cameras
+"capture" = "撮影";
+"switch_camera" = "カメラを切り替える";
+"toggle_fullscreen" = "フルスクリーン";
+"location" = "場所";
+"gallery" = "画像";
+"images_and_videos" = "画像・映像";
+"file" = "ファイル";
+"files" = "ファイル";
+"unknown" = "不明";
+"green" = "緑";
+"red" = "赤";
+"blue" = "青";
+"orange" = "橙";
+"cyan" = "青緑";
+"purple" = "紫";
+"magenta" = "赤紫";
+"white" = "白";
+"zoom" = "文字の大きさ";
+"extra_small" = "細小";
+"small" = "小";
+"normal" = "中";
+"large" = "大";
+"extra_large" = "巨大";
+"fast" = "高速";
+"slow" = "低速";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "新規連絡先";
+"menu_new_chat" = "新規チャット";
+"menu_new_group" = "新規グループ";
+"menu_send" = "送信";
+"menu_toggle_keyboard" = "絵文字キーボードを呼び出す";
+"menu_edit_group" = "グループを編集";
+"menu_group_name_and_image" = "グループ名と画像";
+"menu_show_global_map" = "全ての位置情報を表示する";
+"menu_archive_chat" = "チャットを保管";
+"menu_unarchive_chat" = "チャットを取り出す";
+"menu_add_attachment" = "ファイルを添付する";
+"menu_leave_group" = "退室する";
+"menu_delete_chat" = "チャットを削除";
+"delete_contact" = "連絡先を解除する";
+"menu_delete_location" = "この位置情報を削除しますか";
+"menu_message_details" = "メッセージの詳細";
+"menu_copy_to_clipboard" = "クリップボードにコピー";
+"menu_copy_selection_to_clipboard" = "コピー";
+"menu_copy_link_to_clipboard" = "リンクをコピー";
+"menu_copy_text_to_clipboard" = "テキストをコピー";
+"menu_copy_image_to_clipboard" = "画像をコピー";
+"paste_from_clipboard" = "クリップボードのデータを貼り付ける";
+"menu_forward" = "メッセージを転送";
+"menu_reply" = "メッセージに返答";
+"menu_mute" = "通知しない";
+"menu_unmute" = "ミュート解除";
+"menu_export_attachment" = "添付ファイルのエクスポート";
+"menu_all_media" = "全ての写真･動画･音楽";
+// Command to jump to the original message corresponding to a gallery image or document
+"show_in_chat" = "チャットに表示";
+"menu_share" = "共有";
+// Verb "to block sth." usually a mailing list or a contact, not a noun
+"block" = "ブロック";
+"menu_block_contact" = "拒否する";
+"menu_unblock_contact" = "拒否を解除";
+"menu_play" = "再生";
+"menu_pause" = "一時停止";
+"menu_scroll_to_bottom" = "一番下までスクロールする";
+"menu_scroll_to_top" = "一番上までスクロールする";
+"menu_help" = "ヘルプ";
+"privacy_policy" = "プライバシーについて";
+"menu_select_all" = "全選択";
+"select_more" = "さらに選択";
+"menu_edit_name" = "名前の編集";
+"menu_settings" = "設定";
+"menu_advanced" = "追加設定";
+"menu_view_profile" = "詳細を確認";
+"menu_zoom_in" = "拡大";
+"menu_zoom_out" = "縮小";
+"menu_save_log" = "ログ保存";
+"jump_to_message" = "メッセージへ移動";
+"title_share_location" = "現在地を全員に公開する";
+"device_talk" = "デバイスのメッセージ";
+"device_talk_subtitle" = "ローカルで生成されたメッセージ";
+"device_talk_explain" = "このチャットのメッセージはアプリで生成されます。アプリ開発者はアップデートや問題点をお知らせするために使用しています。";
+"edit_contact" = "連絡先を編集";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin_chat" = "チャットをピン留め";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin_chat" = "チャットのピン留めを解除";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin" = "ピン留め";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin" = "ピン留めを解除";
+"ConversationFragment_quoted_message_not_found" = "メッセージが見つかりません";
+"reply_privately" = "個別に返信する";
+"mute_for_one_hour" = "1時間停止する";
+"mute_for_eight_hours" = "8時間停止する";
+"mute_for_one_day" = "24時間停止する";
+"mute_for_seven_days" = "7日間停止する";
+"mute_forever" = "無効";
+"share_location_for_5_minutes" = "5分間";
+"share_location_for_30_minutes" = "30分間";
+"share_location_for_one_hour" = "1時間";
+"share_location_for_two_hours" = "2時間";
+"share_location_for_six_hours" = "6時間";
+"file_saved_to" = "%1$@に保存しました。";
+"ask_forward" = "%1$@にメッセージを転送しますか？";
+"ask_forward_multiple" = "%1$dチャットにメッセージを転送しますか？";
+"ask_export_attachment" = "添付ファイルをエクスポートしますか？添付ファイルをエクスポートすると、他のアプリからもアクセスできるようになります。\n\nよろしいですか？";
+"ask_block_contact" = "この連絡先を拒否しますか";
+"ask_unblock_contact" = "この連絡先の拒否設定を解除しますか";
+"ask_delete_contacts" = "連絡先を削除しますか？\n\nチャット中の連絡先やシステムのアドレス帳の連絡先は削除できません。";
+"ask_delete_contact" = "%1$@件の連絡先を削除しますか？\n\nチャット中の連絡先やシステムのアドレス帳の連絡先は削除できません。";
+"ask_start_chat_with" = "%1$@とチャットしますか";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_members" = "%1$@をグループから排除しますか";
+"open_url_confirmation" = "このリンクを開きますか？";
+// contact list
+"contacts_title" = "連絡先一覧";
+"contacts_type_email_above" = "上にメールアドレスを入力してください。";
+// chatlist and chat view
+"chat_archived_chats_title" = "アーカイブしたチャット";
+"chat_please_enter_message" = "メッセージを入力してください。";
+"chat_camera_unavailable" = "カメラは利用できません。";
+"chat_unable_to_record_audio" = "録音できません。";
+"chat_new_group_hint" = "最初のメッセージを送ってから他人が返信できるようになります。\n\n･Delta Chatを使わなくても構いません\n\n･最初のメッセージの配信は時間がかかる場合もあります。";
+"chat_record_slide_to_cancel" = "スライドしてキャンセル";
+"chat_record_explain" = "長押しして録音して、離すと送ります。";
+"chat_no_chats_yet_title" = "受信箱が空です。\n＋でチャットを開始します。";
+"chat_all_archived" = "すべてのチャットがアーカイブされました。\n＋でチャットを開始します。";
+"chat_share_with_title" = "共有";
+"chat_input_placeholder" = "メッセージ";
+"chat_archived_label" = "アーカイブ済み";
+"chat_no_messages" = "メッセージ無し";
+"chat_self_talk_subtitle" = "自分に送ったメッセージ";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "保存";
+"saved_messages" = "保存したメッセージ";
+"saved_messages_explain" = "ここにメッセージを転送しておけば、簡単にアクセスできます。メモやボイスメモも保存できます。メディアを添付して保存します。";
+// Should match "Saved" from "Saved messages"
+"saved" = "保存しました";
+"retry_send" = "メッセージの配信を再試行します";
+"cannot_display_unsuported_file_type" = "%1$@形式のファイルは表示できません";
+"attachment_failed_to_load" = "添付ファイルの読み込みに失敗しました";
+// For recording Voice messages: Description for the "Lock" button allowing to lift the thumb from the record button while recording continues
+"lock_recording" = "ずっと録音";
+// mailing lists
+"mailing_list" = "メーリングリスト";
+// punycode warning / labeled links
+"puny_code_warning_header" = "疑わしいリンクが検出された";
+// search
+"search" = "検索";
+"search_explain" = "チャット･メッセージ･連絡先を検索";
+"search_no_result_for_x" = "｢%1$@｣は見付かりませんでした｡";
+// create/edit groups, contact/group profile
+"group_name" = "グループ名";
+"group_avatar" = "グループ画像";
+"remove_group_image" = "アイコン画像の削除";
+"change_group_image" = "グループ画像の編集";
+"group_create_button" = "グループ作成";
+// deprecated, use please_enter_chat_name
+"group_please_enter_group_name" = "グループ名を入力して下さい";
+"group_add_members" = "メンバーを追加";
+"group_self_not_in_group" = "グループのメンバーしかが実行されないアクションです。";
+"profile_encryption" = "暗号化";
+"profile_shared_chats" = "共有チャット";
+"tab_contact" = "連絡先";
+"tab_group" = "グループ";
+"tab_gallery" = "画像";
+"tab_docs" = "文章";
+"tab_links" = "リンク";
+"tab_map" = "地図";
+"tab_gallery_empty_hint" = "このチャットで共有された画像や映像はここに表示されます。";
+"tab_docs_empty_hint" = "このチャットで共有されたドキュメントや音楽などがここに表示されます。";
+"media_preview" = "メディアのプレビュー";
+"send_message" = "送る";
+"connectivity" = "接続性";
+// Shown in the title bar if the app is "Not connected"; prefer short strings.
+"connectivity_not_connected" = "未接続";
+// Shown in the title bar if the app is "Connecting"; prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_connecting" = "接続中";
+// Shown in the title bar if the app is "Updating" (eg. getting new/old message, sync things); prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_updating" = "アップデート中";
+// Shown in the setting if the app is "Connected"
+"connectivity_connected" = "接続済み";
+"login_title" = "ログイン";
+"login_inbox" = "受信";
+"login_imap_login" = "IMAPログイン名";
+"login_imap_server" = "IMAPサーバー";
+"login_imap_port" = "IMAPポート";
+"login_imap_security" = "IMAP暗号方式";
+"login_outbox" = "送信";
+"login_smtp_login" = "SMTPログイン名";
+"login_smtp_password" = "SMTPパスワード";
+"login_smtp_server" = "SMTPサーバー";
+"login_smtp_port" = "SMTPポート";
+"login_smtp_security" = "SMTP暗号方式";
+"login_certificate_checks" = "有効な証明書です";
+"login_error_mail" = "有効なメールアドレスを入力してください";
+"login_error_server" = "有効なサーバー或いはIPアドレスを入力してください";
+"login_error_port" = "有効なポート（１〜６５５３５）を入力してください";
+"login_error_required_fields" = "有効なメールアドレスとパスワードを入力してください";
+"import_backup_title" = "バックアップをインポート";
+"import_backup_ask" = "%1$@でバックアップがあります。\n\nすべての設定やデータを取り込んで使用しましょうか？";
+"import_backup_no_backup_found" = "バックアップが見つかりません。\n\n%1$@にバックアップをコピーして、再試行してください。又は、「メッセージの開始」を押して通常のセットアップを続行します。";
+// %1$s will be replaced by the failing address
+"login_error_cannot_login" = "%1$@としてログインできません。メールアドレスとパスワードを確認してください。";
+// TLS certificate checks
+"accept_invalid_certificates" = "無効な証明書を受け入れます";
+"switch_account" = "アカウントを切り替え";
+"add_account" = "アカウントを追加";
+"delete_account" = "アカウントを削除";
+"delete_account_ask" = "本当にアカウントデータを削除しますか？";
+"delete_account_explain_with_name" = "暗号鍵・連絡先・チャット・メッセージを含めて%1$@のアカウントデータを端末から削除します。元に戻すことはできません。";
+"try_connect_now" = "今直ぐ接続します";
+// Translations: %1$s will be replaced by a more detailed error message
+"configuration_failed_with_error" = "設定失敗。エラー：%1$@";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "転送";
+"ask_send_files_to_selected_chats" = "%1$dつのファイルを%2$d個のチャットに送りますか。";
+"share_text_multiple_chats" = "%2$@を%1$d個のチャットに送りますか。";
+"share_abort" = "権限エラー：共有が一時中断されました。";
+// preferences
+"pref_profile_info_headline" = "ユーザープロファイル";
+"pref_profile_photo" = "アイコン画像";
+"pref_blocked_contacts" = "ブロックされた人";
+"blocked_empty_hint" = "ブロックされた連絡先がここに表示されます。";
+"pref_who_can_see_profile_explain" = "アイコン画像や名前は他のユーザーに連絡するとメッセージとともに表示されます。既に送信された情報を削除することができます。";
+"pref_your_name" = "あなたの名前";
+// Label of the Bio/Signature/Status/Motto field
+"pref_default_status_label" = "署名";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "エンターキーで送信";
+"pref_enter_sends_explain" = "エンターキーを押すとテキストメッセージが送信されます";
+"pref_outgoing_media_quality" = "送信する画像や映像の画質";
+"pref_outgoing_balanced" = "普通";
+"pref_outgoing_worse" = "低画質・サイズが小さい";
+"pref_vibrate" = "振動";
+"pref_screen_security" = "画面セキュリティ";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "アプリ内や「最近使ったアプリ」でスクリーンショットを禁止する";
+"pref_screen_security_please_restart_hint" = "画面のセキュリティ設定を適用してアプリを再起動してください。";
+"pref_notifications" = "通知";
+"pref_notifications_show" = "表示";
+"pref_notifications_priority" = "優先度";
+"pref_notifications_explain" = "新着メッセージ通知を有効にします";
+"pref_show_notification_content" = "通知にメッセージの内容を表示します";
+"pref_show_notification_content_explain" = "通知には、送信者と最初の単語を表示します";
+"pref_led_color" = "LED色";
+"pref_sound" = "通知音";
+"pref_silent" = "無音";
+"pref_privacy" = "機密保護";
+"pref_system_default" = "システム既定";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "白";
+"pref_dark_theme" = "黒";
+"pref_appearance" = "外観";
+"pref_theme" = "見た目";
+"pref_language" = "言語";
+"pref_incognito_keyboard" = "シークレットキーボード";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "予測入力を無効にする";
+"pref_read_receipts" = "既読通知";
+"pref_read_receipts_explain" = "既読通知を無効にすると、相手の既読通知も受け取れません。";
+"pref_manage_keys" = "暗号鍵の管理";
+"pref_chats" = "チャット";
+"pref_in_chat_sounds" = "着信音";
+"pref_view_log" = "ログの表示";
+"pref_saved_log" = "ログはダウンロードフォルダに保存されました。";
+"pref_save_log_failed" = "ログの保存に失敗しました";
+"pref_log_header" = "ログ";
+"pref_other" = "その他";
+"pref_backup" = "バックアップ";
+"pref_backup_explain" = "外部記憶装置へチャットをバックアップする";
+"pref_backup_export_explain" = "バックアップは、本デバイスまたは別のデバイスに新たにインストールする際に役立ちます。\n\nこのバックアップには、すべてのメッセージ、連絡先、チャット、およびエンドツーエンドの自動暗号化設定が含まれます。バックアップファイルは安全な場所に保管するか、できるだけ早く削除してください。";
+"pref_backup_export_start_button" = "バックアップを開始する";
+"pref_backup_written_to_x" = "バックアップは%1$@に正常に完了しました。";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "背景";
+"pref_background_btn_default" = "デフォルトの画像を使う";
+"pref_background_btn_gallery" = "ギャラリーから選ぶ";
+"pref_auto_folder_moves" = "DeltaChatフォルダに自動で移動する";
+"pref_show_emails" = "一般的なメールを表示する";
+"pref_show_emails_no" = "いいえ、チャットのみ";
+"pref_show_emails_accepted_contacts" = "許可されたユーザーのみ";
+"pref_show_emails_all" = "全部";
+"pref_experimental_features" = "実験的な機能";
+"pref_on_demand_location_streaming" = "オンデマンドの位置情報配信";
+"pref_background_default" = "デフォルトの壁紙";
+"pref_background_default_color" = "デフォルト色";
+"pref_background_custom_image" = "画像";
+"pref_background_custom_color" = "色";
+"export_aborted" = "エクスポートを停止しました。";
+"profile_image_select" = "アイコン画像を選択する";
+"select_your_new_profile_image" = "新しいアイコン画像を選択してください";
+"profile_image_delete" = "アイコン画像を削除する";
+"pref_show_tray_icon" = "トレイアイコンの表示";
+"pref_edit_profile" = "プロフィール編集";
+// Emoji picker and categories
+"emoji_search_results" = "検索結果";
+"emoji_not_found" = "絵文字がみつかりません";
+"emoji_recent" = "履歴";
+"emoji_people" = "人と体";
+"emoji_nature" = "自然と動物";
+"emoji_foods" = "食べ物と飲み物";
+"emoji_activity" = "活動";
+"emoji_places" = "旅行・場所";
+"emoji_objects" = "物";
+"emoji_symbols" = "シンボル";
+"emoji_flags" = "フラッグ";
+// automatically delete message
+"delete_old_messages" = "古いメッセージの削除";
+"autodel_device_title" = "端末からメッセージを削除する";
+"autodel_server_title" = "サーバーからメッセージを削除する";
+"autodel_confirm" = "分かりました。メッセージを削除していいです。";
+// "At once" in the meaning of "Immediately", without any intervening time.
+"autodel_at_once" = "すぐに";
+"after_5_minutes" = "5分";
+"autodel_after_1_hour" = "1時間";
+"autodel_after_1_day" = "1日後";
+"autodel_after_1_week" = "1週間後";
+"after_5_weeks" = "5週間後";
+"autodel_after_1_year" = "1年後";
+// system messages
+"systemmsg_subject_for_new_contact" = "%1$@さんからのメッセージ";
+"systemmsg_failed_sending_to" = "%1$@さんへのメッセージ送信に失敗しました。";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name
+"group_name_changed_by_you" = "自分からグループ名を%1$@から%2$@に変更しました。";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name, %3$s will be replaced by name and address of the contact who did the action.
+"group_name_changed_by_other" = "%3$@からグループ名を%1$@から%2$@に変更しました。";
+"group_image_changed_by_you" = "自分からグループ画像が変わりました。";
+// %1$s will be replaced by name of the contact who did the action
+"group_image_changed_by_other" = "%1$@からグループ画像が変わりました。";
+// %1$s will be replaced by name of the contact added to the group
+"add_member_by_you" = "自分から%1$@が追加されました。";
+// %1$s will be replaced by name of the contact added to the group, %2$s will be replaced by name of the contact who did the action
+"add_member_by_other" = "%2$@から%1$@が追加されました。";
+// %1$s will be replaced by name of the contact removed from the group
+"remove_member_by_you" = "自分から%1$@が退会されました。";
+// %1$s will be replaced by name of the contact removed from the group, %2$s will be replaced by name of the contact who did the action
+"remove_member_by_other" = "%2$@から%1$@が退会されました。";
+// %1$s will be replaced by name of the contact removed from the group; this string is used when it's unclear who did the action
+"member_x_removed" = "%1$@が退会されました。";
+"group_image_deleted_by_you" = "自分からグループ画像を削除しました。";
+// %1$s will be replaced by name of the contact
+"group_image_deleted_by_other" = "%1$@からグループ画像を削除しました。";
+"ephemeral_timer_disabled_by_you" = "自分から消えるメッセージを無効にしました。";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_disabled_by_other" = "%1$@から消えるメッセージを無効にしました。";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to
+"ephemeral_timer_seconds_by_you" = "自分から消えるメッセージを%1$@秒にしました。";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_seconds_by_other" = "%2$@から消えるメッセージを%1$@秒にしました。";
+"ephemeral_timer_1_hour_by_you" = "自分から消えるメッセージを1時間にしました。";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_hour_by_other" = "%1$@から消えるメッセージを1時間にしました。";
+"ephemeral_timer_1_day_by_you" = "自分から消えるメッセージを1日にしました。";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_day_by_other" = "%1$@から消えるメッセージを1日にしました。";
+"ephemeral_timer_1_week_by_you" = "自分から消えるメッセージを1週間にしました。";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_week_by_other" = "%1$@から消えるメッセージを1週間にしました。";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to
+"ephemeral_timer_minutes_by_you" = "自分から消えるメッセージを%1$@分にしました。";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_minutes_by_other" = "%2$@から消えるメッセージを%1$@分にしました。";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to
+"ephemeral_timer_hours_by_you" = "自分から消えるメッセージを%1$@時間にしました。";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_hours_by_other" = "%2$@から消えるメッセージを%1$@時間にしました。";
+// %1$s will be replaced by the number of days (always >1) the timer is set to
+"ephemeral_timer_days_by_you" = "自分から消えるメッセージを%1$@日にしました。";
+// %1$s will be replaced by the number of days (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_days_by_other" = "%2$@から消えるメッセージを%1$@日にしました。";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to
+"ephemeral_timer_weeks_by_you" = "自分から消えるメッセージを%1$@週間にしました。";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_weeks_by_other" = "%2$@から消えるメッセージを%1$@週間にしました。";
+// qr code stuff
+"qr_code" = "QRコード";
+"load_qr_code_as_image" = "QRコードを画像として読み込む";
+"qrscan_title" = "QRｺｰﾄﾞを読み取る";
+"qrscan_hint" = "QRコードを読み取って下さい";
+"qrscan_failed" = "QRコードを読み取りできなかった";
+"qrscan_ask_join_group" = "%1$@グループに参加しますか";
+"qrscan_contains_text" = "読み取り結果は以下:\n\n%1$@";
+"qrscan_contains_url" = "読み取り結果は以下:\n\n:\n\n%1$@";
+"qrshow_title" = "自分のQRｺｰﾄﾞ";
+"qrshow_x_joining" = "%1$@が参加しました";
+"qrshow_x_verified" = "%1$@を確認しました。";
+"qrshow_x_has_joined_group" = "%1$@が参加しました";
+"qrshow_join_group_title" = "自分のQRｺｰﾄﾞ";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the group name, eg. "Scan to join group \"Testing group\""
+"qrshow_join_group_hint" = "スキャンして%1$@に参加します";
+"qrshow_join_contact_title" = "自分のQRｺｰﾄﾞ";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to chat with Alice"
+"qrshow_join_contact_hint" = "スキャンして%1$@に連絡します。";
+"qrshow_join_contact_no_connection_toast" = "インターネットに接続されていないので、QRコードの設定ができません。";
+"qraccount_ask_create_and_login" = "%1$@に新しいメールアドレスを作ってログしますか。";
+"contact_verified" = "%1$@を確認しました。";
+// notifications
+"notify_reply_button" = "返信";
+"notify_new_message" = "新規メッセージ";
+"notify_priority_high" = "高";
+"notify_priority_max" = "最大";
+"notify_name_and_message" = "名前とメッセージ";
+"notify_name_only" = "名前のみ";
+"notify_no_name_or_message" = "名前もメッセージも非表示";
+// permissions
+"perm_required_title" = "アクセス許可が必要です";
+"perm_continue" = "続行";
+"ImageEditorHud_add_text" = "テキストを作成";
+"ImageEditorHud_blur" = "ぼかし";
+"ImageEditorHud_crop" = "切り抜き";
+"ImageEditorHud_flip" = "反転";
+"ImageEditorHud_rotate" = "回転";
+"welcome_desktop" = "Delta Chatにようこそ";
+"global_menu_preferences_language_desktop" = "言語を選択して下さい";
+"global_menu_file_desktop" = "ファイル";
+"global_menu_file_quit_desktop" = "終了";
+"global_menu_edit_desktop" = "編集";
+"global_menu_edit_undo_desktop" = "元に戻す";
+"global_menu_edit_redo_desktop" = "やり直す";
+"global_menu_edit_cut_desktop" = "切り取り";
+"global_menu_edit_copy_desktop" = "複製";
+"global_menu_edit_paste_desktop" = "貼り付け";
+"global_menu_view_desktop" = "表示画面";
+"global_menu_view_floatontop_desktop" = "最前面に維持する";
+"global_menu_view_developer_desktop" = "開発者";
+"global_menu_view_developer_tools_desktop" = "開発者ツール";
+"global_menu_help_desktop" = "ヘルプ";
+"global_menu_help_report_desktop" = "問題を報告する";
+"global_menu_help_about_desktop" = "Delta Chatについて";
+"write_message_desktop" = "メッセージを送信";
+"encryption_info_title_desktop" = "暗号化情報";
+"delete_message_desktop" = "メッセージを削除する";
+"more_info_desktop" = "もっと詳しく";
+"timestamp_format_m_desktop" = "MMM D";
+"remove_desktop" = "削除";
+"save_desktop" = "保存";
+"name_desktop" = "名前";
+"select_group_image_desktop" = "グループ画像を選択する";
+"export_backup_desktop" = "バックアップをエクスポート";
+"message_detail_sent_desktop" = "送信済み";
+"message_detail_received_desktop" = "届きました";
+"menu.view.developer.open.log.folder" = "ログフォルダを開く";
+"menu.view.developer.open.current.log.file" = "現在のログファイルを開く";
+// accessibility, the general idea is to use the normal strings for accessibility hints wherever possible
+"a11y_delivery_status_error" = "送信状態：エラー";
+"a11y_delivery_status_sending" = "送信状態：送信中";
+"a11y_delivery_status_draft" = "送信状態：下書き";
+"a11y_delivery_status_delivered" = "送信状態：送信済み";
+"a11y_delivery_status_read" = "送信状態：既読";
+"a11y_delivery_status_invalid" = "不明な送信状態";
+"a11y_disappearing_messages_activated" = "消えるメッセージを有効にしました。";

@@ -1,0 +1,574 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		30421942243DE0F200516852 /* DcCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 30421934243DE0F200516852 /* DcCore.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30421950243DE15D00516852 /* wrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 3042194C243DE15D00516852 /* wrapper.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		30421952243DE15D00516852 /* wrapper.c in Sources */ = {isa = PBXBuildFile; fileRef = 3042194E243DE15D00516852 /* wrapper.c */; };
+		3042195B243DF1C500516852 /* deltachat.h in Headers */ = {isa = PBXBuildFile; fileRef = 3042195A243DF1C500516852 /* deltachat.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		3042195D243E23F100516852 /* DcUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3042195C243E23F100516852 /* DcUtils.swift */; };
+		30421960243E257100516852 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3042195F243E257100516852 /* UIColor+Extensions.swift */; };
+		30421962243E26C800516852 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30421961243E26C800516852 /* Logger.swift */; };
+		30421964243F0B8400516852 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30421963243F0B8400516852 /* String+Extensions.swift */; };
+		30421986243F209E00516852 /* events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30421985243F209E00516852 /* events.swift */; };
+		30421988243F23E500516852 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30421987243F23E500516852 /* Constants.swift */; };
+		304F5E41244F2F3200462538 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 304F5E40244F2F3200462538 /* UIImage+Extensions.swift */; };
+		3057028624C5C60000D84EFC /* UITableView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3057028524C5C60000D84EFC /* UITableView+Extensions.swift */; };
+		306C324824460CDE001D89F3 /* DateUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306C324724460CDE001D89F3 /* DateUtils.swift */; };
+		308198AB24866229003BE20D /* UserDefaults+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 308198AA24866229003BE20D /* UserDefaults+Extensions.swift */; };
+		30B2BD04278F207000889AA4 /* KeychainManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30B2BD03278F207000889AA4 /* KeychainManager.swift */; };
+		30E8F2212447357500CE2C90 /* DatabaseHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E8F2202447357500CE2C90 /* DatabaseHelper.swift */; };
+		30E8F2482449C98600CE2C90 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E8F2472449C98600CE2C90 /* UIView+Extensions.swift */; };
+		30E8F24D2449D30200CE2C90 /* DcColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E8F24C2449D30200CE2C90 /* DcColors.swift */; };
+		5F0FCC772DAE65AD00C4F9C3 /* UNMutableNotificationContent+init.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F0FCC762DAE65AD00C4F9C3 /* UNMutableNotificationContent+init.swift */; };
+		640ACB472E1E3BA9000FBBCC /* ImageFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640ACB462E1E3BA9000FBBCC /* ImageFormat.swift */; };
+		640BC0472DCC941D0049B475 /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 640BC0462DCC941D0049B475 /* DarwinNotificationCenter.swift */; };
+		64E2FCC12E1AD9D200CA9662 /* CodableNSItemProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E2FCC02E1AD9D200CA9662 /* CodableNSItemProvider.swift */; };
+		64E7AA642EBE43E400DB88B7 /* CallKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64E7AA632EBE43DE00DB88B7 /* CallKit.swift */; };
+		78072F172A040ED800EB7C98 /* libdeltachat.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 78072F162A040ED800EB7C98 /* libdeltachat.a */; };
+		7871729629BA495200F110DC /* SystemConfiguration.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7871729529BA495200F110DC /* SystemConfiguration.framework */; };
+		B2526A222DEA12A000EB90CC /* DcEnteredLoginParam.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2526A212DEA12A000EB90CC /* DcEnteredLoginParam.swift */; };
+		B2A830392F6D8C75006D1C8D /* DcTransportListEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A830382F6D8C75006D1C8D /* DcTransportListEntry.swift */; };
+		B2F691252C0790140010D9B1 /* DcVcard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2F691242C0790140010D9B1 /* DcVcard.swift */; };
+		D8BBF0032B57D8E5008C96FD /* DcAccount.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0022B57D8E5008C96FD /* DcAccount.swift */; };
+		D8BBF0052B57D904008C96FD /* DcContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0042B57D904008C96FD /* DcContext.swift */; };
+		D8BBF0072B57D91B008C96FD /* DcEventEmitter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0062B57D91B008C96FD /* DcEventEmitter.swift */; };
+		D8BBF0092B57D92E008C96FD /* DcEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0082B57D92E008C96FD /* DcEvent.swift */; };
+		D8BBF00B2B57D93D008C96FD /* DcChatlist.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF00A2B57D93D008C96FD /* DcChatlist.swift */; };
+		D8BBF00D2B57D949008C96FD /* DcChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF00C2B57D949008C96FD /* DcChat.swift */; };
+		D8BBF0112B57D96F008C96FD /* DcMsg.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0102B57D96F008C96FD /* DcMsg.swift */; };
+		D8BBF0132B57D97B008C96FD /* DcContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0122B57D97B008C96FD /* DcContact.swift */; };
+		D8BBF0152B57D991008C96FD /* DcLot.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0142B57D991008C96FD /* DcLot.swift */; };
+		D8BBF0172B57D99F008C96FD /* DcBackupProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0162B57D99F008C96FD /* DcBackupProvider.swift */; };
+		D8BBF0192B57D9AE008C96FD /* DcProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF0182B57D9AE008C96FD /* DcProvider.swift */; };
+		D8BBF01B2B57D9BE008C96FD /* DcReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8BBF01A2B57D9BE008C96FD /* DcReaction.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		30421931243DE0F200516852 /* DcCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DcCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		30421934243DE0F200516852 /* DcCore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DcCore.h; sourceTree = "<group>"; };
+		30421935243DE0F200516852 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3042194C243DE15D00516852 /* wrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wrapper.h; path = ../../DcCore/DcCore/DC/wrapper.h; sourceTree = "<group>"; };
+		3042194E243DE15D00516852 /* wrapper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = wrapper.c; path = ../../DcCore/DcCore/DC/wrapper.c; sourceTree = "<group>"; };
+		30421958243DE61400516852 /* libdeltachat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdeltachat.a; path = "../deltachat-ios/libraries/deltachat-core-rust/target/universal/release/libdeltachat.a"; sourceTree = "<group>"; };
+		3042195A243DF1C500516852 /* deltachat.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = deltachat.h; path = "../deltachat-ios/libraries/deltachat-core-rust/deltachat-ffi/deltachat.h"; sourceTree = "<group>"; };
+		3042195C243E23F100516852 /* DcUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DcUtils.swift; sourceTree = "<group>"; };
+		3042195F243E257100516852 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		30421961243E26C800516852 /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = Logger.swift; path = ../../DcCore/DcCore/DC/Logger.swift; sourceTree = "<group>"; };
+		30421963243F0B8400516852 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		30421985243F209E00516852 /* events.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = events.swift; path = ../../DcCore/DcCore/DC/events.swift; sourceTree = "<group>"; };
+		30421987243F23E500516852 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		304F5E40244F2F3200462538 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
+		3057028524C5C60000D84EFC /* UITableView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Extensions.swift"; sourceTree = "<group>"; };
+		306C324724460CDE001D89F3 /* DateUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateUtils.swift; sourceTree = "<group>"; };
+		308198AA24866229003BE20D /* UserDefaults+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserDefaults+Extensions.swift"; sourceTree = "<group>"; };
+		30B2BD03278F207000889AA4 /* KeychainManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeychainManager.swift; sourceTree = "<group>"; };
+		30E8F2202447357500CE2C90 /* DatabaseHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseHelper.swift; sourceTree = "<group>"; };
+		30E8F2472449C98600CE2C90 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		30E8F24C2449D30200CE2C90 /* DcColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcColors.swift; sourceTree = "<group>"; };
+		5F0FCC762DAE65AD00C4F9C3 /* UNMutableNotificationContent+init.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UNMutableNotificationContent+init.swift"; sourceTree = "<group>"; };
+		640ACB462E1E3BA9000FBBCC /* ImageFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFormat.swift; sourceTree = "<group>"; };
+		640BC0462DCC941D0049B475 /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
+		64E2FCC02E1AD9D200CA9662 /* CodableNSItemProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableNSItemProvider.swift; sourceTree = "<group>"; };
+		64E7AA632EBE43DE00DB88B7 /* CallKit.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallKit.swift; sourceTree = "<group>"; };
+		78072F162A040ED800EB7C98 /* libdeltachat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdeltachat.a; path = "../deltachat-ios/libraries/libdeltachat.a"; sourceTree = "<group>"; };
+		7827C8882A04089900B8470D /* libraries */ = {isa = PBXFileReference; lastKnownFileType = folder; name = libraries; path = "../deltachat-ios/libraries"; sourceTree = "<group>"; };
+		7827C88A2A0408A700B8470D /* libdeltachat.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libdeltachat.a; path = "../deltachat-ios/libraries/deltachat-core-rust/libdeltachat.a"; sourceTree = "<group>"; };
+		7871729529BA495200F110DC /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX13.1.sdk/System/Library/Frameworks/SystemConfiguration.framework; sourceTree = DEVELOPER_DIR; };
+		B2526A212DEA12A000EB90CC /* DcEnteredLoginParam.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcEnteredLoginParam.swift; sourceTree = "<group>"; };
+		B2A830382F6D8C75006D1C8D /* DcTransportListEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcTransportListEntry.swift; sourceTree = "<group>"; };
+		B2F691242C0790140010D9B1 /* DcVcard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DcVcard.swift; sourceTree = "<group>"; };
+		D8BBF0022B57D8E5008C96FD /* DcAccount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcAccount.swift; sourceTree = "<group>"; };
+		D8BBF0042B57D904008C96FD /* DcContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcContext.swift; sourceTree = "<group>"; };
+		D8BBF0062B57D91B008C96FD /* DcEventEmitter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcEventEmitter.swift; sourceTree = "<group>"; };
+		D8BBF0082B57D92E008C96FD /* DcEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcEvent.swift; sourceTree = "<group>"; };
+		D8BBF00A2B57D93D008C96FD /* DcChatlist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcChatlist.swift; sourceTree = "<group>"; };
+		D8BBF00C2B57D949008C96FD /* DcChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcChat.swift; sourceTree = "<group>"; };
+		D8BBF0102B57D96F008C96FD /* DcMsg.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcMsg.swift; sourceTree = "<group>"; };
+		D8BBF0122B57D97B008C96FD /* DcContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcContact.swift; sourceTree = "<group>"; };
+		D8BBF0142B57D991008C96FD /* DcLot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcLot.swift; sourceTree = "<group>"; };
+		D8BBF0162B57D99F008C96FD /* DcBackupProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcBackupProvider.swift; sourceTree = "<group>"; };
+		D8BBF0182B57D9AE008C96FD /* DcProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcProvider.swift; sourceTree = "<group>"; };
+		D8BBF01A2B57D9BE008C96FD /* DcReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DcReaction.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3042192E243DE0F200516852 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				78072F172A040ED800EB7C98 /* libdeltachat.a in Frameworks */,
+				7871729629BA495200F110DC /* SystemConfiguration.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		30421927243DE0F100516852 = {
+			isa = PBXGroup;
+			children = (
+				3042195A243DF1C500516852 /* deltachat.h */,
+				30421933243DE0F200516852 /* DcCore */,
+				30421932243DE0F200516852 /* Products */,
+				30421957243DE61400516852 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		30421932243DE0F200516852 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				30421931243DE0F200516852 /* DcCore.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		30421933243DE0F200516852 /* DcCore */ = {
+			isa = PBXGroup;
+			children = (
+				30421977243F1AF400516852 /* Helper */,
+				3042195E243E255000516852 /* Extensions */,
+				3042194B243DE15D00516852 /* DC */,
+				30421934243DE0F200516852 /* DcCore.h */,
+				30421935243DE0F200516852 /* Info.plist */,
+			);
+			path = DcCore;
+			sourceTree = "<group>";
+		};
+		3042194B243DE15D00516852 /* DC */ = {
+			isa = PBXGroup;
+			children = (
+				B2A830382F6D8C75006D1C8D /* DcTransportListEntry.swift */,
+				B2526A212DEA12A000EB90CC /* DcEnteredLoginParam.swift */,
+				D8BBF0022B57D8E5008C96FD /* DcAccount.swift */,
+				D8BBF0162B57D99F008C96FD /* DcBackupProvider.swift */,
+				D8BBF00C2B57D949008C96FD /* DcChat.swift */,
+				D8BBF00A2B57D93D008C96FD /* DcChatlist.swift */,
+				D8BBF0122B57D97B008C96FD /* DcContact.swift */,
+				D8BBF0042B57D904008C96FD /* DcContext.swift */,
+				D8BBF0082B57D92E008C96FD /* DcEvent.swift */,
+				D8BBF0062B57D91B008C96FD /* DcEventEmitter.swift */,
+				D8BBF0142B57D991008C96FD /* DcLot.swift */,
+				D8BBF0102B57D96F008C96FD /* DcMsg.swift */,
+				D8BBF0182B57D9AE008C96FD /* DcProvider.swift */,
+				D8BBF01A2B57D9BE008C96FD /* DcReaction.swift */,
+				B2F691242C0790140010D9B1 /* DcVcard.swift */,
+				30421985243F209E00516852 /* events.swift */,
+				30421961243E26C800516852 /* Logger.swift */,
+				3042194E243DE15D00516852 /* wrapper.c */,
+				3042194C243DE15D00516852 /* wrapper.h */,
+			);
+			name = DC;
+			path = "../../deltachat-ios/DC";
+			sourceTree = "<group>";
+		};
+		30421957243DE61400516852 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				7827C88A2A0408A700B8470D /* libdeltachat.a */,
+				78072F162A040ED800EB7C98 /* libdeltachat.a */,
+				7827C8882A04089900B8470D /* libraries */,
+				7871729529BA495200F110DC /* SystemConfiguration.framework */,
+				30421958243DE61400516852 /* libdeltachat.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3042195E243E255000516852 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3042195F243E257100516852 /* UIColor+Extensions.swift */,
+				30421963243F0B8400516852 /* String+Extensions.swift */,
+				30E8F2472449C98600CE2C90 /* UIView+Extensions.swift */,
+				304F5E40244F2F3200462538 /* UIImage+Extensions.swift */,
+				308198AA24866229003BE20D /* UserDefaults+Extensions.swift */,
+				3057028524C5C60000D84EFC /* UITableView+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		30421977243F1AF400516852 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				30B2BD03278F207000889AA4 /* KeychainManager.swift */,
+				640ACB462E1E3BA9000FBBCC /* ImageFormat.swift */,
+				30E8F2202447357500CE2C90 /* DatabaseHelper.swift */,
+				30421987243F23E500516852 /* Constants.swift */,
+				3042195C243E23F100516852 /* DcUtils.swift */,
+				306C324724460CDE001D89F3 /* DateUtils.swift */,
+				30E8F24C2449D30200CE2C90 /* DcColors.swift */,
+				5F0FCC762DAE65AD00C4F9C3 /* UNMutableNotificationContent+init.swift */,
+				640BC0462DCC941D0049B475 /* DarwinNotificationCenter.swift */,
+				64E7AA632EBE43DE00DB88B7 /* CallKit.swift */,
+				64E2FCC02E1AD9D200CA9662 /* CodableNSItemProvider.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		3042192C243DE0F200516852 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30421950243DE15D00516852 /* wrapper.h in Headers */,
+				30421942243DE0F200516852 /* DcCore.h in Headers */,
+				3042195B243DF1C500516852 /* deltachat.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		30421930243DE0F200516852 /* DcCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 30421945243DE0F200516852 /* Build configuration list for PBXNativeTarget "DcCore" */;
+			buildPhases = (
+				30421954243DE38E00516852 /* ShellScript */,
+				3042192C243DE0F200516852 /* Headers */,
+				3042192D243DE0F200516852 /* Sources */,
+				3042192E243DE0F200516852 /* Frameworks */,
+				3042192F243DE0F200516852 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DcCore;
+			productName = DcCore;
+			productReference = 30421931243DE0F200516852 /* DcCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		30421928243DE0F100516852 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1140;
+				LastUpgradeCheck = 1140;
+				ORGANIZATIONNAME = "merlinux GmbH";
+				TargetAttributes = {
+					30421930243DE0F200516852 = {
+						CreatedOnToolsVersion = 11.4;
+					};
+				};
+			};
+			buildConfigurationList = 3042192B243DE0F100516852 /* Build configuration list for PBXProject "DcCore" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 30421927243DE0F100516852;
+			productRefGroup = 30421932243DE0F200516852 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				30421930243DE0F200516852 /* DcCore */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3042192F243DE0F200516852 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		30421954243DE38E00516852 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/build-core.sh\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3042192D243DE0F200516852 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				30421988243F23E500516852 /* Constants.swift in Sources */,
+				D8BBF0072B57D91B008C96FD /* DcEventEmitter.swift in Sources */,
+				30E8F24D2449D30200CE2C90 /* DcColors.swift in Sources */,
+				30421962243E26C800516852 /* Logger.swift in Sources */,
+				30421986243F209E00516852 /* events.swift in Sources */,
+				306C324824460CDE001D89F3 /* DateUtils.swift in Sources */,
+				64E2FCC12E1AD9D200CA9662 /* CodableNSItemProvider.swift in Sources */,
+				D8BBF0152B57D991008C96FD /* DcLot.swift in Sources */,
+				30B2BD04278F207000889AA4 /* KeychainManager.swift in Sources */,
+				30421952243DE15D00516852 /* wrapper.c in Sources */,
+				D8BBF0092B57D92E008C96FD /* DcEvent.swift in Sources */,
+				640BC0472DCC941D0049B475 /* DarwinNotificationCenter.swift in Sources */,
+				30E8F2212447357500CE2C90 /* DatabaseHelper.swift in Sources */,
+				64E7AA642EBE43E400DB88B7 /* CallKit.swift in Sources */,
+				D8BBF01B2B57D9BE008C96FD /* DcReaction.swift in Sources */,
+				3042195D243E23F100516852 /* DcUtils.swift in Sources */,
+				D8BBF0032B57D8E5008C96FD /* DcAccount.swift in Sources */,
+				30421964243F0B8400516852 /* String+Extensions.swift in Sources */,
+				30421960243E257100516852 /* UIColor+Extensions.swift in Sources */,
+				D8BBF0192B57D9AE008C96FD /* DcProvider.swift in Sources */,
+				30E8F2482449C98600CE2C90 /* UIView+Extensions.swift in Sources */,
+				3057028624C5C60000D84EFC /* UITableView+Extensions.swift in Sources */,
+				B2A830392F6D8C75006D1C8D /* DcTransportListEntry.swift in Sources */,
+				308198AB24866229003BE20D /* UserDefaults+Extensions.swift in Sources */,
+				B2526A222DEA12A000EB90CC /* DcEnteredLoginParam.swift in Sources */,
+				D8BBF00D2B57D949008C96FD /* DcChat.swift in Sources */,
+				D8BBF0132B57D97B008C96FD /* DcContact.swift in Sources */,
+				640ACB472E1E3BA9000FBBCC /* ImageFormat.swift in Sources */,
+				D8BBF0112B57D96F008C96FD /* DcMsg.swift in Sources */,
+				D8BBF00B2B57D93D008C96FD /* DcChatlist.swift in Sources */,
+				5F0FCC772DAE65AD00C4F9C3 /* UNMutableNotificationContent+init.swift in Sources */,
+				B2F691252C0790140010D9B1 /* DcVcard.swift in Sources */,
+				D8BBF0052B57D904008C96FD /* DcContext.swift in Sources */,
+				D8BBF0172B57D99F008C96FD /* DcBackupProvider.swift in Sources */,
+				304F5E41244F2F3200462538 /* UIImage+Extensions.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		30421943243DE0F200516852 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		30421944243DE0F200516852 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = NO;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = arm64;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				VALIDATE_PRODUCT = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		30421946243DE0F200516852 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8Y86453UA8;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../deltachat-ios/libraries/deltachat-core-rust/deltachat-ffi",
+				);
+				INFOPLIST_FILE = DcCore/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../deltachat-ios/libraries/deltachat-core-rust/deltachat-ffi",
+					"$(PROJECT_DIR)/../deltachat-ios/libraries",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcCore;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		30421947243DE0F200516852 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = 8Y86453UA8;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_BITCODE = NO;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../deltachat-ios/libraries/deltachat-core-rust/deltachat-ffi",
+				);
+				INFOPLIST_FILE = DcCore/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/../deltachat-ios/libraries/deltachat-core-rust/deltachat-ffi",
+					"$(PROJECT_DIR)/../deltachat-ios/libraries",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcCore;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3042192B243DE0F100516852 /* Build configuration list for PBXProject "DcCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30421943243DE0F200516852 /* Debug */,
+				30421944243DE0F200516852 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		30421945243DE0F200516852 /* Build configuration list for PBXNativeTarget "DcCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				30421946243DE0F200516852 /* Debug */,
+				30421947243DE0F200516852 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 30421928243DE0F100516852 /* Project object */;
+}

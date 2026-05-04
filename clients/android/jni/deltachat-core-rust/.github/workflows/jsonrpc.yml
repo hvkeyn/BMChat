@@ -1,0 +1,42 @@
+name: JSON-RPC API Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions: {}
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_MIN_STACK: "8388608"
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          show-progress: false
+          persist-credentials: false
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v6
+        with:
+          node-version: 18.x
+      - name: Add Rust cache
+        uses: Swatinem/rust-cache@779680da715d629ac1d338a641029a2f4372abb5
+      - name: npm install
+        working-directory: deltachat-jsonrpc/typescript
+        run: npm install
+      - name: Build TypeScript, run Rust tests, generate bindings
+        working-directory: deltachat-jsonrpc/typescript
+        run: npm run build
+      - name: Run integration tests
+        working-directory: deltachat-jsonrpc/typescript
+        run: npm run test
+        env:
+          CHATMAIL_DOMAIN: ${{ vars.CHATMAIL_DOMAIN }}
+      - name: Run linter
+        working-directory: deltachat-jsonrpc/typescript
+        run: npm run prettier:check

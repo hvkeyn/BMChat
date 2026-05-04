@@ -1,0 +1,1095 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "OK";
+"cancel" = "Abbruch";
+"clear_search" = "Suche löschen";
+// a noun, used on a button, short for "show link"
+"link" = "Link";
+// "scan" in the meaning of "scan QR code"
+"scan" = "Scannen";
+"yes" = "Ja";
+"no" = "Nein";
+"select" = "Auswählen";
+"on" = "An";
+"off" = "Aus";
+"def" = "Standard";
+"default_value" = "Standard (%1$@)";
+"custom" = "Benutzerdefiniert";
+"none" = "Keine";
+"automatic" = "Automatisch";
+"strict" = "Strikt";
+"open" = "Öffnen";
+"download" = "Herunterladen";
+"downloading" = "Herunterladen…";
+"open_attachment" = "Anhang öffnen";
+"join" = "Teilnehmen";
+"join_group" = "Gruppe beitreten";
+"join_channel" = "Kanal beitreten";
+"rejoin" = "Öffnen";
+"delete" = "Löschen";
+"delete_for_me" = "Für mich löschen";
+"delete_for_everyone" = "Für alle löschen";
+"info" = "Info";
+"update" = "Aktualisieren";
+"emoji" = "Emoji";
+"attachment" = "Anhang";
+"back" = "Zurück";
+"close" = "Schließen";
+"close_window" = "Fenster schließen";
+"forward" = "Weiterleiten";
+"create" = "Erstellen";
+"reset" = "Zurücksetzen";
+"later" = "Später";
+// "Resend" means "Sending the selected message(s) again to the same chat". The string is used in a menu and should be as short as possible. Resending may be needed after failures or to repost old messages to new members.
+"resend" = "Erneut senden";
+"edited" = "Bearbeitet";
+"edit_message" = "Nachricht bearbeiten";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "Archivieren";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "Dearchivieren";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "Stumm";
+// Adjective "smth is muted". used to describe a muted or silenced chat, that e.g. does not make noise or cause notifications
+"muted" = "Stumm";
+"ephemeral_messages" = "Verschwindende Nachrichten";
+"ephemeral_messages_hint" = "Gilt für alle Gruppenmitglieder, die Delta Chat verwenden. Nachrichten können kopiert, gespeichert oder weitergeleitet werden.";
+"save" = "Speichern";
+"chat" = "Chat";
+"media" = "Medien";
+"apps_and_media" = "Apps & Medien";
+"profile" = "Profil";
+"all_profiles" = "Alle Profile";
+"current_profile" = "Aktuelles Profil";
+"main_menu" = "Hauptmenü";
+"start_chat" = "Chat starten";
+"show_full_message" = "Ganze Nachricht anzeigen…";
+// Stay short here, say ~16 characters. The source string could also be "All Read", maybe that hint can make translations easier :)
+"mark_all_as_read" = "Alles Gelesen";
+// Used as an menu entry or button
+"mark_as_read" = "Gelesen";
+// Used beside an icon with very few space. Shortest text for "Mark as being read". In english, this could be "Read" (past tense of "to read"), in german, this could be "Gelesen".
+"mark_as_read_short" = "Gelesen";
+// Used as an menu entry or button
+"mark_as_unread" = "Ungelesen";
+// Used beside an icon with very few space. Shortest text for "Mark as being unread". In english, this could be "Unread" (past tense of "to unread"), in german, this could be "Ungelesen".
+"mark_as_unread_short" = "Ungelesen";
+// Placeholder text when something is loading
+"loading" = "Wird geladen…";
+"hide" = "Verstecken";
+"activate" = "Einschalten";
+"load_remote_content" = "Bilder nachladen";
+// Possible answers to the question are: Never, Always, Once
+"load_remote_content_ask" = "Das Nachladen von Bildern kann dazu verwendet werden, dich zu tracken.\n\nDie Option erlaubt auch das Laden von Schriftarten und anderen Inhalten; wenn sie deaktiviert ist, werden eingebettete oder zwischengespeicherte Bilder dennoch angezeigt.\n\nBilder nachladen?";
+"always" = "Immer";
+"always_load_remote_images" = "Bilder immer nachladen";
+"once" = "Einmal";
+"show_warning" = "Warnung anzeigen";
+"not_now" = "Nicht jetzt";
+"never" = "Nie";
+"one_moment" = "Einen Moment …";
+"done" = "Fertig";
+"undo" = "Rückgängig";
+"offline" = "Offline";
+// For the next view or as "continue". Should be as short as possible.
+"next" = "Weiter";
+"warning" = "Warnung";
+"error" = "Fehler";
+"error_x" = "Fehler: %1$@";
+"no_app_to_handle_data" = "Keine passende App zum Öffnen dieses Dateityps gefunden";
+"no_browser_installed" = "Kein Internetbrowser installiert.";
+"file_not_found" = "Kann %1$@ nicht finden";
+// the placeholder will be replaced by the name of a file
+"cannot_save_file" = "Kann \"%1$@\" nicht speichern.";
+"copied_to_clipboard" = "In Zwischenablage kopiert.";
+"contacts_headline" = "Kontakte";
+"email_address" = "E-Mail-Adresse";
+"bad_email_address" = "Ungültige E-Mail-Adresse.";
+"password" = "Passwort";
+"existing_password" = "Bestehendes Passwort";
+"now" = "Jetzt";
+// Headline for destructive actions with no undo. Could also be "Caution" or "Warning".
+"danger" = "Achtung";
+"today" = "Heute";
+"yesterday" = "Gestern";
+"this_week" = "Diese Woche";
+"this_month" = "Dieser Monat";
+"last_week" = "Letzte Woche";
+"last_month" = "Letzter Monat";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by date or time, resulting in "Last seen at 12:13 AM" or "Last seen Nov 12"
+"last_seen_at" = "Zuletzt gesehen %1$@";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by a relative point in time as "3 minutes ago" (see https://momentjs.com for more examples and languages)
+"last_seen_relative" = "Zuletzt gesehen %1$@";
+"last_seen_unknown" = "Zuletzt gesehen: Unbekannt";
+// Call duration as shown in the call bubbles. There is some risk to mix with the sending time, so the word "Duration" may be helpful. Might also be "Duration: %d minutes", "%d-minute duration", "%d-minute length" or "%d-minute call"
+// Call duration as shown in the call bubbles in case the call is less than one minute. If the context is not clear enough, one may want to add the word "Duration".
+"call_duration_less_than_a_minute" = "Weniger als 1 Minute";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+// Short form for "N Items Selected"
+"selected_colon" = "Ausgewählt:";
+"selected" = "Ausgewählt";
+"self" = "Ich";
+"draft" = "Entwurf";
+"image" = "Bild";
+// Used in summaries as "Draft: Reply", similar as "Draft: Image". Use a noun here, not a verb (not: "to reply")
+"reply_noun" = "Antwort";
+"gif" = "GIF";
+// "Stickers" as known from other messengers; in some languages, the English "Sticker" is fine.
+"sticker" = "Sticker";
+"add_to_sticker_collection" = "Zu Sticker-Sammlung hinzufügen";
+// deprecated, use sticker_picker_empty_hint instead
+"add_stickers_instructions" = "Um Sticker hinzuzufügen, tippe auf \"Sticker-Ordner öffnen\", erstelle einen Unterordner für dein Sticker-Paket und ziehe Bild- und Sticker-Dateien dorthin.";
+// deprecated
+"open_sticker_folder" = "Sticker-Ordner öffnen";
+"ask_add_sticker_to_collection" = "Sticker zur Sammlung hinzufügen?";
+"ask_delete_sticker" = "Sticker löschen?";
+"sticker_picker_empty_hint" = "Sticker zum Hinzufügen antippen";
+"images" = "Bilder";
+// a noun, used for "Music" and other "Audio" files
+"audio" = "Audio";
+"voice_message" = "Sprachnachricht";
+"forwarded" = "Weitergeleitet";
+"forwarded_message" = "Weitergeleitete Nachricht";
+// %1$s will be replaced by the name of the person who forwarded the message
+"forwarded_by" = "Weitergeleitet von %1$@";
+"video" = "Video";
+"documents" = "Dokumente";
+"contact" = "Kontakt";
+"bot" = "Bot";
+"camera" = "Kamera";
+// As in "start a video recording" or "take a photo"; eg. the description of the "shutter button" in cameras
+"capture" = "Aufnehmen";
+"switch_camera" = "Kamera wechseln";
+"toggle_fullscreen" = "Vollbildmodus umschalten";
+"location" = "Standort";
+"locations" = "Standorte";
+"gallery" = "Galerie";
+"images_and_videos" = "Bilder und Videos";
+"file" = "Datei";
+"files" = "Dateien";
+"files_attach_hint" = "Originaldateien und -bilder senden";
+// "Files" here means the "Files Selector App" or "Files Manager App"
+"choose_from_files" = "Aus Dateien wählen";
+"choose_from_gallery" = "Aus Galerie wählen";
+// "App" is used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_app" = "App";
+// plural of "App"; used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_apps" = "Apps";
+"webxdc_store_url" = "App-Picker-URL";
+"webxdc_store_url_explain" = "Wenn gesetzt, wird diese URL als App-Picker anstelle der Voreinstellung verwendet.";
+"webxdc_draft_hint" = "Zum Teilen auf \"Senden\" tippen";
+"home" = "Start";
+"games" = "Spiele";
+"tools" = "Tools";
+"app_size" = "Größe";
+// Used as a headline for a date. E.g. in the details of a mini app in the app picker
+"app_date_published" = "Veröffentlicht";
+"add_to_chat" = "Zum Chat hinzufügen";
+// short for "Browse through the App Picker/Store/Catalogue"; could also be translated as "Discover" or "Search"
+"browse" = "Entdecken";
+"unknown" = "Unbekannt";
+"green" = "Grün";
+"red" = "Rot";
+"blue" = "Blau";
+"orange" = "Orange";
+"cyan" = "Türkis";
+"purple" = "Lila";
+"magenta" = "Magenta";
+"white" = "Weiß";
+"zoom" = "Zoom";
+"extra_small" = "Extraklein";
+"small" = "Klein";
+"normal" = "Normal";
+"large" = "Groß";
+"extra_large" = "Extragroß";
+"fast" = "Schnell";
+"slow" = "Langsam";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "Neuer Kontakt";
+"menu_new_classic_contact" = "Kontakt manuell hinzufügen";
+"new_classic_contact_explain" = "Manuell hinzugefügte Kontakte können verwendet werden, um klassische E-Mail-Adressen anzuschreiben; diese sind nicht garantiert Ende-zu-Ende-verschlüsselt.";
+"menu_new_chat" = "Neuer Chat";
+"menu_new_group" = "Neue Gruppe";
+// "Chat" is a verb here, "Message to" would also fit. the string might be used in the "New Chat" screen above the contact list
+"chat_with" = "Chatte mit…";
+"clone_chat" = "Chat klonen";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channel" = "Kanal";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channels" = "Kanäle";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"new_channel" = "Neuer Kanal";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channel_name" = "Name des Kanals";
+// The number of times a message is shown in channels. Use what other messengers are using here, smth. as "N-times seen" or "1 Aufruf" (german) work as well, where "1 impression" or "1 hit" may sound too formal and may be more marketing slang.
+"email" = "E-Mail";
+// "New" as in "Create New Email"; shown together with "New Group" and "New Channel"
+"new_email" = "Neue E-Mail";
+// the "Subject" of an email, use the term common in classic email apps
+"subject" = "Betreff";
+"menu_send" = "Senden";
+"menu_toggle_keyboard" = "Emojis einblenden";
+"menu_edit_group" = "Gruppe bearbeiten";
+"menu_group_name_and_image" = "Gruppenname und -bild";
+"menu_show_global_map" = "Alle Standorte";
+"menu_archive_chat" = "Chat archivieren";
+"menu_unarchive_chat" = "Archivieren rückgängig";
+"menu_add_attachment" = "Dateien anhängen";
+"menu_leave_group" = "Gruppe verlassen";
+"menu_leave_channel" = "Kanal verlassen";
+"menu_leave_and_delete" = "Verlassen & für mich löschen";
+"menu_delete_chat" = "Chat löschen";
+// Command to delete all messages in a chat. The chat itself will not be deleted but will be empty afterwards, so make sure to be different from "Delete Chat" here. "Clear" is a verb here, "Empty Chat" would also be fine (eg. in German "Chat leeren")
+"clear_chat" = "Chat leeren";
+"delete_contact" = "Kontakt löschen";
+"menu_delete_location" = "Diesen Standort löschen?";
+"menu_message_details" = "Nachrichteninfo";
+"menu_copy_to_clipboard" = "In Zwischenablage kopieren";
+"share_invite_link" = "Einladungslink teilen";
+"share_invite_link_explain" = "Teile den Link nur mit Personen, denen du vertraust. Alle, die diesen Link haben, können einen Chat mit dir starten.";
+"invite_friends" = "Freunde einladen";
+// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
+"invite_friends_text" = "Kontaktiere mich auf Delta Chat:\n%1$@";
+"menu_copy_selection_to_clipboard" = "Auswahl kopieren";
+"menu_copy_link_to_clipboard" = "Link kopieren";
+"menu_copy_text_to_clipboard" = "Text kopieren";
+"menu_copy_image_to_clipboard" = "Bild kopieren";
+"menu_copy_email_to_clipboard" = "E-Mail kopieren";
+"paste_from_clipboard" = "Von der Zwischenablage einfügen";
+"ask_copy_unopenable_link_to_clipboard" = "Der Link \"%1$d\" kann nicht im Webbrowser geöffnet werden. Den Link auf die Zwischenablage kopieren?";
+"menu_forward" = "Nachricht weiterleiten";
+"menu_reply" = "Antworten";
+"menu_mute" = "Stummschalten";
+"menu_unmute" = "Stumm aus";
+"menu_export_attachment" = "Datei exportieren";
+"menu_export_attachments" = "Dateien exportieren";
+"menu_all_media" = "Alle Medien";
+"all_apps_and_media" = "Alle Apps & Medien";
+// Command to jump to the original message corresponding to a gallery image or document
+"show_in_chat" = "Im Chat zeigen";
+"show_app_in_chat" = "App im Chat zeigen";
+"menu_share" = "Teilen";
+// Verb "to block sth." usually a mailing list or a contact, not a noun
+"block" = "Blockieren";
+"menu_block_contact" = "Kontakt blockieren";
+"menu_unblock_contact" = "Kontakt nicht mehr blockieren";
+"accept" = "Annehmen";
+"menu_play" = "Wiedergabe";
+"menu_pause" = "Pause";
+"menu_scroll_to_bottom" = "Zum Ende scrollen";
+"menu_scroll_to_top" = "Zum Anfang scrollen";
+"menu_help" = "Hilfe";
+// use the same term for "Apps" as elsewhere
+"what_is_webxdc" = "Über Apps";
+"privacy_policy" = "Datenschutzerklärung";
+"menu_select_all" = "Alles auswählen";
+"select_chat" = "Chat auswählen";
+"select_more" = "Mehr auswählen";
+"menu_edit_name" = "Name bearbeiten";
+// The placeholder will be replaced by the name the contact gave themself
+"edit_name_explain" = "Nicknamen festlegen, der anstelle von „%1$@“ angezeigt wird. Leer lassen, um den vom Kontakt gewählten Namen zu verwenden.";
+// The placeholder will be replaced by the name the contact gave themself
+"edit_name_placeholder" = "Nickname für \"%1$@\"";
+"menu_settings" = "Einstellungen";
+"menu_advanced" = "Erweitert";
+"menu_view_profile" = "Profil anzeigen";
+"menu_zoom_in" = "Ansicht vergrößern";
+"menu_zoom_out" = "Ansicht verkleinern";
+"menu_save_log" = "Logdatei speichern";
+"menu_more_options" = "Mehr Optionen";
+"menu_learn_spelling" = "Schreibweise lernen";
+"jump_to_message" = "Zur Nachricht springen";
+"replace_draft" = "Entwurf ersetzen";
+"title_share_location" = "Standort mit allen Gruppenmitgliedern teilen";
+"device_talk" = "Systemnachrichten";
+"device_talk_subtitle" = "Lokal erzeugte Nachrichten";
+"device_talk_explain" = "Die Nachrichten in diesem Chat werden auf dem Gerät generiert, um über App-Updates und Probleme während der Nutzung zu informieren.";
+"device_talk_welcome_message2" = "Nimm Kontakt auf!\n\n🙌 Tippe auf dem Hauptbildschirm beider Geräte auf \"QR-Code\". Wähle \"QR-Code scannen\" auf einem Gerät und scanne den QR-Code des anderen\n\n🌍 Wenn ihr euch nicht im selben Raum befindet, scanne per Videoanruf oder teile einen Einladungslink aus \"QR-Code scannen\"\n\nDann: Viel Spaß beim dezentralen Texten. Und im Gegensatz zu anderen populären Apps, auch ohne die Daten von dir, deinen FreundInnen, KollegInnen oder Familienmitgliedern an irgendwelche Firmen zu verkaufen.";
+"edit_contact" = "Kontakt bearbeiten";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin_chat" = "Chat anheften";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin_chat" = "Chat loslösen";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin" = "Anheften";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin" = "Loslösen";
+"ConversationFragment_quoted_message_not_found" = "Originalnachricht nicht gefunden";
+"reply_privately" = "Privat antworten";
+"source_code" = "Quelltext";
+// Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
+"add_to_home_screen" = "Zum Startbildschirm hinzufügen";
+"donate" = "Spenden";
+"donate_device_msg" = "❤️ Delta Chat gefällt dir anscheinend sehr gut!\n\nBitte spende, damit Delta Chat weiterhin unabhängig bleibt.\n\nDelta Chat ist zwar kostenlos und Open Source, die Entwicklung kostet jedoch Geld. Hilf uns, Delta Chat unabhängig zu halten und in Zukunft noch besser zu machen.\n\nhttps://delta.chat/donate";
+"mute_for_one_hour" = "Stumm für 1 Stunde";
+"mute_for_eight_hours" = "Stumm für 8 Stunden";
+"mute_for_one_day" = "Stumm für 1 Tag";
+"mute_for_seven_days" = "Stumm für 7 Tage";
+"mute_forever" = "Stumm für immer";
+"share_location_for_5_minutes" = "für 5 Minuten";
+"share_location_for_30_minutes" = "für 30 Minuten";
+"share_location_for_one_hour" = "für 1 Stunde";
+"share_location_for_two_hours" = "für 2 Stunden";
+"share_location_for_six_hours" = "für 6 Stunden";
+"file_saved_to" = "Datei gespeichert unter \"%1$@\".";
+// the action "to call someone", used as a tooltip for the "phone" icon. not: "the call"
+"start_call" = "Anrufen";
+// Menu item to start an audio call; verbs as "start" are probably superfluous in many translations
+"start_audio_call" = "Sprachanruf";
+// Menu item to start a video call; verbs as "start" are probably superfluous in many translations
+"start_video_call" = "Videoanruf";
+// the action "to answer" or to "accept" or to "pick up" a call. not: "the answer"
+"answer_call" = "Annehmen";
+// the action "to decline" a call, not: "the decline"
+"end_call" = "Ablehnen";
+// Used in call bubbles, summaries, notifications
+"audio_call" = "Sprachanruf";
+// Used in call bubbles, summaries, notifications
+"video_call" = "Videoanruf";
+"call_initializing" = "Initialisieren…";
+"call_incoming" = "Eingehender Anruf";
+"call_ringing" = "Klingeln…";
+"call_reconnecting" = "Wiederverbinden…";
+"call_ended" = "Anruf beendet";
+"call_failed" = "Anruf fehlgeschlagen";
+// deprecated, use "Audio call" instead
+"outgoing_audio_call" = "Ausgehender Sprachanruf";
+// deprecated, use "Video call" instead
+"outgoing_video_call" = "Ausgehender Videoanruf";
+// deprecated, use "Audio call" instead
+"incoming_audio_call" = "Eingehender Sprachanruf";
+// deprecated, use "Video call" instead
+"incoming_video_call" = "Eingehender Videoanruf";
+"declined_call" = "Abgelehnter Anruf";
+"canceled_call" = "Abgebrochener Anruf";
+"missed_call" = "Verpasster Anruf";
+"already_in_call" = "Bereits im Anruf";
+"call_answered_elsewhere" = "Anruf auf einem anderen Gerät beantwortet";
+"call_requires_mic_permission" = "Mikrofonzugriff für Anrufe erforderlich";
+// get confirmations
+// confirmation for leaving groups or channels. If a subject is needed, "Are you sure you want to leave the chat?" would work as well
+"ask_leave_group" = "Diesen Chat verlassen?";
+"ask_delete_named_chat" = "Chat \"%1$@\" löschen?";
+"ask_delete_message" = "Diese Nachricht löschen?";
+"ask_forward" = "Nachricht weiterleiten an %1$@?";
+"ask_forward_multiple" = "Nachrichten an %1$d Chats weiterleiten?";
+"ask_export_attachment" = "Das Exportieren von Anhängen ermöglicht es allen anderen Anwendungen auf deinem Gerät, auf diese zuzugreifen.\n\nFortfahren? ";
+"ask_block_contact" = "Diesen Kontakt blockieren?\n\nDirektnachrichten oder Gruppen, die von blockierten Kontakten erstellt wurden, werden nicht angezeigt.\n\nIn anderen Gruppen mit blockierten Kontakten werden deren Nachrichten weiterhin angezeigt.";
+"ask_unblock_contact" = "Diesen Kontakt nicht mehr blockieren?";
+"ask_delete_contacts" = "Kontakte dauerhaft löschen?\n\nKontakte mit laufenden Chats und Kontakte aus dem Adressbuch des Systems können nicht dauerhaft gelöscht werden.";
+"ask_delete_contact" = "Kontakt %1$@ dauerhaft löschen?\n\nKontakte mit laufenden Chats und Kontakte aus dem Adressbuch des Systems können nicht dauerhaft gelöscht werden.";
+"ask_start_chat_with" = "Chat mit %1$@ starten?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_members" = "%1$@ aus der Gruppe löschen?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_from_channel" = "%1$@ vom Kanal entfernen?";
+"open_url_confirmation" = "Diesen Link öffnen?";
+// contact list
+"contacts_title" = "Kontakte";
+"contacts_type_email_above" = "Oben eine E-Mail-Adresse eingeben";
+// chatlist and chat view
+"chat_archived_chats_title" = "Archivierte Chats";
+"chat_please_enter_message" = "Bitte eine Nachricht eingeben.";
+"chat_camera_unavailable" = "Kamera nicht verfügbar.";
+"chat_unable_to_record_audio" = "Audio kann nicht aufgenommen werden.";
+// The placeholder will be replaced by the name of the recipient in a one-to-one chat.
+"chat_new_one_to_one_hint" = "Sende eine Nachricht an %1$@.";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"chat_new_channel_hint" = "Kanäle dienen der Verbreitung von Nachrichten an viele Empfänger.";
+"chat_new_group_hint" = "Andere sehen diese Gruppe erst, nachdem eine erste Nachricht gesendet wurde.";
+"chat_record_slide_to_cancel" = "Schieben, um abzubrechen";
+"chat_record_explain" = "Tippen und halten, um eine Sprachnachricht aufzunehmen, loslassen um zu senden. ";
+"chat_no_chats_yet_title" = "Keine Chats.\n\"+\" drücken, um einen neuen Chat zu starten.";
+"chat_all_archived" = "Alle Chats archiviert.\n\"+\" drücken, um einen neuen Chat zu starten.";
+"chat_share_with_title" = "Teilen mit…";
+"chat_input_placeholder" = "Nachricht";
+"chat_archived_label" = "Archiviert";
+"chat_request_label" = "Anfrage";
+"chat_request_label_explain" = "Anfragen in Zählern und Notifications anzeigen";
+"chat_no_messages" = "Keine Nachrichten.";
+"chat_self_talk_subtitle" = "Nachrichten an mich selbst";
+"archive_empty_hint" = "Archivierte Chats werden hier angezeigt.";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "Nachricht speichern";
+"saved_messages" = "Gespeicherte Nachrichten";
+"saved_messages_explain" = "• Nachrichten zum Merken hierher weiterleiten\n\n• Notizen oder Sprachmemos machen\n\n• Medien zum Speichern einfügen";
+// Should match "Saved" from "Saved messages"
+"saved" = "Gespeichert";
+"save_as" = "Speichern unter";
+"retry_send" = "Nachricht erneut senden";
+"cannot_display_unsuported_file_type" = "Kann diesen Dateityp nicht anzeigen: %1$@";
+"attachment_failed_to_load" = "Kann Anhang nicht laden";
+// For recording Voice messages: Description for the "Lock" button allowing to lift the thumb from the record button while recording continues
+"lock_recording" = "Aufnahme arretieren";
+// mailing lists
+"mailing_list" = "Mailingliste";
+// webxdc
+// "Start..." button for an app
+"start_app" = "Start…";
+// this is a warning that is shown when one tries to send something to a chat that is not yet accepted.
+"accept_request_first" = "Bitte zunächst die Chatanfrage annehmen.";
+// title shown above a list of chats where one should be selected (eg. when sharing files from a webxdc). the placeholder will be replaced by a file name
+"send_file_to" = "Sende \"%1$@\" an…";
+// title shown above a list contacts where one should be selected (eg. when a webxdc attempts to send a message to a chat)
+"send_message_to" = "Nachricht senden an…";
+// punycode warning / labeled links
+"puny_code_warning_header" = "Verdächtiger Link erkannt";
+// placeholder contains the hostname converted to ascii
+"puny_code_warning_question" = "Bist du sicher, dass du %1$@ besuchen möchten?";
+// this message is shown whenever a link with non-latin characters is clicked. first placeholder is original hostname with special chars, second placeholder is hostname encoded in ascii
+"puny_code_warning_description" = "Du bist einem Link gefolgt, der durch die Verwendung ähnlich aussehender Zeichen aus verschiedenen Alphabeten zu einer falschen Darstellung führen könnte. Wenn du dem Link mit der Bezeichnung %1$@ folgst, gelangst du zu %2$@, was für nicht-lateinische Zeichen normal ist. Wenn du solche Zeichen nicht erwartet hast, könnte dieser Link schädlich sein.";
+// search
+"search" = "Suchen";
+"search_in_chat" = "Im Chat suchen";
+// Placeholder will be replaced by the chat name
+"search_in" = "In \"%1$@\" suchen";
+"search_files" = "Dateien suchen";
+"search_explain" = "Suche nach Chats, Kontakten und Nachrichten";
+"search_result_for_x" = "Ergebnis für \"%1$@\"";
+"search_no_result_for_x" = "Keine Ergebnisse für \"%1$@\" gefunden.";
+// Adjective, as in "Show Unread Messages"
+"search_unread" = "Ungelesen";
+// create/edit groups, contact/group profile
+"group_name" = "Gruppenname";
+"group_avatar" = "Gruppenbild";
+"remove_group_image" = "Gruppenbild löschen";
+"change_group_image" = "Gruppenbild ändern";
+"group_create_button" = "Gruppe erstellen";
+// deprecated, use please_enter_chat_name
+"group_please_enter_group_name" = "Bitte einen Gruppennamen eingeben.";
+"please_enter_chat_name" = "Bitte einen Namen eingeben.";
+"group_add_members" = "Mitglied hinzufügen";
+"group_self_not_in_group" = "Du must ein Mitglied der Gruppe sein, um diese Aktion durchführen zu können.";
+"profile_encryption" = "Verschlüsselung";
+"profile_shared_chats" = "Gemeinsame Chats";
+// Separator between the list of actual members and past members
+"past_members" = "Ehemalige Mitglieder";
+"tab_contact" = "Kontakt";
+"tab_group" = "Gruppe";
+"tab_gallery" = "Galerie";
+"tab_docs" = "Dokumente";
+"tab_links" = "Links";
+"tab_map" = "Karte";
+"tab_gallery_empty_hint" = "Diesem Chat angehängte Bilder und Videos werden hier angezeigt.";
+"tab_docs_empty_hint" = "Diesem Chat angehängte Dokumente und Dateien werden hier angezeigt.";
+"tab_image_empty_hint" = "Diesem Chat angehängte Bilder werden hier angezeigt.";
+"tab_video_empty_hint" = "Diesem Chat angehängte Videos werden hier angezeigt.";
+"tab_audio_empty_hint" = "Diesem Chat angehängte Audiodateien und Sprachnachrichten werden hier angezeigt.";
+"tab_webxdc_empty_hint" = "Diesem Chat angehängte Apps werden hier angezeigt.";
+"tab_all_media_empty_hint" = "Medien aus allen Chats werden hier angezeigt.";
+"all_files_empty_hint" = "Dokumente und Dateien aus allen Chats werden hier angezeigt.";
+"all_apps_empty_hint" = "Apps aus allen Chats werden hier angezeigt.";
+"media_preview" = "Medien-Vorschau";
+// option to show images in the gallery with the correct width/height aspect (instead of square); other gallery apps may be a source of inspiration for translation :)
+"aspect_ratio_grid" = "Raster im Seitenverhältnis";
+// option to show images in the gallery as square (instead of using correct width/height)
+"square_grid" = "Quadratisches Raster";
+"send_message" = "Nachricht senden";
+// Multi Device
+// "Second Device" can also be translated as "Another Device", if that is catchier in the destination language. However, make sure to use the term consistently.
+"multidevice_title" = "Zweitgerät hinzufügen";
+"multidevice_same_network_hint" = "Beide Geräte müssen im selben Wi-Fi oder Netzwerk sein.";
+"multidevice_this_creates_a_qr_code" = "Erstellt einen QR-Code, den ein Zweitgerät scannen kann, um das Profil zu kopieren.\n\nStelle sicher, dass keine unerwünschten Beobachter oder Kameras den folgenden Bildschirm sehen können.";
+"multidevice_install_dc_on_other_device" = "Delta Chat auf dem anderen Gerät installieren (https://get.delta.chat)";
+// "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
+"multidevice_tap_scan_on_other_device" = "Delta Chat starten, \"Ich habe bereits ein Profil / Als Zweitgerät hinzufügen\" wählen und den QR-Code scannen";
+// Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
+"multidevice_qr_subtitle" = "Scannen, um ein zweites Gerät für %1$@ hinzuzufügen";
+"multidevice_receiver_title" = "Als Zweitgerät hinzufügen";
+"multidevice_open_settings_on_other_device" = "Auf dem ersten Gerät, öffne Delta Chat, dann \"Einstellungen / Zweitgerät hinzufügen\" und scanne den dort angezeigten Code";
+"multidevice_receiver_scanning_ask" = "Das Profil vom anderen Gerät auf dieses Gerät kopieren?";
+"multidevice_receiver_needs_update" = "Das Profil, das du importieren möchtest, stammt aus einer neueren Delta-Chat-Version.\n\nUm Fortzufahren, aktualisiere dieses Gerät bitte auf die neueste Version von Delta Chat.";
+"multidevice_abort" = "Einrichtung des Zweitgeräts beenden?";
+"multidevice_abort_will_invalidate_copied_qr" = "Dadurch wird der auf die Zwischenablage kopierte QR-Code ungültig.";
+"multidevice_transfer_done_devicemsg" = "ℹ️ Profil wurde auf dein Zweitgerät übertragen.";
+// Shown beside progress bar, stay short
+"preparing_account" = "Profil vorbereiten…";
+// Shown beside progress bar, stay short
+"transferring" = "Transfer…";
+"troubleshooting" = "Fehlersuche";
+// Connectivity
+// Headline for the "Inbox" eg. in the "Connectivity" view
+"incoming_messages" = "Eingehende Nachrichten";
+// Headline for the "Outbox" eg. in the "Connectivity" view
+"outgoing_messages" = "Ausgehende Nachrichten";
+"connectivity" = "Verbindungsstatus";
+// Shown in the title bar if the app is "Not connected"; prefer short strings.
+"connectivity_not_connected" = "Nicht verbunden";
+// Shown in the title bar if the app is "Connecting"; prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_connecting" = "Verbinde…";
+// Shown in the title bar if the app is "Updating" (eg. getting new/old message, sync things); prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_updating" = "Aktualisiere…";
+// Shown in the setting if the app is "Connected"
+"connectivity_connected" = "Verbunden";
+"sending" = "Sende…";
+"last_msg_sent_successfully" = "Letzte Nachricht erfolgreich versandt.";
+"not_supported_by_provider" = "Nicht unterstützt von deinem Anbieter.";
+// Subtitle in quota context of "Connectivity" view. Should be be plural always, no number is prefixed.
+"messages" = "Nachrichten";
+// Used for describing resource usage, resulting string will be eg. "1.2 GiB of 3 GiB used"
+"part_of_total_used" = "%1$@ von %2$@ verwendet";
+// welcome and login
+// Primary button on the welcome screen, allows to create an instant profile
+"onboarding_create_instant_account" = "Neues Profil erstellen";
+// Secondary button on the welcome screen, allows to "Add as Second Device", "Restore from Backup"
+"onboarding_alternative_logins" = "Ich habe bereits ein Profil";
+// This is a button and a title, allowing to use existing, classic email, setting ports, passwords and so on
+"manual_account_setup_option" = "Klassische E-Mail als Relay";
+// Instant onboarding title (there is not more to do than to set name and avatar)
+"instant_onboarding_title" = "Dein Profil";
+// The placeholder will be replaced by the default onboarding server
+"instant_onboarding_agree_default2" = "Datenschutzerklärung für %1$@";
+// The placeholder will be replaced by instance name, the whole text will link to the instance page
+"instant_onboarding_agree_instance" = "Infos zu Profilen auf %1$@";
+// Confirmation button on the instant onboarding screen
+"instant_onboarding_create" = "Einverstanden & Profil erstellen";
+// Secondary, link-like button to open a page with other possible instances
+"instant_onboarding_show_more_instances" = "Anderen Server verwenden";
+"instant_onboarding_other_server" = "Chatmail-Server anzeigen";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by the group name
+"instant_onboarding_group_info" = "Erstelle ein Profil, um der Gruppe \"%1$@\" beizutreten.";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by contact name
+"instant_onboarding_contact_info" = "Erstelle ein Profil, um mit %1$@ zu chatten.";
+// Question shown when another user's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_contact" = "Ein neues Profil erstellen und mit %1$@ chatten?";
+// Question shown when group's/channel's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_group" = "Ein neues Profil erstellen und \"%1$@\" beitreten?";
+"welcome_chat_over_email" = "Sicherer dezentraler Chat";
+"scan_invitation_code" = "Einladungscode scannen";
+"login_title" = "Login";
+"login_advanced_hint" = "Für fortgeschrittene Benutzer:\n\n• Verwende keine Adresse, die du bereits in einer anderen App nutzt.\n\n• Klassische E-Mail-Server ermöglichen Chats ohne Ende-zu-Ende-Verschlüsselung, gekennzeichnet durch ein E-Mail-Symbol.";
+"login_inbox" = "Posteingang";
+"login_imap_login" = "IMAP-Anmeldename";
+"login_imap_server" = "IMAP-Server";
+"login_imap_port" = "IMAP-Port";
+"login_imap_security" = "IMAP-Sicherheit";
+"login_outbox" = "Postausgang";
+"login_smtp_login" = "SMTP-Anmeldename";
+"login_smtp_password" = "SMTP-Passwort";
+"login_smtp_server" = "SMTP-Server";
+"login_smtp_port" = "SMTP-Port";
+"login_smtp_security" = "SMTP-Sicherheit";
+// the word "Proxy" might be left untranslated unless the destination language has a well-known term for a "Proxy Server", acting intermediary between the app and the server
+"proxy_settings" = "Proxy";
+"proxy_use_proxy" = "Proxy verwenden";
+"proxy_add" = "Proxy hinzufügen";
+"proxy_add_explain" = "Unterstützte Typen: HTTP(S), SOCKS5 und Shadowsocks.";
+"proxy_add_url_hint" = "Proxy-Link hier eingeben";
+"proxy_invalid" = "Ungültiger oder nicht unterstützter Proxy";
+"proxy_list_header" = "Proxies";
+"proxy_delete" = "Proxy löschen";
+"proxy_delete_explain" = "\"%1$@\" löschen?";
+"proxy_use_proxy_confirm" = "Proxy \"%1$@\" verwenden?";
+"proxy_share_explain" = "Freunde können das Proxy durch Scannen des QR-Codes verwenden.";
+"proxy_share_link" = "Link teilen";
+"proxy_enabled" = "Proxy aktiv";
+"proxy_enabled_hint" = "Sie verwenden einen Proxy. Wenn Sie Probleme mit der Verbindung haben, versuchen Sie es mit einem anderen Proxy.";
+// "Relay" refers to the relay servers used; please chose a common term in your language, no need to be literal. If in doubt, stay with "Relay"
+"transports" = "Relays";
+"add_transport" = "Relay hinzufügen";
+"remove_transport" = "Relay entfernen";
+"edit_transport" = "Relay bearbeiten";
+"used_for_sending" = "Zum Senden verwendet";
+"hide_from_contacts" = "Vor Kontakten verstecken";
+"hidden_from_contacts" = "Vor Kontakten versteckt";
+// Hint for the list of relays
+"transport_list_hint" = "Nachrichten werden auf allen Relays empfangen.\n\n⚠️ Wenn Sie hier Änderungen vornehmen, stellen Sie sicher, dass auf allen Ihren Geräten mindestens Version 2.47.0 installiert ist. Andernfalls könnten auf älteren Versionen Nachrichten verloren gehen.";
+// shown if a QR code was scanned that can be used as a relay
+"confirm_add_transport" = "Relay hinzufügen?";
+"invalid_transport_qr" = "Der gescannte QR-Code enthält keine gültiges Relay.";
+// placeholder will be replaced by a relay server name
+"confirm_remove_or_hide_transport_x" = "Relay \"%1$@\" entfernen?\n\nKontakte, die nur dieses Relay kennen, erreichen dich möglicherweise erst wieder, wenn du ihnen erneut eine Nachricht schickst.\n\nIm Zweifelsfall, verstecke das Relay anstelle es zu löschen.";
+"login_certificate_checks" = "Zertifikatsüberprüfung";
+"login_error_mail" = "Bitte eine gültige E-Mail-Adresse eingeben";
+"login_error_server" = "Bitte eine gültige Server/IP-Adresse eingeben";
+"login_error_port" = "Bitte einen gültigen Port  (1–65535) eingeben";
+"login_error_required_fields" = "Bitte eine gültige E-Mail-Adresse und ein Passwort eingeben";
+"import_backup_title" = "Wiederherstellen aus Backup";
+"import_backup_ask" = "Backup \"%1$@\" gefunden.\n\nDieses einlesen und alle Daten und Einstellungen daraus verwenden?";
+"import_backup_no_backup_found" = "Kein Backup gefunden.\n\nKopiere das Backup nach \"%1$@\" und versuche es erneut.";
+// %1$s will be replaced by the failing address
+"login_error_cannot_login" = "Login als \"%1$@\" nicht möglich. Bitte Adresse und Passwort auf Richtigkeit überprüfen.";
+// TLS certificate checks
+"accept_invalid_certificates" = "Ungültige Zertifikate akzeptieren";
+"switch_account" = "Profil wechseln";
+"add_account" = "Profil hinzufügen";
+// for translations, you can also think of "Profile Tag" or "Profile Description" as the source string
+"profile_tag" = "Profilbeschreibung";
+"profile_tag_hint" = "z.B. Familie, Arbeit, Freunde";
+"profile_tag_explain" = "Die Beschreibung ist nur für dich sichtbar um zwischen Profilen zu unterscheiden.";
+// Menu entry to sort an item to the beginning of a list. Only "To Top" may do as well in some translations, if that helps to stay shorter.
+"move_to_top" = "Nach oben";
+"delete_account" = "Profil löschen";
+"delete_account_ask" = "Möchtest du das Profil und alle Daten wirklich von diesem Gerät löschen?";
+"delete_account_explain_with_name" = "Alle Daten des Profils \"%1$@\" werden von diesem Gerät gelöscht, dies schließt deine Ende-zu-Ende Autocrypt-Einstellungen, Kontakte, Chats, Nachrichten und Medien mit ein. Diese Aktion kann nicht rückgängig gemacht werden.";
+"unconfigured_account" = "Unkonfiguriertes Profil";
+"unconfigured_account_hint" = "Profil zum Konfigurieren öffnen.";
+"try_connect_now" = "Versuche, zu verbinden";
+"sync_all" = "Alles synchronisieren";
+// Translations: %1$s will be replaced by a more detailed error message
+"configuration_failed_with_error" = "Konfiguration fehlgeschlagen. Fehler: %1$@";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "Weiterleiten an…";
+// first placeholder is replaced by the number of files (always 2 or more); second placeholder is replaced by a chat name
+"ask_send_files_to_chat" = "%1$d Dateien an \"%2$@\" senden?";
+"ask_send_files_to_selected_chats" = "%1$d Datei(en) an %2$d Chats senden?";
+"videos_sent_without_recoding" = "(Videos werden als große Originaldateien versandt. Um Videos als kleinere Dateien zu versenden, hänge sie einzeln an)";
+"share_text_multiple_chats" = "Den folgenden Text an %1$d Chats senden?\n\n\"%2$@\"";
+"share_abort" = "Teilen aufgrund fehlender Berechtigungen abgebrochen.";
+// preferences
+"pref_profile_info_headline" = "Mein Profil";
+"pref_profile_photo" = "Profilbild";
+"pref_blocked_contacts" = "Blockierte Kontakte";
+"blocked_empty_hint" = "Blockierte Kontakte werden hier angezeigt.";
+"pref_who_can_see_profile_explain" = "Dein Profilbild, dein Name und die Signatur werden beim Chatten zusammen mit deinen Nachrichten gesendet.";
+"pref_your_name" = "Mein Name";
+// Label of the Bio/Signature/Status/Motto field
+"pref_default_status_label" = "Signatur";
+"chat_description" = "Beschreibung";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "Enter-Taste sendet";
+"pref_enter_sends_explain" = "Durch Drücken der Eingabetaste werden Textnachrichten gesendet.";
+"pref_outgoing_media_quality" = "Medienqualität beim Senden";
+"pref_outgoing_media_quality_hint" = "Um Originalqualität zu senden, hänge Medien als „Datei“ an. Dies verbraucht deutlich mehr Datenvolumen für dich und die Empfänger.";
+"pref_outgoing_balanced" = "Ausgewogen";
+"pref_outgoing_worse" = "Schlechte Qualität, kleine Dateien";
+"pref_vibrate" = "Vibrieren";
+"pref_screen_security" = "Bildschirmsicherheit";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "Aufforderung zum Sperren von Screenshots in der kürzlich erstellten Liste und in der App";
+"pref_screen_security_please_restart_hint" = "Um die Bildschirmsicherheitseinstellungen anzuwenden, bitte App neu starten.";
+"pref_notifications" = "Benachrichtigungen";
+"pref_mention_notifications" = "Erwähnungen";
+"pref_mention_notifications_explain" = "In stummgeschalteten Gruppen, über an dich gerichtete Nachrichten, wie Antworten oder Reaktionen, benachrichtigen";
+// Title for the "Calls" notification setting. This is a plural noun, not a verb.
+"pref_calls" = "Anrufe";
+// Details about what the "Calls" notification setting does
+"pref_calls_explain" = "Anrufbildschirm bei eingehenden Anrufen";
+"pref_notifications_show" = "Anzeigen";
+"pref_notifications_priority" = "Priorität";
+"pref_notifications_explain" = "System-Benachrichtigungen bei neuen Nachrichten aktivieren";
+"pref_show_notification_content" = "Textinhalt in Benachrichtigungen anzeigen";
+"pref_show_notification_content_explain" = "Absender und Textbeginn in Benachrichtigungen anzeigen";
+"pref_led_color" = "LED-Farbe";
+"pref_sound" = "Ton";
+"pref_silent" = "Leise";
+"pref_privacy" = "Datenschutz";
+"pref_system_default" = "Systemstandard";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "Hell";
+"pref_dark_theme" = "Dunkel";
+"pref_appearance" = "Darstellung";
+"pref_theme" = "Design";
+"pref_language" = "Sprache";
+"pref_use_system_ui_font" = "Systemschrift verwenden";
+"pref_incognito_keyboard" = "Inkognito-Tastatur";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "Deaktivierung des personalisierten Lernens der Tastatur anfordern.";
+"pref_read_receipts" = "Lesebestätigungen";
+"pref_read_receipts_explain" = "Wenn Lesebestätigungen ausgeschaltet sind, werden auch keine Lesebestätigungen von anderen angezeigt. ";
+// Title above a list of contacts who read a message
+"read_by" = "Gelesen von";
+"pref_server" = "Server";
+"pref_encryption" = "Verschlüsselung";
+"pref_manage_keys" = "Schlüssel verwalten";
+"pref_chats" = "Chats";
+"pref_in_chat_sounds" = "In-Chat-Klänge";
+"pref_view_log" = "Protokoll anzeigen";
+"pref_saved_log" = "Die Logdatei wurde im Downloads Ordner gespeichert.";
+"pref_save_log_failed" = "Logdatei konnte nicht gespeichert werden.";
+"pref_log_header" = "Protokoll";
+"pref_other" = "Sonstiges";
+"pref_backup" = "Backup";
+"pref_backup_explain" = "Chats auf externem Speicher speichern";
+"pref_backup_export_explain" = "Ein Backup hilft bei einer Neuinstallation auf diesem oder einem anderen Gerät.\n\nDas Backup enthält alle Nachrichten, Kontakte und Chats sowie die Ende-zu-Ende Autocrypt-Einstellungen. Das Backup bitte an einem sicheren Ort aufbewahren oder es so bald wie möglich löschen.";
+"pref_backup_export_this" = "Dieses Profil exportieren";
+// the placeholder will be replaced by the number of profiles to export; the number is always larger than 1
+"pref_backup_export_all" = "Alle %1$d Profile exportieren";
+"pref_backup_export_start_button" = "Backup starten";
+"pref_backup_written_to_x" = "Backup nach \"%1$@\" erfolgreich.";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "Hintergrund";
+"pref_background_btn_default" = "Standard-Bild verwenden";
+"pref_background_btn_gallery" = "Aus Galerie auswählen";
+"pref_imap_folder_warn_disable_defaults" = "Wenn du diese Option änderst, stelle sicher, dass der Server und die anderen Geräte entsprechend konfiguriert sind\n\nAndernfalls funktionieren Dinge möglicherweise nicht wie erwartet.";
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+"pref_multidevice" = "Mehrgerätemodus";
+"pref_multidevice_explain" = "Synchronisiere deine Nachrichten mit deinen anderen Geräten. Wird beim Hinzufügen eines zweiten Geräts automatisch aktiviert.";
+"pref_multidevice_change_warn" = "Der Mehrgerätemodus muss aktiviert sein, wenn dasselbe Profil auf mehreren Geräten verwendet wird. Deaktiviere diese Einstellung nur, wenn du dieses Profil von allen anderen Geräten entfernt hast.\n\nDie Deaktivierung des Mehrgerätemodus bei Verwendung des Profils auf mehreren Geräten führt zu verlorenen Nachrichten und anderen Problemen.";
+"pref_auto_folder_moves" = "Autom. Verschieben in den DeltaChat-Ordner";
+"pref_only_fetch_mvbox_title" = "Nur aus DeltaChat-Ordner lesen";
+"pref_show_emails" = "Normale E-Mails anzeigen";
+"pref_show_emails_no" = "Nein, nur Chats";
+"pref_show_emails_accepted_contacts" = "Akzeptierte Kontakte";
+"pref_show_emails_all" = "Alle";
+"pref_experimental_features" = "Experimentelle Features";
+"pref_experimental_features_explain" = "Die Features können instabil sein und geändert oder entfernt werden";
+"pref_on_demand_location_streaming" = "Standortübertragung nach Bedarf";
+"pref_background_default" = "Voreingestellter Hintergrund";
+"pref_background_default_color" = "Voreingestellte Farbe";
+"pref_background_custom_image" = "Benutzerdefiniertes Hintergrundbild";
+"pref_background_custom_color" = "Benutzerdefinierte Farbe";
+"export_aborted" = "Export abgebrochen.";
+"auto_download_messages" = "Nachrichten autom. herunterladen";
+// %1$s will be replaced by a human-readable number of bytes, eg. 32 KiB, 1 MiB
+"up_to_x" = "Bis zu %1$@";
+"up_to_x_most_worse_quality_images" = "Bis zu %1$@, die meisten Bilder schlechter Qualität";
+"up_to_x_most_balanced_quality_images" = "Bis zu %1$@, die meisten Bilder ausgewogener Qualität";
+"download_failed" = "Download gescheitert";
+"profile_image_select" = "Profilbild auswählen";
+"select_your_new_profile_image" = "Wählen dein Profilbild aus";
+"profile_image_delete" = "Profilbild löschen";
+"pref_show_tray_icon" = "Benachrichtigungssymbol anzeigen";
+"pref_edit_profile" = "Profil bearbeiten";
+"send_stats_to_devs" = "Statistik an Delta Chat Entwickler senden";
+"stats_device_message" = "Möchtest du helfen, Delta Chat zu verbessern, indem du wöchentlich anonyme Nutzungsstatistiken sendest?\n\n👉 Hier tippen … 👈";
+"stats_confirmation_dialog" = "Möchtest du helfen, Delta Chat zu verbessern, indem du wöchentlich anonyme Nutzungsstatistiken sendest?";
+"stats_thanks" = "Danke! Du kannst das Senden der Statistik jederzeit unter \"Einstellungen / Erweitert\" ausschalten.\n\nHast du zusätzlich 5 Minuten Zeit, um an einer wissenschaftlichen Studie zur Sicherheit von Delta Chat teilzunehmen?";
+"stats_disable_dialog" = "Das Senden von Statistiken ist bereits eingeschaltet.\n\nMöchtest du es ausschalten?";
+"disable" = "Ausschalten";
+"stats_keep_sending" = "Weiter senden";
+"stats_msg_body" = "Der Anhang enthält anonyme Statistiken, die uns helfen, Delta Chat zu verbessern. Vielen Dank! Für weitere Infos, siehe https://delta.chat/help#statssending ";
+// Emoji picker and categories
+"emoji_search_results" = "Suchergebnisse";
+"emoji_not_found" = "Keine Emoji gefunden";
+"emoji_recent" = "Zuletzt verwendet";
+"emoji_people" = "Leute";
+"emoji_nature" = "Tiere und Natur";
+"emoji_foods" = "Essen und Trinken";
+"emoji_activity" = "Aktivitäten";
+"emoji_places" = "Reisen und Orte";
+"emoji_objects" = "Objekte";
+"emoji_symbols" = "Symbole";
+"emoji_flags" = "Flaggen";
+// Reactions
+"reactions" = "Reaktionen";
+// Verb, the action of adding a "Reaction" to a message. Used eg. in context menus, similar to "Reply" or "Forward"
+"react" = "Reagieren";
+// %1$s will be replaced by an emoji. %2$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %2$s will often not being visible). Eg. 'You reacted 👍 to "Found my suitcase"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer and work as well.
+"reaction_by_you" = "Du reagierst mit %1$@ auf \"%2$@\"";
+// %1$s will be replaced a name. %2$s will be replaced by an emoji. %3$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %3$s will often not being visible). Eg. 'Alice reacted 👍 to "Nice photos"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer work as well.
+"reaction_by_other" = "%1$@ reagierte mit %2$@ auf \"%3$@\"";
+// automatically delete message
+"delete_old_messages" = "Alte Nachrichten löschen";
+"autodel_device_title" = "Nachrichten vom Gerät löschen";
+"autodel_server_title" = "Nachrichten vom Server löschen";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_device_ask" = "Wirklich %1$d Nachrichten jetzt und zukünftig alle neuen Nachrichten \"%2$@\" löschen?\n\n• Dies schliesst alle Medien mit ein\n\n• Nachrichten werden gelöscht, auch wenn sie nicht angesehen wurden\n\n• \"Gespeicherte Nachrichten\" werden nicht gelöscht";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_server_ask" = "Wirklich %1$d Nachrichten jetzt und zukünftig alle neuen Nachrichten \"%2$@\" löschen?\n\n⚠️ Dies schließt E-Mails, Medien und \"Gespeicherte Nachrichten\" aus allen Server-Ordnern mit ein\n\n⚠️ Verwende diese Funktion nicht, wenn du Daten auf dem Server behalten möchtest oder auch klassische E-Mail-Clients verwendest";
+// shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
+"autodel_server_enabled_hint" = "Dies schließt E-Mails, Medien und \"Gespeicherte Nachrichten\" aus allen Server-Ordnern mit ein. Verwenden diese Funktion nicht, wenn du Daten auf dem Server behalten möchtest oder auch klassische E-Mail-Clients verwendest.";
+"autodel_server_warn_multi_device_title" = "Sofortiges Löschen einschalten";
+"autodel_server_warn_multi_device" = "Wenn sofortiges Löschen aktiviert ist, können nicht mehrere Geräte für dieses Profil verwendet werden.";
+"autodel_confirm" = "Verstanden, all diese Nachrichten löschen";
+// "At once" in the meaning of "Immediately", without any intervening time.
+"autodel_at_once" = "Sofort nach Download";
+"after_5_minutes" = "Nach 5 Minuten";
+"autodel_after_1_hour" = "Nach 1 Stunde";
+"autodel_after_1_day" = "Nach 1 Tag";
+"autodel_after_1_week" = "Nach 1 Woche";
+"after_5_weeks" = "Nach 5 Wochen";
+"autodel_after_1_year" = "Nach 1 Jahr";
+// system messages
+"systemmsg_subject_for_new_contact" = "Nachricht von %1$@";
+"systemmsg_failed_sending_to" = "Nachricht senden an %1$@ fehlgeschlagen.";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name
+"group_name_changed_by_you" = "Du hast den Gruppennamen von \"%1$@\" zu \"%2$@\" geändert.";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name, %3$s will be replaced by name and address of the contact who did the action.
+"group_name_changed_by_other" = "Gruppenname geändert von \"%1$@\" zu \"%2$@\" von %3$@.";
+// %1$s will be replaced by the old channel name, %2$s will be replaced by the new channel name
+"channel_name_changed" = "Kanalname geändert von \"%1$@\" zu \"%2$@\".";
+"group_image_changed_by_you" = "Du hast das Gruppenbild geändert.";
+// %1$s will be replaced by name of the contact who did the action
+"group_image_changed_by_other" = "Gruppenbild geändert von %1$@.";
+"channel_image_changed" = "Kanalbild geändert.";
+"chat_description_changed_by_you" = "Du hast die Chat-Beschreibung geändert.";
+// %1$s will be replaced by name of the contact who did the action
+"chat_description_changed_by_other" = "Chat-Beschreibung geändert von %1$@.";
+// %1$s will be replaced by name of the contact added to the group
+"member_x_added" = "%1$@ hinzugefügt.";
+// %1$s will be replaced by name of the contact added to the group
+"add_member_by_you" = "%1$@ hinzugefügt.";
+// %1$s will be replaced by name of the contact added to the group, %2$s will be replaced by name of the contact who did the action
+"add_member_by_other" = "%1$@ hinzugefügt von %2$@.";
+// %1$s will be replaced by name of the contact removed from the group
+"remove_member_by_you" = "Du hast %1$@ entfernt.";
+// %1$s will be replaced by name of the contact removed from the group, %2$s will be replaced by name of the contact who did the action
+"remove_member_by_other" = "%1$@ entfernt von %2$@.";
+// %1$s will be replaced by name of the contact removed from the group; this string is used when it's unclear who did the action
+"member_x_removed" = "%1$@ entfernt.";
+// "left" in the meaning of "exited".
+"group_left_by_you" = "Du hast die Gruppe verlassen.";
+// "left" in the meaning of "exited".
+"channel_left_by_you" = "Du hast den Kanal verlassen.";
+"you_joined_the_channel" = "Du bist dem Kanal beigetreten.";
+// "left" in the meaning of "exited"; %1$s will be replaced by name of the contact leaving the group
+"group_left_by_other" = "Gruppe verlassen von %1$@.";
+"group_image_deleted_by_you" = "Du hast das Gruppenbild gelöscht.";
+// %1$s will be replaced by name of the contact
+"group_image_deleted_by_other" = "Gruppenbild gelöscht von %1$@.";
+"location_enabled_by_you" = "Du hast die Standortübertragung aktiviert.";
+// %1$s will be replaced by name of the contact
+"location_enabled_by_other" = "Standortübertragung aktiviert von %1$@.";
+"ephemeral_timer_disabled_by_you" = "Du hast verschwindende Nachrichten ausgeschaltet.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_disabled_by_other" = "Verschwindende Nachrichten ausgeschaltet von %1$@.";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to
+"ephemeral_timer_seconds_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf %1$@ Sekunden gesetzt.";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_seconds_by_other" = "Ablaufzeit verschwindender Nachrichten auf %1$@ Sekunden gesetzt von %2$@.";
+"ephemeral_timer_1_hour_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf 1 Stunde gesetzt.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_hour_by_other" = "Ablaufzeit verschwindender Nachrichten auf 1 Stunde gesetzt von %1$@.";
+"ephemeral_timer_1_day_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf 1 Tag gesetzt.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_day_by_other" = "Ablaufzeit verschwindender Nachrichten auf 1 Tag gesetzt von %1$@.";
+"ephemeral_timer_1_week_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf 1 Woche gesetzt.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_week_by_other" = "Ablaufzeit verschwindender Nachrichten auf 1 Woche gesetzt von %1$@.";
+"ephemeral_timer_1_year_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf 1 Jahr gesetzt.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_year_by_other" = "Ablaufzeit verschwindender Nachrichten auf 1 Jahr gesetzt von %1$@.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to
+"ephemeral_timer_minutes_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf %1$@ Minuten gesetzt.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_minutes_by_other" = "Ablaufzeit verschwindender Nachrichten auf %1$@ Minuten gesetzt von %2$@.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to
+"ephemeral_timer_hours_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf %1$@ Stunden gesetzt.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_hours_by_other" = "Ablaufzeit verschwindender Nachrichten auf %1$@ Stunden gesetzt von %2$@.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to
+"ephemeral_timer_days_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf %1$@ Tage gesetzt.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_days_by_other" = "Ablaufzeit verschwindender Nachrichten auf %1$@ Tage gesetzt von %2$@.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to
+"ephemeral_timer_weeks_by_you" = "Du hast die Ablaufzeit verschwindender Nachrichten auf %1$@ Wochen gesetzt.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_weeks_by_other" = "Ablaufzeit verschwindender Nachrichten auf %1$@ Wochen gesetzt von %2$@.";
+"chat_unencrypted_explanation" = "Dieser Chat verwendet klassische E-Mails und ist nicht Ende-zu-Ende-verschlüsselt.";
+"messages_are_e2ee" = "Nachrichten sind Ende-zu-Ende-verschlüsselt.";
+"chat_protection_enabled_tap_to_learn_more" = "Nachrichten sind Ende-zu-Ende-verschlüsselt. Tippen, um mehr zu erfahren.";
+"chat_protection_enabled_explanation" = "Alle Nachrichten in diesem Chat sind Ende-zu-Ende verschlüsselt.\n\nDurch die Ende-zu-Ende-Verschlüsselung bleiben die Nachrichten zwischen dir und deinen Chat-Partnern privat. Nicht einmal Server, Provider oder Relays können sie lesen.";
+"invalid_unencrypted_tap_to_learn_more" = "⚠️ %1$@ verlangt eine Ende-zu-Ende-Verschlüsselung, die für diesen Chat noch nicht hergestellt wurde. Tippen, um mehr zu erfahren.";
+"invalid_unencrypted_explanation" = "Um eine Ende-zu-Ende-Verschlüsselung herzustellen, kannst du Kontakte persönlich treffen und ihren QR-Code scannen.";
+"learn_more" = "Mehr erfahren";
+"devicemsg_self_deleted" = "Du hast den Chat \"Gespeicherte Nachrichten\" gelöscht.\n\nℹ️ Um die Funktion \"Gespeicherte Nachrichten\" erneut zu verwenden, erstelle einfach einen Chat mit dir selbst.";
+// %1$s will be replaced by the amount of storage already used, sth. as '500 MB'. If you want to use a percentage sign, type in two of them, eg. %1$s %%
+"devicemsg_storage_exceeding" = "⚠️ Der Speicherplatz deines Anbieters ist bald erschöpft; bereits %1$@%% sind verbraucht.\n\nDu kannst möglicherweise keine Nachrichten mehr empfangen, wenn der Speicherplatz komplett verbraucht ist.\n\n👉 Bitte prüfe, ob du alte Daten im Webinterface des Anbieters löschen kannst, und erwäge, \"Einstellungen / Chats / Alte Nachrichten löschen\" zu aktivieren. Den aktuellen Speicherverbrauch kannst du jederzeit unter \"Einstellungen / Verbindungsstatus\" überprüfen.";
+// %1%s will be replaced by date and time in some human-readable format
+"devicemsg_bad_time" = "⚠️ Dein Gerät scheint ein falsches Datum oder eine falsche Uhrzeit (%1$@) zu verwenden.\n\nStelle deine Uhr ⏰🔧 richtig ein, um sicherzustellen, dass deine Nachrichten korrekt empfangen werden.";
+"devicemsg_update_reminder" = "⚠️ Deine Delta-Chat-Version ist möglicherweise veraltet.\n\nDies kann zu Problemen führen, wenn deine Chat-PartnerInnen neuere Versionen verwenden - und dir die neuesten Funktionen fehlen. 😳\nBitte überprüfe https://get.delta.chat oder den App-Store auf Updates.";
+// Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
+"enter_system_secret_to_continue" = "Entsperren zum Fortfahren";
+// qr code stuff
+"qr_code" = "QR-Code";
+"load_qr_code_as_image" = "QR-Code als Bild laden";
+"qrscan_title" = "QR-Code scannen";
+"qrscan_hint" = "Kamera über den QR-Code halten";
+"qrscan_hint_desktop" = "QR-Code zur Kamera führen";
+"qrscan_failed" = "QR-Code kann nicht dekodiert werden.";
+"qrscan_ask_join_group" = "Der Gruppe \"%1$@\" beitreten?";
+"qrscan_ask_join_channel" = "Dem Kanal \"%1$@\" beitreten?";
+"qrscan_fingerprint_mismatch" = "Der gescannte Fingerabdruck stimmt nicht mit dem zuletzt für %1$@ gesehenen Fingerabdruck überein.";
+"qrscan_no_addr_found" = "Dieser QR-Code enthält einen Fingerabdruck, aber keine Adresse.\n\nFür eine Out-of-Band-Verifizierung bitte zuerst eine verschlüsselte Verbindung zur EmpfängerIn herstellen.";
+"qrscan_contains_text" = "Gescannter QR-Code text:\n\n%1$@";
+"qrscan_contains_url" = "Gescannter QR-Code URL:\n\n%1$@";
+"qrscan_fingerprint_label" = "Fingerabdruck";
+"withdraw_verifycontact_explain" = "Dieser QR-Code kann von anderen gescannt werden, um dich zu kontaktieren.\n\nDu kannst den QR-Code zurücksetzen; der bestehende QR-Code oder Einladungslink wird dann nicht mehr funktionieren.";
+"withdraw_verifygroup_explain" = "Dieser QR-Code kann von anderen gescannt werden, um der Gruppe \"%1$@\" beizutreten.\n\nDu kannst den QR-Code zurücksetzen; der bestehende QR-Code oder Einladungslink wird dann nicht mehr funktionieren.";
+"withdraw_joinbroadcast_explain" = "Dieser QR-Code kann von anderen gescannt werden, um dem Kanal \"%1$@\" beizutreten.\n\nDu kannst den QR-Code zurücksetzen; der bestehende QR-Code oder Einladungslink wird dann nicht mehr funktionieren.";
+"withdraw_qr_code" = "QR-Code zurücksetzen";
+"revive_verifycontact_explain" = "Dieser QR-Code wurde zurückgesetzt und ist nicht mehr aktiv.";
+"revive_qr_code" = "QR-Code aktivieren";
+"qrshow_title" = "QR-Einladungscode";
+"qrshow_x_joining" = "%1$@ beigetreten.";
+"qrshow_x_verified" = "%1$@ eingeführt.";
+"qrshow_x_has_joined_group" = "%1$@ ist der Gruppe beigetreten.";
+"qrshow_join_group_title" = "QR-Einladungscode";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the group name, eg. "Scan to join group \"Testing group\""
+"qrshow_join_group_hint" = "Scannen, um der Gruppe \"%1$@\" beizutreten";
+"qrshow_join_channel_hint" = "Scannen, um dem Kanal \"%1$@\" beizutreten";
+"qrshow_join_contact_title" = "QR-Einladungscode";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to chat with Alice"
+"qrshow_join_contact_hint" = "Scannen für Chat mit %1$@";
+"qrshow_join_contact_no_connection_toast" = "Keine Verbindung zum Internet, Austausch des QR-Codes nicht möglich.";
+"qraccount_ask_create_and_login" = "Profil auf \"%1$@\" erzeugen und dort anmelden?";
+"set_name_and_avatar_explain" = "Lege einen Namen fest, unter dem deine Kontakte dich kennen. Du kannst auch ein Profilbild festlegen.";
+"please_enter_name" = "Bitte gib einen Namen an.";
+"qraccount_qr_code_cannot_be_used" = "Der eingescannte QR-Code kann nicht dazu verwendet werden, eine neues Profil zu erstellen.";
+// the placeholder will be replaced by the address of the profile
+"qrlogin_ask_login" = "Bei \"%1$@\" anmelden?";
+// first placeholder will be replaced by name of the inviter, second placeholder will be replaced by the name of the inviter.
+"secure_join_started" = "%1$@ hat dich zu dieser Gruppe eingeladen.\n\nWarte auf die Antwort des Gerätes von %2$@…";
+// first placeholder will be replaced by name of the inviter, second placeholder will be replaced by the name of the inviter.
+"secure_join_channel_started" = "%1$@ hat dich zu diesem Kanal eingeladen.\n\nWarte auf die Antwort des Gerätes von %2$@…";
+// placeholder will be replaced by the name of the inviter.
+"secure_join_replies" = "%1$@ antwortet. Warte, zur Gruppe hinzugefügt zu werden…";
+"secure_join_wait" = "Verbindungsaufbau, bitte warten…";
+"contact_verified" = "%1$@ eingeführt.";
+"contact_blocked" = "Du hast den Kontakt blockiert";
+// Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact.
+"verified_by" = "Eingeführt von %1$@";
+"verified_by_you" = "Durch mich eingeführt";
+"verified_by_unknown" = "Eingeführt";
+"mailto_dialog_header_select_chat" = "Wähle den Chat, an den die Nachricht gesendet werden soll";
+// first placeholder is the name of the chat
+"confirm_replace_draft" = "%1$@ hat bereits einen Entwurf. Möchtest du diesen ersetzen?";
+"mailto_link_could_not_be_decoded" = "Mailto-Link konnte nicht dekodiert werden: %1$@";
+"remove_quote" = "Zitat entfernen";
+"remove_attachment" = "Anhang entfernen";
+// notifications
+"notify_reply_button" = "Antworten";
+"notify_new_message" = "Neue Nachricht";
+"notify_background_connection_enabled" = "Hintergrundverbindung aktiviert";
+"notify_priority_high" = "Hoch";
+"notify_priority_max" = "Maximum";
+"notify_name_and_message" = "Name und Nachricht";
+"notify_name_only" = "Nur der Name";
+"notify_no_name_or_message" = "Kein Name oder Nachricht";
+"notifications_disabled" = "Benachrichtigungen deaktiviert";
+"unreliable_bg_notifications" = "Für zuverlässige Benachrichtigungen, \"Hintergrundverbindung erzwingen\" einschalten";
+"new_messages" = "Neue Nachrichten";
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+"new_messages_body" = "Du hast neue Nachrichten";
+"n_messages_in_m_chats" = "%1$d Nachrichten in %2$d Chats";
+// location streaming
+"location_streaming_channel_desc" = "Kanal für Standortübertragung";
+"location_streaming_notification_title" = "Standardübertragung";
+"location_streaming_notification_text" = "Du teilst deinen Standort";
+"location_rationale" = "Damit du deinen aktuellen Standort teilen kannst, musst du Delta Chat die Nutzung deiner Standortdaten erlauben.\n\nDamit die Standortanzeige nahtlos funktioniert, werden Standortdaten auch dann verwendet, wenn die App geschlossen ist oder nicht genutzt wird.";
+// permissions
+"perm_required_title" = "Berechtigung erforderlich";
+"perm_continue" = "Weiter";
+"perm_explain_access_to_camera_denied" = "Um Fotos oder Videos aufzunehmen, bitte in den System-Einstellungen DeltaChat den Zugriff auf die Kamera erlauben. ";
+// give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
+"perm_explain_access_to_mic_denied" = "Um Audio-Nachrichten zu senden, bitte in den System- oder App-Einstellungen den Zugriff auf das Mikrophon erlauben.";
+"perm_explain_access_to_storage_denied" = "Um Dateien zu empfangen oder zu versenden, bitte in den System-Einstellungen Delta Chat den Zugriff auf den Speicher erlauben.";
+"perm_explain_access_to_location_denied" = "Um einen Standort anzuhängen, bitte in den Systemeinstellungen DeltaChat den Zugriff auf \"Standort\" erlauben.";
+"perm_explain_access_to_notifications_denied" = "Um Benachrichtigungen zu erhalten, öffne \"Systemeinstellungen / Apps / Delta Chat\" und aktiviere \"Benachrichtigungen\".";
+// ImageEditorHud
+"ImageEditorHud_draw_anywhere_to_blur" = "Zeichne zum Verwischen in beliebige Bereiche";
+"ImageEditorHud_add_text" = "Text hinzufügen";
+"ImageEditorHud_blur" = "Verwischen";
+"ImageEditorHud_brush_marker" = "Markieren";
+"ImageEditorHud_brush_highlight" = "Hervorheben";
+"ImageEditorHud_crop" = "Zuschneiden";
+"ImageEditorHud_flip" = "Spiegeln";
+"ImageEditorHud_rotate" = "Drehen";
+"welcome_desktop" = "Willkommen bei Delta Chat";
+"global_menu_preferences_language_desktop" = "Sprache";
+"global_menu_file_desktop" = "Datei";
+"global_menu_file_quit_desktop" = "Beenden";
+"global_menu_edit_desktop" = "Bearbeiten";
+"global_menu_edit_undo_desktop" = "Rückgängig";
+"global_menu_edit_redo_desktop" = "Wiederholen";
+"global_menu_edit_cut_desktop" = "Ausschneiden";
+"global_menu_edit_copy_desktop" = "Kopieren";
+"global_menu_edit_paste_desktop" = "Einfügen";
+"global_menu_view_desktop" = "Ansicht";
+"global_menu_view_floatontop_desktop" = "Im Vordergrund halten";
+"global_menu_view_developer_desktop" = "EntwicklerIn";
+"global_menu_view_developer_tools_desktop" = "Entwicklungswerkzeug";
+"global_menu_help_desktop" = "Hilfe";
+"delta_chat_homepage" = "Delta Chat Homepage";
+"contribute" = "Mitwirken";
+"global_menu_help_report_desktop" = "Ein Problem melden";
+"global_menu_help_about_desktop" = "Über Delta Chat";
+"global_menu_file_open_desktop" = "Delta Chat öffnen";
+"global_menu_minimize_to_tray" = "Minimieren";
+"no_account_selected" = "Profil auswählen oder ein neues Profil erstellen";
+"no_chat_selected_suggestion_desktop" = "Chat auswählen oder neuen Chat erstellen.";
+"write_message_desktop" = "Nachricht schreiben";
+"encryption_info_title_desktop" = "Verschlüsselungsinformationen";
+"delete_message_desktop" = "Nachricht löschen";
+"more_info_desktop" = "Mehr Informationen";
+"timestamp_format_m_desktop" = "D MMM";
+"remove_desktop" = "Entfernen";
+"save_desktop" = "Speichern";
+// Opposite of "Save". Undo a "Save" action. Similar to "Unmute", "Unpin". Could also be worded as "Save no longer" or so.
+"unsave" = "Nicht mehr speichern";
+"name_desktop" = "Name";
+"select_group_image_desktop" = "Gruppenbild auswählen";
+"export_backup_desktop" = "Backup exportieren";
+"message_detail_sent_desktop" = "Gesendet";
+"message_detail_received_desktop" = "Empfangen";
+"menu.view.developer.open.log.folder" = "Log-Ordner öffnen";
+"menu.view.developer.open.current.log.file" = "Aktuelle Logdatei öffnen";
+"explain_desktop_minimized_disabled_tray_pref" = "Benachrichtigungssymbol kann nicht deaktiviert werden, da Delta Chat mit der Option --minimized gestartet wurde.";
+// deprecated, used on desktop although there is not spell checker
+"no_spellcheck_suggestions_found" = "Keine Rechtschreibvorschläge gefunden.";
+"show_window" = "Fenster anzeigen";
+"data_found_other_installation_message" = "Auf deine Profile aus einer anderen Delta-Chat-Installation kann nicht zugegriffen werden – verschiedene Installationen speichern deine Daten an unterschiedlichen Orten.\n\nSo behältst du bestehende Profile bei:\n1. Beende das Programm jetzt\n2. Öffne die andere Delta-Chat-Version; bei Bedarf installiere es erneut von %1$@\n3. Sichere jedes Profil unter „Einstellungen/Chats“\n4. Starte diese Version neu\n5. Stellen die Backups über „Ich habe bereits ein Profil“ wieder her\n\nOhne deine bisherigen Profile fortfahren?";
+// title of the "keybindings" dialog (for the keybindings names as such, where possible the normal command strings are used)
+"keybindings" = "Tastaturbelegung";
+// subtitle in the "keybindings" dialog
+"navigation_shortcut_section" = "Navigieren";
+// subtitle in the "keybindings" dialog
+"message_input_shortcut_section" = "Nachrichteneingabe";
+// subtitle in the "keybindings" dialog
+"message_selected_shortcut_section" = "Ausgewählte Nachricht";
+"switch_between_chats" = "Chats durchschalten";
+"scroll_messages" = "Nachrichten scrollen";
+// command to put the cursor to the search input field
+"focus_search_input" = "Suche aktivieren";
+// command to put the cursor to the message input field
+"focus_message_input" = "Eingabefeld aktivieren";
+"force_refresh_network" = "Neu Verbinden";
+"insert_newline" = "Neue Zeile einfügen";
+// accessibility, the general idea is to use the normal strings for accessibility hints wherever possible
+"a11y_delivery_status_error" = "Übertragungsstatus: Fehler";
+"a11y_delivery_status_sending" = "Übertragungsstatus: Sendet";
+"a11y_delivery_status_draft" = "Übertragungsstatus: Entwurf";
+"a11y_delivery_status_delivered" = "Übertragungsstatus: Versendet";
+"a11y_delivery_status_read" = "Übertragungsstatus: Gelesen";
+"a11y_delivery_status_invalid" = "Übertragungsstatus: Ungültig";
+"a11y_message_context_menu_btn_label" = "Nachrichtaktionen";
+"a11y_background_preview_label" = "Vorschau für Hintergrundbild";
+"a11y_disappearing_messages_activated" = "Verschwindende Nachrichten eingeschaltet";
+// iOS specific strings, developers: please take care to remove strings that are no longer used!
+"stop_sharing_location" = "Teilen des Standorts beenden";
+"a11y_voice_message_hint_ios" = "Nach der Aufnahme zum Senden doppelt tippen. Um die Aufnahme zu verwerfen, mit zwei Fingern links-rechts hin- und herwischen.";
+"a11y_connectivity_hint" = "Doppelt Tippen für Verbindungsdetails.";
+"login_error_no_internet_connection" = "Keine Internetverbindung, Anmeldung fehlgeschlagen.";
+"share_account_not_configured" = "Profil nicht konfiguriert.";
+"cannot_play_audio_file" = "Audiodatei kann nicht abgespielt werden.";
+// iOS camera permission alert
+"perm_ios_explain_access_to_camera_denied" = "Um Fotos oder Videos aufzunehmen oder den QR-Code-Scanner zu verwenden, öffne die Systemeinstellungen und aktiviere \"Kamera\".";
+"open_settings" = "Einstellungen öffnen";
+// iOS device contact alert
+"import_device_contacts" = "Kontakte vom Gerät importieren";
+"import_device_contacts_hint" = "Um mit Kontakten auf deinem Gerät zu chatten, öffne die Systemeinstellungen und aktiviere \"Kontakte\".";
+// iOS notification settings
+"disabled_in_dc" = "Deaktiviert in Delta Chat";
+"disabled_in_system_settings" = "Deaktiviert in den Systemeinstellungen";
+"bg_app_refresh_disabled" = "\"App Hintergrundaktivität\" deaktiviert in den Systemeinstellungen";
+"notifications_avg_minutes" = "Im Mittel alle %1$d Minuten";
+"notifications_avg_hours" = "Im Mittel alle %1$d Stunden";
+"last_check_at" = "Überprüft um %1$@";
+"system_settings" = "Systemeinstellungen";
+// shown below the button "System Settings" on the notification screen. this is a hint about what can be edited on System Settings' Notification page - eg. the notification type (banner, lock screen, notification centre), sound, badges and so on. no need to be exhaustive here, it is only to give the user an idea.
+"system_settings_notify_explain_ios" = "Töne, Vorschau, Stil und mehr bearbeiten";
+// iOS shortcut widget
+// use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
+"shortcuts_widget_title" = "Shortcuts";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"shortcuts_widget_description" = "Delta Chat\'s \"Zum Widget hinzufügen\" verwenden, um Chats hinzuzufügen";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"remove_from_widget" = "Aus Widget entfernen";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"add_to_widget" = "Zum Widget hinzufügen";
+// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// android specific strings, developers: please take care to remove strings that are no longer used!
+"pref_instant_delivery" = "Sofortige Benachrichtigungen";
+"pref_background_notifications" = "Hintergrundverbindung verwenden";
+"pref_background_notifications_explain" = "Erfordert das Deaktivieren der Akku-Optimierungen; empfohlen, wenn Nachrichten nicht rechtzeitig ankommen";
+"pref_reliable_service" = "Hintergrundverbindung erzwingen";
+"pref_reliable_service_explain" = "Verursacht eine permanente Benachrichtigung";
+"pref_background_notifications_rationale" = "Um die Verbindung aufrechtzuerhalten und Nachrichten im Hintergrund zu empfangen, ignorieren im nächsten Schritt die \"Akku-Optimierungen\".\n\nDelta Chat verbraucht nur minimale Ressourcen und achtet darauf, den Akku zu schonen.";
+// disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
+"perm_enable_bg_reminder_title" = "Tippen hier, um Nachrichten zu empfangen, während Delta Chat im Hintergrund läuft.";
+"perm_enable_bg_already_done" = "Du hast Delta Chat bereits erlaubt, Nachrichten im Hintergrund zu empfangen.\n\nFalls keine Nachrichten eingehen, überprüfe bitte auch die Systemeinstellungen.";
+// device messages for updates
+"update_2_0" = "Was ist neu?\n\n💯 Die Ende-zu-Ende-Verschlüsselung ist jetzt dauerhaft. Vorhängeschlösser 🔒 gibt es nicht mehr!\n\n✉️ Klassische E-Mails ohne Ende-zu-Ende-Verschlüsselung sind mit einem Umschlag-Symbol gekennzeichnet\n\n😻 Neues, verbessertes Profil für alle Kontakte\n\n🔲 Neue Schaltfläche für den schnellen Zugriff auf Apps, die in einem Chat verwendet werden\n\n❤️ Bitte spende und hilf uns, unabhängig zu bleiben und weiterhin Verbesserungen zu bringen: %1$@";

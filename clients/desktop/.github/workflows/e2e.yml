@@ -1,0 +1,64 @@
+name: e2e Tests
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'  # only trigger build if a file outside of /docs was changed
+      - '_locales/*.xml'
+      - '.vscode/**'
+      - 'README_ASSETS/**'
+      - 'README.md'
+  pull_request:
+    paths-ignore:
+      - 'docs/**'  # only trigger build if a file outside of /docs was changed
+      - '_locales/*.xml'
+      - '.vscode/**'
+      - 'README_ASSETS/**'
+      - 'README.md'
+
+permissions: {}
+
+jobs:
+  test:
+    name: E2E Tests
+    environment: test
+    env:
+      CI: true
+      NODE_ENV: test
+      VERSION_INFO_GIT_REF: ${{ github.ref }}
+      DC_ACCOUNTS_DIR: ../../e2e-tests/data/accounts
+      DC_CHATMAIL_DOMAIN: ${{ vars.DC_CHATMAIL_DOMAIN }}
+      DC_MAIL_SERVER: ${{ vars.CI_MAIL_SERVER }}
+      DC_MAIL_SERVER_TOKEN: ${{ secrets.CI_MAIL_SERVER_TOKEN }}
+    timeout-minutes: 60
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        show-progress: false
+        persist-credentials: false
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22.x
+    - name: Install dependencies
+      run: npm install -g pnpm && pnpm install
+    - name: Install Playwright Browsers
+      working-directory: ./packages/e2e-tests
+      run: pnpm exec playwright install --with-deps --only-shell chromium
+    - name: Run e2e tests
+      env:
+        DC_FRONTEND_NO_TLS: true
+      run: pnpm e2e
+    - uses: actions/upload-artifact@v4
+      # We may want to not upload artifacts if tests pass,
+      # (`if: ${{ failure() && !cancelled() }}`)
+      # but we want to debug flaky tests, so let's always upload them.
+      if: ${{ !cancelled() }}
+      with:
+        name: e2e-report
+        path: packages/e2e-tests/playwright-report
+        retention-days: 10

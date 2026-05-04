@@ -1,0 +1,831 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "OK";
+"cancel" = "Отказ";
+"clear_search" = "Изчистване на търсенето";
+"yes" = "Да";
+"no" = "Не";
+"select" = "Избор";
+"on" = "Включено";
+"off" = "Изключено";
+"def" = "По подразбиране";
+"default_value" = "По подразбиране (%1$@)";
+"custom" = "Дефиниран от потребителя";
+"none" = "Без";
+"automatic" = "Автоматично";
+"strict" = "Стриктно";
+"open" = "Отваряне";
+"download" = "Сваляне";
+"downloading" = "Сваля се...";
+"open_attachment" = "Отваряне на прикачен файл";
+"join" = "Присъединяване";
+"rejoin" = "Присъединяване отново";
+"delete" = "Изтриване";
+"info" = "Информация";
+"update" = "Актуализиране";
+"emoji" = "Emoji";
+"attachment" = "Прикачен файл";
+"back" = "Назад";
+"close" = "Затваряне";
+"close_window" = "Затваряне на прозореца";
+"forward" = "Напред";
+"create" = "Създаване";
+"later" = "По-късно";
+// "Resend" means "Sending the selected message(s) again to the same chat". The string is used in a menu and should be as short as possible. Resending may be needed after failures or to repost old messages to new members.
+"resend" = "Изпращане отново";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "Архивиране";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "Деархивиране";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "Изключване на звука";
+"ephemeral_messages" = "Изчезващи съобщения";
+"ephemeral_messages_hint" = "Приложимо за всички членове на този чат, ако използват Delta Chat; в противен случай те пак могат да копират, записват и препращат съобщения или да използват други клиенти за електронна поща.";
+"save" = "Записване";
+"chat" = "Чат";
+"media" = "Медия";
+"profile" = "Профил";
+"main_menu" = "Основно меню";
+"start_chat" = "Започване на чат";
+"show_full_message" = "Показване на пълното съобщение...";
+// Stay short here, say ~16 characters. The source string could also be "All Read", maybe that hint can make translations easier :)
+"mark_all_as_read" = "Маркиране на всички като прочетени";
+// Used beside an icon with very few space. Shortest text for "Mark as being read". In english, this could be "Read" (past tense of "to read"), in german, this could be "Gelesen".
+"mark_as_read_short" = "Прочетено";
+// Placeholder text when something is loading
+"loading" = "Зарежда се ...";
+"hide" = "Скриване";
+"activate" = "Активиране";
+"load_remote_content" = "Да се зареждат отдалечени изображения";
+// Possible answers to the question are: Never, Always, Once
+"load_remote_content_ask" = "Отдалечените изображения могат да Ви следят.\n\nСъщо така тази настройка позволява да се зареждат шрифтове и друго съдържание. Ако е забранена, може да се появяват вградени или кеширани изображения.\n\nДа се зареждат ли ли отдалечени изображения?";
+"always" = "Винаги";
+"always_load_remote_images" = "Винаги да се зареждат отдалечените изображения";
+"once" = "Веднъж";
+"show_warning" = "Показване на предупреждение";
+"not_now" = "Не сега";
+"never" = "Никога";
+"one_moment" = "Един момент...";
+"done" = "Готово";
+"undo" = "Отмяна";
+"offline" = "Офлайн";
+// For the next view or as "continue". Should be as short as possible.
+"next" = "Следващ";
+"error" = "Грешка";
+"error_x" = "Грешка:%1$@";
+"no_app_to_handle_data" = "Не може да бъде открито приложение, което да обработва данни от този тип.";
+"no_browser_installed" = "Няма инсталиран браузър.";
+"file_not_found" = "%1$@ не беше открит.";
+"copied_to_clipboard" = "Копирано в клипборда.";
+"contacts_headline" = "Контакти";
+"email_address" = "Адрес за електронна поща";
+"bad_email_address" = "Невалиден адрес за електронна поща.";
+"password" = "Парола";
+"existing_password" = "Съществуваща парола";
+"now" = "Сега";
+// Headline for destructive actions with no undo. Could also be "Caution" or "Warning".
+"danger" = "Опасност";
+"today" = "Днес";
+"yesterday" = "Вчера";
+"this_week" = "Тази седмица";
+"this_month" = "Този месец";
+"last_week" = "Миналата седмица";
+"last_month" = "Миналия месец";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by date or time, resulting in "Last seen at 12:13 AM" or "Last seen Nov 12"
+"last_seen_at" = "Последно видян на %1$@";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by a relative point in time as "3 minutes ago" (see https://momentjs.com for more examples and languages)
+"last_seen_relative" = "Последно видян %1$@";
+"last_seen_unknown" = "Последно видян: Не е известно";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+// Short form for "N Items Selected"
+"self" = "Аз";
+"draft" = "Чернова";
+"image" = "Изображение";
+// Used in summaries as "Draft: Reply", similar as "Draft: Image". Use a noun here, not a verb (not: "to reply")
+"reply_noun" = "Отговор";
+"gif" = "GIF";
+// "Stickers" as known from other messengers; in some languages, the English "Sticker" is fine.
+"sticker" = "Стикер";
+"add_to_sticker_collection" = "Добавяне към колекция от стикери";
+// deprecated, use sticker_picker_empty_hint instead
+"add_stickers_instructions" = "За да добавите стикери, натиснете върху \"Отваряне на папка Стикери\", създайте подпапка за Вашия пакет от стикери и дърпайте файлове със стикери и изображения тук";
+// deprecated
+"open_sticker_folder" = "Отваряне на папка Стикери";
+"images" = "Изображения";
+// a noun, used for "Music" and other "Audio" files
+"audio" = "Аудио";
+"voice_message" = "Гласово съобщение";
+"forwarded" = "Препратено";
+"forwarded_message" = "Препратено съобщение";
+// %1$s will be replaced by the name of the person who forwarded the message
+"forwarded_by" = "Препратен от %1$@";
+"video" = "Видео";
+"documents" = "Документи";
+"contact" = "Контакт";
+"camera" = "Камера";
+// As in "start a video recording" or "take a photo"; eg. the description of the "shutter button" in cameras
+"capture" = "Заснемане";
+"switch_camera" = "Превключване на камерата";
+"toggle_fullscreen" = "Включване/изключване на пълноекранния режим";
+"location" = "Местоположение";
+"locations" = "Местоположения";
+"gallery" = "Галерия";
+"images_and_videos" = "Изображения и видеоклипове";
+"file" = "Файл";
+"files" = "Файлове";
+// "App" is used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_app" = "Приложение";
+// plural of "App"; used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_apps" = "Приложения";
+"unknown" = "Непознат";
+"green" = "Зелено";
+"red" = "Червено";
+"blue" = "Синьо";
+"orange" = "Оранжево";
+"cyan" = "Циан";
+"purple" = "Лилаво";
+"magenta" = "Маджента";
+"white" = "Бяло";
+"zoom" = "Мащабиране";
+"extra_small" = "Много малко";
+"small" = "Малко";
+"normal" = "Нормално";
+"large" = "Голямо";
+"extra_large" = "Много голямо";
+"fast" = "Бързо";
+"slow" = "Бавно";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "Нов контакт";
+"menu_new_classic_contact" = "Ръчно добавяне на контакт";
+"new_classic_contact_explain" = "С помощта на ръчно добавените контакти можете да пращате текстови съобщение до получатели, използващи класическа електронна поща. Не е гарантирано, че те ще са криптирани \"от край до край\".";
+"menu_new_chat" = "Нов чат";
+"menu_new_group" = "Нова група";
+"clone_chat" = "Клониране на чат";
+"menu_send" = "Изпращане";
+"menu_toggle_keyboard" = "Включване/изключване на Emoji клавиатура";
+"menu_edit_group" = "Редактиране на група";
+"menu_group_name_and_image" = "Име и изображение на група";
+"menu_show_global_map" = "Показване на всички местоположения";
+"menu_archive_chat" = "Архивиране на чата";
+"menu_unarchive_chat" = "Деархивиране на чата";
+"menu_add_attachment" = "Добавяне на прикачен файл";
+"menu_leave_group" = "Напускане на групата";
+"menu_delete_chat" = "Изтриване на чата";
+// Command to delete all messages in a chat. The chat itself will not be deleted but will be empty afterwards, so make sure to be different from "Delete Chat" here. "Clear" is a verb here, "Empty Chat" would also be fine (eg. in German "Chat leeren")
+"clear_chat" = "Изчистване на чата";
+"delete_contact" = "Изтриване на контакт";
+"menu_delete_location" = "Да бъде ли изтрито това местоположение?";
+"menu_message_details" = "Детайли на съобщение";
+"menu_copy_to_clipboard" = "Копиране в клипборд";
+"menu_copy_selection_to_clipboard" = "Копиране на избраното";
+"menu_copy_link_to_clipboard" = "Копиране на връзка";
+"menu_copy_text_to_clipboard" = "Копиране на текст";
+"menu_copy_image_to_clipboard" = "Копиране на изображение";
+"menu_copy_email_to_clipboard" = "Копиране на e-mail съобщение";
+"paste_from_clipboard" = "Поставяне от клипборд";
+"ask_copy_unopenable_link_to_clipboard" = "Връзката \"%1$d\" не може да бъде отворена в уеб браузъра. Желаете ли вместо това да я копирате в клипборда?";
+"menu_forward" = "Препращане на съобщение";
+"menu_reply" = "Отговор на съобщение";
+"menu_mute" = "Изключване на звука на уведомленията";
+"menu_unmute" = "Включване на звука";
+"menu_export_attachment" = "Експорт на прикачен файл";
+"menu_export_attachments" = "Експорт на прикачени файлове";
+"menu_all_media" = "Всички медиа файлове";
+// Command to jump to the original message corresponding to a gallery image or document
+"show_in_chat" = "Показване в чата";
+"show_app_in_chat" = "Показване на приложение в чата";
+"menu_share" = "Споделяне";
+// Verb "to block sth." usually a mailing list or a contact, not a noun
+"block" = "Блокиране";
+"menu_block_contact" = "Блокиране на контакт";
+"menu_unblock_contact" = "Отблокиране на контакт";
+"accept" = "Приемане";
+"menu_play" = "Възпроизвеждане";
+"menu_pause" = "Пауза";
+"menu_scroll_to_bottom" = "Превъртане до дъното";
+"menu_scroll_to_top" = "Превъртане до върха";
+"menu_help" = "Помощ";
+// use the same term for "Apps" as elsewhere
+"what_is_webxdc" = "Какво е Webxdc?";
+"privacy_policy" = "Политика за поверителност";
+"menu_select_all" = "Избор на всичко";
+"select_chat" = "Изберете чат";
+"select_more" = "Избор на още";
+"menu_edit_name" = "Редактиране на името";
+"menu_settings" = "Настройки";
+"menu_advanced" = "Разширени";
+"menu_view_profile" = "Разглеждане на профил";
+"menu_zoom_in" = "Приближаване";
+"menu_zoom_out" = "Отдалечаване";
+"menu_save_log" = "Запис на дневник";
+"menu_more_options" = "Още опции";
+"menu_learn_spelling" = "Запомняне на правописа";
+"jump_to_message" = "Към съобщение";
+"replace_draft" = "Замяна на чернова";
+"title_share_location" = "Местоположението да се споделя с всички членове на групата";
+"device_talk" = "Съобщения в устройството";
+"device_talk_subtitle" = "Локално генерирани съобщения";
+"device_talk_explain" = "Съобщенията в този чат се генерират на Вашето устройство, за да информират относно актуализации на приложението и проблеми по време на ползване.";
+"device_talk_welcome_message2" = "Свържете се!\n\n🙌 Натиснете \"QR код\" в главния екран и на двете устройства. Изберете \"Сканиране на QR код\" на едно от устройствата и го насочете към другото\n\n🌍 Ако двете устройства не се намират в една и съща стая, сканирайте посредством видео обаждане или споделете връзка с покана от \"Сканиране на QR код\"\n\nСлед това: Насладете се на изживяването да обменяте съобщения през най-голямата децентрализирана мрежа, която някога е съществувала: електронната поща. And in contrast to other popular apps, without central control or tracking or selling you, friends, colleagues or family out to large organizations.";
+"edit_contact" = "Редактиране на контакт";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin_chat" = "Забождане на чата";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin_chat" = "Премахване на чата от забодените";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin" = "Забождане";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin" = "Премахване от забодените";
+"ConversationFragment_quoted_message_not_found" = "Оригиналното съобщение не е открито";
+"reply_privately" = "Личен отговор";
+"source_code" = "Изходен код";
+// Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
+"add_to_home_screen" = "Добавяне към началния екран";
+"donate" = "Дарение";
+"mute_for_one_hour" = "Спиране на звука за 1 час";
+"mute_for_eight_hours" = "Спиране на звука за 8 часа";
+"mute_for_one_day" = "Спиране на звука за 1 ден";
+"mute_for_seven_days" = "Спиране на звука за 7 дни";
+"mute_forever" = "Спиране на звука за постоянно";
+"share_location_for_5_minutes" = "За 5 минути";
+"share_location_for_30_minutes" = "За 30 минути";
+"share_location_for_one_hour" = "За 1 час";
+"share_location_for_two_hours" = "За 2 часа";
+"share_location_for_six_hours" = "За 6 часа";
+"file_saved_to" = "Файлът е записан в \"%1$@\"";
+"ask_forward" = "Да бъдат ли препратени съобщенията на %1$@?";
+"ask_forward_multiple" = "Да бъдат ли препратени съобщенията към %1$d чата?";
+"ask_export_attachment" = "Експортирането на прикачените файлове ще даде възможност други приложения на Вашето устройство да имат достъп до тях.\n\nИскате ли да продължите?";
+"ask_block_contact" = "Да бъде ли блокиран този контакт? Повече няма да получавате съобщения от него.";
+"ask_unblock_contact" = "Да бъде ли отблокиран този контакт? Ще можете отново да получавате съобщения от него.";
+"ask_delete_contacts" = "Да бъдат ли изтрити контактите?\n\nКонтактите с текущо провеждани чатове и контактите от системната адресна книга не могат да бъдат изтрити за постоянно.";
+"ask_delete_contact" = "Да бъде ли изтрит контактът %1$@? Контактите с текущо провеждани чатове и контактите от системната адресна книга не могат да бъдат изтрити за постоянно.";
+"ask_start_chat_with" = "Чат с %1$@?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_members" = "Премахване на %1$@ от групата?";
+"open_url_confirmation" = "Искате ли да отворите тази връзка?";
+// contact list
+"contacts_title" = "Контакти";
+"contacts_type_email_above" = "Въведете адрес за електронна поща по-горе";
+// chatlist and chat view
+"chat_archived_chats_title" = "Архивирани чатове";
+"chat_please_enter_message" = "Моля, въведете съобщение";
+"chat_camera_unavailable" = "Камерата не е налична.";
+"chat_unable_to_record_audio" = "Не е възможно да се записва аудио.";
+// The placeholder will be replaced by the name of the recipient in a one-to-one chat.
+"chat_new_one_to_one_hint" = "Изпращане на съобщение до %1$@.";
+"chat_new_group_hint" = "Другите ще виждат тази група едва след като изпратите първо съобщение.";
+"chat_record_slide_to_cancel" = "Приплъзнете, за да откажете";
+"chat_record_explain" = "Докоснете и задръжте, за да запишете гласово съобщение, отпуснете, за да го изпратите";
+"chat_no_chats_yet_title" = "Празна входяща кутия.\nНатиснете \"+\", за да започнете нов чат";
+"chat_all_archived" = "Всички чатове са архивирани.\nНатиснете \"+\", за да започнете нов чат";
+"chat_share_with_title" = "Споделяне с";
+"chat_input_placeholder" = "Съобщение";
+"chat_archived_label" = "Архивирано";
+"chat_request_label" = "Заявка";
+"chat_no_messages" = "Няма съобщения.";
+"chat_self_talk_subtitle" = "Съобщения към себе си";
+"archive_empty_hint" = "Архивираните чатове ще се показват тук.";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "Записване";
+"saved_messages" = "Запазени съобщения";
+"saved_messages_explain" = "• Препращайте съобщения тук за лесен достъп\n\n• Взимайте си текстови или гласови бележки\n\n• Прикрепяйте медийни файлове, за да ги запазите";
+// Should match "Saved" from "Saved messages"
+"saved" = "Запазено";
+"save_as" = "Запазване като";
+"retry_send" = "Нов опит за изпращане на съобщението";
+"cannot_display_unsuported_file_type" = "Файл от тип %1$@ не може да бъде показан";
+"attachment_failed_to_load" = "Неуспешно зареждане на прикрепен файл";
+// For recording Voice messages: Description for the "Lock" button allowing to lift the thumb from the record button while recording continues
+"lock_recording" = "Заключване на записа";
+// mailing lists
+"mailing_list" = "Пощенски списък";
+// webxdc
+// "Start..." button for an app
+"start_app" = "Старт…";
+// this is a warning that is shown when one tries to send something to a chat that is not yet accepted.
+"accept_request_first" = "Моля, първо приемете заявката за чат.";
+// title shown above a list of chats where one should be selected (eg. when sharing files from a webxdc). the placeholder will be replaced by a file name
+"send_file_to" = "Изпращане на \"%1$@\" до";
+// title shown above a list contacts where one should be selected (eg. when a webxdc attempts to send a message to a chat)
+"send_message_to" = "Изпращане на съобщение до…";
+// punycode warning / labeled links
+"puny_code_warning_header" = "Открита е подозрителна връзка";
+// placeholder contains the hostname converted to ascii
+"puny_code_warning_question" = "Сигурни ли сте, че искате да посетите %1$@?";
+// this message is shown whenever a link with non-latin characters is clicked. first placeholder is original hostname with special chars, second placeholder is hostname encoded in ascii
+"puny_code_warning_description" = "Има вероятност тази връзка лъжливо да представя някои знаци чрез подобно изглеждащи такива от различни от текущата азбуки. Следването на връзката с етикет %1$@ ще доведе до %2$@, което е обичайно за знаци, които не са от Latin набора. Ако не сте очаквали такива знаци, тази връзка може да причини вреда";
+// search
+"search" = "Търсене";
+"search_in_chat" = "Търсене в чата";
+"search_files" = "Търсене на файлове";
+"search_explain" = "Търсене на чатове, контакти и съобщения";
+"search_no_result_for_x" = "Не са открити резултати за \"%1$@\"";
+// create/edit groups, contact/group profile
+"group_name" = "Име на групата";
+"group_avatar" = "Изображение на групата";
+"remove_group_image" = "Премахване на изображението на групата";
+"change_group_image" = "Промяна на изображението на групата";
+"group_create_button" = "Създаване на група";
+// deprecated, use please_enter_chat_name
+"group_please_enter_group_name" = "Моля, въведете име на групата";
+"group_add_members" = "Добавяне на членове";
+"group_self_not_in_group" = "Трябва да сте член на групата, за да изпълните това действие.";
+"profile_encryption" = "Криптиране";
+"profile_shared_chats" = "Споделени чатове";
+"tab_contact" = "Контакт";
+"tab_group" = "Група";
+"tab_gallery" = "Галерия";
+"tab_docs" = "Документи";
+"tab_links" = "Връзки";
+"tab_map" = "Карта";
+"tab_gallery_empty_hint" = "Изображенията и видеоклиповете, споделени в този чат, ще се показват тук.";
+"tab_docs_empty_hint" = "Документите и другите файлове, споделени в този чат, ще се показват тук.";
+"tab_image_empty_hint" = "Изображенията, споделени в този чат, ще се появяват тук.";
+"tab_video_empty_hint" = "Видеоклиповете, споделени в този чат, ще се появяват тук.";
+"tab_audio_empty_hint" = "Аудио файловете и гласовите съобщения, споделени в този чат, ще се появяват тук.";
+"tab_webxdc_empty_hint" = "Приложенията, споделени в този чат, ще се появяват тук.";
+"tab_all_media_empty_hint" = "Медийните файлове, споделени в кой да е чат, ще се появяват тук.";
+"all_apps_empty_hint" = "Приложенията, получени или изпратени в кой да е чат, ще се появяват тук.";
+"media_preview" = "Предварителен преглед на медия файл";
+// option to show images in the gallery with the correct width/height aspect (instead of square); other gallery apps may be a source of inspiration for translation :)
+"aspect_ratio_grid" = "Мрежа, запазваща съотношенията";
+// option to show images in the gallery as square (instead of using correct width/height)
+"square_grid" = "Мрежа от квадрати";
+"send_message" = "Изпращане на съобщение";
+// Multi Device
+// "Second Device" can also be translated as "Another Device", if that is catchier in the destination language. However, make sure to use the term consistently.
+"multidevice_title" = "Добавяне на допълнително устройство";
+"multidevice_same_network_hint" = "Уверете се, че и двете устройства са свързани към една и съща Wi-Fi или друга мрежа";
+"multidevice_this_creates_a_qr_code" = "Ще бъде създаден QR код, чрез сканиране на който другото устройство може да копира акаунта.";
+"multidevice_install_dc_on_other_device" = "Инсталирайте Delta Chat на другото Ви устройство (https://get.delta.chat)";
+// "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
+"multidevice_tap_scan_on_other_device" = "Стартирайте Delta Chat, докоснете \"Добавяне като допълнително устройство\" и сканирайте кода, показан тук";
+// Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
+"multidevice_qr_subtitle" = "Сканирайте, за да установите допълнително устройство за %1$@";
+"multidevice_receiver_title" = "Добавяне като допълнително устройство";
+"multidevice_open_settings_on_other_device" = "На първото устройство, отидете на \"Настройки / Добавяне на допълнително устройство\" и сканирайте кода, показан тук";
+"multidevice_receiver_scanning_ask" = "Да бъде ли копиран акаунтът от другото устройство в настоящото?";
+"multidevice_abort" = "Да бъде ли прекъснато добавянето на второ устройство?";
+"multidevice_abort_will_invalidate_copied_qr" = "QR кодът, копиран в клипборда, ще стане невалиден.";
+"multidevice_transfer_done_devicemsg" = "ℹ️ Акаунтът е прехвърлен на второто Ви устройство.";
+// Shown beside progress bar, stay short
+"preparing_account" = "Акаунтът се подготвя...";
+// Shown beside progress bar, stay short
+"transferring" = "Прехвърляне...";
+"troubleshooting" = "Отстраняване на проблеми";
+// Connectivity
+// Headline for the "Inbox" eg. in the "Connectivity" view
+"incoming_messages" = "Входящи съобщения";
+// Headline for the "Outbox" eg. in the "Connectivity" view
+"outgoing_messages" = "Изходящи съобщения";
+"connectivity" = "Свързаност";
+// Shown in the title bar if the app is "Not connected"; prefer short strings.
+"connectivity_not_connected" = "Не сте свързани";
+// Shown in the title bar if the app is "Connecting"; prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_connecting" = "Свързване…";
+// Shown in the title bar if the app is "Updating" (eg. getting new/old message, sync things); prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_updating" = "Актуализиране…";
+// Shown in the setting if the app is "Connected"
+"connectivity_connected" = "Свързани сте";
+"sending" = "Изпращане…";
+"last_msg_sent_successfully" = "Последното съобщение беше изпратено успешно.";
+"not_supported_by_provider" = "Не се поддържа от Вашия доставчик.";
+// Subtitle in quota context of "Connectivity" view. Should be be plural always, no number is prefixed.
+"messages" = "Съобщения";
+// Used for describing resource usage, resulting string will be eg. "1.2 GiB of 3 GiB used"
+"part_of_total_used" = "Използвани са %1$@ от %2$@";
+// welcome and login
+// Primary button on the welcome screen, allows to create an instant profile
+"onboarding_create_instant_account" = "Създаване на нов профил";
+// Secondary button on the welcome screen, allows to "Add as Second Device", "Restore from Backup"
+"onboarding_alternative_logins" = "Вече имам профил";
+// This is a button and a title, allowing to use existing, classic email, setting ports, passwords and so on
+"manual_account_setup_option" = "Вход в класическа електронна поща";
+// Instant onboarding title (there is not more to do than to set name and avatar)
+"instant_onboarding_title" = "Вашият профил";
+// The placeholder will be replaced by the default onboarding server
+"instant_onboarding_agree_default2" = "Политика за поверителност за %1$@";
+// The placeholder will be replaced by instance name, the whole text will link to the instance page
+"instant_onboarding_agree_instance" = "Относно профилите на %1$@";
+// Confirmation button on the instant onboarding screen
+"instant_onboarding_create" = "Съгласявам се, профилът да бъде създаден";
+// Secondary, link-like button to open a page with other possible instances
+"instant_onboarding_show_more_instances" = "Да се използва друг сървър";
+"instant_onboarding_other_server" = "Списък със сървъри за чат поща";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by the group name
+"instant_onboarding_group_info" = "Създайте профил, за да се присъедините към групата \"%1$@\".";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by contact name
+"instant_onboarding_contact_info" = "Създайте профил, за да обменяте съобщения с %1$@.";
+// Question shown when another user's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_contact" = "Искате ли да създадете нов профил и да започнете да обменяте съобщения с %1$@?";
+// Question shown when group's/channel's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_group" = "Искате ли да създадете нов профил и да се присъедините към чат групата \"%1$@\"?";
+"welcome_chat_over_email" = "Защитен децентрализиран чат";
+"scan_invitation_code" = "Сканиране на код за покана";
+"login_title" = "Влизане";
+"login_inbox" = "Входящи";
+"login_imap_login" = " Име за влизане на IMAP";
+"login_imap_server" = "IMAP сървър";
+"login_imap_port" = "IMAP порт";
+"login_imap_security" = "IMAP сигурност";
+"login_outbox" = "Изходящи";
+"login_smtp_login" = "Име за влизане на SMTP";
+"login_smtp_password" = "SMTP парола";
+"login_smtp_server" = "SMTP сървър";
+"login_smtp_port" = "SMTP порт";
+"login_smtp_security" = "Сигурност на SMTP връзката";
+"login_certificate_checks" = "Проверки на сертификатите";
+"login_error_mail" = "Моля, въведете валиден адрес за електронна поща";
+"login_error_server" = "Моля, въведете валиден адрес / IP адрес на сървър";
+"login_error_port" = "Моля, въведете валиден порт (1–65535)";
+"login_error_required_fields" = "Моля, въведете валиден адрес за електронна поща и парола";
+"import_backup_title" = "Възстановяване от резервно копие";
+"import_backup_ask" = "Открито е резервно копие в \"%1$@\".\n\n Искате ли да импортирате и използвате всички данни и настройки от него?";
+"import_backup_no_backup_found" = "Не са открити резервни копия.\n\nКопирайте резервното копие в \"%1$@\" и опитайте отново.";
+// %1$s will be replaced by the failing address
+"login_error_cannot_login" = "Не можете да влезете като \"%1$@\". Моля, проверете дали адресът за електронна поща и паролата са правилни. ";
+// TLS certificate checks
+"accept_invalid_certificates" = "Да бъдат приемани невалидните сертификати";
+"switch_account" = "Превключване към друг акаунт";
+"add_account" = "Добавяне на акаунт";
+"delete_account" = "Изтриване на акаунта";
+"delete_account_ask" = "Сигурни ли сте, че искате да изтриете данните от Вашия акаунт?";
+"delete_account_explain_with_name" = "Всички данни, свързани с акаунта \"%1$@\", на това устройство ще бъдат изтрити, включително настройката Ви за криптиране \"от край до край\", контакти, чатове, съобщения и медийни файлове. Това действие не може да бъде отменено.";
+"unconfigured_account" = "Неконфигуриран акаунт";
+"unconfigured_account_hint" = "Отворете акаунта, за да го конфигурирате.";
+"try_connect_now" = "Да се опита свързване сега";
+"sync_all" = "Синхронизиране на всички";
+// Translations: %1$s will be replaced by a more detailed error message
+"configuration_failed_with_error" = "Неуспешно конфигуриране. Грешка: %1$@";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "Препращане на…";
+"ask_send_files_to_selected_chats" = "Да бъдат ли изпратени %1$d файл(а) към %2$d чата?";
+"share_text_multiple_chats" = "Да бъде ли изпратен този текст към %1$d чата?\n\n\"%2$@\"";
+"share_abort" = "Споделянето е прекъснато поради липсващи позволения.";
+// preferences
+"pref_profile_info_headline" = "Информация от Вашия профил";
+"pref_profile_photo" = "Изображение на профила";
+"pref_blocked_contacts" = "Блокирани контакти";
+"blocked_empty_hint" = "Блокираните контакти ще се появяват тук.";
+"pref_who_can_see_profile_explain" = "Изображението, името и подписът от Вашия профил ще бъдат изпратени заедно с Вашите съобщения, когато общувате с други потребители.";
+"pref_your_name" = "Вашето име";
+// Label of the Bio/Signature/Status/Motto field
+"pref_default_status_label" = "Текст на подписа";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "Клавишът Enter изпраща";
+"pref_enter_sends_explain" = "Натискането на клавиша Enter ще изпраща текстовите съобщения";
+"pref_outgoing_media_quality" = "Качество на изходящата медия";
+"pref_outgoing_balanced" = "Балансирано";
+"pref_outgoing_worse" = "По-ниско качество, малък размер";
+"pref_vibrate" = "Вибриране";
+"pref_screen_security" = "Сигурност на екрана";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "Да се изиска да бъдат блокирани екранните снимки в списъка със скорошни приложения и вътре в приложението";
+"pref_screen_security_please_restart_hint" = "За да приложите настройката за сигурност на екрана, моля рестартирайте приложението.";
+"pref_notifications" = "Уведомления";
+"pref_notifications_show" = "Показване";
+"pref_notifications_priority" = "Приоритет";
+"pref_notifications_explain" = "Да бъдат разрешени системните уведомления за нови съобщения";
+"pref_show_notification_content" = "Да се показва в уведомлението съдържанието на съобщението";
+"pref_show_notification_content_explain" = "Да се показва в уведомлението подателят и първите думи на съобщението";
+"pref_led_color" = "Цвят на LED светлината";
+"pref_sound" = "Звук";
+"pref_silent" = "Без звук";
+"pref_privacy" = "Поверителност";
+"pref_system_default" = "Подразбиращото се за системата";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "Светъл";
+"pref_dark_theme" = "Тъмен";
+"pref_appearance" = "Външен вид";
+"pref_theme" = "Тема";
+"pref_language" = "Език";
+"pref_incognito_keyboard" = "Клавиатура \"инкогнито\"";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "Да се изиска от клавиатурата да преустанови персонализираното запомняне";
+"pref_read_receipts" = "Известия за прочетена поща";
+"pref_read_receipts_explain" = "Ако известията за прочетена поща са забранени, няма да може да виждате известията, идващи от други потребители.";
+"pref_server" = "Сървър";
+"pref_encryption" = "Криптиране";
+"pref_manage_keys" = "Управление на ключове";
+"pref_chats" = "Чатове";
+"pref_in_chat_sounds" = "Звуци в чата";
+"pref_view_log" = "Разглеждане на дневника";
+"pref_saved_log" = "Дневникът е записан в папката \"Свалени\"";
+"pref_save_log_failed" = "Неуспешен запис на дневника";
+"pref_log_header" = "Дневник";
+"pref_other" = "Други";
+"pref_backup" = "Резервно копие";
+"pref_backup_explain" = "Резервните копия на чатовете да се създават във външно място за съхранение";
+"pref_backup_export_explain" = "Резервното копие помага да установите нова инсталация на това или друго устройство.\n\nТо ще съдържа всички съобщения, контакти и чатове и Вашата настройка \"от край до край\" на Autocrypt. Пазете файла на резервното копие на сигурно място или го изтрийте колкото е възможно по-скоро.";
+// the placeholder will be replaced by the number of profiles to export; the number is always larger than 1
+"pref_backup_export_all" = "Експортиране на всички %1$d профила";
+"pref_backup_export_start_button" = "Започване на създаването на резервно копие";
+"pref_backup_written_to_x" = "Резервното копие е успешно записано в \"%1$@\".";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "Фон";
+"pref_background_btn_default" = "Да се използва подразбиращото се изображение";
+"pref_background_btn_gallery" = "Избор от галерията";
+"pref_imap_folder_warn_disable_defaults" = "Ако промение тази опция, се уверете, че Вашият сървър и другите Ви клиенти са конфигурирани по съответен начин.\n\nВ противен случай е възможно нещата въобще да не работят.";
+"pref_auto_folder_moves" = "Автоматично преместване в папката DeltaChat";
+"pref_only_fetch_mvbox_title" = "Да се извлича само от папката DeltaChat";
+"pref_show_emails" = "Да се показват класически e-mail съобщения";
+"pref_show_emails_no" = "Не, само чатове";
+"pref_show_emails_accepted_contacts" = "За приетите контакти";
+"pref_show_emails_all" = "Всички";
+"pref_experimental_features" = "Експериментални възможности";
+"pref_on_demand_location_streaming" = "Поточно излъчване на местоположението при поискване";
+"pref_background_default" = "Подразбиращо се изображение";
+"pref_background_default_color" = "Подразбиращ се цвят";
+"pref_background_custom_image" = "Зададено от Вас изображение";
+"pref_background_custom_color" = "Зададен от Вас цвят";
+"export_aborted" = "Експортът е прекъснат.";
+"auto_download_messages" = "Съобщенията да се свалят автоматично";
+// %1$s will be replaced by a human-readable number of bytes, eg. 32 KiB, 1 MiB
+"up_to_x" = "До %1$@";
+"up_to_x_most_worse_quality_images" = "До %1$@, повечето от които изображения с по-лошо качество";
+"up_to_x_most_balanced_quality_images" = "До %1$@, повечето от които изображения с балансирано качество";
+"download_failed" = "Неуспешно сваляне";
+"profile_image_select" = "Избор на изображение за профила";
+"select_your_new_profile_image" = "Изберете новото изображение за профила си";
+"profile_image_delete" = "Изтриване на изображението на профила";
+"pref_show_tray_icon" = "Показване на иконата в System Tray";
+"pref_edit_profile" = "Редактиране на профил";
+"send_stats_to_devs" = "Да се изпраща статистика към разработчиците на Delta Chat";
+// Emoji picker and categories
+"emoji_search_results" = "Резултати от търсенето";
+"emoji_not_found" = "Не е открито Emoji";
+"emoji_recent" = "Наскоро използвани";
+"emoji_people" = "Хора & eзик на тялото";
+"emoji_nature" = "Животни & природа";
+"emoji_foods" = "Храна & напитки";
+"emoji_activity" = "Дейност";
+"emoji_places" = "Пътуване & места";
+"emoji_objects" = "Обекти";
+"emoji_symbols" = "Символи";
+"emoji_flags" = "Знамена";
+// Reactions
+"reactions" = "Реакции";
+// Verb, the action of adding a "Reaction" to a message. Used eg. in context menus, similar to "Reply" or "Forward"
+"react" = "Реакция";
+// %1$s will be replaced by an emoji. %2$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %2$s will often not being visible). Eg. 'You reacted 👍 to "Found my suitcase"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer and work as well.
+"reaction_by_you" = "Реагирахте с %1$@ на \"%2$@\".";
+// %1$s will be replaced a name. %2$s will be replaced by an emoji. %3$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %3$s will often not being visible). Eg. 'Alice reacted 👍 to "Nice photos"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer work as well.
+"reaction_by_other" = "%1$@ реагира с %2$@ на \"%3$@\".";
+// automatically delete message
+"delete_old_messages" = "Изтриване на старите съобщения";
+"autodel_device_title" = "Изтриване на съобщенията от устройството";
+"autodel_server_title" = "Изтриване на съобщенията от сървъра";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_device_ask" = "Искате ли да изтриете %1$d съобщения сега, както и всички съобщения \"%2$@\", които ще бъдат изтегляни в бъдеще?\n\n• Това включва всички медийни файлове\n\n• Съобщенията ще бъдат изтрити, независимо от това дали са видени или не\n\n• Съобщенията от \"Запазени съобщения\" няма да бъдат изтривани локално";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_server_ask" = "Искате ли да изтриете %1$d съобщения сега и всички съобщения \"%2$@\", които ще бъдат изтегляни в бъдеще?\n\n⚠️ Това включва електронна поща, медийни файлове и съобщенията от \"Записани съобщения\" във всички папки на сървъра\n\n⚠️ Не ползвайте тази функция, ако искате да запазите данните на сървъра\n\n⚠️ Не ползвайте тази функция, ако работите с други клиенти за електронна поща освен Delta Chat";
+// shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
+"autodel_server_enabled_hint" = "Това включва електронна поща, медийни файлове и \"Запазени съобщения\" във всички папки на сървъра. Не ползвайте тази функция, ако искате да запазите данните на сървъра или ако работите с други клиенти за електронна поща освен Delta Chat.";
+"autodel_confirm" = "Разбирам. Всички тези съобщения да бъдат изтрити";
+// "At once" in the meaning of "Immediately", without any intervening time.
+"autodel_at_once" = "Наведнъж";
+"after_5_minutes" = "След 5 минути";
+"autodel_after_1_hour" = "След 1 час";
+"autodel_after_1_day" = "След 1 ден";
+"autodel_after_1_week" = "След 1 седмица";
+"after_5_weeks" = "След 5 седмици";
+"autodel_after_1_year" = "След 1 година";
+// system messages
+"systemmsg_subject_for_new_contact" = "Съобщение от %1$@";
+"systemmsg_failed_sending_to" = "Неуспешно изпращане на съобщение до %1$@.";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name
+"group_name_changed_by_you" = "Променихте името на групата от \"%1$@\" на \"%2$@\".";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name, %3$s will be replaced by name and address of the contact who did the action.
+"group_name_changed_by_other" = "Името на групата е променено от \"%1$@\" на \"%2$@\" от %3$@.";
+"group_image_changed_by_you" = "Променихте изображението на групата.";
+// %1$s will be replaced by name of the contact who did the action
+"group_image_changed_by_other" = "Изображението на групата е променено от %1$@";
+// %1$s will be replaced by name of the contact added to the group
+"member_x_added" = "Добавен е членът %1$@.";
+// %1$s will be replaced by name of the contact added to the group
+"add_member_by_you" = "Добавихте члена %1$@";
+// %1$s will be replaced by name of the contact added to the group, %2$s will be replaced by name of the contact who did the action
+"add_member_by_other" = "Членът %1$@ е добавен от %2$@";
+// %1$s will be replaced by name of the contact removed from the group
+"remove_member_by_you" = "Премахнахте члена %1$@";
+// %1$s will be replaced by name of the contact removed from the group, %2$s will be replaced by name of the contact who did the action
+"remove_member_by_other" = "Членът %1$@ е премахнат от %2$@";
+// "left" in the meaning of "exited"; %1$s will be replaced by name of the contact leaving the group
+"group_left_by_other" = "Групата е напусната от %1$@.";
+"group_image_deleted_by_you" = "Изтрихте изображението на групата.";
+// %1$s will be replaced by name of the contact
+"group_image_deleted_by_other" = "Изображението на групата е изтрито от %1$@";
+"location_enabled_by_you" = "Разрешихте поточното излъчване на местоположението.";
+// %1$s will be replaced by name of the contact
+"location_enabled_by_other" = "Поточното излъчване на местоположението е разрешено от %1$@.";
+"ephemeral_timer_disabled_by_you" = "Таймерът на изчезващите съобщения е деактивиран от мен";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_disabled_by_other" = "Таймерът на изчезващите съобщения е деактивиран от %1$@";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to
+"ephemeral_timer_seconds_by_you" = "Установихте таймера на изчезващите съобщения на %1$@";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_seconds_by_other" = "Таймерът на изчезващите съобщение е установен на %1$@сек. от %2$@.";
+"ephemeral_timer_1_hour_by_you" = "Установихте таймера на изчезващите съобщения на 1 час.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_hour_by_other" = "Таймерът на изчезващите съобщения е установен на 1 час от %1$@.";
+"ephemeral_timer_1_day_by_you" = "Установихте таймера на изчезващите съобщения на 1 ден.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_day_by_other" = "Таймерът на изчезващите съобщения е установен на 1 ден от %1$@.";
+"ephemeral_timer_1_week_by_you" = "Установихте таймера на изчезващите съобщения на 1 седмица.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_week_by_other" = "Таймерът на изчезващите съобщения е установен на 1 седмица от %1$@.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to
+"ephemeral_timer_minutes_by_you" = "Установихте таймера на изчезващите съобщения на %1$@ минути.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_minutes_by_other" = "Таймерът на изчезващите съобщения е установен на %1$@ минути от %2$@.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to
+"ephemeral_timer_hours_by_you" = "Установихте таймера на изчезващите съобщения на %1$@ часа.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_hours_by_other" = "Таймерът на изчезващите съобщения е установен на %1$@ часа от %2$@.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to
+"ephemeral_timer_days_by_you" = "Установихте таймера на изчезващите съобщения на %1$@ дни.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_days_by_other" = "Таймерът на изчезващите съобщения е установен на %1$@ дни от %2$@.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to
+"ephemeral_timer_weeks_by_you" = "Установихте таймера на изчезващите съобщения на %1$@ седмици.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_weeks_by_other" = "Таймерът на изчезващите съобщения е установен на %1$@ седмици от %2$@.";
+"chat_protection_enabled_tap_to_learn_more" = "От тук нататък е гарантирано, че съобщенията ще бъдат криптирани от край до край. Докоснете, за да научите повече.";
+"chat_protection_enabled_explanation" = "От тук нататък е гарантирано, че всички съобщения в този чат са криптирани от край до край.\n\nКриптирането от край до край запазва поверителността на съобщенията между вас и вашите партньори в чата. Дори Вашият e-mail доставчик не може да ги прочете.";
+"invalid_unencrypted_tap_to_learn_more" = "⚠️%1$@ изисква криптиране от край до край, което все още не е установено за този чат. Докоснете, за да научите повече.";
+"invalid_unencrypted_explanation" = "За да установите криптиране от край до край, бихте могли да се срещате с лицата, с които желаете да контактувате, лично и да сканирате техните QR кодове, за да ги въведете.";
+"learn_more" = "Научете повече";
+"devicemsg_self_deleted" = "Изтрихте чата \"Запазени съобщения\".\n\nℹ️ За да използвате възможността \"Запазени съобщения\" отново, създайте нов чат със себе си.";
+// %1$s will be replaced by the amount of storage already used, sth. as '500 MB'. If you want to use a percentage sign, type in two of them, eg. %1$s %%
+"devicemsg_storage_exceeding" = "⚠️ Мястото за съхранение, предоставено от Вашия доставчик, скоро ще бъде изчерпано:%1$@%% вече са използвани.\n\nМоже да нямате възможност да получавате съобщения, ако мястото за съхранение е заето напълно.\n\n👉 Моля, проверете дали не бихте могли да изтриете стари данни през уеб интерфейса на доставчика и обмислете дали да не включите \"Настройки / Изтриване на старите съобщения\". Можете по всяко време да проверите текущо използваното място за съхранение в \"Настройки / Свързаност\".";
+// %1%s will be replaced by date and time in some human-readable format
+"devicemsg_bad_time" = "⚠️ Изглежда датата и часът на Вашето устройство са неточни (%1$@).\n\nНастройте часовника ⏰🔧, за да имате сигурност, че Вашите съобщения се получават правилно.";
+"devicemsg_update_reminder" = "⚠️ Възможно е версията на Вашия Delta Chat да е неактуална.\n\nТова може да създаде проблеми, тъй като Вашите чат партньори използват по-нови версии; освен това Ви липсват най-новите възможности.😳\nМоля, проверете за актуализации на https://get.delta.chat или в ползвания от Вас магазин за приложения.";
+// Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
+"enter_system_secret_to_continue" = "Отключете, за да продължите";
+// qr code stuff
+"qr_code" = "QR код";
+"load_qr_code_as_image" = "Зареждане на QR код като изображение";
+"qrscan_title" = "Сканиране на QR код";
+"qrscan_hint" = "Задръжте камерата си върху QR кода";
+"qrscan_hint_desktop" = "Преместване на QR кода в камерата";
+"qrscan_failed" = "Неуспешно декодиране на QR код";
+"qrscan_ask_join_group" = "Искате ли да се присъедините към групата \"%1$@\"?";
+"qrscan_fingerprint_mismatch" = "Сканираният цифров отпечатък не съответства на последния известен за%1$@.";
+"qrscan_no_addr_found" = "Този QR код съдържа цифров отпечатък, но не и e-mail адрес.\n\nЗа верификация през външен канал, моля най-напред установете криптирана връзка към получателя.";
+"qrscan_contains_text" = "Текст на сканирания QR код:\n\n%1$@";
+"qrscan_contains_url" = "URL адрес на сканирания QR код:\n\n%1$@";
+"qrscan_fingerprint_label" = "Цифров отпечатък";
+"withdraw_verifycontact_explain" = "Чрез сканиране на този QR код други хора могат да се свързват с Вас.\n\nМожете да деактивирате QR кода тук и повторно да го активирате, като го сканирате отново.";
+"withdraw_verifygroup_explain" = "Чрез сканиране на този QR код други хора могат да се присъединяват към крупата \"%1$@\".\n\nМожете да деактивирате QR кода тук и повторно да го активирате, като го сканирате отново.";
+"withdraw_qr_code" = "Деактивиране на QR кода";
+"revive_verifycontact_explain" = "Чрез сканиране на този QR код други хора могат да се свързват с Вас.\n\nQR кодът не е активен на това устройство.";
+"revive_qr_code" = "Активиране на QR кода";
+"qrshow_title" = "QR код за покана";
+"qrshow_x_joining" = "%1$@ се присъединява.";
+"qrshow_x_verified" = "%1$@ е проверен.";
+"qrshow_x_has_joined_group" = "%1$@ се присъедини към групата.";
+"qrshow_join_group_title" = "QR код за покана";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the group name, eg. "Scan to join group \"Testing group\""
+"qrshow_join_group_hint" = "Сканирайте, за да се присъедините към групата \"%1$@\"";
+"qrshow_join_contact_title" = "QR код за покана";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to chat with Alice"
+"qrshow_join_contact_hint" = "Сканирайте, за да чатите с %1$@";
+"qrshow_join_contact_no_connection_toast" = "Няма връзка към Интернет, не може да бъде извършена настройка чрез QR код.";
+"qraccount_ask_create_and_login" = "Да бъде ли създаден нов адрес за електронна поща на \"%1$@\" и да бъде ли осъществено влизане там?";
+"set_name_and_avatar_explain" = "Задайте име, което Вашите контакти ще разпознават. Можете също да установите изображение за профил.";
+"please_enter_name" = "Моля, въведете име.";
+"qraccount_qr_code_cannot_be_used" = "Не може да бъде създаден нов акаунт със сканирания QR код.";
+// the placeholder will be replaced by the address of the profile
+"qrlogin_ask_login" = "Желаете ли да влезете в \"%1$@\"?";
+// first placeholder will be replaced by name of the inviter, second placeholder will be replaced by the name of the inviter.
+"secure_join_started" = "%1$@ Ви покани да се присъедините към тази група.\n\nИзчаква се устройството на %2$@ да отговори…";
+// placeholder will be replaced by the name of the inviter.
+"secure_join_replies" = "%1$@ отговори, изчаква се да бъдете добавени към групата…";
+"secure_join_wait" = "Установява се гарантирано криптиране от край до край, моля изчакайте…";
+"contact_verified" = "%1$@ е проверен.";
+// Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact.
+"verified_by" = "Проверен от%1$@";
+"verified_by_you" = "Представен от мен";
+"mailto_dialog_header_select_chat" = "Изберете чат, към който да бъде пратено съобщението";
+// first placeholder is the name of the chat
+"confirm_replace_draft" = "%1$@ вече има съобщение чернова, искате ли да го замените?";
+"mailto_link_could_not_be_decoded" = "Неуспешно декодиране на mailto връзка: %1$@";
+// notifications
+"notify_reply_button" = "Отговор";
+"notify_new_message" = "Ново съобщение";
+"notify_background_connection_enabled" = "Връзката във фонов режим е разрешена";
+"notify_priority_high" = "Висок";
+"notify_priority_max" = "Най-висок";
+"notify_name_and_message" = "Име и съобщение";
+"notify_name_only" = "Само име";
+"notify_no_name_or_message" = "Без име или съобщение";
+"notifications_disabled" = "Показването на уведомления е забранено";
+"new_messages" = "Нови съобщения";
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+"new_messages_body" = "Имате нови съобщения";
+"n_messages_in_m_chats" = "%1$d съобщения в %2$d чата";
+// permissions
+"perm_required_title" = "Изисква се позволение";
+"perm_continue" = "Продължаване";
+"perm_explain_access_to_camera_denied" = "За да правите снимки или заснемате видеоклипове, отидете в настройките на приложението, изберете \"Позволения\" и разрешете \"Камера\".";
+// give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
+"perm_explain_access_to_mic_denied" = "За да изпращате аудиосъобщения, отидете в настройките на приложението, изберете \"Позволения\" и разрешете \"Микрофон\".";
+"perm_explain_access_to_storage_denied" = "За да получавате или изпращате файлове, отидете в настройките на приложението, изберете \"Позволения\" и разрешете \"Съхранение\".";
+"perm_explain_access_to_location_denied" = "За да прикрепите информация за местоположението, отидете в настройките на приложението, изберете \"Позволения\" и разрешете \"Местоположение\".";
+"perm_explain_access_to_notifications_denied" = "За да получавате уведомления, отидете в \"Системни настройки / Приложения / Delta Chat\" и разрешете \"Уведомления\"";
+// ImageEditorHud
+"ImageEditorHud_draw_anywhere_to_blur" = "Рисувайте на произволно място, за да замъглите";
+"ImageEditorHud_add_text" = "Добавяне на текст";
+"ImageEditorHud_blur" = "Замъгляване";
+"ImageEditorHud_brush_marker" = "Четка маркер";
+"ImageEditorHud_brush_highlight" = "Четка за подчертаване";
+"ImageEditorHud_crop" = "Изрязване";
+"ImageEditorHud_flip" = "Обръщане";
+"ImageEditorHud_rotate" = "Завъртане";
+"welcome_desktop" = "Добре дошли в Delta Chat";
+"global_menu_preferences_language_desktop" = "Език";
+"global_menu_file_desktop" = "Файл";
+"global_menu_file_quit_desktop" = "Напускане";
+"global_menu_edit_desktop" = "Редакция";
+"global_menu_edit_undo_desktop" = "Отмяна на последното действие";
+"global_menu_edit_redo_desktop" = "Повтаряне на последното действие";
+"global_menu_edit_cut_desktop" = "Изрязване";
+"global_menu_edit_copy_desktop" = "Копиране";
+"global_menu_edit_paste_desktop" = "Поставяне";
+"global_menu_view_desktop" = "Разглеждане";
+"global_menu_view_floatontop_desktop" = "Изобразяване върху всички останали";
+"global_menu_view_developer_desktop" = "Разработчик";
+"global_menu_view_developer_tools_desktop" = "Инструменти за разработчици";
+"global_menu_help_desktop" = "Помощ";
+"global_menu_help_report_desktop" = "Съобщаване за проблем";
+"global_menu_help_about_desktop" = "Относно Delta Chat";
+"global_menu_file_open_desktop" = "Отваряне на Delta Chat";
+"global_menu_minimize_to_tray" = "Минимизиране";
+"no_chat_selected_suggestion_desktop" = "Изберете чат или създайте нов";
+"write_message_desktop" = "Писане на съобщение";
+"encryption_info_title_desktop" = "Информация за криптирането";
+"delete_message_desktop" = "Изтриване на съобщение";
+"more_info_desktop" = "Повече информация";
+"timestamp_format_m_desktop" = "MMM D";
+"remove_desktop" = "Премахване";
+"save_desktop" = "Запис";
+"name_desktop" = "Име";
+"select_group_image_desktop" = "Изберете изображение за групата";
+"export_backup_desktop" = "Експорт на резервно копие";
+"message_detail_sent_desktop" = "изпратено";
+"message_detail_received_desktop" = "получено";
+"menu.view.developer.open.log.folder" = "Отваряне на папката \"Дневник\"";
+"menu.view.developer.open.current.log.file" = "Отваряне на текущия файл на дневника";
+"explain_desktop_minimized_disabled_tray_pref" = "Показването на икона в системната лента не може да бъде забранено, тъй като Delta Chat е стартиран с опцията --minimized.";
+// deprecated, used on desktop although there is not spell checker
+"no_spellcheck_suggestions_found" = "Няма открити предложения за правопис.";
+"show_window" = "Показване на прозореца";
+// title of the "keybindings" dialog (for the keybindings names as such, where possible the normal command strings are used)
+"keybindings" = "Обвързвания на клавиши към команди";
+"switch_between_chats" = "Превключване между чатовете";
+"scroll_messages" = "Превъртане на екрана на съобщенията";
+// command to put the cursor to the search input field
+"focus_search_input" = "Поставяне на текстовия курсор в полето \"Търсене\"";
+// command to put the cursor to the message input field
+"focus_message_input" = "Поставяне на текстовия курсор в полето \"Съобщение\"";
+"force_refresh_network" = "Принудително опресняване на мрежата";
+"insert_newline" = "Вмъкване на символ за нов ред";
+// accessibility, the general idea is to use the normal strings for accessibility hints wherever possible
+"a11y_delivery_status_error" = "Статус на доставката: Грешка";
+"a11y_delivery_status_sending" = "Статус на доставката: Изпраща се";
+"a11y_delivery_status_draft" = "Статус на доставката: Чернова";
+"a11y_delivery_status_delivered" = "Статус на доставката: Доставено";
+"a11y_delivery_status_read" = "Статус на доставката: Прочетено";
+"a11y_delivery_status_invalid" = "Невалиден статус на доставката";
+"a11y_message_context_menu_btn_label" = "Действия, свързани със съобщението";
+"a11y_background_preview_label" = "Предварителен преглед на тапет";
+"a11y_disappearing_messages_activated" = "Активирани са изчезващите съобщения";
+// iOS specific strings, developers: please take care to remove strings that are no longer used!
+"stop_sharing_location" = "Споделянето на местоположението да бъде спряно";
+"a11y_voice_message_hint_ios" = "След като приключите със записа, докоснете двукратно, за да го изпратите. За да го отхвърлите, приплъзнете с два пръста.";
+"a11y_connectivity_hint" = "Докоснете двукратно, за да видите информация за връзката.";
+"login_error_no_internet_connection" = "Няма връзка към интернет, влизането е неуспешно.";
+"share_account_not_configured" = "Акаунтът не е конфигуриран.";
+"cannot_play_audio_file" = "Аудио файлът не може да бъде възпроизведен.";
+// iOS camera permission alert
+"perm_ios_explain_access_to_camera_denied" = "За да правите снимки, да записвате видеоклипове или да използвате скенера на QR кодове, отворете системните настройки и разрешете \"Камера\".";
+"open_settings" = "Отваряне на настройките";
+// iOS device contact alert
+"import_device_contacts" = "Въвеждане на контакти от устройството";
+"import_device_contacts_hint" = "За да чатите с контакти от Вашето устройство, отворете Настройки и разрешете \"Контакти\".";
+// iOS notification settings
+"disabled_in_dc" = "Забранено в Delta Chat";
+"disabled_in_system_settings" = "Забранено в системните настройки";
+"bg_app_refresh_disabled" = "\"Опресняване на приложението на заден план\" е забранено в системните настройки";
+"notifications_avg_minutes" = "Средно всеки %1$d минути";
+"notifications_avg_hours" = "Средно всеки %1$d часа";
+"last_check_at" = "Проверено на %1$@";
+// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+"pref_background_notifications_rationale" = "За да се поддържа връзката към Вашия сървър за електронна поща и да получавате съобщения във фонов режим, игнорирайте оптимизациите на батерията на следващата стъпка.\n\nDelta Chat използва малко ресурси и се грижи да не изтощава Вашата батерия.";
+// disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
+"perm_enable_bg_reminder_title" = "Докоснете тук, за да получавате съобщения, докато Delta Chat е във фонов режим.";
+"perm_enable_bg_already_done" = "Вече разрешихте Delta Chat да получава съобщения във фонов режим.\n\nАко съобщенията все още не пристигат във фонов режим, моля проверете Вашите системни настройки.";

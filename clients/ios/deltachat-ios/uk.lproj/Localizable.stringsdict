@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>call_duration_minutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Тривалістю %d хвилина</string>
+			<key>few</key>
+			<string>Тривалістю %d хвилини</string>
+			<key>many</key>
+			<string>Тривалістю %d хвилин</string>
+			<key>other</key>
+			<string>Тривалістю %d хвилин</string>
+		</dict>
+	</dict>
+	<key>n_minutes</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d хвилину</string>
+			<key>few</key>
+			<string>%d хвилини</string>
+			<key>many</key>
+			<string>%d хвилин</string>
+			<key>other</key>
+			<string>%d хвилин</string>
+		</dict>
+	</dict>
+	<key>n_hours</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d годину</string>
+			<key>few</key>
+			<string>%d години</string>
+			<key>many</key>
+			<string>%d годин</string>
+			<key>other</key>
+			<string>%d годин</string>
+		</dict>
+	</dict>
+	<key>n_chats</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d чат</string>
+			<key>few</key>
+			<string>%d чати</string>
+			<key>many</key>
+			<string>%d чатів</string>
+			<key>other</key>
+			<string>%d чатів</string>
+		</dict>
+	</dict>
+	<key>n_contacts</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d контактна особа</string>
+			<key>few</key>
+			<string>%d контактні особи</string>
+			<key>many</key>
+			<string>%d контактних осіб</string>
+			<key>other</key>
+			<string>%d контактних осіб</string>
+		</dict>
+	</dict>
+	<key>n_messages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d повідомлення</string>
+			<key>few</key>
+			<string>%d повідомлення</string>
+			<key>many</key>
+			<string>%d повідомлень</string>
+			<key>other</key>
+			<string>%d повідомлень</string>
+		</dict>
+	</dict>
+	<key>n_reactions</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d реакція</string>
+			<key>few</key>
+			<string>%d реакції</string>
+			<key>many</key>
+			<string>%d реакцій</string>
+			<key>other</key>
+			<string>%d реакцій</string>
+		</dict>
+	</dict>
+	<key>n_members</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d учасник</string>
+			<key>few</key>
+			<string>%d учасників</string>
+			<key>many</key>
+			<string>%d учасників</string>
+			<key>other</key>
+			<string>%d учасників</string>
+		</dict>
+	</dict>
+	<key>n_recipients</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d одержувач</string>
+			<key>few</key>
+			<string>%d одержувачі</string>
+			<key>many</key>
+			<string>%d одержувачів</string>
+			<key>other</key>
+			<string>%d одержувачів</string>
+		</dict>
+	</dict>
+	<key>n_selected</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d обрано</string>
+			<key>few</key>
+			<string>%d обрано</string>
+			<key>many</key>
+			<string>%d обрано</string>
+			<key>other</key>
+			<string>%d обрано</string>
+		</dict>
+	</dict>
+	<key>n_views</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d перегляд</string>
+			<key>few</key>
+			<string>%d перегляди</string>
+			<key>many</key>
+			<string>%d переглядів</string>
+			<key>other</key>
+			<string>%d переглядів</string>
+		</dict>
+	</dict>
+	<key>ask_send_following_n_files_to</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Надіслати цей файл → %s?</string>
+			<key>few</key>
+			<string>Надіслати ці %d файли → %s?</string>
+			<key>many</key>
+			<string>Надіслати ці %d файлів → %s?</string>
+			<key>other</key>
+			<string>Надіслати ці %d файлів → %s?</string>
+		</dict>
+	</dict>
+	<key>ask_delete_chat</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Видалити %d чат?</string>
+			<key>few</key>
+			<string>Видалити %d чати?</string>
+			<key>many</key>
+			<string>Видалити %d чатів?</string>
+			<key>other</key>
+			<string>Видалити %d чатів?</string>
+		</dict>
+	</dict>
+	<key>ask_delete_messages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Видалити %d повідомлення?</string>
+			<key>few</key>
+			<string>Видалити %d повідомлення?</string>
+			<key>many</key>
+			<string>Видалити %d повідомлень?</string>
+			<key>other</key>
+			<string>Видалити %d повідомлень?</string>
+		</dict>
+	</dict>
+	<key>chat_archived</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d чат заархівовано</string>
+			<key>few</key>
+			<string>%d чати заархівовано</string>
+			<key>many</key>
+			<string>%d чатів заархівовано</string>
+			<key>other</key>
+			<string>%d чатів заархівовано</string>
+		</dict>
+	</dict>
+	<key>chat_unarchived</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d чат розархівовано</string>
+			<key>few</key>
+			<string>%d чати розархівовано</string>
+			<key>many</key>
+			<string>%d чатів розархівовано</string>
+			<key>other</key>
+			<string>%d чатів розархівовано</string>
+		</dict>
+	</dict>
+	<key>chat_n_new_messages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@localized_format_key@</string>
+		<key>localized_format_key</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d нове повідомлення</string>
+			<key>few</key>
+			<string>%d нові повідомлення</string>
+			<key>many</key>
+			<string>%d нових повідомлень</string>
+			<key>other</key>
+			<string>%d нових повідомлень</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

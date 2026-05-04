@@ -1,0 +1,1095 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "Oké";
+"cancel" = "Annuleren";
+"clear_search" = "Zoekopdracht wissen";
+// a noun, used on a button, short for "show link"
+"link" = "Link";
+// "scan" in the meaning of "scan QR code"
+"scan" = "Scannen";
+"yes" = "Ja";
+"no" = "Nee";
+"select" = "Selecteren";
+"on" = "Aan";
+"off" = "Uit";
+"def" = "Standaard";
+"default_value" = "Standaard (%1$@)";
+"custom" = "Aangepast";
+"none" = "Geen";
+"automatic" = "Automatisch";
+"strict" = "Strikt";
+"open" = "Openen";
+"download" = "Downloaden";
+"downloading" = "Bezig met downloaden…";
+"open_attachment" = "Bijlage openen";
+"join" = "Deelnemen";
+"join_group" = "Deelnemen aan groep";
+"join_channel" = "Deelnemen aan kanaal";
+"rejoin" = "Opnieuw deelnemen";
+"delete" = "Verwijderen";
+"delete_for_me" = "Verwijderen voor mij";
+"delete_for_everyone" = "Verwijderen voor iedereen";
+"info" = "Informatie";
+"update" = "Bijwerken";
+"emoji" = "Emoji";
+"attachment" = "Bijlage";
+"back" = "Terug";
+"close" = "Sluiten";
+"close_window" = "Venster sluiten";
+"forward" = "Doorsturen";
+"create" = "Aanmaken";
+"reset" = "Standaardwaarden";
+"later" = "Later";
+// "Resend" means "Sending the selected message(s) again to the same chat". The string is used in a menu and should be as short as possible. Resending may be needed after failures or to repost old messages to new members.
+"resend" = "Opnieuw versturen";
+"edited" = "Bewerkt";
+"edit_message" = "Bericht bewerken";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "Archiveren";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "De-archiveren";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "Negeren";
+// Adjective "smth is muted". used to describe a muted or silenced chat, that e.g. does not make noise or cause notifications
+"muted" = "Genegeerd";
+"ephemeral_messages" = "Verdwijnende berichten";
+"ephemeral_messages_hint" = "Deze instellingen zijn van toepassing op alle deelnemers. Ze kunnen berichten kopiëren, opslaan of doorsturen middels andere e-mailapps.";
+"save" = "Opslaan";
+"chat" = "Gesprek";
+"media" = "Media";
+"apps_and_media" = "Apps en media";
+"profile" = "Profiel";
+"all_profiles" = "Alle profielen";
+"current_profile" = "Huidig profiel";
+"main_menu" = "Hoofdmenu";
+"start_chat" = "Gesprek beginnen";
+"show_full_message" = "Volledig bericht tonen…";
+// Stay short here, say ~16 characters. The source string could also be "All Read", maybe that hint can make translations easier :)
+"mark_all_as_read" = "Alles markeren als gelezen";
+// Used as an menu entry or button
+"mark_as_read" = "Markeren als gelezen";
+// Used beside an icon with very few space. Shortest text for "Mark as being read". In english, this could be "Read" (past tense of "to read"), in german, this could be "Gelesen".
+"mark_as_read_short" = "Gelezen";
+// Used as an menu entry or button
+"mark_as_unread" = "Markeren als ongelezen";
+// Used beside an icon with very few space. Shortest text for "Mark as being unread". In english, this could be "Unread" (past tense of "to unread"), in german, this could be "Ungelesen".
+"mark_as_unread_short" = "Ongelezen";
+// Placeholder text when something is loading
+"loading" = "Bezig met laden…";
+"hide" = "Verbergen";
+"activate" = "Inschakelen";
+"load_remote_content" = "Externe afbeeldingen laden";
+// Possible answers to the question are: Never, Always, Once
+"load_remote_content_ask" = "Externe afbeeldingen kunnen worden gebruikt om je gedrag te volgen.\n\nDeze instelling staat tevens toe om andere externe inhoud, zoals lettertypen, te laden. Zelfs na uitschakeling kunnen er ingesloten of gecachte afbeeldingen worden getoond.\n\nWeet je het zeker?";
+"always" = "Altijd";
+"always_load_remote_images" = "Externe afbeeldingen altijd laden";
+"once" = "Eenmalig";
+"show_warning" = "Waarschuwing tonen";
+"not_now" = "Niet nu";
+"never" = "Nooit";
+"one_moment" = "Even geduld…";
+"done" = "Klaar";
+"undo" = "Ongedaan maken";
+"offline" = "Offline";
+// For the next view or as "continue". Should be as short as possible.
+"next" = "Volgende";
+"warning" = "Waarschuwing";
+"error" = "Fout";
+"error_x" = "Fout: %1$@";
+"no_app_to_handle_data" = "Er is geen app die deze inhoud kan openen.";
+"no_browser_installed" = "Er is geen webbrowser geïnstalleerd.";
+"file_not_found" = "‘%1$@’ kan niet worden gevonden.";
+// the placeholder will be replaced by the name of a file
+"cannot_save_file" = "“%1$@” kan niet worden opgeslagen.";
+"copied_to_clipboard" = "Gekopieerd naar het klembord.";
+"contacts_headline" = "Contactpersonen";
+"email_address" = "E-mailadres";
+"bad_email_address" = "Het e-mailadres is ongeldig.";
+"password" = "Wachtwoord";
+"existing_password" = "Bestaand wachtwoord";
+"now" = "Nu";
+// Headline for destructive actions with no undo. Could also be "Caution" or "Warning".
+"danger" = "Gevarenzone";
+"today" = "Vandaag";
+"yesterday" = "Gisteren";
+"this_week" = "Deze week";
+"this_month" = "Deze maand";
+"last_week" = "Vorige week";
+"last_month" = "Vorige maand";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by date or time, resulting in "Last seen at 12:13 AM" or "Last seen Nov 12"
+"last_seen_at" = "Laatst gezien om %1$@";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by a relative point in time as "3 minutes ago" (see https://momentjs.com for more examples and languages)
+"last_seen_relative" = "Laatst gezien: %1$@";
+"last_seen_unknown" = "Laatst gezien: onbekend";
+// Call duration as shown in the call bubbles. There is some risk to mix with the sending time, so the word "Duration" may be helpful. Might also be "Duration: %d minutes", "%d-minute duration", "%d-minute length" or "%d-minute call"
+// Call duration as shown in the call bubbles in case the call is less than one minute. If the context is not clear enough, one may want to add the word "Duration".
+"call_duration_less_than_a_minute" = "Minder dan een minuut";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+// Short form for "N Items Selected"
+"selected_colon" = "Gekozen:";
+"selected" = "Gekozen";
+"self" = "Ik";
+"draft" = "Concept";
+"image" = "Afbeelding";
+// Used in summaries as "Draft: Reply", similar as "Draft: Image". Use a noun here, not a verb (not: "to reply")
+"reply_noun" = "Antwoord";
+"gif" = "GIF";
+// "Stickers" as known from other messengers; in some languages, the English "Sticker" is fine.
+"sticker" = "Sticker";
+"add_to_sticker_collection" = "Toevoegen aan stickerverzameling";
+// deprecated, use sticker_picker_empty_hint instead
+"add_stickers_instructions" = "Stickers toevoegen kan als volgt: druk op ‘Stickermap openen’, maak een onderliggende map aan voor je pakket en plaats afbeeldings- en stickerbestanden in de map.";
+// deprecated
+"open_sticker_folder" = "Stickermap openen";
+"ask_add_sticker_to_collection" = "Wil je deze sticker toevoegen aan je verzameling?";
+"ask_delete_sticker" = "Wil je deze sticker verwijderen?";
+"sticker_picker_empty_hint" = "Druk op een sticker om die hier toe te voegen.";
+"images" = "Afbeeldingen";
+// a noun, used for "Music" and other "Audio" files
+"audio" = "Audio";
+"voice_message" = "Spraakbericht";
+"forwarded" = "Doorgestuurd";
+"forwarded_message" = "Bericht doorgestuurd";
+// %1$s will be replaced by the name of the person who forwarded the message
+"forwarded_by" = "Doorgestuurd door %1$@";
+"video" = "Video";
+"documents" = "Documenten";
+"contact" = "Contactpersoon";
+"bot" = "Bot";
+"camera" = "Camera";
+// As in "start a video recording" or "take a photo"; eg. the description of the "shutter button" in cameras
+"capture" = "Vastleggen";
+"switch_camera" = "Andere camera";
+"toggle_fullscreen" = "Schermvullende weergave aan/uit";
+"location" = "Locatie";
+"locations" = "Locaties";
+"gallery" = "Galerij";
+"images_and_videos" = "Foto\'s en video\'s";
+"file" = "Bestand";
+"files" = "Bestanden";
+"files_attach_hint" = "Bestanden en foto\'s in oorspronkelijke kwaliteit versturen";
+// "Files" here means the "Files Selector App" or "Files Manager App"
+"choose_from_files" = "Kiezen uit bestanden";
+"choose_from_gallery" = "Kiezen uit galerij";
+// "App" is used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_app" = "Privé-app";
+// plural of "App"; used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_apps" = "Privé-apps";
+"webxdc_store_url" = "Appkiezer-url";
+"webxdc_store_url_explain" = "Stel in om apps te kiezen vanaf een url in plaats van de standaard appkiezer";
+"webxdc_draft_hint" = "Druk op ‘versturen’ om te delen";
+"home" = "Overzicht";
+"games" = "Games";
+"tools" = "Hulpmiddelen";
+"app_size" = "Grootte";
+// Used as a headline for a date. E.g. in the details of a mini app in the app picker
+"app_date_published" = "Publicatiedatum";
+"add_to_chat" = "Toevoegen aan gesprek";
+// short for "Browse through the App Picker/Store/Catalogue"; could also be translated as "Discover" or "Search"
+"browse" = "Ontdekken";
+"unknown" = "Onbekend";
+"green" = "Groen";
+"red" = "Rood";
+"blue" = "Blauw";
+"orange" = "Oranje";
+"cyan" = "Groenblauw";
+"purple" = "Paars";
+"magenta" = "Magenta";
+"white" = "Wit";
+"zoom" = "Zoomen";
+"extra_small" = "Extra klein";
+"small" = "Klein";
+"normal" = "Normaal";
+"large" = "Groot";
+"extra_large" = "Extra groot";
+"fast" = "Snel";
+"slow" = "Langzaam";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "Nieuw contactpersoon";
+"menu_new_classic_contact" = "Contactpersoon handmatig toevoegen";
+"new_classic_contact_explain" = "Handmatig toegevoegde contactpersonen zijn bedoeld voor traditionele e-mailcommunicatie - eind-tot-endversleuteling is daarom niet gegarandeerd.";
+"menu_new_chat" = "Nieuw gesprek";
+"menu_new_group" = "Nieuwe groep";
+// "Chat" is a verb here, "Message to" would also fit. the string might be used in the "New Chat" screen above the contact list
+"chat_with" = "Gesprek voeren met…";
+"clone_chat" = "Gesprek klonen";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channel" = "Kanaal";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channels" = "Kanalen";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"new_channel" = "Nieuw kanaal";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channel_name" = "Kanaalnaam";
+// The number of times a message is shown in channels. Use what other messengers are using here, smth. as "N-times seen" or "1 Aufruf" (german) work as well, where "1 impression" or "1 hit" may sound too formal and may be more marketing slang.
+"email" = "E-mail";
+// "New" as in "Create New Email"; shown together with "New Group" and "New Channel"
+"new_email" = "Nieuwe e-mail";
+// the "Subject" of an email, use the term common in classic email apps
+"subject" = "Onderwerp";
+"menu_send" = "Versturen";
+"menu_toggle_keyboard" = "Emojitoetsenbord tonen/verbergen";
+"menu_edit_group" = "Groep aanpassen";
+"menu_group_name_and_image" = "Groepsnaam en -foto";
+"menu_show_global_map" = "Alle locaties tonen";
+"menu_archive_chat" = "Gesprek archiveren";
+"menu_unarchive_chat" = "Gesprek de-archiveren";
+"menu_add_attachment" = "Bijlage toevoegen";
+"menu_leave_group" = "Groep verlaten";
+"menu_leave_channel" = "Kanaal verlaten";
+"menu_leave_and_delete" = "Vertalen en verwijderen voor mij";
+"menu_delete_chat" = "Gesprek verwijderen";
+// Command to delete all messages in a chat. The chat itself will not be deleted but will be empty afterwards, so make sure to be different from "Delete Chat" here. "Clear" is a verb here, "Empty Chat" would also be fine (eg. in German "Chat leeren")
+"clear_chat" = "Ale berichten wissen";
+"delete_contact" = "Contactpersoon verwijderen";
+"menu_delete_location" = "Wil je deze locatie verwijderen?";
+"menu_message_details" = "Berichtinformatie";
+"menu_copy_to_clipboard" = "Kopiëren naar klembord";
+"share_invite_link" = "Uitnodigingslink versturen";
+"share_invite_link_explain" = "Iedereen die deze link ontvangt kan je profiel bekijken en een gesprek met je starten. Deel hem daarom alleen met mensen die je vertrouwt.";
+"invite_friends" = "Vrienden uitnodigen";
+// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
+"invite_friends_text" = "Neem contact met me op via Delta Chat:\n%1$@";
+"menu_copy_selection_to_clipboard" = "Selectie kopiëren";
+"menu_copy_link_to_clipboard" = "Link kopiëren";
+"menu_copy_text_to_clipboard" = "Tekst kopiëren";
+"menu_copy_image_to_clipboard" = "Afbeelding kopiëren";
+"menu_copy_email_to_clipboard" = "E-mailadres kopiëren";
+"paste_from_clipboard" = "Plakken van klembord";
+"ask_copy_unopenable_link_to_clipboard" = "‘%1$d’ kan niet worden geopend in de webbrowser. Wil je de link naar het klembord kopiëren?";
+"menu_forward" = "Bericht doorsturen";
+"menu_reply" = "Bericht beantwoorden";
+"menu_mute" = "Meldingen uitschakelen";
+"menu_unmute" = "Meldingen inschakelen";
+"menu_export_attachment" = "Bijlage exporteren";
+"menu_export_attachments" = "Bijlagen exporteren";
+"menu_all_media" = "Alle media";
+"all_apps_and_media" = "Alle apps en media";
+// Command to jump to the original message corresponding to a gallery image or document
+"show_in_chat" = "Tonen in bijbehorend gesprek";
+"show_app_in_chat" = "App tonen in gesprek";
+"menu_share" = "Delen";
+// Verb "to block sth." usually a mailing list or a contact, not a noun
+"block" = "Blokkeren";
+"menu_block_contact" = "Contactpersoon blokkeren";
+"menu_unblock_contact" = "Contactpersoon deblokkeren";
+"accept" = "Accepteren";
+"menu_play" = "Afspelen";
+"menu_pause" = "Pauzeren";
+"menu_scroll_to_bottom" = "Ga naar het einde";
+"menu_scroll_to_top" = "Ga naar het begin";
+"menu_help" = "Hulp";
+// use the same term for "Apps" as elsewhere
+"what_is_webxdc" = "Wat is Webxdc?";
+"privacy_policy" = "Privacybeleid";
+"menu_select_all" = "Alles selecteren";
+"select_chat" = "Kies een gesprek";
+"select_more" = "Meer selecteren";
+"menu_edit_name" = "Naam wijzigen";
+// The placeholder will be replaced by the name the contact gave themself
+"edit_name_explain" = "Geef deze persoon een bijnaam, ter vervanging van “%1$@”. Laat leeg om de standaardnaam te gebruiken.";
+// The placeholder will be replaced by the name the contact gave themself
+"edit_name_placeholder" = "Bijnaam van %1$@";
+"menu_settings" = "Instellingen";
+"menu_advanced" = "Geavanceerd";
+"menu_view_profile" = "Profiel bekijken";
+"menu_zoom_in" = "Inzoomen";
+"menu_zoom_out" = "Uitzoomen";
+"menu_save_log" = "Logboek opslaan";
+"menu_more_options" = "Meer opties";
+"menu_learn_spelling" = "Spelling leren";
+"jump_to_message" = "Ga naar bericht";
+"replace_draft" = "Concept vervangen";
+"title_share_location" = "Locatie delen met alle groepsleden";
+"device_talk" = "Berichten op apparaat";
+"device_talk_subtitle" = "Lokaal gegenereerde berichten";
+"device_talk_explain" = "Berichten in dit gesprek worden geplaatst door de app zelf. Zo blijf je op de hoogte van app-updates en gebruiksproblemen.";
+"device_talk_welcome_message2" = "Kom in contact!\n\n🙌 Druk op beide apparaten op het hoofdscherm op ‘QR-code’. Kies vervolgens ‘QR-code scannen’ op het ene apparaat en houd hem boven het andere.\n\n🌍 Als jullie niet ter plaatse zijn, scan de code dan via een videogesprek of deel de code via een uitnodigingslink (‘QR-code delen’).\n\nDaarna kunnen jullie beide vertrouwen op het voeren van gesprekken via het grootste gedecentraliseerde netwerk ooit: e-mail. En in tegenstelling tot andere populaire apps, is er geen centraal beheer, word je niet gevolgd en worden de gegevens van jou, je vrienden, collega\'s en familieleden niet verkocht.";
+"edit_contact" = "Contactpersoon bewerken";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin_chat" = "Gesprek vastmaken";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin_chat" = "Gesprek losmaken";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin" = "Vastmaken";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin" = "Losmaken";
+"ConversationFragment_quoted_message_not_found" = "Het oorspronkelijke bericht is niet aangetroffen";
+"reply_privately" = "Privé beantwoorden";
+"source_code" = "Broncode";
+// Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
+"add_to_home_screen" = "Toevoegen aan startscherm";
+"donate" = "Doneren";
+"donate_device_msg" = "❤️ Het lijkt er op dat je blij bent met Delta Chat!\n\nAls dat zo is, zouden we je vriendelijk willen vragen om een donatie, zodat Delta Chat gratis beschikbaar kan blijven.\n\n Ook al is Delta Chat gratis en opensource, de ontwikkeling ervan kost wél geld. Jouw donatie kan het verschil maken!\n\nhttps://delta.chat/donate";
+"mute_for_one_hour" = "1 uur lang uitschakelen";
+"mute_for_eight_hours" = "8 uur lang uitschakelen";
+"mute_for_one_day" = "1 dag lang uitschakelen";
+"mute_for_seven_days" = "7 dagen lang uitschakelen";
+"mute_forever" = "Permanent uitschakelen";
+"share_location_for_5_minutes" = "5 minuten lang";
+"share_location_for_30_minutes" = "30 minuten lang";
+"share_location_for_one_hour" = "1 uur lang";
+"share_location_for_two_hours" = "2 uur lang";
+"share_location_for_six_hours" = "6 uur lang";
+"file_saved_to" = "Het bestand is opgeslagen in ‘%1$@’.";
+// the action "to call someone", used as a tooltip for the "phone" icon. not: "the call"
+"start_call" = "Bellen";
+// Menu item to start an audio call; verbs as "start" are probably superfluous in many translations
+"start_audio_call" = "Audiogesprek";
+// Menu item to start a video call; verbs as "start" are probably superfluous in many translations
+"start_video_call" = "Videogesprek";
+// the action "to answer" or to "accept" or to "pick up" a call. not: "the answer"
+"answer_call" = "Aanvaarden";
+// the action "to decline" a call, not: "the decline"
+"end_call" = "Weigeren";
+// Used in call bubbles, summaries, notifications
+"audio_call" = "Audiogesprek";
+// Used in call bubbles, summaries, notifications
+"video_call" = "Videogesprek";
+"call_initializing" = "Bezig met alles opzetten…";
+"call_incoming" = "Inkomende oproep";
+"call_ringing" = "Bezig met oproep…";
+"call_reconnecting" = "Bezig met herverbinden…";
+"call_ended" = "Gesprek beëindigd";
+"call_failed" = "Gesprek mislukt";
+// deprecated, use "Audio call" instead
+"outgoing_audio_call" = "Uitgaand audiogesprek";
+// deprecated, use "Video call" instead
+"outgoing_video_call" = "Uitgaand videogesprek";
+// deprecated, use "Audio call" instead
+"incoming_audio_call" = "Inkomend audiogesprek";
+// deprecated, use "Video call" instead
+"incoming_video_call" = "Inkomend videogesprek";
+"declined_call" = "Geweigerde oproep";
+"canceled_call" = "Afgebroken oproep";
+"missed_call" = "Gemiste oproep";
+"already_in_call" = "Reeds in gesprek";
+"call_answered_elsewhere" = "Er is opgenomen op een ander apparaat";
+"call_requires_mic_permission" = "Microfoontoegang is vereist om te kunnen bellen";
+// get confirmations
+// confirmation for leaving groups or channels. If a subject is needed, "Are you sure you want to leave the chat?" would work as well
+"ask_leave_group" = "Weet je zeker dat je dit kanaal wilt verlaten?";
+"ask_delete_named_chat" = "Wil je ‘%1$@’ verwijderen?";
+"ask_delete_message" = "Wil je dit bericht verwijderen?";
+"ask_forward" = "Wil je de berichten doorsturen aan %1$@?";
+"ask_forward_multiple" = "Wil je de berichten doorsturen naar %1$d gesprekken?";
+"ask_export_attachment" = "Als je de bijlage exporteert, geef je andere apps op je apparaat toegang om hem uit te lezen.\n\nWil je doorgaan?";
+"ask_block_contact" = "Wil je deze contactpersoon blokkeren? Hij/zij kan je geen berichten meer sturen.";
+"ask_unblock_contact" = "Wil je deze contactpersoon deblokkeren? Hij/zij kan je wederom berichten sturen.";
+"ask_delete_contacts" = "Wil je de geselecteerde contactpersonen permanent verwijderen?\n\nPersonen met actieve gesprekken en personen afkomstig uit je adresboek kunnen niet permanent worden verwijderd.";
+"ask_delete_contact" = "Wil je ‘%1$@’ permanent verwijderen?\n\nPersonen met actieve gesprekken en personen afkomstig uit je adresboek kunnen niet permanent worden verwijderd.";
+"ask_start_chat_with" = "Wil je een gesprek voeren met %1$@?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_members" = "Wil je %1$@ verwijderen uit de groep?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_from_channel" = "Weet je zeker dat je %1$@ van het kanaal wilt verwijderen?";
+"open_url_confirmation" = "Weet je zeker dat je deze link wilt openen?";
+// contact list
+"contacts_title" = "Contactpersonen";
+"contacts_type_email_above" = "Typ hierboven het e-mailadres";
+// chatlist and chat view
+"chat_archived_chats_title" = "Gearchiveerde gesprekken";
+"chat_please_enter_message" = "Typ een bericht.";
+"chat_camera_unavailable" = "De camera is niet beschikbaar.";
+"chat_unable_to_record_audio" = "Er kan geen audio worden opgenomen.";
+// The placeholder will be replaced by the name of the recipient in a one-to-one chat.
+"chat_new_one_to_one_hint" = "Stuur een bericht aan %1$@ .";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"chat_new_channel_hint" = "Kanalen zijn bedoeld om te gebruiken als verzendlijsten.";
+"chat_new_group_hint" = "Stel het eerste bericht op zodat anderen binnen deze groep kunnen reageren.";
+"chat_record_slide_to_cancel" = "Veeg opzij om te annuleren";
+"chat_record_explain" = "Houd ingedrukt om een spraakbericht op te nemen; laat los om te versturen";
+"chat_no_chats_yet_title" = "Er zijn nog geen gesprekken.\nDruk op ‘+’ om een gesprek te beginnen.";
+"chat_all_archived" = "Alle gesprekken zijn gearchiveerd.\nDruk op ‘+’ om een gesprek te beginnen.";
+"chat_share_with_title" = "Delen met…";
+"chat_input_placeholder" = "Bericht";
+"chat_archived_label" = "Gearchiveerd";
+"chat_request_label" = "Verzoek";
+"chat_request_label_explain" = "Gespreksverzoeken tonen op meldingen en emblemen";
+"chat_no_messages" = "Er zijn geen berichten.";
+"chat_self_talk_subtitle" = "Aan mijzelf gestuurde berichten";
+"archive_empty_hint" = "Gearchiveerde gesprekken worden hier getoond.";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "Bericht bewaren";
+"saved_messages" = "Bewaarde berichten";
+"saved_messages_explain" = "• Stuur berichten door naar hier om ze snel terug te kunnen lezen\n\n• Maak aantekeningen of spraakopnamen\n\n• Voeg media toe om deze op te slaan";
+// Should match "Saved" from "Saved messages"
+"saved" = "Bewaard";
+"save_as" = "Bewaren als";
+"retry_send" = "Bericht opnieuw versturen";
+"cannot_display_unsuported_file_type" = "Het volgende bestandstype kan niet worden getoond: %1$@";
+"attachment_failed_to_load" = "De bijlage kan niet worden geladen";
+// For recording Voice messages: Description for the "Lock" button allowing to lift the thumb from the record button while recording continues
+"lock_recording" = "Opname vergrendelen";
+// mailing lists
+"mailing_list" = "Mailinglijst";
+// webxdc
+// "Start..." button for an app
+"start_app" = "Starten…";
+// this is a warning that is shown when one tries to send something to a chat that is not yet accepted.
+"accept_request_first" = "Accepteer eerst het gespreksverzoek.";
+// title shown above a list of chats where one should be selected (eg. when sharing files from a webxdc). the placeholder will be replaced by a file name
+"send_file_to" = "“%1$@” versturen naar…";
+// title shown above a list contacts where one should be selected (eg. when a webxdc attempts to send a message to a chat)
+"send_message_to" = "Bericht versturen naar…";
+// punycode warning / labeled links
+"puny_code_warning_header" = "Verdachte link aangetroffen";
+// placeholder contains the hostname converted to ascii
+"puny_code_warning_question" = "Weet je zeker dat je %1$@ wilt openen?";
+// this message is shown whenever a link with non-latin characters is clicked. first placeholder is original hostname with special chars, second placeholder is hostname encoded in ascii
+"puny_code_warning_description" = "Je hebt op een link gedrukt welke niet-overeenkomende tekens bevat uit andere talen. Door %1$@ te openen kom je op %2$@ terecht, welke niet-Latijnse tekens bevat. Als je deze tekens niet verwachtte, dan is de site mogelijk niet te vertrouwen.";
+// search
+"search" = "Zoeken";
+"search_in_chat" = "Gesprek doorzoeken";
+// Placeholder will be replaced by the chat name
+"search_in" = "‘%1$@’ doorzoeken";
+"search_files" = "Bestanden doorzoeken";
+"search_explain" = "Zoek naar gesprekken, contactpersonen en berichten";
+"search_result_for_x" = "Zoekresultaten voor “%1$@”";
+"search_no_result_for_x" = "Er zijn geen resultaten voor “%1$@”";
+// Adjective, as in "Show Unread Messages"
+"search_unread" = "Ongelezen";
+// create/edit groups, contact/group profile
+"group_name" = "Groepsnaam";
+"group_avatar" = "Groepsfoto";
+"remove_group_image" = "Groepsfoto verwijderen";
+"change_group_image" = "Groepsfoto wijzigen";
+"group_create_button" = "Groep aanmaken";
+// deprecated, use please_enter_chat_name
+"group_please_enter_group_name" = "Geef de groep een naam.";
+"please_enter_chat_name" = "Voer een naam in.";
+"group_add_members" = "Deelnemers toevoegen";
+"group_self_not_in_group" = "Om deze actie uit te kunnen voeren moet je deelnemen aan de groep.";
+"profile_encryption" = "Versleuteling";
+"profile_shared_chats" = "Gemeenschappelijke gesprekken";
+// Separator between the list of actual members and past members
+"past_members" = "Voormalige deelnemers";
+"tab_contact" = "Contactpersoon";
+"tab_group" = "Groep";
+"tab_gallery" = "Galerij";
+"tab_docs" = "Documenten";
+"tab_links" = "Links";
+"tab_map" = "Kaart";
+"tab_gallery_empty_hint" = "De in dit gesprek gedeelde afbeeldingen en video\'s verschijnen hier.";
+"tab_docs_empty_hint" = "Gedeelde documenten en andere bestanden uit dit gesprek worden hier getoond.";
+"tab_image_empty_hint" = "De in dit gesprek gedeelde afbeeldingen verschijnen hier.";
+"tab_video_empty_hint" = "De in dit gesprek gedeelde video\'s verschijnen hier.";
+"tab_audio_empty_hint" = "De in dit gesprek gedeelde audiobestanden en spraakberichten verschijnen hier.";
+"tab_webxdc_empty_hint" = "Privéapps in dit gesprek worden hier getoond.";
+"tab_all_media_empty_hint" = "De in gesprekken gedeelde media verschijnen hier.";
+"all_files_empty_hint" = "Gedeelde documenten en andere bestanden uit gesprekken worden hier getoond.";
+"all_apps_empty_hint" = "Privéapps die je verstuurt of ontvangt worden hier getoond.";
+"media_preview" = "Mediavoorbeeld";
+// option to show images in the gallery with the correct width/height aspect (instead of square); other gallery apps may be a source of inspiration for translation :)
+"aspect_ratio_grid" = "Beeldverhouding van rooster";
+// option to show images in the gallery as square (instead of using correct width/height)
+"square_grid" = "Vierkant rooster";
+"send_message" = "Bericht versturen";
+// Multi Device
+// "Second Device" can also be translated as "Another Device", if that is catchier in the destination language. However, make sure to use the term consistently.
+"multidevice_title" = "Secundair apparaat toevoegen";
+"multidevice_same_network_hint" = "Zorg ervoor dat beide apparaten verbonden zijn met hetzelfde (wifi)netwerk";
+"multidevice_this_creates_a_qr_code" = "Hiermee wordt een QR-code samengesteld die door het tweede apparaat kan worden gescand om het account te kopiëren.\n\nZorg dat er geen vreemden meekijken, al dan niet door een camera.";
+"multidevice_install_dc_on_other_device" = "Installeer Delta Chat op je andere apparaat (https://get.delta.chat)";
+// "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
+"multidevice_tap_scan_on_other_device" = "Start Delta Chat, druk op ‘Ik heb al een profiel → Toevoegen als secundair apparaat’ en scan de hier getoonde code";
+// Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
+"multidevice_qr_subtitle" = "Scan om een secundair apparaat voor %1$@ in te stellen";
+"multidevice_receiver_title" = "Toevoegen als secundair apparaat";
+"multidevice_open_settings_on_other_device" = "Ga op het eerste apparaat naar ‘Instellingen → Secundair apparaat toevoegen’ en scan de hier getoonde code";
+"multidevice_receiver_scanning_ask" = "Wil je je account van het andere apparaat naar dit apparaat kopiëren?";
+"multidevice_receiver_needs_update" = "Het te importeren profiel is afkomstig uit een nieuwere Delta Chat-versie.\n\nAls je het tweede apparaat wilt instellen, installeer dan de nieuwste versie van Delta Chat.";
+"multidevice_abort" = "Wil je het instellen afbreken?";
+"multidevice_abort_will_invalidate_copied_qr" = "Hierdoor wordt de gekopieerde QR-code onbruikbaar gemaakt.";
+"multidevice_transfer_done_devicemsg" = "ℹ️ Het account is overgezet naar je tweede apparaat.";
+// Shown beside progress bar, stay short
+"preparing_account" = "Bezig met voorbereiden…";
+// Shown beside progress bar, stay short
+"transferring" = "Bezig met overdragen…";
+"troubleshooting" = "Probleemoplossing";
+// Connectivity
+// Headline for the "Inbox" eg. in the "Connectivity" view
+"incoming_messages" = "Inkomende berichten";
+// Headline for the "Outbox" eg. in the "Connectivity" view
+"outgoing_messages" = "Uitgaande berichten";
+"connectivity" = "Verbindingen";
+// Shown in the title bar if the app is "Not connected"; prefer short strings.
+"connectivity_not_connected" = "Niet verbonden";
+// Shown in the title bar if the app is "Connecting"; prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_connecting" = "Bezig met verbinden…";
+// Shown in the title bar if the app is "Updating" (eg. getting new/old message, sync things); prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_updating" = "Bezig met bijwerken…";
+// Shown in the setting if the app is "Connected"
+"connectivity_connected" = "Verbonden";
+"sending" = "Bezig met versturen…";
+"last_msg_sent_successfully" = "Het nieuwste bericht is verstuurd.";
+"not_supported_by_provider" = "Wordt niet ondersteund door je provider.";
+// Subtitle in quota context of "Connectivity" view. Should be be plural always, no number is prefixed.
+"messages" = "Berichten";
+// Used for describing resource usage, resulting string will be eg. "1.2 GiB of 3 GiB used"
+"part_of_total_used" = "%1$@ van %2$@ in gebruik";
+// welcome and login
+// Primary button on the welcome screen, allows to create an instant profile
+"onboarding_create_instant_account" = "Account aanmaken";
+// Secondary button on the welcome screen, allows to "Add as Second Device", "Restore from Backup"
+"onboarding_alternative_logins" = "Ik heb al een account";
+// This is a button and a title, allowing to use existing, classic email, setting ports, passwords and so on
+"manual_account_setup_option" = "Inloggen met eigen e-mailadres";
+// Instant onboarding title (there is not more to do than to set name and avatar)
+"instant_onboarding_title" = "Mijn profiel";
+// The placeholder will be replaced by the default onboarding server
+"instant_onboarding_agree_default2" = "Privacybeleid van %1$@";
+// The placeholder will be replaced by instance name, the whole text will link to the instance page
+"instant_onboarding_agree_instance" = "Over profielen op %1$@";
+// Confirmation button on the instant onboarding screen
+"instant_onboarding_create" = "Akkoord gaan en profiel aanmaken";
+// Secondary, link-like button to open a page with other possible instances
+"instant_onboarding_show_more_instances" = "Andere server kiezen";
+"instant_onboarding_other_server" = "Lijst met chatmailservers tonen";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by the group name
+"instant_onboarding_group_info" = "Maak een profiel aan om deel te nemen aan de groep ‘%1$@’.";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by contact name
+"instant_onboarding_contact_info" = "Maak een profiel aan om een gesprek te voeren met ‘%1$@’.";
+// Question shown when another user's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_contact" = "Wil je een nieuw profiel aanmaken en een gesprek beginnen met ‘%1$@’?";
+// Question shown when group's/channel's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_group" = "Wil je een nieuw profiel aanmaken en deelnemen aan ‘%1$@’?";
+"welcome_chat_over_email" = "Veilige, gedecentraliseerde gesprekken";
+"scan_invitation_code" = "Uitnodigingscode scannen";
+"login_title" = "Inloggen";
+"login_advanced_hint" = "Deze inlogfunctie is bedoeld voor gevorderden:\n\n• Gebruik géén account dat je al in een andere app gebruikt;\n\n• Op klassieke e-mailservers worden gesprekken zonder eind-tot-eindversleuteling aangeduid met een envelopje.";
+"login_inbox" = "Postvak in";
+"login_imap_login" = "IMAP-inlognaam";
+"login_imap_server" = "IMAP-server";
+"login_imap_port" = "IMAP-poort";
+"login_imap_security" = "IMAP-beveiliging";
+"login_outbox" = "Postvak uit";
+"login_smtp_login" = "SMTP-inlognaam";
+"login_smtp_password" = "SMTP-wachtwoord";
+"login_smtp_server" = "SMTP-server";
+"login_smtp_port" = "SMTP-poort";
+"login_smtp_security" = "SMTP-beveiliging";
+// the word "Proxy" might be left untranslated unless the destination language has a well-known term for a "Proxy Server", acting intermediary between the app and the server
+"proxy_settings" = "Proxy";
+"proxy_use_proxy" = "Proxy gebruiken";
+"proxy_add" = "Proxy toevoegen";
+"proxy_add_explain" = "Ondersteunde proxytypes: http(s), socks5 en shadowsocks.";
+"proxy_add_url_hint" = "Voer een proxylink in";
+"proxy_invalid" = "Ongeldige of niet-ondersteunde proxy";
+"proxy_list_header" = "Bewaarde proxy\'s";
+"proxy_delete" = "Proxy verwijderen";
+"proxy_delete_explain" = "Weet je zeker dat je ‘%1$@’ wilt verwijderen?";
+"proxy_use_proxy_confirm" = "Wil je gebruikmaken van de proxy ‘%1$@’?";
+"proxy_share_explain" = "Je kunt vrienden toevoegen aan deze proxy door de QR-code te scannen.";
+"proxy_share_link" = "Link delen";
+"proxy_enabled" = "Proxy ingeschakeld";
+"proxy_enabled_hint" = "Je maakt gebruik van een proxyserver. Als je verbindingsproblemen hebt, probeer dan een andere proxy.";
+// "Relay" refers to the relay servers used; please chose a common term in your language, no need to be literal. If in doubt, stay with "Relay"
+"transports" = "Overdrachtsservers";
+"add_transport" = "Server toevoegen";
+"remove_transport" = "Server verwijderen";
+"edit_transport" = "Server bewerken";
+"used_for_sending" = "Wordt gebruikt voor versturen";
+"hide_from_contacts" = "Verbergen op contactpersonenlijst";
+"hidden_from_contacts" = "Verborgen op contactpersonenlijst";
+// Hint for the list of relays
+"transport_list_hint" = "Berichten worden op alle relays ontvangen.\n\n⚠️ Als je hier iets wijzigt, doe dat dan alléén als ál je apparaten gebruikmaken van versie 2.47.0, anders kunnen er berichten ontbreken.";
+// shown if a QR code was scanned that can be used as a relay
+"confirm_add_transport" = "Wil je deze server toevoegen?";
+"invalid_transport_qr" = "De gescande QR-code bevat geen geldige overdrachtsserver.";
+// placeholder will be replaced by a relay server name
+"confirm_remove_or_hide_transport_x" = "Wil je ‘%1$@’ verwijderen?\n\nContactpersonen die deze relay niet kennen, kunnen je zo niet bereiken.\n\nBij twijfel verbergen in plaats van verwijderen.";
+"login_certificate_checks" = "Certificaatcontrole";
+"login_error_mail" = "Voer een geldig e-mailadres in";
+"login_error_server" = "Voer een geldig(e) ip-adres/server in";
+"login_error_port" = "Voer een geldig poortnummer in (1-65535)";
+"login_error_required_fields" = "Voer een geldig e-mailadres en wachtwoord in";
+"import_backup_title" = "Reservekopie importeren";
+"import_backup_ask" = "Er is een reservekopie aangetroffen in ‘%1$@’.\n\nWil je de instellingen en gegevens daaruit importeren?";
+"import_backup_no_backup_found" = "Er zijn geen reservekopieën aangetroffen.\n\nKopieer de reservekopie naar ‘%1$@’ en probeer het opnieuw.";
+// %1$s will be replaced by the failing address
+"login_error_cannot_login" = "Het inloggen als ‘%1$@’ is mislukt. Controleer je e-mailadres en wachtwoord.";
+// TLS certificate checks
+"accept_invalid_certificates" = "Ongeldige certificaten accepteren";
+"switch_account" = "Ander account kiezen";
+"add_account" = "Account toevoegen";
+// for translations, you can also think of "Profile Tag" or "Profile Description" as the source string
+"profile_tag" = "Profielbeschrijving";
+"profile_tag_hint" = "bijv. werk, familie";
+"profile_tag_explain" = "Een beschrijving die alleen jij kan zien, om profielen van elkaar te onderscheiden.";
+// Menu entry to sort an item to the beginning of a list. Only "To Top" may do as well in some translations, if that helps to stay shorter.
+"move_to_top" = "Bovenaan tonen";
+"delete_account" = "Account verwijderen";
+"delete_account_ask" = "Weet je zeker dat je je accountgegevens wilt verwijderen?";
+"delete_account_explain_with_name" = "Alle gegevens van ‘%1$@’ worden verwijderd: de eind-tot-eindinstellingen, contactpersonen, gesprekken, berichten en media. Deze actie kan niet ongedaan worden gemaakt.";
+"unconfigured_account" = "Niet-ingesteld account";
+"unconfigured_account_hint" = "Open een account om het in te stellen.";
+"try_connect_now" = "Probeer te verbinden";
+"sync_all" = "Alles synchroniseren";
+// Translations: %1$s will be replaced by a more detailed error message
+"configuration_failed_with_error" = "Het instellen is mislukt. Foutmelding: %1$@";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "Doorsturen naar…";
+// first placeholder is replaced by the number of files (always 2 or more); second placeholder is replaced by a chat name
+"ask_send_files_to_chat" = "Wil je %1$d bestanden delen met %2$@?";
+"ask_send_files_to_selected_chats" = "Wil je %1$d bestand(en) delen in %2$d gesprekken?";
+"videos_sent_without_recoding" = "(Video\'s worden verstuurd in de oorspronkelijke grootte. Voeg bestanden los toe om te versturen als kleinere bestanden.)";
+"share_text_multiple_chats" = "Wil je deze tekst versturen naar %1$d gesprekken?\n\n“%2$@”";
+"share_abort" = "Het delen is afgebroken wegens ontbrekende rechten.";
+// preferences
+"pref_profile_info_headline" = "Mijn profiel";
+"pref_profile_photo" = "Profielfoto";
+"pref_blocked_contacts" = "Geblokkeerde contactpersonen";
+"blocked_empty_hint" = "Geblokkeerde contactpersonen worden hier getoond.";
+"pref_who_can_see_profile_explain" = "Je profielfoto, -naam en handtekening worden naast je gespreksberichten getoond.";
+"pref_your_name" = "Je naam";
+// Label of the Bio/Signature/Status/Motto field
+"pref_default_status_label" = "Handtekeningtekst";
+"chat_description" = "Beschrijving";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "Versturen met enter";
+"pref_enter_sends_explain" = "Druk op de entertoets om tekstberichten te versturen";
+"pref_outgoing_media_quality" = "Kwaliteit van verstuurde media";
+"pref_outgoing_media_quality_hint" = "Als je de oorspronkelijke kwaliteit wilt behouden, verstuur het dan als bestand. De huidige methode verbruikt meer data bij zowel jou als de ontvangers.";
+"pref_outgoing_balanced" = "Normaal";
+"pref_outgoing_worse" = "Lagere kwaliteit, kleinere bestanden";
+"pref_vibrate" = "Trillen";
+"pref_screen_security" = "Schermbeveiliging";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "Geen schermfoto\'s tonen op de ‘recent’-lijst en binnen de app";
+"pref_screen_security_please_restart_hint" = "Herstart de app om de wijzigingen toe te passen.";
+"pref_notifications" = "Meldingen";
+"pref_mention_notifications" = "Vermeldingen";
+"pref_mention_notifications_explain" = "Toon berichten gericht aan jou in genegeerde groepen";
+// Title for the "Calls" notification setting. This is a plural noun, not a verb.
+"pref_calls" = "Oproepen";
+// Details about what the "Calls" notification setting does
+"pref_calls_explain" = "Belscherm tonen bij inkomende oproepen";
+"pref_notifications_show" = "Tonen";
+"pref_notifications_priority" = "Prioriteit";
+"pref_notifications_explain" = "Systeemmeldingen tonen bij nieuwe berichten";
+"pref_show_notification_content" = "Berichtinhoud tonen op meldingen";
+"pref_show_notification_content_explain" = "Toont de afzender en eerste regel van berichten op meldingen";
+"pref_led_color" = "Ledkleur";
+"pref_sound" = "Geluid";
+"pref_silent" = "Stil";
+"pref_privacy" = "Privacy";
+"pref_system_default" = "Systeemstandaard";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "Licht";
+"pref_dark_theme" = "Donker";
+"pref_appearance" = "Uiterlijk";
+"pref_theme" = "Thema";
+"pref_language" = "Taal";
+"pref_use_system_ui_font" = "Systeemlettertype gebruiken";
+"pref_incognito_keyboard" = "Privétoetsenbord";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "Verzoek het toetsenbord om geen persoonlijke woorden op te nemen";
+"pref_read_receipts" = "Leesbevestigingen";
+"pref_read_receipts_explain" = "Als je leesbevestigingen uitschakelt, zie je geen leesbevestigingen van anderen.";
+// Title above a list of contacts who read a message
+"read_by" = "Gelezen door";
+"pref_server" = "Server";
+"pref_encryption" = "Versleuteling";
+"pref_manage_keys" = "Sleutels beheren";
+"pref_chats" = "Gesprekken";
+"pref_in_chat_sounds" = "Gespreksgeluiden";
+"pref_view_log" = "Logboek bekijken";
+"pref_saved_log" = "Het logboek is opgeslagen in de downloadmap";
+"pref_save_log_failed" = "Kan logboek niet opslaan";
+"pref_log_header" = "Logboek";
+"pref_other" = "Overig";
+"pref_backup" = "Reservekopie";
+"pref_backup_explain" = "Gesprekken bewaren op externe opslag";
+"pref_backup_export_explain" = "Met een reservekopie kun je een nieuwe installatie instellen op dit of een ander apparaat.\n\nEen reservekopie bevat alle berichten, contactpersonen, gesprekken en je eind-tot-eindversleuteling. Bewaar het reservekopiebestand op een veilige plaats of verwijder het zo snel mogelijk.";
+"pref_backup_export_this" = "Profiel exporteren";
+// the placeholder will be replaced by the number of profiles to export; the number is always larger than 1
+"pref_backup_export_all" = "%1$d accounts exporteren";
+"pref_backup_export_start_button" = "Reservekopie maken";
+"pref_backup_written_to_x" = "De reservekopie is opgeslagen in ‘%1$@’.";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "Achtergrond";
+"pref_background_btn_default" = "Standaardafbeelding gebruiken";
+"pref_background_btn_gallery" = "Kiezen uit galerij";
+"pref_imap_folder_warn_disable_defaults" = "Als je deze optie uitschakelt, zorg er dan voor dat je server en overige clients goed ingesteld zijn.\n\nAls dat niet zo is, dan werkt het misschien helemaal niet.";
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+"pref_multidevice" = "Meerdere apparaten";
+"pref_multidevice_explain" = "Synchroniseer berichten met andere apparaten. Dit wordt automatisch ingeschakeld na het toevoegen van een secundair apparaat.";
+"pref_multidevice_change_warn" = "Let op: deze modus moet op alle apparaten worden ingeschakeld op hetzelfde profiel. Schakel deze instelling alleen uit als je je profiel van alle andere apparaten hebt verwijderd.\n\nDoor deze modus uit te schakelen terwijl het profiel nog gebruikt wordt, gaan er berichten verloren en kunnen er andere problemen ontstaan.";
+"pref_auto_folder_moves" = "Automatisch verplaatsen naar DeltaChat-map";
+"pref_only_fetch_mvbox_title" = "Alleen DeltaChat-map controleren";
+"pref_show_emails" = "Klassieke e-mails tonen";
+"pref_show_emails_no" = "Nee, alleen gesprekken";
+"pref_show_emails_accepted_contacts" = "Van goedgekeurde contactpersonen";
+"pref_show_emails_all" = "Alles";
+"pref_experimental_features" = "Experimentele functies";
+"pref_experimental_features_explain" = "Let op: deze functies zijn experimenteel en kunnen te allen tijde worden aangepast of verwijderd";
+"pref_on_demand_location_streaming" = "Locatie delen (op verzoek)";
+"pref_background_default" = "Standaardachtergrond";
+"pref_background_default_color" = "Standaardkleur";
+"pref_background_custom_image" = "Eigen afbeelding";
+"pref_background_custom_color" = "Eigen kleur";
+"export_aborted" = "Het exporteren is afgebroken.";
+"auto_download_messages" = "Berichten automatisch ophalen";
+// %1$s will be replaced by a human-readable number of bytes, eg. 32 KiB, 1 MiB
+"up_to_x" = "Tot %1$@";
+"up_to_x_most_worse_quality_images" = "Tot %1$@ - lage afbeeldingskwaliteit";
+"up_to_x_most_balanced_quality_images" = "Tot %1$@ - redelijke afbeeldingskwaliteit";
+"download_failed" = "Het downloaden is mislukt";
+"profile_image_select" = "Profielfoto kiezen";
+"select_your_new_profile_image" = "Kies een nieuwe profielfoto";
+"profile_image_delete" = "Profielfoto verwijderen";
+"pref_show_tray_icon" = "Systeemvakpictogram tonen";
+"pref_edit_profile" = "Profiel bewerken";
+"send_stats_to_devs" = "Statistieken delen met Delta Chat-ontwikkelaars";
+"stats_device_message" = "Wil je helpen Delta Chat te verbeteren en voor onderzoeksdoeleinden iedere week volledig anonieme, automatische gebruiksstatistieken in te sturen?\n\n👉 Druk dan hier… 👈";
+"stats_confirmation_dialog" = "Wil je helpen Delta Chat te verbeteren en voor onderzoeksdoeleinden iedere week volledig anonieme, automatische gebruiksstatistieken in te sturen?";
+"stats_thanks" = "Hartelijk dank! Je kunt deze instelling te allen tijde aanpassen via ‘Instellingen → Geavanceerd’.\n\nHeb je nog 5 minuutjes om deel te nemen aan een wetenschappelijk onderzoek aangaande beveiliging van Delta Chat?";
+"stats_disable_dialog" = "Het insturen van statistieken is al ingeschakeld.\n\nWil je dit uitschakelen?";
+"disable" = "Uitschakelen";
+"stats_keep_sending" = "Niet uitschakelen";
+"stats_msg_body" = "De bijlage bevat anonieme gebruiksstatistieken die ons helpen Delta Chat te verbeteren. Bij voorbaat dank!";
+// Emoji picker and categories
+"emoji_search_results" = "Zoekresultaten";
+"emoji_not_found" = "Geen emoji gevonden";
+"emoji_recent" = "Onlangs gebruikt";
+"emoji_people" = "Personen en lichaamsuitdrukkingen";
+"emoji_nature" = "Dieren en natuur";
+"emoji_foods" = "Eten en drinken";
+"emoji_activity" = "Activiteit";
+"emoji_places" = "Reizen en locaties";
+"emoji_objects" = "Objecten";
+"emoji_symbols" = "Symbolen";
+"emoji_flags" = "Vlaggen";
+// Reactions
+"reactions" = "Reacties";
+// Verb, the action of adding a "Reaction" to a message. Used eg. in context menus, similar to "Reply" or "Forward"
+"react" = "Reageren";
+// %1$s will be replaced by an emoji. %2$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %2$s will often not being visible). Eg. 'You reacted 👍 to "Found my suitcase"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer and work as well.
+"reaction_by_you" = "Je hebt met %1$@ gereageerd op “%2$@”";
+// %1$s will be replaced a name. %2$s will be replaced by an emoji. %3$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %3$s will often not being visible). Eg. 'Alice reacted 👍 to "Nice photos"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer work as well.
+"reaction_by_other" = "%1$@ heeft met %2$@ gereageerd op “%3$@”";
+// automatically delete message
+"delete_old_messages" = "Oude berichten verwijderen";
+"autodel_device_title" = "Berichten verwijderen van apparaat";
+"autodel_server_title" = "Berichten verwijderen van server";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_device_ask" = "Wil je nu %1$d berichten verwijderen en toekomstige berichten ‘%2$@’?\n\n• Dit omvat alle media\n\n• Berichten worden verwijderd, ongeacht of ze bekeken zijn\n\n• Het gesprek ‘Bewaarde berichten’ wordt overgeslagen.";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_server_ask" = "Wil je nu %1$d berichten verwijderen en toekomstige berichten ‘%2$@’,?\n\n⚠️ Dit omvat alle berichten, media en het gesprek ‘Bewaarde berichten’.\n\n⚠️ Gebruik deze functie niet als je je gegevens wilt bewaren op de server\n\n⚠️ Gebruik deze functie niet als je ook andere e-mailclients gebruikt";
+// shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
+"autodel_server_enabled_hint" = "Dit omvat alle berichten, media en het gesprek ‘Bewaarde berichten’. Gebruik deze functie niet als je je gegevens wilt bewaren op de server of als je ook andere e-mailclients gebruikt.";
+"autodel_server_warn_multi_device_title" = "Onmiddellijke verwijdering inschakelen";
+"autodel_server_warn_multi_device" = "Let op: als je deze optie inschakelt, dan kun je geen meerdere apparaten tegelijk meer gebruiken met dit profiel.";
+"autodel_confirm" = "Ik begrijp het; verwijder alle berichten";
+// "At once" in the meaning of "Immediately", without any intervening time.
+"autodel_at_once" = "Direct";
+"after_5_minutes" = "Na 5 minuten";
+"autodel_after_1_hour" = "Na 1 uur";
+"autodel_after_1_day" = "Na 1 dag";
+"autodel_after_1_week" = "Na 1 week";
+"after_5_weeks" = "Na 5 weken";
+"autodel_after_1_year" = "Na 1 jaar";
+// system messages
+"systemmsg_subject_for_new_contact" = "Bericht van %1$@";
+"systemmsg_failed_sending_to" = "Het bericht kan niet worden verstuurd aan %1$@.";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name
+"group_name_changed_by_you" = "Je hebt de groepsnaam gewijzigd. Oude naam: “%1$@” - Nieuwe naam: “%2$@”";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name, %3$s will be replaced by name and address of the contact who did the action.
+"group_name_changed_by_other" = "De groepsnaam is gewijzigd door %3$@. Oude naam: “%1$@” - Nieuwe naam: “%2$@”";
+// %1$s will be replaced by the old channel name, %2$s will be replaced by the new channel name
+"channel_name_changed" = "De kanaalnaam is gewijzigd van ‘%1$@’ in ‘%2$@’.";
+"group_image_changed_by_you" = "Je hebt de groepsfoto gewijzigd.";
+// %1$s will be replaced by name of the contact who did the action
+"group_image_changed_by_other" = "De groepsfoto is gewijzigd door %1$@.";
+"channel_image_changed" = "De kanaalafbeelding is gewijzigd.";
+"chat_description_changed_by_you" = "Je hebt de gespreksbeschrijving aangepast.";
+// %1$s will be replaced by name of the contact who did the action
+"chat_description_changed_by_other" = "De gespreksbeschrijving is aangepast door %1$@.";
+// %1$s will be replaced by name of the contact added to the group
+"member_x_added" = "‘%1$@’ is toegevoegd.";
+// %1$s will be replaced by name of the contact added to the group
+"add_member_by_you" = "Je hebt ‘%1$@’ toegevoegd.";
+// %1$s will be replaced by name of the contact added to the group, %2$s will be replaced by name of the contact who did the action
+"add_member_by_other" = "‘%1$@’ is toegevoegd door %2$@.";
+// %1$s will be replaced by name of the contact removed from the group
+"remove_member_by_you" = "Je hebt ‘%1$@’ verwijderd.";
+// %1$s will be replaced by name of the contact removed from the group, %2$s will be replaced by name of the contact who did the action
+"remove_member_by_other" = "‘%1$@’ is verwijderd door %2$@.";
+// %1$s will be replaced by name of the contact removed from the group; this string is used when it's unclear who did the action
+"member_x_removed" = "‘%1$@’ is verwijderd.";
+// "left" in the meaning of "exited".
+"group_left_by_you" = "Je hebt de groep verlaten.";
+// "left" in the meaning of "exited".
+"channel_left_by_you" = "Je hebt het kanaal verlaten.";
+"you_joined_the_channel" = "Je neemt vanaf nu deel aan het kanaal.";
+// "left" in the meaning of "exited"; %1$s will be replaced by name of the contact leaving the group
+"group_left_by_other" = "De groep is verlaten door %1$@.";
+"group_image_deleted_by_you" = "Je hebt de groepsfoto verwijderd.";
+// %1$s will be replaced by name of the contact
+"group_image_deleted_by_other" = "De groepfoto is verwijderd door %1$@.";
+"location_enabled_by_you" = "Je hebt locatiedeling ingeschakeld.";
+// %1$s will be replaced by name of the contact
+"location_enabled_by_other" = "Locatiedeling is ingeschakeld door %1$@.";
+"ephemeral_timer_disabled_by_you" = "Je hebt de tijdklok van verdwijnende berichten uitgeschakeld.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_disabled_by_other" = "De tijdklok van verdwijnende berichten is uitgeschakeld door %1$@.";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to
+"ephemeral_timer_seconds_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op %1$@ sec.";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_seconds_by_other" = "De tijdklok van verdwijnende berichten is door %2$@ ingesteld op %1$@ sec.";
+"ephemeral_timer_1_hour_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op 1 uur.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_hour_by_other" = "De tijdklok van verdwijnende berichten is door %1$@ ingesteld op 1 uur.";
+"ephemeral_timer_1_day_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op 1 dag.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_day_by_other" = "De tijdklok van verdwijnende berichten is door %1$@ ingesteld op 1 dag.";
+"ephemeral_timer_1_week_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op 1 week.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_week_by_other" = "De tijdklok van verdwijnende berichten is door %1$@ ingesteld op 1 week.";
+"ephemeral_timer_1_year_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op 1 jaar.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_year_by_other" = "De tijdklok van verdwijnende berichten is door %1$@ ingesteld op 1 jaar.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to
+"ephemeral_timer_minutes_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op %1$@ minuten.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_minutes_by_other" = "De tijdklok van verdwijnende berichten is door %2$@ ingesteld op %1$@ minuten.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to
+"ephemeral_timer_hours_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op %1$@ uur.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_hours_by_other" = "De tijdklok van verdwijnende berichten is door %2$@ ingesteld op %1$@ uur.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to
+"ephemeral_timer_days_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op %1$@ dagen.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_days_by_other" = "De tijdklok van verdwijnende berichten is door %2$@ ingesteld op %1$@ dagen.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to
+"ephemeral_timer_weeks_by_you" = "Je hebt de tijdklok van verdwijnende berichten ingesteld op %1$@ weken.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_weeks_by_other" = "De tijdklok van verdwijnende berichten is door %2$@ ingesteld op %1$@ weken.";
+"chat_unencrypted_explanation" = "Berichten in dit gesprek maken gebruik van traditionele e-mailcommunicatie - eind-tot-endversleuteling is daarom niet gegarandeerd.";
+"messages_are_e2ee" = "Berichten zijn van eind-tot-eindversleuteling voorzien.";
+"chat_protection_enabled_tap_to_learn_more" = "Berichten zijn gegarandeerd van eind-tot-eindversleuteling voorzien. Druk hier voor meer informatie.";
+"chat_protection_enabled_explanation" = "Alle berichten in dit gesprek zijn gegarandeerd van eind-tot-eindversleuteling voorzien.\n\nMet behulp van deze versleuteling blijven berichten tussen jou en je gesprekspartners geheim - zelfs je e-mailprovider kan ze niet uitlezen.";
+"invalid_unencrypted_tap_to_learn_more" = "⚠️ Voor %1$@ is eind-tot-eindversleuteling vereist, maar dit is nog niet ingesteld in het huidige gesprek. Druk voor meer informatie.";
+"invalid_unencrypted_explanation" = "Spreek met elkaar af en scan elkaars QR-code om eind-tot-eindversleuteling op te zetten.";
+"learn_more" = "Meer informatie";
+"devicemsg_self_deleted" = "Je hebt het gesprek ‘Bewaarde berichten’ verwijderd.\n\nℹ️ Als je weer gebruik wilt maken van deze functie, begin dan een nieuw gesprek met jezelf.";
+// %1$s will be replaced by the amount of storage already used, sth. as '500 MB'. If you want to use a percentage sign, type in two of them, eg. %1$s %%
+"devicemsg_storage_exceeding" = "⚠️ De opslagruimte die je provider biedt is bijna overschreden. Momenteel heb je %1$@%% ervan in gebruik.\n\nAls je geen ruimte meer hebt, kun je mogelijk geen berichten meer ontvangen.\n\n👉 Kijk of je oude gegevens kunt verwijderen in de webclient van je provider. Overweeg ook ‘Instellingen → Oude berichten verwijderen’ in te schakelen. Je kunt je huidige gebruik te allen tijde bekijken via ‘Instellingen → Verbindingen’.";
+// %1%s will be replaced by date and time in some human-readable format
+"devicemsg_bad_time" = "⚠️ De datum en tijd van je apparaat lijken niet te kloppen (%1$@).\n\nVerzet je klok ⏰🔧 om er zeker van te zijn dat je berichten kunt ontvangen.";
+"devicemsg_update_reminder" = "⚠️ Je versie van Delta Chat is mogelijk verouderd.\n\nDit kan problemen veroorzaken aangezien je gesprekspartners nieuwe versies gebruiken. Bovendien mis je hierdoor enkele nieuwe functies. 😳\nGa naar https://get.delta.chat of de appwinkel van je apparaat om te controleren op updates.";
+// Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
+"enter_system_secret_to_continue" = "Ontgrendelen om verder te gaan";
+// qr code stuff
+"qr_code" = "QR-code";
+"load_qr_code_as_image" = "QR-code als afbeelding laden";
+"qrscan_title" = "QR-code scannen";
+"qrscan_hint" = "Houd je camera boven de QR-code";
+"qrscan_hint_desktop" = "Houd de QR-code voor de camera";
+"qrscan_failed" = "De QR-code kan niet worden ontcijferd";
+"qrscan_ask_join_group" = "Wil je deelnemen aan de groep ‘%1$@’?";
+"qrscan_ask_join_channel" = "Wil je deelnemen aan het kanaal ‘%1$@’?";
+"qrscan_fingerprint_mismatch" = "De gescande vingerafdruk komt niet overeen met de vorige voor %1$@";
+"qrscan_no_addr_found" = "Deze QR-code bevat een vingerafdruk, maar geen e-mailadres.\n\nVoor out-of-bandgoedkeuring, moet je eerst een beveiligde verbinding opzetten met de ontvanger.";
+"qrscan_contains_text" = "Gescande QR-codetekst:\n\n %1$@";
+"qrscan_contains_url" = "Gescande QR-code-url:\n\n %1$@";
+"qrscan_fingerprint_label" = "Vingerafdruk";
+"withdraw_verifycontact_explain" = "Deze QR-code kan door anderen worden gescand om contact met je op te nemen.\n\nJe kunt de QR-code hier deactiveren, zodat die niet meer werkt.";
+"withdraw_verifygroup_explain" = "Deze QR-code kan door anderen worden gescand om deel te nemen aan de groep ‘%1$@’.\n\nJe kunt de QR-code hier deactiveren, zodat die niet meer werkt.";
+"withdraw_joinbroadcast_explain" = "Deze QR-code kan door anderen worden gescand om deel te nemen aan het kanaal ‘%1$@’.\n\nJe kunt de QR-code hier deactiveren, zodat die niet meer werkt.";
+"withdraw_qr_code" = "QR-code deactiveren";
+"revive_verifycontact_explain" = "Deze QR-code is gedactiveerd en kan niet meer worden gebruikt.";
+"revive_qr_code" = "QR-code activeren";
+"qrshow_title" = "QR-uitnodigingscode";
+"qrshow_x_joining" = "%1$@ heeft deelgenomen.";
+"qrshow_x_verified" = "%1$@ is goedgekeurd.";
+"qrshow_x_has_joined_group" = "%1$@ neemt nu deel aan de groep.";
+"qrshow_join_group_title" = "QR-uitnodigingscode";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the group name, eg. "Scan to join group \"Testing group\""
+"qrshow_join_group_hint" = "Scan dit om deel te nemen aan de groep ‘%1$@’.";
+"qrshow_join_channel_hint" = "Scan dit om deel te nemen aan het kanaal ‘%1$@’";
+"qrshow_join_contact_title" = "QR-uitnodigingscode";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to chat with Alice"
+"qrshow_join_contact_hint" = "Scan dit om een gesprek te beginnen met %1$@";
+"qrshow_join_contact_no_connection_toast" = "Geen internetverbinding; kan QR-codes niet instellen.";
+"qraccount_ask_create_and_login" = "Wil je een nieuw e-mailadres aanmaken op ‘%1$@’ en daarmee inloggen?";
+"set_name_and_avatar_explain" = "Kies een naam die herkenbaar is voor je contactpersonen en, desgewenst, een profielfoto.";
+"please_enter_name" = "Voer een naam in.";
+"qraccount_qr_code_cannot_be_used" = "De gescande QR-code kan niet worden gebruikt om een nieuw account in te stellen.";
+// the placeholder will be replaced by the address of the profile
+"qrlogin_ask_login" = "Inloggen als ‘%1$@’?";
+// first placeholder will be replaced by name of the inviter, second placeholder will be replaced by the name of the inviter.
+"secure_join_started" = "%1$@ heeft je uitgenodigd voor deze groep.\n\nEr wordt gewacht op antwoord van het apparaat van %2$@…";
+// first placeholder will be replaced by name of the inviter, second placeholder will be replaced by the name of the inviter.
+"secure_join_channel_started" = "%1$@ heeft je uitgenodigd voor dit kanaal.\n\nEr wordt gewacht op antwoord van het apparaat van %2$@…";
+// placeholder will be replaced by the name of the inviter.
+"secure_join_replies" = "%1$@ heeft geantwoord en wacht op toelating tot de groep…";
+"secure_join_wait" = "Bezig met opzetten van eind-tot-eindversleuteling…";
+"contact_verified" = "%1$@ is goedgekeurd.";
+"contact_blocked" = "Je hebt deze contactpersoon geblokkeerd";
+// Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact.
+"verified_by" = "Geïntroduceerd door %1$@";
+"verified_by_you" = "Geïntroduceerd door mij";
+"verified_by_unknown" = "Geïntroduceerd";
+"mailto_dialog_header_select_chat" = "Kies in welk gesprek je dit bericht wilt delen";
+// first placeholder is the name of the chat
+"confirm_replace_draft" = "%1$@ bevat al een concept. Wil je dit vervangen?";
+"mailto_link_could_not_be_decoded" = "De mailto-link kan niet worden ontcijferd: %1$@";
+"remove_quote" = "Citaat verwijderen";
+"remove_attachment" = "Bijlage verwijderen";
+// notifications
+"notify_reply_button" = "Beantwoorden";
+"notify_new_message" = "Nieuw bericht";
+"notify_background_connection_enabled" = "Achtergrondverbinding ingeschakeld";
+"notify_priority_high" = "Hoog";
+"notify_priority_max" = "Maximaal";
+"notify_name_and_message" = "Naam en bericht";
+"notify_name_only" = "Alleen naam";
+"notify_no_name_or_message" = "Geen naam of bericht";
+"notifications_disabled" = "Meldingen zijn uitgeschakeld";
+"unreliable_bg_notifications" = "Schakel de gedwongen achtergrondverbinding in om meldingen betrouwbaarder te maken";
+"new_messages" = "Nieuwe berichten";
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+"new_messages_body" = "Je hebt nieuwe berichten";
+"n_messages_in_m_chats" = "%1$d berichten in %2$d gesprekken";
+// location streaming
+"location_streaming_channel_desc" = "Kanaal voor locatie delen op verzoek";
+"location_streaming_notification_title" = "Locatiedeling";
+"location_streaming_notification_text" = "Je deelt op dit moment je locatie";
+"location_rationale" = "Om je locatie live te kunnen blijven doorgeven aan andere deelnemers, is locatietoegang vereist.\n\nHiervoor is het ook nodig om je locatie op de achtergrond door te geven.";
+// permissions
+"perm_required_title" = "Recht vereist";
+"perm_continue" = "Doorgaan";
+"perm_explain_access_to_camera_denied" = "Delta Chat wil foto\'s en video\'s kunnen maken. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Camera’ in.";
+// give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
+"perm_explain_access_to_mic_denied" = "Delta Chat wil spraakberichten versturen. Ga naar de app-instellingen, kies ‘Rechten’ of ‘Privacy en beveiliging’ en schakel ‘Microfoon’ in.";
+"perm_explain_access_to_storage_denied" = "Delta Chat wil bestanden kunnen ontvangen en versturen. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Opslag’ in.";
+"perm_explain_access_to_location_denied" = "Delta Chat wil je locatie kunnen delen. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Locatie’ in.";
+"perm_explain_access_to_notifications_denied" = "Open Systeeminstellingen → Apps → Delta Chat en schakel meldingen in.";
+// ImageEditorHud
+"ImageEditorHud_draw_anywhere_to_blur" = "Teken met je vinger om vervaging toe te passen";
+"ImageEditorHud_add_text" = "Tekst toevoegen";
+"ImageEditorHud_blur" = "Vervagen";
+"ImageEditorHud_brush_marker" = "Stift";
+"ImageEditorHud_brush_highlight" = "Markeerstift";
+"ImageEditorHud_crop" = "Bijsnijden";
+"ImageEditorHud_flip" = "Spiegelen";
+"ImageEditorHud_rotate" = "Draaien";
+"welcome_desktop" = "Welkom bij Delta Chat";
+"global_menu_preferences_language_desktop" = "Taal";
+"global_menu_file_desktop" = "Bestand";
+"global_menu_file_quit_desktop" = "Afsluiten";
+"global_menu_edit_desktop" = "Bewerken";
+"global_menu_edit_undo_desktop" = "Ongedaan maken";
+"global_menu_edit_redo_desktop" = "Opnieuw";
+"global_menu_edit_cut_desktop" = "Knippen";
+"global_menu_edit_copy_desktop" = "Kopiëren";
+"global_menu_edit_paste_desktop" = "Plakken";
+"global_menu_view_desktop" = "Beeld";
+"global_menu_view_floatontop_desktop" = "Altijd bovenaan";
+"global_menu_view_developer_desktop" = "Ontwikkelaar";
+"global_menu_view_developer_tools_desktop" = "Ontwikkelaarshulpmiddelen";
+"global_menu_help_desktop" = "Hulp";
+"delta_chat_homepage" = "Delta Chat-website";
+"contribute" = "Bijdragen";
+"global_menu_help_report_desktop" = "Meld een probleem";
+"global_menu_help_about_desktop" = "Over Delta Chat";
+"global_menu_file_open_desktop" = "Delta Chat openen";
+"global_menu_minimize_to_tray" = "Minimaliseren";
+"no_account_selected" = "Kies een profiel of maak een nieuw profiel aan";
+"no_chat_selected_suggestion_desktop" = "Kies een gesprek of begin een gesprek";
+"write_message_desktop" = "Schrijf een bericht";
+"encryption_info_title_desktop" = "Versleutelingsinformatie";
+"delete_message_desktop" = "Bericht verwijderen";
+"more_info_desktop" = "Meer informatie";
+"timestamp_format_m_desktop" = "MMM D";
+"remove_desktop" = "Verwijderen";
+"save_desktop" = "Opslaan";
+// Opposite of "Save". Undo a "Save" action. Similar to "Unmute", "Unpin". Could also be worded as "Save no longer" or so.
+"unsave" = "Niet meer bewaren";
+"name_desktop" = "Naam";
+"select_group_image_desktop" = "Kies een groepsafbeelding";
+"export_backup_desktop" = "Reservekopie exporteren";
+"message_detail_sent_desktop" = "Verstuurd";
+"message_detail_received_desktop" = "Ontvangen";
+"menu.view.developer.open.log.folder" = "Map met logbestanden openen";
+"menu.view.developer.open.current.log.file" = "Huidig logbestand openen";
+"explain_desktop_minimized_disabled_tray_pref" = "Het systeemvakpictogram is uitgeschakeld omdat Delta Chat is gestart met de optie --minimized";
+// deprecated, used on desktop although there is not spell checker
+"no_spellcheck_suggestions_found" = "Geen suggesties gevonden.";
+"show_window" = "Venster tonen";
+"data_found_other_installation_message" = "Profielen uit een andere Delta Chat-installatie zijn niet beschikbaar, daar ze allen gebruikmaken van eigen opslaglocaties.\n\nWil je tóch bestaande profielen gebruiken, volg dan deze stappen:\n1. Sluit de app af\n2. Open de andere Delta Chat-installatie en herinstalleer deze zonodig vanaf %1$@\n3. Maak een reservekopie van ieder profiel via ‘Instellingen → Gesprekken’\n4. Herstart deze versie\n5. Herstel de gesprekken door te kiezen voor ‘Ik heb al een profiel’\n\nWil je doorgaan zonder bestaande profielen?";
+// title of the "keybindings" dialog (for the keybindings names as such, where possible the normal command strings are used)
+"keybindings" = "Sneltoetsen";
+// subtitle in the "keybindings" dialog
+"navigation_shortcut_section" = "Navigatie";
+// subtitle in the "keybindings" dialog
+"message_input_shortcut_section" = "Berichtinvoer";
+// subtitle in the "keybindings" dialog
+"message_selected_shortcut_section" = "Gekozen bericht";
+"switch_between_chats" = "Wisselen van gesprek";
+"scroll_messages" = "Scrollen door berichten";
+// command to put the cursor to the search input field
+"focus_search_input" = "Zoekbalk focussen";
+// command to put the cursor to the message input field
+"focus_message_input" = "Invoerveld focussen";
+"force_refresh_network" = "Netwerk gedwongen vernieuwen";
+"insert_newline" = "Nieuwe regel invoegen";
+// accessibility, the general idea is to use the normal strings for accessibility hints wherever possible
+"a11y_delivery_status_error" = "Bezorgstatus: afleveren mislukt";
+"a11y_delivery_status_sending" = "Bezorgstatus: bezig met versturen";
+"a11y_delivery_status_draft" = "Bezorgstatus: concept";
+"a11y_delivery_status_delivered" = "Bezorgstatus: afgeleverd";
+"a11y_delivery_status_read" = "Bezorgstatus: gelezen";
+"a11y_delivery_status_invalid" = "Onbekende bezorgstatus";
+"a11y_message_context_menu_btn_label" = "Berichtacties";
+"a11y_background_preview_label" = "Achtergrondvoorbeeld";
+"a11y_disappearing_messages_activated" = "Verdwijnende berichten zijn ingeschakeld";
+// iOS specific strings, developers: please take care to remove strings that are no longer used!
+"stop_sharing_location" = "Stop locatiedeling";
+"a11y_voice_message_hint_ios" = "Dubbeltik op de opname om hem te versturen. Veeg met twee vingers van links naar rechts om de opname af te breken.";
+"a11y_connectivity_hint" = "Dubbeltik om de verbindingsinformatie te bekijken.";
+"login_error_no_internet_connection" = "Het inloggen is mislukt omdat er geen internetverbinding is.";
+"share_account_not_configured" = "Dit account is niet ingesteld.";
+"cannot_play_audio_file" = "Dit audiobestand kan niet worden afgespeeld.";
+// iOS camera permission alert
+"perm_ios_explain_access_to_camera_denied" = "Voor het maken van foto\'s, opnemen van video\'s en gebruik van de QR-codescanner is cameratoegang vereist. Open de systeeminstellingen en verleen deze toegang.";
+"open_settings" = "Open instellingen";
+// iOS device contact alert
+"import_device_contacts" = "Importeer lokale contactpersonen";
+"import_device_contacts_hint" = "Voor het voeren van gesprekken met contactpersonen is toegang vereist. Open de systeeminstellingen en verleen deze toegang.";
+// iOS notification settings
+"disabled_in_dc" = "Uitgeschakeld in Delta Chat";
+"disabled_in_system_settings" = "Uitgeschakeld in systeeminstellingen";
+"bg_app_refresh_disabled" = "App op de achtergrond vernieuwen is uitgeschakeld in de systeeminstellingen";
+"notifications_avg_minutes" = "Gemiddeld elke %1$d minuten";
+"notifications_avg_hours" = "Gemiddeld elke %1$d uur";
+"last_check_at" = "Gecontroleerd om %1$@";
+"system_settings" = "Systeeminstellingen";
+// shown below the button "System Settings" on the notification screen. this is a hint about what can be edited on System Settings' Notification page - eg. the notification type (banner, lock screen, notification centre), sound, badges and so on. no need to be exhaustive here, it is only to give the user an idea.
+"system_settings_notify_explain_ios" = "Pas het type, emblemen, de voorvertoning en meer aan";
+// iOS shortcut widget
+// use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
+"shortcuts_widget_title" = "Opdrachten";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"shortcuts_widget_description" = "Gebruik Delta Chats ‘Tonen op widget’ om items toe te voegen";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"remove_from_widget" = "Niet tonen op widget";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"add_to_widget" = "Tonen op widget";
+// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// android specific strings, developers: please take care to remove strings that are no longer used!
+"pref_instant_delivery" = "Onmiddellijke bezorging";
+"pref_background_notifications" = "Achtergrondverbinding gebruiken";
+"pref_background_notifications_explain" = "Hiervoor is het verplicht dat accu-optimalisering wordt uitgeschakeld. Let op: gebruik alleen indien de push-afleverdienst niet beschikbaar is.";
+"pref_reliable_service" = "Achtergrondverbinding afdwingen";
+"pref_reliable_service_explain" = "Toont een permanente melding";
+"pref_background_notifications_rationale" = "Om een achtergrondverbinding naar je server op te zetten, dien je in de volgende stap alle accu-optimalisaties te negeren.\n\nDelta Chat gebruikt weinig systeembronnen en verhoogt je accuverbruik nauwelijks.";
+// disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
+"perm_enable_bg_reminder_title" = "Druk hier om berichten te ontvangen als Delta Chat niet geopend is.";
+"perm_enable_bg_already_done" = "Je hebt al toestemming gegeven voor het ophalen van berichten op de achtergrond.\n\nAls het nog steeds niet werkt, controleer dan de systeeminstellingen.";
+// device messages for updates
+"update_2_0" = "Wijzigingslog:\n\n💯 Eind-tot-eindversleuteling is voortaan betrouwbaarder én standaard. Slotjes 🔒 zijn verleden tijd!\n\n✉️ Klassieke e-mails zonder eind-tot-eindversleuteling worden voortaan gemarkeerd met een letter\n\n😻 Nieuwe, mooiere profielpagina\'s van al je contactpersonen\n\n🔲 Nieuwe knop voor snelle toegang tot apps in gesprekken\n\n❤️ Overweeg een donatie, zodat we onafhankelijk kunnen blijven en verbeteringen kunnen blijven aanbrengen: %1$@";

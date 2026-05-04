@@ -1,0 +1,13 @@
+# BMChat Project Intelligence
+
+- Always read `memory-bank/*.md` before working on BMChat tasks.
+- The workspace is a multi-client fork, not a single app rewrite.
+- Keep Delta Chat upstream mergeability high: avoid broad namespace/class/package renames unless required for install identity or store submission.
+- Client roots:
+  - `clients/desktop`: Delta Chat Desktop fork on `bmchat/main`.
+  - `clients/android`: Delta Chat Android fork on `bmchat/main`.
+  - `clients/ios`: Delta Chat iOS fork on `bmchat/main`.
+- Treat `clients/android/jni/deltachat-core-rust` and `clients/ios/deltachat-ios/libraries/deltachat-core-rust` as upstream core submodules. Do not brand-edit core unless a user-facing string is proven to come from there.
+- Default licensing assumption: desktop and Android BMChat distributions must stay GPL-compatible; iOS and core are MPL-based per upstream files. This is not legal advice.
+- Brand source of truth starts at `brand/config/bmchat-brand.json`; keep generated platform assets and identifiers documented in `docs/brand-map.md`.
+- Russian localization audit is in `docs/localization-audit.md`; do not assume existing Russian translations are BMChat-ready.

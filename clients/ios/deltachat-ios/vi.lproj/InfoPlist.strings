@@ -1,0 +1,6 @@
+NSCameraUsageDescription = "Delta Chat sử dụng máy ảnh của bạn để chụp và gửi ảnh cũng như video cũng như quét mã QR.";
+NSLocationAlwaysAndWhenInUseUsageDescription = "Delta Chat cần có quyền chia sẻ vị trí của bạn trong khoảng thời gian bạn đã bật tính năng chia sẻ vị trí.";
+NSLocationWhenInUseUsageDescription = "Delta Chat cần có quyền chia sẻ vị trí của bạn trong khoảng thời gian bạn đã bật tính năng chia sẻ vị trí.";
+NSMicrophoneUsageDescription = "Delta Chat sử dụng micrô của bạn để ghi và gửi tin nhắn thoại cũng như video có âm thanh.";
+NSPhotoLibraryUsageDescription = "Delta Chat sẽ cho phép bạn chọn ảnh từ thư viện để gửi.";
+NSPhotoLibraryAddUsageDescription = "Delta Chat muốn lưu hình ảnh vào thư viện ảnh của bạn.";

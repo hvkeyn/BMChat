@@ -1,0 +1,369 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "OK";
+"cancel" = "Imtina";
+"yes" = "Bəli";
+"no" = "Xeyir";
+"on" = "Açıq";
+"off" = "Bağlı";
+"def" = "Cari olan";
+"custom" = "Xüsusi";
+"none" = "Yoxdur";
+"automatic" = "Avtomatik";
+"strict" = "Mıtin";
+"open" = "Açıq";
+"delete" = "Sil";
+"info" = "məlumat";
+"update" = "Yeniləmə";
+"emoji" = "Emojilər";
+"attachment" = "Fayllar";
+"back" = "Geri";
+"close" = "Bağla";
+"forward" = "Başqasına göndərmə";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "Arxivləşmə";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "Arxivdən çıxarma";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "Səssiz";
+"ephemeral_messages" = "Yox olan mesajlar";
+"save" = "Saxla";
+"chat" = "Çat";
+"media" = "Mediafayllar";
+"main_menu" = "Əsas menyu";
+"start_chat" = "Çata başla";
+"not_now" = "İndi deyil";
+"never" = "Heç vaxt";
+"one_moment" = "Gözləyin...";
+"done" = "Hazır";
+"undo" = "Geri qaytar";
+"error" = "Xəta";
+"error_x" = "Xəta: %1$@";
+"no_app_to_handle_data" = "Bu tip məlumatları idarə etmək üçün bir tətbiq tapılmadı.";
+"no_browser_installed" = "Heç bir brauzer quraşdırılıb.";
+"file_not_found" = "Tapa bilmədim %1$@.";
+"copied_to_clipboard" = "Panoya kopyalandı.";
+"contacts_headline" = "Kontaktlar";
+"email_address" = "Email ünvanı";
+"bad_email_address" = "Səhv e-mail ünvanı.";
+"password" = "Parol";
+"now" = "Indi";
+"today" = "Bugün";
+"yesterday" = "Dünən";
+"this_week" = "Bu həftə";
+"this_month" = "Bu ay";
+"last_week" = "Keçən həftə";
+"last_month" = "Keçən ay";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+"self" = "Mənə";
+"draft" = "Laihə";
+"image" = "Şəkil";
+"gif" = "Gif";
+"images" = "Şəkillər";
+// a noun, used for "Music" and other "Audio" files
+"audio" = "Audio";
+"voice_message" = "Səsli mesaj";
+"forwarded_message" = "Köçürülmüş mesaj";
+"video" = "Video";
+"documents" = "Sənədlər";
+"contact" = "Kontakt";
+"camera" = "Kamera";
+"location" = "Yer";
+"gallery" = "Qalereya";
+"file" = "Fayl";
+"unknown" = "Naməlum";
+"green" = "Yaşıl";
+"red" = "Qırmızı";
+"blue" = "Mavi";
+"orange" = "Narıncı";
+"cyan" = "Sian";
+"purple" = "Purpur";
+"magenta" = "Açıq fırfır";
+"white" = "Ağ";
+"small" = "Kiçik";
+"normal" = "Normal";
+"large" = "Böyük";
+"extra_large" = "Çox böyük";
+"fast" = "Sürətli";
+"slow" = "Ləng";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "Yeni kontakt";
+"menu_new_chat" = "Yeni çat";
+"menu_new_group" = "Yeni qrup";
+"menu_send" = "Göndər";
+"menu_toggle_keyboard" = "Emoji klaviatura keçidi";
+"menu_edit_group" = "Qrupu dəyiş";
+"menu_group_name_and_image" = "Qrupun adı və şəkili";
+"menu_show_global_map" = "Bütün yerləşmə yerləri göstər";
+"menu_archive_chat" = "Çatın xəzinəsi";
+"menu_unarchive_chat" = "Çat xəzinəsini aç";
+"menu_add_attachment" = "Fayl əlavə et";
+"menu_leave_group" = "Qrupu tərk et";
+"menu_delete_chat" = "Çatı sil";
+"menu_delete_location" = "Bu yerləşməni silmək? ";
+"menu_message_details" = "Mesaj məlumatları";
+"menu_copy_to_clipboard" = "Panoya kopyalamaq";
+"menu_forward" = "Növbəti mesaj";
+"menu_reply" = "Mesaja cavab";
+"menu_mute" = "Bildirişləri söndürmək";
+"menu_unmute" = "Səs vermək";
+"menu_export_attachment" = "Fayl exportu";
+"menu_all_media" = "Bütün fayllar";
+"menu_share" = "Göndər";
+"menu_block_contact" = "Kontaktı blokla";
+"menu_unblock_contact" = "Kontaktı blokdan aç";
+"menu_play" = "İşə sal";
+"menu_pause" = "Dayandır";
+"menu_scroll_to_bottom" = "Altına keçin";
+"menu_scroll_to_top" = "Yuxarı qalxmaq";
+"menu_help" = "Kömək";
+"menu_select_all" = "Hamısını səç";
+"menu_edit_name" = "Adı dəyişdir";
+"menu_settings" = "Tənzimləmə";
+"menu_advanced" = "Ətraflı";
+"menu_view_profile" = "Profilə bax";
+"menu_zoom_in" = "Yaxınlaşdırmaq";
+"menu_zoom_out" = "Uzaqlaşdırmaq";
+"menu_save_log" = "Loqu saxlamaq";
+"title_share_location" = "Qrup üzvlərinə yerləşdiyin yerini göndər";
+"edit_contact" = "Kontakta dəyişiklik";
+"mute_for_one_hour" = "1 saatlıq söndür";
+"mute_for_eight_hours" = "8 saatlıq söndür";
+"mute_for_one_day" = "1 günlük söndür";
+"mute_for_seven_days" = "7 günlük söndür";
+"mute_forever" = "Həmişə səssiz";
+"share_location_for_5_minutes" = "5 dəqiqə üçün";
+"share_location_for_30_minutes" = "30 qəqiqə üçün";
+"share_location_for_one_hour" = "1 saat üçün";
+"share_location_for_two_hours" = "2 saat üçün ";
+"share_location_for_six_hours" = "6 saat üçün";
+"ask_forward" = "Mesajları yönləndirin %1$@ə-?";
+"ask_export_attachment" = "Faylı ixrac etmək? Faylların ixracı cihazınızdakı hər hansı digər tətbiqlərə daxil olmağa imkan verəcəkdir. \n\n Razısan?";
+"ask_block_contact" = "Bu kontaktı bloklamaq? Bu kontaktdan artıq mesaj qəbul etməyəcəksiniz.";
+"ask_unblock_contact" = "Bu kontaktı blokdan çıxarmaq istəyirsiniz? Nəticədə kontaktdan mesajlar ala bilərsiniz.";
+"ask_delete_contacts" = "Kontaktları silmək? Bu əməliyyat seçilmiş kontaktları daimi olaraq silməyəcək. \n\n Sistem kontakt kitabından davam edən söhbətlər və kontaktlar ilə əlaqə saxlanıla bilməz.";
+"ask_start_chat_with" = "%1$@ ilə çat? ";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_members" = "%1$@ qrupdan silmək? ";
+// contact list
+"contacts_title" = "Kontaktlar";
+"contacts_type_email_above" = "E-poçt ünvanını yazın";
+// chatlist and chat view
+"chat_archived_chats_title" = "Çatlar saxlanıldı";
+"chat_please_enter_message" = "Mesajı daxıl edin";
+"chat_camera_unavailable" = "Camera əlçatmazdır.";
+"chat_unable_to_record_audio" = "Səs yaza bilmir.";
+"chat_new_group_hint" = "Başqalarının bu qrup daxilində cavab verməsinə imkan verən ilk mesajı yaradın. \n\n• Bütün üzvlər Delta Chat istifadə etsələr daha yaxşıdır. \n\n• İlk mesajı çatdırmaq bir müddət ala bilər.";
+"chat_record_slide_to_cancel" = "Ləğv etmək üçün sürüşdürün";
+"chat_record_explain" = "Bir səsli mesajı yazmaq üçün toxunun və saxlayın, göndərmək üçün buraxın";
+"chat_no_chats_yet_title" = "Qutu boşdur.\nYeni çata başlamaq üçün \"+\" işarəsinə toxunun. ";
+"chat_all_archived" = "Bütün çatlar saxlanıldı.\nYeni çata başlamaq üçün \"+\" işarəsinə toxunun. ";
+"chat_share_with_title" = "Göndər ";
+"chat_input_placeholder" = "Mesaj";
+"chat_archived_label" = "Xəzinələndi";
+"chat_no_messages" = "Mesaj yoxdur";
+"chat_self_talk_subtitle" = "Özümə göndərdiyim mesajlar";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "Saxla";
+"saved_messages" = "Saxlanılmış mesajlar";
+"retry_send" = "Mesaji yenidən göndərməyə cəht et";
+// search
+"search" = "Axtarış";
+"search_explain" = "Çatlar, kontaktlar və mesajlar axtar";
+"search_no_result_for_x" = "\"%1$@\" üçün heç bir nəticə tapılmadı";
+// create/edit groups, contact/group profile
+"group_name" = "Qrup adı";
+"group_avatar" = "Qrupun şəkili";
+"group_create_button" = "Qrup yarat";
+// deprecated, use please_enter_chat_name
+"group_please_enter_group_name" = "Xahiş edirik qrup üçün bir ad daxil et.";
+"group_add_members" = "Üzv elavə et";
+"group_self_not_in_group" = "Bunu etmək üçün qrupun üzvü olmalısan.";
+"profile_encryption" = "Şifrələmə";
+"profile_shared_chats" = "Çatlar göndərildi";
+"tab_contact" = "Kontakt";
+"tab_group" = "Qrup";
+"tab_gallery" = "Şəkillər";
+"tab_docs" = "Sənədlər";
+"tab_links" = "Linklər";
+"tab_map" = "Xəritə";
+"tab_gallery_empty_hint" = "Bu çatda paylaşılan şəkillər və videolar burada nümayiş olunacaq.";
+"tab_docs_empty_hint" = "Bu söhbətdə paylaşılan sənədlər, musiqi və digər fayllar burada göstəriləcək.";
+"media_preview" = "Fayllara baxmaq";
+"login_title" = "Daxil ol";
+"login_inbox" = "Gələn";
+"login_imap_login" = "IMAP logini";
+"login_imap_server" = "IMAP server";
+"login_imap_port" = "IMAP port";
+"login_imap_security" = "IMAP təhlükəsizliyi";
+"login_outbox" = "Çıxan";
+"login_smtp_login" = "SMTP login";
+"login_smtp_password" = "SMTP parolu";
+"login_smtp_server" = "SMTP server";
+"login_smtp_port" = "SMTP port";
+"login_smtp_security" = "SMTP təhlükəsizliyi";
+"login_certificate_checks" = "Sertifikat yoxlanmaları";
+"login_error_mail" = "Xahiş edirik düzgün bir e-poçt ünvanı daxil et";
+"login_error_server" = "Xahiş edirik, düzgün bir server / IP ünvanı daxil et";
+"login_error_port" = "Xahiş edirik, düzgün bir port (1-65535) daxil et";
+"login_error_required_fields" = "Xahiş edirik düzgün bir e-poçt ünvanı və parol daxil et";
+"import_backup_title" = "Nüsxənin importu";
+"import_backup_ask" = "\"%1$@\" - də ehtiyat nüsxəsi tapıldı.\n\nİndi bütün məlumatları və parametrləri idxal etmək və istifadə etmək istəyirsiniz?";
+// %1$s will be replaced by the failing address
+"login_error_cannot_login" = " \"%1$@\" kimi giriş alınmadı. E-poçt ünvanı və parolun düzgün olub olmadığını yoxlayın.";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "İrəli ...";
+"share_abort" = "İcazə olmadığına görə göndərmə kəsildi";
+// preferences
+"pref_profile_info_headline" = "Profil məlumatınız";
+"pref_profile_photo" = "Profil şəkili";
+"pref_blocked_contacts" = "Bloklanmış kontaktlar";
+"pref_who_can_see_profile_explain" = "Digər istifadəçilərlə ünsiyyət qurarkən profil şəkliniz və adınız mesajlarınızla birlikdə göstərilir. Zatən göndərilən məlumat silinməyəcək. ";
+"pref_your_name" = "Adın";
+// Label of the Bio/Signature/Status/Motto field
+"pref_default_status_label" = "Yazını mətni";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "Enter açarı ilə göndərmək";
+"pref_enter_sends_explain" = "Enter düyməsini basaraq mətn mesajları göndərəcək";
+"pref_outgoing_media_quality" = "Göndərilən medianın keyfiyyatı";
+"pref_outgoing_balanced" = "Balanslıdır";
+"pref_outgoing_worse" = "Daha pis keyfiyyət, kiçik ölçülü";
+"pref_vibrate" = "Vibrasiya";
+"pref_screen_security" = "Ekran təhlükəsizliyi";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "Son proqramlar siyahısında və proqramın daxilində ekran çəkməyi qadağan etmə";
+"pref_screen_security_please_restart_hint" = "Ekranın təhlükəsizlik tənzimləmələrini tətbiq etmək üçün proqramı yenidən başladın.";
+"pref_notifications" = "Bildirişlər";
+"pref_notifications_show" = "Göstərmək";
+"pref_notifications_priority" = "Öndəmdə olan";
+"pref_led_color" = "LED rəng";
+"pref_sound" = "Səs";
+"pref_silent" = "Səssiz";
+"pref_privacy" = "Gizlilik";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "Açıq";
+"pref_dark_theme" = "Tünd";
+"pref_appearance" = "Görünüş";
+"pref_theme" = "Tema";
+"pref_language" = "Dillər";
+"pref_incognito_keyboard" = "Məxfi klaviatura";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "Klaviaturanın personal öyrənməyini söndürmək";
+"pref_read_receipts" = "Qəbul olunanları oxuyun";
+"pref_read_receipts_explain" = "Bildirişlər aradan qaldırılırsa, başqalarının oxuduğu bildirişləri görə bilməyəcəksiniz.";
+"pref_manage_keys" = "Açar edarəetməsi";
+"pref_chats" = "Çatlar";
+"pref_in_chat_sounds" = "Çatda olan səslər";
+"pref_view_log" = "Log-a bax";
+"pref_saved_log" = "Loqi Yükləmələr qovluğuna saxlanıldı";
+"pref_save_log_failed" = "Loqu saxlaya bilmədi";
+"pref_log_header" = "Loq";
+"pref_other" = "Başqa";
+"pref_backup" = "Nüsxə";
+"pref_backup_explain" = "Daxili yaddaşa mesaj nüsxəsi";
+"pref_backup_export_explain" = "Ehtiyat nüsxəsi bu və ya digər bir cihazda yeni bir quraşdırma qurmağa kömək edir. \n\nNüsxədə bütün mesajlar, kontaktlar, çatlar və son ucdan uca avtoşifrələmə quraşdırmaınız olacaq. Nüsxə faylını təhlükəsiz yerdə saxlayın və ya mümkün qədər tez silin.";
+"pref_backup_export_start_button" = "Nüsxəyə başla";
+"pref_backup_written_to_x" = "Ehtiyat nüsxə %1$@- ə uğurla yazılmışdır";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "Fon";
+"pref_background_btn_default" = "Hal hazırdaki şəkili istifadə edin";
+"pref_background_btn_gallery" = "Fotoalbomdan götürün";
+"pref_imap_folder_warn_disable_defaults" = "Bu seçimi ləğv etsəniz, serverinizin və digər müştərilərinizin müvafiq olaraq konfiqurasiya olunduğundan əmin olun. \n\nAyrıca şeylər işləməyəcəkdir.";
+"pref_auto_folder_moves" = "DeltaChat qovluğuna avtomatik keçid";
+"pref_show_emails" = "Klassik e-poçtları göstər";
+"pref_show_emails_no" = "Xeyir, ancaq çatlar";
+"pref_show_emails_accepted_contacts" = "Qəbul edilən kontaktlar üçün";
+"pref_show_emails_all" = "Hamısı";
+"pref_background_default" = "Özünəməxsus arxa fon";
+"pref_background_default_color" = "Özünəməxsus rəng";
+"pref_background_custom_image" = "Şəkil";
+"pref_background_custom_color" = "Rəng";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name
+"group_name_changed_by_you" = "Qrupun adı \"%1$@\" - dən \"%2$@\" - yə deyişildi məndən. ";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name, %3$s will be replaced by name and address of the contact who did the action.
+"group_name_changed_by_other" = "Qrupun adı \"%1$@\" - dən \"%2$@\" - yə deyişildi ilə %3$@.";
+"group_image_changed_by_you" = "Qrup şəkili dəyişildi məndən. ";
+// %1$s will be replaced by name of the contact who did the action
+"group_image_changed_by_other" = "Qrup şəkili dəyişildi ilə %1$@.";
+// %1$s will be replaced by name of the contact added to the group
+"add_member_by_you" = "Üzv %1$@ əlavə olundu məndən. ";
+// %1$s will be replaced by name of the contact added to the group, %2$s will be replaced by name of the contact who did the action
+"add_member_by_other" = "Üzv %1$@ əlavə olundu ilə %2$@.";
+// %1$s will be replaced by name of the contact removed from the group
+"remove_member_by_you" = "%1$@ üzv silindi məndən. ";
+// %1$s will be replaced by name of the contact removed from the group, %2$s will be replaced by name of the contact who did the action
+"remove_member_by_other" = "%1$@ üzv silindi ilə %2$@.";
+"group_image_deleted_by_you" = "Qrupun şəkili silindi məndən. ";
+// %1$s will be replaced by name of the contact
+"group_image_deleted_by_other" = "Qrupun şəkili silindi ilə %1$@.";
+"qrscan_title" = "Qr kodu skan edin";
+"qrscan_hint" = "QR kodu kamera ilə izləyin";
+"qrscan_ask_join_group" = "\"%1$@\" qrupa qoşulmaq istəyirsinizmi?";
+"qrscan_fingerprint_mismatch" = "%1$@üçün skan olunan barmaq izi son görüldüyü barmaq izinə uyğun deyil";
+"qrscan_no_addr_found" = "QR kodu iz ehtiva edir, lakin heç bir e-poçt ünvanı yoxdur.\n\nƏlaqə qurmaq üçün əvvəlcə abonentlə şifrəli bir əlaqə qurun.";
+"qrscan_contains_text" = "QR kod mətni skan olundu:\n\n%1$@";
+"qrscan_contains_url" = "QR kod linki skan olundu:\n\n%1$@";
+"qrscan_fingerprint_label" = "İz";
+"qrshow_title" = "QR dəvət kodu";
+"qrshow_x_joining" = "%1$@ qoşulur.";
+"qrshow_x_verified" = "%1$@ yoxlanıldı.";
+"qrshow_x_has_joined_group" = "%1$@ qrupa qoşuldu.";
+"qrshow_join_group_title" = "Dəvət QR-kodu";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the group name, eg. "Scan to join group \"Testing group\""
+"qrshow_join_group_hint" = " \"%1$@\" qrupuna qoşulmaq üçün bunu skan edin. ";
+"qrshow_join_contact_title" = "Dəvət QR-kodu";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to chat with Alice"
+"qrshow_join_contact_hint" = "%1$@ilə əlaqə qurmaq üçün bunu skan edin";
+"qrshow_join_contact_no_connection_toast" = "İnternet bağlantısı yoxdur, QR kodunu qura bilmir.";
+"contact_verified" = "%1$@ yoxlanıldı.";
+// notifications
+"notify_reply_button" = "Cavab ver";
+"notify_new_message" = "Yeni mesaj";
+"notify_background_connection_enabled" = "Arxa fon əlaqəsi aktivdir";
+"notify_priority_high" = "Yüksək";
+"notify_priority_max" = "Maksimal";
+"notify_name_and_message" = "Ad və mesaj";
+"notify_name_only" = "Ancaq ad";
+"notify_no_name_or_message" = "Adı və ya mesaj yoxdur";
+// permissions
+"perm_required_title" = "İzin tələb olunur";
+"perm_continue" = "Davam edin";
+"perm_explain_access_to_camera_denied" = "Delta Chat şəkillər və ya video çəkmək üçün kamera icazə tələb edir, lakin bu, əbədi imtina edilmişdir. Proqramın sistem ayarlarına gedib \"İcazələr\"-i seçin və \"kamera\" izni verin.";
+// give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
+"perm_explain_access_to_mic_denied" = "Delta Chat yer əlavə etmək üçün yer icazə tələb edir, lakin daimi olaraq rədd edilmişdir. \"İcazələr\"-i seçin və\"Yerləşmə\" izni verin. ";
+"perm_explain_access_to_storage_denied" = "Delta Chat, fotoşəkilləri, videoları və ya səsləri əlavə etmək və ya ixrac etmək üçün saxlama icazəsini tələb edir, lakin bu daimi olaraq rədd edildi. Xahiş edirik tətbiq ayarları menyusuna davam edin, \"İzinlər\" seçin və \"Yaddaş\" funksiyasını aktivləşdirin.";
+"perm_explain_access_to_location_denied" = "Delta Chat yer əlavə etmək üçün yer icazə tələb edir, lakin daimi olaraq rədd edilmişdir. \"İcazələr\"-i seçin və\"Yerləşmə\" izni verin. ";
+"global_menu_preferences_language_desktop" = "Dil səç";
+"global_menu_file_desktop" = "Fayl";
+"global_menu_file_quit_desktop" = "Çıxış";
+"global_menu_edit_desktop" = "Düzəliş et";
+"global_menu_edit_undo_desktop" = "Geri qaytar";
+"global_menu_edit_redo_desktop" = "Hazır";
+"global_menu_edit_cut_desktop" = "Kəs";
+"global_menu_edit_copy_desktop" = "Kopyala";
+"global_menu_edit_paste_desktop" = "Əlavə et";
+"global_menu_view_desktop" = "Baxmaq";
+"global_menu_view_floatontop_desktop" = "Üstə çıxın";
+"global_menu_view_developer_desktop" = "İnkişaf etdirici";
+"global_menu_view_developer_tools_desktop" = "İnkişaf etdirici alətləri";
+"global_menu_help_desktop" = "Kömək";
+"global_menu_help_report_desktop" = "Problemi bildirin";
+"no_chat_selected_suggestion_desktop" = "Bir çat seçin və ya yeni bir çat yaradın";
+"write_message_desktop" = "Bir mesaj yazın";
+"encryption_info_title_desktop" = "Şifrələmə məlumatları";
+"delete_message_desktop" = "Mesajı sil";
+"more_info_desktop" = "Daha çox məlumat";
+"timestamp_format_m_desktop" = "MMM D";
+"remove_desktop" = "Sil";
+"save_desktop" = "Saxla";
+"name_desktop" = "Ad";
+"select_group_image_desktop" = "Qrup şəklini seç";
+"export_backup_desktop" = "Ehtiyat nüsxəsinin ixracı";
+"message_detail_sent_desktop" = "Göndər";
+"message_detail_received_desktop" = "qəbul olundu";
+"menu.view.developer.open.log.folder" = "Loq mələfini açın";
+"menu.view.developer.open.current.log.file" = "Loq-faylı açın";
+// disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
+"perm_enable_bg_reminder_title" = "Delta Chat arxa fonda mesajları almaq üçün bura toxunun.";

@@ -1,0 +1,53 @@
+body {
+    font-size: 13pt;
+    font-family: -apple-system, sans-serif;
+	padding: 0 .5rem .5rem .5rem;
+    -webkit-text-size-adjust: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+h2, h3, h4 {
+  margin-top: 2rem;
+}
+
+ul#top {
+  list-style-type: none;
+  margin: 1.2rem 0 0 0;
+  padding: 0;
+}
+
+ul#top > li {
+  font-weight: bold !important;
+}
+
+ul#top li {
+  margin-top: 0.7rem;
+  margin-bottom: 0.7rem;
+  font-weight: normal;
+}
+
+p.back {
+  font-size: 1.5rem;
+  padding: 0 2rem 0 0;
+}
+
+a[href^='http']::after {
+    content: " ↗";
+}
+
+/* ---------- colors, dark mode ---------- */
+
+a {
+  color: #0984ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: black !important;
+	color: #eee;
+  }
+}
+

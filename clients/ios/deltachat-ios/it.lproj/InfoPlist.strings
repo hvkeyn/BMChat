@@ -1,0 +1,7 @@
+NSCameraUsageDescription = "Delta Chat utilizza la tua fotocamera per scattare e inviare foto e video e per scansionare i codici QR.";
+NSLocationAlwaysAndWhenInUseUsageDescription = "Delta Chat necessita dell\'autorizzazione per condividere la tua posizione per il periodo di tempo in cui hai abilitato la condivisione della posizione.";
+NSLocationWhenInUseUsageDescription = "Delta Chat ha bisogno dell\'autorizzazione di localizzazione per condividere la vostra posizione per il periodo di tempo in cui avete abilitato la condivisione della posizione.";
+NSMicrophoneUsageDescription = "Delta Chat utilizza il tuo microfono per registrare e inviare messaggi vocali e video con audio.";
+NSPhotoLibraryUsageDescription = "Delta Chat ti permetterà di scegliere quali foto della tua libreria inviare.";
+NSPhotoLibraryAddUsageDescription = "Delta Chat vuole salvare le immagini nella tua libreria fotografica.";
+NSFaceIDUsageDescription = "Delta Chat può utilizzare Face ID per proteggere il tuo profilo locale, la creazione di backup e la configurazione di un secondo dispositivo.";

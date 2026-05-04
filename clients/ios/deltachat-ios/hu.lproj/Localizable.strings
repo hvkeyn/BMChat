@@ -1,0 +1,986 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "OK";
+"cancel" = "Mégse";
+"clear_search" = "Keresés kiürítése";
+// a noun, used on a button, short for "show link"
+"link" = "Hivatkozás";
+// "scan" in the meaning of "scan QR code"
+"scan" = "Beolvasás";
+"yes" = "Igen";
+"no" = "Nem";
+"select" = "Kiválasztás";
+"on" = "Bekapcsolva";
+"off" = "Kikapcsolva";
+"def" = "Alapértelmezett";
+"default_value" = "Alapértelmezett (%1$@)";
+"custom" = "Egyéni";
+"none" = "Semmi";
+"automatic" = "Automatikus";
+"strict" = "Szigorú";
+"open" = "Megnyitás";
+"download" = "Letöltés";
+"downloading" = "Letöltés…";
+"open_attachment" = "Melléklet megnyitása";
+"join" = "Csatlakozás";
+"rejoin" = "Újracsatlakozás";
+"delete" = "Törlés";
+"delete_for_me" = "Törlés számomra";
+"delete_for_everyone" = "Törlés mindenki számára";
+"info" = "Információk";
+"update" = "Frissítés";
+"emoji" = "Emodzsi";
+"attachment" = "Melléklet";
+"back" = "Vissza";
+"close" = "Bezárás";
+"close_window" = "Ablak bezárása";
+"forward" = "Továbbítás";
+"create" = "Létrehozás";
+"reset" = "Visszaállítás";
+"later" = "Később";
+// "Resend" means "Sending the selected message(s) again to the same chat". The string is used in a menu and should be as short as possible. Resending may be needed after failures or to repost old messages to new members.
+"resend" = "Újraküldés";
+"edited" = "Szerkesztve";
+"edit_message" = "Üzenet szerkesztése";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "Archiválás";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "Archiválás visszavonása";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "Némítás";
+// Adjective "smth is muted". used to describe a muted or silenced chat, that e.g. does not make noise or cause notifications
+"muted" = "Némított";
+"ephemeral_messages" = "Eltűnő üzenetek";
+"ephemeral_messages_hint" = "A csevegés összes tagjára vonatkozik; az üzeneteket továbbra is másolhatják, menthetik és továbbíthatják.";
+"save" = "Mentés";
+"chat" = "Csevegés";
+"media" = "Média";
+"apps_and_media" = "Alkalmazások & média";
+"profile" = "Profil";
+"all_profiles" = "Összes profil";
+"current_profile" = "Jelenlegi profil";
+"main_menu" = "Főmenü";
+"start_chat" = "Csevegés indítása";
+"show_full_message" = "Teljes üzenet megjelenítése…";
+// Stay short here, say ~16 characters. The source string could also be "All Read", maybe that hint can make translations easier :)
+"mark_all_as_read" = "Összes megjelölése olvasottként";
+// Used as an menu entry or button
+"mark_as_read" = "Megjelölés olvasottként";
+// Used beside an icon with very few space. Shortest text for "Mark as being read". In english, this could be "Read" (past tense of "to read"), in german, this could be "Gelesen".
+"mark_as_read_short" = "Megjelölés olvasottként";
+// Placeholder text when something is loading
+"loading" = "Betöltés…";
+"hide" = "Elrejtés";
+"activate" = "Aktiválás";
+"load_remote_content" = "Távoli képek betöltése";
+// Possible answers to the question are: Never, Always, Once
+"load_remote_content_ask" = "A távoli képek követhetik Önt.\n\nEz a beállítás betűtípusokat és egyéb tartalmakat is betölthet. Ha letiltja, beágyazott vagy gyorsítótárazott képek jelenhetnek meg.\n\nBetölti a távoli képeket?";
+"always" = "Mindig";
+"always_load_remote_images" = "Mindig töltse be a távoli képeket";
+"once" = "Azonnal";
+"show_warning" = "Figyelmeztetés megjelenítése";
+"not_now" = "Most nem";
+"never" = "Soha";
+"one_moment" = "Egy pillanat…";
+"done" = "Kész";
+"undo" = "Visszavonás";
+"offline" = "Offline";
+// For the next view or as "continue". Should be as short as possible.
+"next" = "Következő";
+"error" = "Hiba";
+"error_x" = "Hiba: %1$@";
+"no_app_to_handle_data" = "Nem található alkalmazást az ilyen típusú adatok kezeléséhez.";
+"no_browser_installed" = "Nincs telepítve böngésző.";
+"file_not_found" = "%1$@ nem található.";
+// the placeholder will be replaced by the name of a file
+"cannot_save_file" = "Nem lehet menteni a következőt: %1$@.";
+"copied_to_clipboard" = "Vágólapra másolva.";
+"contacts_headline" = "Névjegyek";
+"email_address" = "E-mail-cím";
+"bad_email_address" = "Hibás e-mail-cím.";
+"password" = "Jelszó";
+"existing_password" = "Jelenlegi jelszó";
+"now" = "Most";
+// Headline for destructive actions with no undo. Could also be "Caution" or "Warning".
+"danger" = "Veszély";
+"today" = "Ma";
+"yesterday" = "Tegnap";
+"this_week" = "Ezen a héten";
+"this_month" = "Ebben a hónapban";
+"last_week" = "Múlt héten";
+"last_month" = "Múlt hónapban";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by date or time, resulting in "Last seen at 12:13 AM" or "Last seen Nov 12"
+"last_seen_at" = "Utoljára látta: %1$@";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by a relative point in time as "3 minutes ago" (see https://momentjs.com for more examples and languages)
+"last_seen_relative" = "Utoljára látta: %1$@";
+"last_seen_unknown" = "Utoljára látta: - (ismeretlen)";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+// Short form for "N Items Selected"
+"selected_colon" = "Kiválasztva:";
+"self" = "Ön";
+"draft" = "Piszkozat";
+"image" = "Kép";
+// Used in summaries as "Draft: Reply", similar as "Draft: Image". Use a noun here, not a verb (not: "to reply")
+"reply_noun" = "Válasz";
+"gif" = "Gif";
+// "Stickers" as known from other messengers; in some languages, the English "Sticker" is fine.
+"sticker" = "Matrica";
+"add_to_sticker_collection" = "Hozzáadás a matricagyűjteményhez";
+// deprecated, use sticker_picker_empty_hint instead
+"add_stickers_instructions" = "A matricák hozzáadásához koppintson a „Matricamappa megnyitása” lehetőségre, hozzon létre egy almappát a matricacsomagnak, és húzza oda a kép- és matricafájlokat.";
+// deprecated
+"open_sticker_folder" = "Matricamappa megnyitása";
+"images" = "Képek";
+// a noun, used for "Music" and other "Audio" files
+"audio" = "Hang";
+"voice_message" = "Hangüzenet";
+"forwarded" = "Továbbított";
+"forwarded_message" = "Továbbított üzenet";
+// %1$s will be replaced by the name of the person who forwarded the message
+"forwarded_by" = "Továbbítva %1$@ által";
+"video" = "Videó";
+"documents" = "Dokumentumok";
+"contact" = "Névjegy";
+"bot" = "Bot";
+"camera" = "Kamera";
+// As in "start a video recording" or "take a photo"; eg. the description of the "shutter button" in cameras
+"capture" = "Rögzítés";
+"switch_camera" = "Kameraváltás";
+"toggle_fullscreen" = "Váltás teljes képernyős módra";
+"location" = "Hely";
+"locations" = "Helyek";
+"gallery" = "Galéria";
+"images_and_videos" = "Képek és videók";
+"file" = "Fájl";
+"files" = "Fájlok";
+"files_attach_hint" = "Eredeti fájlok és tömörítetlen képek küldése";
+// "Files" here means the "Files Selector App" or "Files Manager App"
+"choose_from_files" = "Kiválasztás a „Fájlokból”";
+"choose_from_gallery" = "Kiválasztás a „Galériából”";
+// "App" is used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_app" = "Alkalmazás";
+// plural of "App"; used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_apps" = "Alkalmazások";
+"webxdc_store_url" = "Alkalmazásválasztó webcíme";
+"webxdc_store_url_explain" = "Ha be van állítva, akkor a webcím lesz használva mint alkalmazásválasztó az alapértelmezett helyett";
+"webxdc_draft_hint" = "Koppintson a „Küldésre” a megosztáshoz";
+"home" = "Kezdőlap";
+"games" = "Játékok";
+"tools" = "Eszközök";
+"app_size" = "Méret";
+// Used as a headline for a date. E.g. in the details of a mini app in the app picker
+"app_date_published" = "Közzétéve";
+"add_to_chat" = "Hozzáadás csevegéshez";
+// short for "Browse through the App Picker/Store/Catalogue"; could also be translated as "Discover" or "Search"
+"browse" = "Böngészés";
+"unknown" = "Ismeretlen";
+"green" = "Zöld";
+"red" = "Piros";
+"blue" = "Kék";
+"orange" = "Narancssárga";
+"cyan" = "Cián";
+"purple" = "Lila";
+"magenta" = "Magenta";
+"white" = "Fehér";
+"zoom" = "Nagyítás";
+"extra_small" = "Extra kicsi";
+"small" = "Kicsi";
+"normal" = "Normál";
+"large" = "Nagy";
+"extra_large" = "Nagyon nagy";
+"fast" = "Gyors";
+"slow" = "Lassú";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "Új névjegy";
+"menu_new_classic_contact" = "Új névjegy hozzáadása kézzel";
+"new_classic_contact_explain" = "A kézzel hozzáadott névjegyek szöveges üzenetek küldésére használhatók a klasszikus e-mailekhez és nem garantált a végpontok közötti titkosításuk.";
+"menu_new_chat" = "Új csevegés";
+"menu_new_group" = "Új csoport";
+// "Chat" is a verb here, "Message to" would also fit. the string might be used in the "New Chat" screen above the contact list
+"chat_with" = "Csevegés vele…";
+"clone_chat" = "Csevegés klónozása";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channel" = "Csatorna";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channels" = "Csatornák";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"new_channel" = "Új csatorna";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"channel_name" = "Csatorna neve";
+"email" = "E-mail";
+// "New" as in "Create New Email"; shown together with "New Group" and "New Channel"
+"new_email" = "Új e-mail";
+// the "Subject" of an email, use the term common in classic email apps
+"subject" = "Tárgy";
+"menu_send" = "Küldés";
+"menu_toggle_keyboard" = "Váltás emodzsibillentyűzetre";
+"menu_edit_group" = "Csoport szerkesztése";
+"menu_group_name_and_image" = "Csoportnév és -kép";
+"menu_show_global_map" = "Az összes hely megjelenítése";
+"menu_archive_chat" = "Csevegés archiválása";
+"menu_unarchive_chat" = "Archiválás visszavonása";
+"menu_add_attachment" = "Fájl mellékelése";
+"menu_leave_group" = "Csoport elhagyása";
+"menu_leave_channel" = "Csatorna elhagyása";
+"menu_delete_chat" = "Csevegés törlése";
+// Command to delete all messages in a chat. The chat itself will not be deleted but will be empty afterwards, so make sure to be different from "Delete Chat" here. "Clear" is a verb here, "Empty Chat" would also be fine (eg. in German "Chat leeren")
+"clear_chat" = "Csevegés kiürítése";
+"delete_contact" = "Névjegy törlése";
+"menu_delete_location" = "Biztosan törli ezt a helyet?";
+"menu_message_details" = "Üzenetinformáció";
+"menu_copy_to_clipboard" = "Másolás a vágólapra";
+"share_invite_link" = "Meghívási hivatkozás megosztása";
+"share_invite_link_explain" = "Ezen a hivatkozáson keresztül bárki megtekintheti az Ön profilját, és csevegést kezdeményezhet Önnel. Csak olyan emberekkel ossza meg, akikben megbízik.";
+"invite_friends" = "Partnerek meghívása";
+// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
+"invite_friends_text" = "Lépjen kapcsolatba velem a Delta Chaten:\n%1$@";
+"menu_copy_selection_to_clipboard" = "Kiválasztott(ak) másolása";
+"menu_copy_link_to_clipboard" = "Hívatkozás másolása";
+"menu_copy_text_to_clipboard" = "Szöveg másolása";
+"menu_copy_image_to_clipboard" = "Kép másolása";
+"menu_copy_email_to_clipboard" = "E-mail másolása";
+"paste_from_clipboard" = "Beillesztés a vágólapról";
+"ask_copy_unopenable_link_to_clipboard" = "A(z) „%1$d” hivatkozást nem lehet megnyitni a böngészőben. Szeretné inkább a hivatkozást a vágólapra másolni?";
+"menu_forward" = "Üzenet továbbítása";
+"menu_reply" = "Válasz az üzenetre";
+"menu_mute" = "Értesítések némítása";
+"menu_unmute" = "Némítás megszüntetése";
+"menu_export_attachment" = "Melléklet exportálása";
+"menu_export_attachments" = "Mellékletek exportálása";
+"menu_all_media" = "Összes média";
+"all_apps_and_media" = "Összes alkalmazás & média";
+// Command to jump to the original message corresponding to a gallery image or document
+"show_in_chat" = "Megjelenítés a csevegésben";
+"show_app_in_chat" = "Alkalmazás megjelenítése a csevegésben";
+"menu_share" = "Megosztás";
+// Verb "to block sth." usually a mailing list or a contact, not a noun
+"block" = "Letiltás";
+"menu_block_contact" = "Névjegy letiltása";
+"menu_unblock_contact" = "Letiltás visszavonása";
+"accept" = "Elfogadás";
+"menu_play" = "Lejátszás";
+"menu_pause" = "Szünet";
+"menu_scroll_to_bottom" = "Ugrás az aljára";
+"menu_scroll_to_top" = "Ugrás a tetejére";
+"menu_help" = "Súgó";
+// use the same term for "Apps" as elsewhere
+"what_is_webxdc" = "Mi az a Webxdc?";
+"privacy_policy" = "Adatvédelmi irányelvek";
+"menu_select_all" = "Összes kiválasztása";
+"select_chat" = "Csevegés kiválasztása";
+"select_more" = "Továbbiak kiválasztása";
+"menu_edit_name" = "Név szerkesztése";
+// The placeholder will be replaced by the name the contact gave themself
+"edit_name_explain" = "Állítson be egy becenevet a(z) „%1$@” nevű partnerének. Hagyja üresen a partnere által választott név megjelenítéséhez.";
+// The placeholder will be replaced by the name the contact gave themself
+"edit_name_placeholder" = "Becenév megadása „%1$@“ számára";
+"menu_settings" = "Beállítások";
+"menu_advanced" = "Speciális beállítások";
+"menu_view_profile" = "Profil megtekintése";
+"menu_zoom_in" = "Nagyítás";
+"menu_zoom_out" = "Kicsinyítés";
+"menu_save_log" = "Naplófájl mentése";
+"menu_more_options" = "További beállítások";
+"menu_learn_spelling" = "Helyesírás tanulása";
+"jump_to_message" = "Ugrás az üzenetre";
+"replace_draft" = "Piszkozat cseréje";
+"title_share_location" = "Hely megosztása a csoport összes tagjával";
+"device_talk" = "Eszközüzenetek";
+"device_talk_subtitle" = "Helyben előállított üzenetek";
+"device_talk_explain" = "Az üzenetek ebben a csevegésben az Ön készülékén kerülnek előállításra, hogy tájékoztassák Önt az alkalmazás frissítéseiről és a használat közben felmerülő problémákról.";
+"device_talk_welcome_message2" = "Lépjen kapcsolatba a partnereivel!\n\n🙌 Koppintson a QR-kódra mindkét eszköz főképernyőjén. Az egyik eszközön válassza a „QR-kód beolvasása” lehetőséget, majd irányítsa a másik eszköz képernyőjére\n\n🌍 Ha nincsenek egy helyiségben, olvassa be egy videohívás segítségével, vagy küldjön egy meghívási hivatkozást a „QR-kód beolvasása” menüpontból\n\nÉlvezze az üzenetküldési élményt a valaha létezett legnagyobb decentralizált hálózaton: az e-mailen. És más népszerű alkalmazásokkal ellentétben központi kiszolgáló vagy nyomon követés nélkül, illetve anélkül, hogy Önt, partnereit, kollégáit vagy családját nagy szervezeteknek adná el.";
+"edit_contact" = "Névjegy szerkesztése";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin_chat" = "Csevegés kitűzése";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin_chat" = "Csevegés kitűzésének megszüntetése";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin" = "Kitűzés";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin" = "Kitűzés megszüntetése";
+"ConversationFragment_quoted_message_not_found" = "Nem található az eredeti üzenet";
+"reply_privately" = "Válasz privátban";
+"source_code" = "Forráskód";
+// Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
+"add_to_home_screen" = "Hozzáadás a kezdőképernyőhöz";
+"donate" = "Adományozás";
+"donate_device_msg" = "❤️ Úgy tűnik, hogy tetszik önnek a Delta Chat!\n\nFontolja meg az adományozást, hogy a Delta Chat mindenki számára ingyenes maradhasson.\n\nUgyan a Delta Chat szabadon használható és nyílt forráskódú, de a fejlesztés pénzbe kerül. Segítsen nekünk, hogy a Delta Chat független maradhasson, és a jövőben még fantasztikusabbá váljon.\n\nhttps://delta.chat/donate";
+"mute_for_one_hour" = "Némítás 1 órára";
+"mute_for_eight_hours" = "Némítás 8 órára";
+"mute_for_one_day" = "Némítás 1 napra";
+"mute_for_seven_days" = "Némítás 7 napra";
+"mute_forever" = "Némítás örökre";
+"share_location_for_5_minutes" = "5 percre";
+"share_location_for_30_minutes" = "30 percre";
+"share_location_for_one_hour" = "1 órára";
+"share_location_for_two_hours" = "2 órára";
+"share_location_for_six_hours" = "6 órára";
+"file_saved_to" = "Fájl mentve ide: „%1$@”.";
+// the action "to call someone", used as a tooltip for the "phone" icon. not: "the call"
+"start_call" = "Hívás";
+// the action "to answer" or to "accept" or to "pick up" a call. not: "the answer"
+"answer_call" = "Fogadás";
+// the action "to decline" a call, not: "the decline"
+"end_call" = "Elutasítás";
+"declined_call" = "Elutasított hívás";
+"canceled_call" = "Visszavont hívás";
+"missed_call" = "Nem fogadott hívás";
+// get confirmations
+// confirmation for leaving groups or channels. If a subject is needed, "Are you sure you want to leave the chat?" would work as well
+"ask_leave_group" = "Biztosan elhagyja a csatornát?";
+"ask_delete_named_chat" = "Törli a(z) „%1$@” nevű csevegést az összes eszközén?";
+"ask_delete_message" = "Törli ezt az üzenetet az összes eszközén?";
+"ask_forward" = "Továbbítja az üzenetet „%1$@” számára?";
+"ask_forward_multiple" = "Továbbítja az üzenetet a következő csevegésbe: %1$d?";
+"ask_export_attachment" = "A mellékletek exportálása lehetővé teszi, hogy más alkalmazások is hozzáférjenek azokhoz az eszközön.\n\nFolytatja?";
+"ask_block_contact" = "Letiltja ezt a partnerét? Többé nem fog üzeneteket kapni tőle.";
+"ask_unblock_contact" = "Feloldja ennek a partnerének a letiltását? Ezután képes lesz üzeneteket fogadni tőle.";
+"ask_delete_contacts" = "Névjegy törlése?\n\nA folyamatban lévő csevegésekkel rendelkező vagy a rendszer névjegyzékéből származó névjegyek nem törölhetők véglegesen.";
+"ask_delete_contact" = "Törli a(z) %1$@ nevű partnerét?\n\nA folyamatban lévő csevegésekkel rendelkező vagy a rendszer névjegyzékéből származó partnerek nem törölhetők véglegesen.";
+"ask_start_chat_with" = "Csevegés vele: %1$@?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_members" = "Eltávolítja a csoportból őt: %1$@?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_from_channel" = "Eltávolítja a csatornából a következőt: %1$@?";
+"open_url_confirmation" = "Biztosan megnyitja ezt a hivatkozást?";
+// contact list
+"contacts_title" = "Névjegyek";
+"contacts_type_email_above" = "Írja be a fenti e-mail-címet";
+// chatlist and chat view
+"chat_archived_chats_title" = "Archivált csevegések";
+"chat_please_enter_message" = "Írjon be egy üzenetet.";
+"chat_camera_unavailable" = "Kamera nem elérhető.";
+"chat_unable_to_record_audio" = "Nem lehet hangfelvételt készíteni.";
+// The placeholder will be replaced by the name of the recipient in a one-to-one chat.
+"chat_new_one_to_one_hint" = "Üzenet küldése „%1$@” számára.";
+// consider keeping the term "channel" as in WhatsApp or Telegram
+"chat_new_channel_hint" = "A csatornák egy blogszerű eszköz az üzenetek megosztására a közönséggel.";
+"chat_new_group_hint" = "Mások csak az első üzenet elküldése után fogják látni ezt a csoportot.";
+"chat_record_slide_to_cancel" = "Visszavonás csúsztatással";
+"chat_record_explain" = "Hangüzenet rögzítéséhez koppintson és tartsa lenyomva; Az elküldéshez engedje el.";
+"chat_no_chats_yet_title" = "Nincsenek csevegések.\nÉrintse meg a „+” gombot egy új csevegés indításához.";
+"chat_all_archived" = "Az összes csevegés archiválva van.\nÉrintse meg a „+” gombot egy új csevegés indításához.";
+"chat_share_with_title" = "Megosztás vele:";
+"chat_input_placeholder" = "Üzenet…";
+"chat_archived_label" = "Archivált";
+"chat_request_label" = "Kérés";
+"chat_request_label_explain" = "Kérések felvétele a számlálókba és értesítésekbe";
+"chat_no_messages" = "Nincsenek üzenetek.";
+"chat_self_talk_subtitle" = "Önmagamnak küldött üzenetek";
+"archive_empty_hint" = "Az archivált csevegések itt fognak megjelenni.";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "Üzenet mentése";
+"saved_messages" = "Mentett üzenetek";
+"saved_messages_explain" = "• Üzenetek továbbítása az egyszerű hozzáférés érdekében\n\n• Jegyzetek vagy hangjegyzetek készítése\n\n• Médiaanyagok mellékelése a mentéshez";
+// Should match "Saved" from "Saved messages"
+"saved" = "Mentett";
+"save_as" = "Mentés mint";
+"retry_send" = "Üzenet újraküldése";
+"cannot_display_unsuported_file_type" = "Ezt a fájltípust nem lehet megjeleníteni: %1$@";
+"attachment_failed_to_load" = "Nem sikerült betölteni a mellékletet";
+// For recording Voice messages: Description for the "Lock" button allowing to lift the thumb from the record button while recording continues
+"lock_recording" = "Felvétel zárolása";
+// mailing lists
+"mailing_list" = "Levelezőlista";
+// webxdc
+// "Start..." button for an app
+"start_app" = "Indítás…";
+// this is a warning that is shown when one tries to send something to a chat that is not yet accepted.
+"accept_request_first" = "Először fogadja el a csevegéskérést.";
+// title shown above a list of chats where one should be selected (eg. when sharing files from a webxdc). the placeholder will be replaced by a file name
+"send_file_to" = "„%1$@” küldése…";
+// title shown above a list contacts where one should be selected (eg. when a webxdc attempts to send a message to a chat)
+"send_message_to" = "Üzenet küldése…";
+// punycode warning / labeled links
+"puny_code_warning_header" = "Gyanús hivatkozás észlelve";
+// placeholder contains the hostname converted to ascii
+"puny_code_warning_question" = "Biztosan meglátogatja a következőt: %1$@?";
+// this message is shown whenever a link with non-latin characters is clicked. first placeholder is original hostname with special chars, second placeholder is hostname encoded in ascii
+"puny_code_warning_description" = "Ez a hivatkozás a hasonló kinézetű karaktereket más betűkészletekből származókkal helyettesítheti. A(z) %1$@ hivatkozás a(z) %2$@ címre vezet, ami a nem latin betűs karaktereknél normális. Ha nem számított ilyen karakterekre, ez a hivatkozás káros lehet.";
+// search
+"search" = "Keresés";
+"search_in_chat" = "Keresés a csevegésben";
+"search_files" = "Fájlok keresése";
+"search_explain" = "Csevegések, névjegyek és üzenetek keresése";
+"search_no_result_for_x" = "Nincs a(z) „%1$@” keresésnek megfelelő találat.";
+// Adjective, as in "Show Unread Messages"
+"search_unread" = "Olvasatlan";
+// create/edit groups, contact/group profile
+"group_name" = "Csoportnév";
+"group_avatar" = "Csoport profilképe";
+"remove_group_image" = "Csoport profilképének eltávolítása";
+"change_group_image" = "Csoport profilképének megváltoztatása";
+"group_create_button" = "Csoport készítése";
+// deprecated, use please_enter_chat_name
+"group_please_enter_group_name" = "Csoport nevének magadása.";
+"group_add_members" = "Tagok hozzáadása";
+"group_self_not_in_group" = "A csoport tagjának kell lennie, ahhoz, hogy ezt megtehesse.";
+"profile_encryption" = "Titkosítás";
+"profile_shared_chats" = "Közös csevegések";
+// Separator between the list of actual members and past members
+"past_members" = "Már nem tagok";
+"tab_contact" = "Névjegy";
+"tab_group" = "Csoport";
+"tab_gallery" = "Galéria";
+"tab_docs" = "Dokumentumok";
+"tab_links" = "Hivatkozások";
+"tab_map" = "Térkép";
+"tab_gallery_empty_hint" = "Az ebben a csevegésben megosztott képek és videók itt fognak megjelenni.";
+"tab_docs_empty_hint" = "Az ebben a csevegésben megosztott dokumentumok és egyéb fájlok itt fognak megjelenni.";
+"tab_image_empty_hint" = "Az ebben a csevegésben megosztott képek itt fognak megjelenni.";
+"tab_video_empty_hint" = "Az ebben a csevegésben megosztott videók itt fognak megjelenni.";
+"tab_audio_empty_hint" = "Az ebben a csevegésben megosztott hangfájlok és hangüzenetek itt fognak megjelenni.";
+"tab_webxdc_empty_hint" = "Az ebben a csevegésben megosztott alkalmazások itt fognak megjelenni.";
+"tab_all_media_empty_hint" = "A bármelyik csevegésben megosztott média itt fog megjelenni.";
+"all_files_empty_hint" = "A csevegésekben megosztott dokumentumok és egyéb fájlok itt jelennek meg.";
+"all_apps_empty_hint" = "A bármelyik csevegésben kapott vagy küldött alkalmazások itt fognak megjelenni.";
+"media_preview" = "Médiaelőnézet";
+// option to show images in the gallery with the correct width/height aspect (instead of square); other gallery apps may be a source of inspiration for translation :)
+"aspect_ratio_grid" = "Tengelyarányrács";
+// option to show images in the gallery as square (instead of using correct width/height)
+"square_grid" = "Négyzetrács";
+"send_message" = "Üzenet küldése";
+// Multi Device
+// "Second Device" can also be translated as "Another Device", if that is catchier in the destination language. However, make sure to use the term consistently.
+"multidevice_title" = "Második eszköz hozzáadása";
+"multidevice_same_network_hint" = "Győződjön meg arról, hogy mindkét eszköz ugyanazon a Wi-Fi-n vagy hálózaton van-e";
+"multidevice_this_creates_a_qr_code" = "Ez létrehoz egy QR-kódot, amit a második eszközön beolvashat a profil másolásához.\n\nÜgyeljen arra, hogy egy nem kívánatos megfigyelő vagy kamera ne láthassa a következő képernyőt.";
+"multidevice_install_dc_on_other_device" = "Telepítse a Delta Chatet a másik eszközére (https://get.delta.chat)";
+// "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
+"multidevice_tap_scan_on_other_device" = "Indítsa el a Delta Chatet, koppintson a „Már van profilom / Hozzáadás második eszközként” lehetőségre, és olvassa be az itt megjelenő QR-kódot.";
+// Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
+"multidevice_qr_subtitle" = "QR-kód beolvasása a második eszköz beállításához „%1$@” számára";
+"multidevice_receiver_title" = "Hozzáadás második eszközként";
+"multidevice_open_settings_on_other_device" = "Az első eszközön lépjen a „Beállítások / Második eszköz hozzáadása” menüpontra, és olvassa be az ott megjelenő QR-kódot.";
+"multidevice_receiver_scanning_ask" = "Átmásolja a profilt a másik eszközről erre az eszközre?";
+"multidevice_receiver_needs_update" = "Az importálni kívánt profil egy újabb Delta Chat verzióból származik.\n\nA második eszköz beállításának folytatásához frissítse ezt az eszközt a Delta Chat legújabb verziójára.";
+"multidevice_abort" = "A második eszköz beállításának megszakítása?";
+"multidevice_abort_will_invalidate_copied_qr" = "Ez érvényteleníti a vágólapra másolt QR-kódot.";
+"multidevice_transfer_done_devicemsg" = "ℹ️ A profil átkerül az Ön második eszközére.";
+// Shown beside progress bar, stay short
+"preparing_account" = "Profil készítése…";
+// Shown beside progress bar, stay short
+"transferring" = "Átvitel…";
+"troubleshooting" = "Hibaelhárítás";
+// Connectivity
+// Headline for the "Inbox" eg. in the "Connectivity" view
+"incoming_messages" = "Beérkező üzenetek";
+// Headline for the "Outbox" eg. in the "Connectivity" view
+"outgoing_messages" = "Kimenő üzenetek";
+"connectivity" = "Tárhely";
+// Shown in the title bar if the app is "Not connected"; prefer short strings.
+"connectivity_not_connected" = "Nem kapcsolódott";
+// Shown in the title bar if the app is "Connecting"; prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_connecting" = "Kapcsolódás…";
+// Shown in the title bar if the app is "Updating" (eg. getting new/old message, sync things); prefer short strings. The ellipsis is a single character (…), not three (...)
+"connectivity_updating" = "Frissítés…";
+// Shown in the setting if the app is "Connected"
+"connectivity_connected" = "Kapcsolódott";
+"sending" = "Küldés…";
+"last_msg_sent_successfully" = "Utolsó üzenet sikeresen elküldve.";
+"not_supported_by_provider" = "Az Ön szolgáltatója nem támogatja.";
+// Subtitle in quota context of "Connectivity" view. Should be be plural always, no number is prefixed.
+"messages" = "Üzenetek";
+// Used for describing resource usage, resulting string will be eg. "1.2 GiB of 3 GiB used"
+"part_of_total_used" = "%1$@/%2$@ használatban";
+// welcome and login
+// Primary button on the welcome screen, allows to create an instant profile
+"onboarding_create_instant_account" = "Új profil létrehozása";
+// Secondary button on the welcome screen, allows to "Add as Second Device", "Restore from Backup"
+"onboarding_alternative_logins" = "Már van profilom";
+// This is a button and a title, allowing to use existing, classic email, setting ports, passwords and so on
+"manual_account_setup_option" = "Klasszikus e-mail bejelentkezés";
+// Instant onboarding title (there is not more to do than to set name and avatar)
+"instant_onboarding_title" = "Profil";
+// The placeholder will be replaced by the default onboarding server
+"instant_onboarding_agree_default2" = "Adatvédelmi irányelvek ehhez: %1$@";
+// The placeholder will be replaced by instance name, the whole text will link to the instance page
+"instant_onboarding_agree_instance" = "További információ a profilokról itt: %1$@";
+// Confirmation button on the instant onboarding screen
+"instant_onboarding_create" = "Elfogadás és profil létrehozása";
+// Secondary, link-like button to open a page with other possible instances
+"instant_onboarding_show_more_instances" = "Másik szolgáltató használata";
+"instant_onboarding_other_server" = "Chatmail-kiszolgálók listája";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by the group name
+"instant_onboarding_group_info" = "Hozzon létre egy profilt, hogy csatlakozni tudjon a(z) „%1$@” nevű csoporthoz.";
+// Hint about what happens when "Create Profile" button in pressed; the placeholder will be replaced by contact name
+"instant_onboarding_contact_info" = "Hozzon létre egy profilt, hogy csevegni tudjon vele: %1$@.";
+// Question shown when another user's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_contact" = "Szeretne új profilt létrehozni és csevegni vele: %1$@?";
+// Question shown when group's/channel's QR code is scanned from onboarding screen
+"instant_onboarding_confirm_group" = "Szeretne új profilt létrehozni és csatlakozni a „%1$@” szobához?";
+"welcome_chat_over_email" = "Biztonságos decentralizált csevegés";
+"scan_invitation_code" = "QR-kód-meghívó beolvasása";
+"login_title" = "Bejelentkezés";
+"login_inbox" = "Bejövő";
+"login_imap_login" = "IMAP bejelentkezési név";
+"login_imap_server" = "IMAP-kiszolgáló";
+"login_imap_port" = "IMAP-port";
+"login_imap_security" = "IMAP-biztonság";
+"login_outbox" = "Kimenő";
+"login_smtp_login" = "SMTP bejelentkezési név";
+"login_smtp_password" = "SMTP-jelszó";
+"login_smtp_server" = "SMTP-kiszolgáló";
+"login_smtp_port" = "SMTP-port";
+"login_smtp_security" = "SMTP-biztonság";
+// the word "Proxy" might be left untranslated unless the destination language has a well-known term for a "Proxy Server", acting intermediary between the app and the server
+"proxy_settings" = "Proxy";
+"proxy_use_proxy" = "Proxy használata";
+"proxy_add" = "Proxy hozzáadása";
+"proxy_add_explain" = "Támogatott proxytípusok: HTTP(S), SOCKS5 és ShadowSOCKS";
+"proxy_add_url_hint" = "Adja meg a proxy hivatkozását";
+"proxy_invalid" = "Érvénytelen vagy nem támogatott proxy";
+"proxy_list_header" = "Mentett proxyk";
+"proxy_delete" = "Proxy törlése";
+"proxy_delete_explain" = "Biztosan törli a következőt: „%1$@”?";
+"proxy_use_proxy_confirm" = "Biztosan használni akarja a következő proxyt: „%1$@”?";
+"proxy_share_explain" = "A partnerei a QR-kód beolvasásával hozzáadhatják ezt a proxyt.";
+"proxy_share_link" = "Hivatkozás megosztása";
+"proxy_enabled" = "Proxy engedélyezve";
+"proxy_enabled_hint" = "Ön jelenleg proxyt használ. Ha problémája van a kapcsolódással, próbáljon ki egy másik proxyt.";
+"login_certificate_checks" = "Tanúsítvány ellenőrzése";
+"login_error_mail" = "Adjon meg egy érvényes e-mail-címet";
+"login_error_server" = "Adjon meg egy érvényes kiszolgáló- vagy IP-címet";
+"login_error_port" = "Adjon meg egy érvényes portot (1-65535)";
+"login_error_required_fields" = "Adjon meg egy érvényes e-mail-címet és egy jelszót";
+"import_backup_title" = "Biztonsági mentés visszaállítása";
+"import_backup_ask" = "A biztonsági mentés itt található: „%1$@”.\n\nAz összes adatot és beállítást szeretné importálni és használni belőle?";
+"import_backup_no_backup_found" = "A biztonsági mentés nem található.\n\nMásolja a biztonsági mentést ide: „%1$@” és próbálja újra.";
+// %1$s will be replaced by the failing address
+"login_error_cannot_login" = "Nem lehetett bejelentkezni ide: „%1$@”. Ellenőrizze, hogy a megadott e-mail-cím és a jelszó helyes-e.";
+// TLS certificate checks
+"accept_invalid_certificates" = "Érvénytelen tanúsítványok elfogadása";
+"switch_account" = "Profilváltás";
+"add_account" = "Profil hozzáadása";
+// for translations, you can also think of "Profile Tag" or "Profile Description" as the source string
+"profile_tag" = "Profil címke";
+"profile_tag_hint" = "Például: „Munka”, „Család”";
+"profile_tag_explain" = "Állítson be egy olyan címkét, amely csak az Ön számára látható; segít megkülönböztetni a profiljait.";
+// Menu entry to sort an item to the beginning of a list. Only "To Top" may do as well in some translations, if that helps to stay shorter.
+"move_to_top" = "Feljebb mozgatás";
+"delete_account" = "Profil törlése";
+"delete_account_ask" = "Biztosan törölni szeretné a profiladatait?";
+"delete_account_explain_with_name" = "A(z) „%1$@” nevű profilhoz tartozó mindet adat ezen az eszközön törölve lesz, beleértve a végpontok közötti titkosítás beállításait, a névjegyeket, a csevegéseket, az üzeneteket és a médiát. Ez a művelet nem vonható vissza. ";
+"unconfigured_account" = "Konfigurálatlan profil";
+"unconfigured_account_hint" = "Nyissa meg a profilt a konfiguráláshoz.";
+"try_connect_now" = "Próbáljon meg most kapcsolódni";
+"sync_all" = "Az összes szinkronizálása";
+// Translations: %1$s will be replaced by a more detailed error message
+"configuration_failed_with_error" = "A konfiguráció sikertelen. Hiba: %1$@";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "Továbbítás…";
+// first placeholder is replaced by the number of files (always 2 or more); second placeholder is replaced by a chat name
+"ask_send_files_to_chat" = "%1$d fájl elküldése „%2$@” számára?";
+"ask_send_files_to_selected_chats" = "%1$d fájl megosztása a vele való csevegésben: %2$d?";
+"videos_sent_without_recoding" = "(A videók eredeti, nagyméretű fájlként kerülnek elküldésre. Amennyiben azt szeretné, hogy a videók kisebb fájlként kerüljenek elküldésre, mellékelje őket külön-külön)";
+"share_text_multiple_chats" = "Megosztja ezt a szöveget a vele való csevegésben: %1$d?\n\n„%2$@”";
+"share_abort" = "A megosztás megszakadt a hiányzó engedélyek miatt.";
+// preferences
+"pref_profile_info_headline" = "Profiladatok";
+"pref_profile_photo" = "Profilkép";
+"pref_blocked_contacts" = "Letiltott névjegyek";
+"blocked_empty_hint" = "A letiltott névjegyek itt fognak megjelenni";
+"pref_who_can_see_profile_explain" = "A profilképe, neve és névjegye az üzenetekkel együtt kerül elküldésre, amikor más felhasználókkal kommunikál.";
+"pref_your_name" = "Név";
+// Label of the Bio/Signature/Status/Motto field
+"pref_default_status_label" = "Névjegy";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "Küldés „Enterrel”";
+"pref_enter_sends_explain" = "Az „Enter” billentyű megnyomásával szöveges üzeneteket küldhet";
+"pref_outgoing_media_quality" = "Kimenő média minősége";
+"pref_outgoing_balanced" = "Kiegyensúlyozott";
+"pref_outgoing_worse" = "Rosszabb minőség, kis méret";
+"pref_vibrate" = "Rezgés";
+"pref_screen_security" = "Képernyőbiztonság";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "Képernyőképek készítésének megakadályozása a futó alkalmazások listájában és az alkalmazáson belül";
+"pref_screen_security_please_restart_hint" = "A képernyő biztonsági beállításának alkalmazásához indítsa újra az alkalmazást.";
+"pref_notifications" = "Értesítések";
+"pref_mention_notifications" = "Említések";
+"pref_mention_notifications_explain" = "A némított csoportokban csak az Önnek címzett üzenetek, (például válaszok vagy reakciók) esetén küld értesítést.";
+"pref_notifications_show" = "Megjelenítés";
+"pref_notifications_priority" = "Prioritás";
+"pref_notifications_explain" = "Rendszerértesítések engedélyezése az új üzenetekről";
+"pref_show_notification_content" = "Üzenet tartalmának megjelenítése az értesítésben";
+"pref_show_notification_content_explain" = "Az értesítésekben megjelenik az üzenet feladója és első szavai";
+"pref_led_color" = "Értesítésjelző-fény színe";
+"pref_sound" = "Hang";
+"pref_silent" = "Csendes";
+"pref_privacy" = "Adatvédelem";
+"pref_system_default" = "Rendszer alapértelmezett";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "Világos";
+"pref_dark_theme" = "Sötét";
+"pref_appearance" = "Megjelenés";
+"pref_theme" = "Téma";
+"pref_language" = "Nyelv";
+"pref_use_system_ui_font" = "Rendszer betűtípusának használata";
+"pref_incognito_keyboard" = "Inkognitó-billentyűzet";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "Tanulás letiltásának kérése a billentyűzettől";
+"pref_read_receipts" = "Olvasási visszaigazolások";
+"pref_read_receipts_explain" = "Ha az olvasási visszaigazolásokat letiltja, akkor Ön sem fogja látni mások olvasási visszaigazolásait.";
+"pref_server" = "Kiszolgáló";
+"pref_encryption" = "Titkosítás";
+"pref_manage_keys" = "Kulcsok kezelése";
+"pref_chats" = "Csevegések";
+"pref_in_chat_sounds" = "Csevegésen belüli hangok";
+"pref_view_log" = "Naplófájl megtekintése";
+"pref_saved_log" = "A naplófájl mentve a „Letöltések” nevű mappába";
+"pref_save_log_failed" = "Nem sikerült menteni a naplófájlt";
+"pref_log_header" = "Naplófájl";
+"pref_other" = "Egyéb";
+"pref_backup" = "Biztonsági mentés";
+"pref_backup_explain" = "Csevegések biztonsági mentése külső tárhelyre";
+"pref_backup_export_explain" = "A biztonsági mentés segít egy új telepítés beállításában ezen vagy egy másik eszközön.\n\nA biztonsági mentés tartalmazza az összes üzenetet, névjegyet és csevegést, valamint a végpontok közötti autocrypt beállításokat. Tartsa a biztonsági mentést biztonságos helyen, vagy törölje, amint lehetséges.";
+"pref_backup_export_this" = "Ezen profil exportálása";
+// the placeholder will be replaced by the number of profiles to export; the number is always larger than 1
+"pref_backup_export_all" = "Az összes (%1$d) profil exportálása";
+"pref_backup_export_start_button" = "Biztonsági mentés készítése";
+"pref_backup_written_to_x" = "A biztonsági mentés sikeresen létrehozva itt: „%1$@”.";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "Háttérkép";
+"pref_background_btn_default" = "Alapértelemezett kép használata";
+"pref_background_btn_gallery" = "Kiválasztás a galériából";
+"pref_imap_folder_warn_disable_defaults" = "Ha megváltoztatja ezt a beállítást, győződjön meg arról, hogy a kiszolgálója és a többi kliense is ennek megfelelően van beállítva.\n\nMáskülönben előfordulhat, hogy a dolgok egyáltalán nem fognak működni.";
+"pref_auto_folder_moves" = "Automatikus áthelyezés a DeltaChat nevű mappába";
+"pref_only_fetch_mvbox_title" = "Csak a DeltaChat nevű mappából történjen lekérdezés";
+"pref_show_emails" = "Klasszikus e-mailek megjelenítése";
+"pref_show_emails_no" = "Nem, csak csevegések";
+"pref_show_emails_accepted_contacts" = "Elfogadott partnerek számára";
+"pref_show_emails_all" = "Összes";
+"pref_experimental_features" = "Kísérleti funkciók";
+"pref_on_demand_location_streaming" = "On-Demand folyamatos helymegosztás";
+"pref_background_default" = "Alapértelmezett kép";
+"pref_background_default_color" = "Alapértelmezett szín";
+"pref_background_custom_image" = "Egyéni kép";
+"pref_background_custom_color" = "Egyéni szín";
+"export_aborted" = "Exportálás megszakítva.";
+"auto_download_messages" = "Üzenetek automatikus letöltése";
+// %1$s will be replaced by a human-readable number of bytes, eg. 32 KiB, 1 MiB
+"up_to_x" = "Legfeljebb %1$@";
+"up_to_x_most_worse_quality_images" = "Legfeljebb %1$@, leginkább rosszabb minőségű kép";
+"up_to_x_most_balanced_quality_images" = "Legfeljebb %1$@, leginkább kiegyensúlyozatabb minőségű kép";
+"download_failed" = "Sikertelen letöltés";
+"profile_image_select" = "Profilkép kiválasztása";
+"select_your_new_profile_image" = "Válassza ki az új profilképet";
+"profile_image_delete" = "Profilkép törlése";
+"pref_show_tray_icon" = "Tálcaikon megjelenítése";
+"pref_edit_profile" = "Profil szerkesztése";
+"send_stats_to_devs" = "Statisztikák küldése a Delta Chat fejlesztőinek";
+// Emoji picker and categories
+"emoji_search_results" = "Keresési eredmények";
+"emoji_not_found" = "Nem található emodzsi";
+"emoji_recent" = "Nemrég használt";
+"emoji_people" = "Emberek és test";
+"emoji_nature" = "Állatok és természet";
+"emoji_foods" = "Étel és ital";
+"emoji_activity" = "Tevékenységek";
+"emoji_places" = "Utazás és helyek";
+"emoji_objects" = "Tárgyak";
+"emoji_symbols" = "Szimbólumok";
+"emoji_flags" = "Zászlók";
+// Reactions
+"reactions" = "Reakciók";
+// Verb, the action of adding a "Reaction" to a message. Used eg. in context menus, similar to "Reply" or "Forward"
+"react" = "Reakció";
+// %1$s will be replaced by an emoji. %2$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %2$s will often not being visible). Eg. 'You reacted 👍 to "Found my suitcase"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer and work as well.
+"reaction_by_you" = "Ön a következővel reagált: %1$@, erre: „%2$@”";
+// %1$s will be replaced a name. %2$s will be replaced by an emoji. %3$s will be replaced by message summary (the summary is often long and whole string gets truncated; words after %3$s will often not being visible). Eg. 'Alice reacted 👍 to "Nice photos"'. Use less than 20 characters, otherwise the string will be truncated too soon and too few information are shown. Do not try to translate "reacted to" too strict. Depending on the language, "added 👍 to" or "gave 👍 to" or just "👍 to" may be shorter and/or clearer work as well.
+"reaction_by_other" = "%1$@ a következővel reagált: %2$@, erre: „%3$@”";
+// automatically delete message
+"delete_old_messages" = "Régi üzenetek törlése";
+"autodel_device_title" = "Üzenetek törlése az eszközről a letöltést követően";
+"autodel_server_title" = "Üzenetek törlése a kiszolgálóról a letöltést követően";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_device_ask" = "Szeretné törölni a %1$d üzenetet most és az összes újonnan érkező üzenetet a jövőben ekkor: „%2$@”?\n\n• Ez magában foglalja az összes médiát is\n\n• Az üzenetek törlésre kerülnek, akár látták őket, akár nem\n\n• A „Mentett üzenetek” nem kerülnek törlésre a helyi törlésből.";
+// %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
+"autodel_server_ask" = "Biztosan törölni szeretne %1$d üzenetet most, és a jövőben minden újonnan lekérdezett „%2$@” üzenetet?\n\n⚠️ Ez magába foglalja az e-maileket, a médiatartalmakat és a „Mentett üzeneteket” az összes kiszolgálómappában.\n\n⚠️ Ne használja ezt a funkciót, ha meg akarja tartani az adatokat a kiszolgálón, vagy ha klasszikus e-mail-klienseket is használ.";
+// shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
+"autodel_server_enabled_hint" = "Ez magába foglalja az e-maileket, a médiatartalmakat és a „Mentett üzeneteket” az összes kiszolgálómappában. Ne használja ezt a funkciót, ha meg akarja tartani az adatokat a kiszolgálón, vagy ha klasszikus e-mail-klienseket is használ.";
+"autodel_server_warn_multi_device_title" = "A „Törlés a letöltés után azonnal” bekapcsolása";
+"autodel_server_warn_multi_device" = "Ha a „Törlés a letöltés után azonnal” engedélyezve van, akkor nem használhatja ezt a profilt több eszközről.";
+"autodel_confirm" = "Értem, törölje ezeket az üzeneteket";
+// "At once" in the meaning of "Immediately", without any intervening time.
+"autodel_at_once" = "A letöltés után azonnal";
+"after_5_minutes" = "5 perc elteltével";
+"autodel_after_1_hour" = "1 óra elteltével";
+"autodel_after_1_day" = "1 nap elteltével";
+"autodel_after_1_week" = "1 hét elteltével";
+"after_5_weeks" = "5 hét elteltével";
+"autodel_after_1_year" = "1 év elteltével";
+// system messages
+"systemmsg_subject_for_new_contact" = "Üzenet tőle: %1$@";
+"systemmsg_failed_sending_to" = "Nem sikerült elküldeni az üzenetet „%1$@” számára.";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name
+"group_name_changed_by_you" = "Ön megváltoztatta a csoport nevét a következőről: „%1$@”, erre: „%2$@”.";
+// %1$s will be replaced by the old group name, %2$s will be replaced by the new group name, %3$s will be replaced by name and address of the contact who did the action.
+"group_name_changed_by_other" = "%3$@ megváltoztatta a csoport nevét a következőről: „%1$@”, erre: „%2$@”.";
+"group_image_changed_by_you" = "Ön megváltoztatta a csoport profilképét.";
+// %1$s will be replaced by name of the contact who did the action
+"group_image_changed_by_other" = "%1$@ megváltoztatta a csoport profilképét.";
+// %1$s will be replaced by name of the contact added to the group
+"member_x_added" = "%1$@ tag hozzáadva";
+// %1$s will be replaced by name of the contact added to the group
+"add_member_by_you" = "Ön hozzáadta őt: %1$@.";
+// %1$s will be replaced by name of the contact added to the group, %2$s will be replaced by name of the contact who did the action
+"add_member_by_other" = "%2$@ hozzáadta őt: %1$@.";
+// %1$s will be replaced by name of the contact removed from the group
+"remove_member_by_you" = "Ön eltávolította őt: %1$@.";
+// %1$s will be replaced by name of the contact removed from the group, %2$s will be replaced by name of the contact who did the action
+"remove_member_by_other" = "%2$@ eltávolította őt: %1$@.";
+// %1$s will be replaced by name of the contact removed from the group; this string is used when it's unclear who did the action
+"member_x_removed" = "%1$@ eltávolítva a csoportból.";
+// "left" in the meaning of "exited".
+"group_left_by_you" = "Ön elhagyta a csoportot.";
+// "left" in the meaning of "exited".
+"channel_left_by_you" = "Ön elhagyta a csatornát.";
+"you_joined_the_channel" = "Ön csatlakozott a csatornához.";
+// "left" in the meaning of "exited"; %1$s will be replaced by name of the contact leaving the group
+"group_left_by_other" = "%1$@ elhagyta a csoportot.";
+"group_image_deleted_by_you" = "Ön törölte a csoport profilképét.";
+// %1$s will be replaced by name of the contact
+"group_image_deleted_by_other" = "%1$@ törölte a csoport profilképét.";
+"location_enabled_by_you" = "Ön engedélyezte a folyamatos helymegosztást.";
+// %1$s will be replaced by name of the contact
+"location_enabled_by_other" = "%1$@ engedélyezte a folyamatos helymegosztást.";
+"ephemeral_timer_disabled_by_you" = "Ön letiltotta az eltűnő üzenetek időzítőjét.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_disabled_by_other" = "%1$@ letiltotta az eltűnő üzenetek időzítőjét.";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to
+"ephemeral_timer_seconds_by_you" = "Ön az eltűnő üzenetek időzítőjét %1$@ másodpercre állította be.";
+// %1$s will be replaced by the number of seconds (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_seconds_by_other" = "%2$@ az eltűnő üzenetek időzítőjét %1$@ másodpercre állította be.";
+"ephemeral_timer_1_hour_by_you" = "Ön az eltűnő üzenetek időzítőjét 1 órára állította be.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_hour_by_other" = "%1$@ az eltűnő üzenetek időzítőjét 1 órára állította be.";
+"ephemeral_timer_1_day_by_you" = "Ön az eltűnő üzenetek időzítőjét 1 napra állította be.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_day_by_other" = "%1$@ az eltűnő üzenetek időzítőjét 1 napra állította be.";
+"ephemeral_timer_1_week_by_you" = "Ön az eltűnő üzenetek időzítőjét 1 hétre állította be.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_week_by_other" = "%1$@ az eltűnő üzenetek időzítőjét 1 hétre állította be.";
+"ephemeral_timer_1_year_by_you" = "Ön az eltűnő üzenetek időzítőjét 1 évre állította be.";
+// %1$s will be replaced by name of the contact
+"ephemeral_timer_1_year_by_other" = "%1$@ az eltűnő üzenetek időzítőjét 1 évre állította be.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to
+"ephemeral_timer_minutes_by_you" = "Ön az eltűnő üzenetek időzítőjét %1$@ percre állította be.";
+// %1$s will be replaced by the number of minutes (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_minutes_by_other" = "%2$@ az eltűnő üzenetek időzítőjét %1$@ percre állította be.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to
+"ephemeral_timer_hours_by_you" = "Ön az eltűnő üzenetek időzítőjét %1$@ órára állította be.";
+// %1$s will be replaced by the number of hours (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_hours_by_other" = "%2$@ az eltűnő üzenetek időzítőjét %1$@ órára állította be.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to
+"ephemeral_timer_days_by_you" = "Ön az eltűnő üzenetek időzítőjét %1$@ napra állította be.";
+// %1$s will be replaced by the number of days (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_days_by_other" = "%2$@ az eltűnő üzenetek időzítőjét %1$@ napra állította be.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to
+"ephemeral_timer_weeks_by_you" = "Ön az eltűnő üzenetek időzítőjét %1$@ hétre állította be.";
+// %1$s will be replaced by the number of weeks (always >1) the timer is set to, %2$s will be replaced by name of the contact
+"ephemeral_timer_weeks_by_other" = "%2$@ az eltűnő üzenetek időzítőjét%1$@ hétre állította be.";
+"chat_protection_enabled_tap_to_learn_more" = "Az üzenetek mostantól garantáltan titkosítva lesznek a végpontok között. Koppintson, ha többet szeretne tudni.";
+"chat_protection_enabled_explanation" = "Mostantól garantált, hogy ebben a csevegésben az összes üzenet végpontok közötti titkosítással rendelkezik.\n\nA végpontok közötti titkosítással az üzenetek bizalmasak maradnak Ön és a partnerei között. Még az e-mail-szolgáltatója sem tudja elolvasni őket.";
+"invalid_unencrypted_tap_to_learn_more" = "⚠️ A(z) %1$@ végpontok közötti titkosítást igényel, ami még nincs beállítva erre a csevegésre. Koppintson, ha többet szeretne megtudni.";
+"invalid_unencrypted_explanation" = "A végpontok közötti titkosítás létrehozásához személyesen is találkozhat a partnereivel, és a QR-kódjukat beolvasva bemutathatja őket.";
+"learn_more" = "Tudjon meg többet";
+"devicemsg_self_deleted" = "Ön törölte a „Mentett üzenetek” csevegést.\n\nℹ️ A „Mentett üzenetek” funkció újbóli használatához hozzon létre egy új csevegést önmagával.";
+// %1$s will be replaced by the amount of storage already used, sth. as '500 MB'. If you want to use a percentage sign, type in two of them, eg. %1$s %%
+"devicemsg_storage_exceeding" = "⚠️ Az e-mail-szolgáltatójától kapott tárhelye hamarosan megtelik: %1$@%% már felhasználásra került.\n\n\nElképzelhető, hogy nem tud üzeneteket fogadni, ha a tárhelye megtelt.\n\n👉 Ellenőrizze, hogy a szolgáltatója webes felületén tudja-e törölni a DeltaChat-mappából az üzeneteket, és fontolja meg a „Beállítások / Csevegések és média / Üzenetek törlése a kiszolgálóról” engedélyezését. Az aktuális tárhelyhasználatot bármikor ellenőrizheti a „Beállítások / Tárhely” menüpontban.";
+// %1%s will be replaced by date and time in some human-readable format
+"devicemsg_bad_time" = "⚠️ Az eszközén lévő dátum vagy idő pontatlannak tűnik (%1$@).\n\nJavítsa meg az órát ⏰🔧 az üzenetek helyes fogadásának biztosítása érdekében.";
+"devicemsg_update_reminder" = "⚠️ Lehet, hogy a Delta Chat verziója elavult.\n\nEz problémákat okozhat, mivel a partnerei újabb verziókat használnak - továbbá hiányoznak a legújabb funkciók 😳\nEllenőrizze a https://get.delta.chat oldalon vagy az alkalmazásboltban a frissítéseket.";
+// Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
+"enter_system_secret_to_continue" = "Feloldás a folytatáshoz";
+// qr code stuff
+"qr_code" = "QR-kód";
+"load_qr_code_as_image" = "QR-kód betöltése képként";
+"qrscan_title" = "QR-kód beolvasása";
+"qrscan_hint" = "Tartsa a kamerát a QR-kód fölé";
+"qrscan_hint_desktop" = "Mozgassa a QR-kódot a kamera elé";
+"qrscan_failed" = "A QR-kódot nem sikerült értelmezni";
+"qrscan_ask_join_group" = "Biztosan csatlakozik a(z) „%1$@” nevű szobához?";
+"qrscan_fingerprint_mismatch" = "A beolvasott ujjlenyomat nem egyezik „%1$@” utoljára ismert ujjlenyomatával.";
+"qrscan_no_addr_found" = "Ez a QR-kód tartalmaz egy ujjlenyomatot, de nem tartalmaz e-mail-címet.\n\nA sávon kívüli hitelesítéshez először hozzon létre egy titkosított kapcsolatot a címzettel.";
+"qrscan_contains_text" = "A beolvasott QR-kód-szöveg:\n\n%1$@";
+"qrscan_contains_url" = "A beolvasott QR-kód-webcím:\n\n%1$@";
+"qrscan_fingerprint_label" = "Ujjlenyomat";
+"withdraw_verifycontact_explain" = "Ezt a QR-kódot mások is beolvashatják, hogy felvegyék önnel a kapcsolatot.\n\nA QR-kódot itt kikapcsolhatja, és újból bekapcsolhatja, ha újra beolvassa.";
+"withdraw_verifygroup_explain" = "Ezt a QR-kódot mások is beolvashatják, hogy csatlakozhassanak a(z) „%1$@” nevű csoporthoz.\n\nA QR-kódot itt kikapcsolhatja, és újra bekapcsolhatja, ha újra beolvassa.";
+"withdraw_qr_code" = "QR-kód kikapcsolása";
+"revive_verifycontact_explain" = "Ezt a QR-kódot mások is beolvashatják, hogy kapcsolatba lépjenek Önnel.\n\nA QR-kód nincs bekapcsolva ezen az eszközön.";
+"revive_qr_code" = "QR-kód bekapcsolása";
+"qrshow_title" = "QR-kód-meghívó";
+"qrshow_x_joining" = "%1$@ csatlakozott.";
+"qrshow_x_verified" = "%1$@ bemutatva.";
+"qrshow_x_has_joined_group" = "%1$@ csatlakozott a csoporthoz.";
+"qrshow_join_group_title" = "QR-kód-meghívó";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the group name, eg. "Scan to join group \"Testing group\""
+"qrshow_join_group_hint" = "QR-kód beolvasás a(z) „%1$@” nevű csoporthoz való csatlakozáshoz";
+"qrshow_join_channel_hint" = "QR-kód beolvasás a(z) „%1$@” nevű csatornához való csatlakozáshoz";
+"qrshow_join_contact_title" = "QR-kód-meghívó";
+// This text is shown inside the "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to chat with Alice"
+"qrshow_join_contact_hint" = "QR-kód beolvasása a csevegéshez vele: „%1$@”";
+"qrshow_join_contact_no_connection_toast" = "Nincs internetkapcsolat, nem lehet elvégezni a QR-kód beállítását.";
+"qraccount_ask_create_and_login" = "Új profil létrehozása a(z) „%1$@” oldalon és bejelentkezés ott?";
+"set_name_and_avatar_explain" = "Adjon meg egy olyan nevet, amelyet a partnerei felismernek. Beállíthat egy profilképet is.";
+"please_enter_name" = "Adjon meg egy nevet.";
+"qraccount_qr_code_cannot_be_used" = "A beolvasott QR-kód nem használható új profil beállítására.";
+// the placeholder will be replaced by the address of the profile
+"qrlogin_ask_login" = "Bejelentkezés ide: „%1$@”?";
+// first placeholder will be replaced by name of the inviter, second placeholder will be replaced by the name of the inviter.
+"secure_join_started" = "%1$@ meghívta önt, hogy csatlakozzon ehhez a csoporthoz.\n\n%2$@ eszközére várakozás a válaszhoz…";
+// placeholder will be replaced by the name of the inviter.
+"secure_join_replies" = "%1$@ válaszolt, várakozik, hogy fölvegyék a csoportba…";
+"secure_join_wait" = "Garantált végpontok közötti titkosítás létrehozása, várjon…";
+"contact_verified" = "%1$@ bemutatva.";
+// Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact.
+"verified_by" = "%1$@ által bemutatva";
+"verified_by_you" = "Ön által bemutatva";
+"verified_by_unknown" = "Bemutatva";
+"mailto_dialog_header_select_chat" = "Válassza ki a csevegést az üzenet elküldéséhez";
+// first placeholder is the name of the chat
+"confirm_replace_draft" = "Már létezik egy piszkozat a következő szöveggel: %1$@, biztosan le akarja cserélni?";
+"mailto_link_could_not_be_decoded" = "Nem sikerült dekódolni a mailto-hivatkozást: %1$@";
+// notifications
+"notify_reply_button" = "Válasz";
+"notify_new_message" = "Új üzenet";
+"notify_background_connection_enabled" = "Háttérkapcsolat engedélyezve";
+"notify_priority_high" = "Magas";
+"notify_priority_max" = "Maximum";
+"notify_name_and_message" = "Név és üzenet";
+"notify_name_only" = "Csak név";
+"notify_no_name_or_message" = "Se név, se üzenet";
+"notifications_disabled" = "Értesítések letiltva";
+"unreliable_bg_notifications" = "Engedélyezze a „Háttérkapcsolat kényszerítése” funkciót a megbízható értesítések érdekében";
+"new_messages" = "Új üzenetek";
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+"new_messages_body" = "Új olvasatlan üzenetek vannak";
+"n_messages_in_m_chats" = "%1$d üzenet %2$d csevegésben";
+// permissions
+"perm_required_title" = "Engedély szükséges";
+"perm_continue" = "Folytatás";
+"perm_explain_access_to_camera_denied" = "A fényképek-, videók- vagy QR-kódok rögzítéséhez lépjen a rendszer beállításaiba, válassza ki a „Alkalmazások és értesítések” menüpontot, válassza ki az DeltaChat alkalmazást, majd koppintson az „Engedélyek” menüpontra, és engedélyezze a hozzáférést a „Kamerához”.";
+// give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
+"perm_explain_access_to_mic_denied" = "A hangüzenetek küldéséhez lépjen a rendszer beállításaiba, válassza ki az „Alkalmazások és értesítések” menüpontot, válassza ki a DeltaChat alkalmazást, majd koppintson az „Engedélyek” menüpontra, és engedélyezze a hozzáférést a „Mikrofonhoz”.";
+"perm_explain_access_to_storage_denied" = "A fájlok fogadásához vagy küldéséhez lépjen a rendszer beállításaiba, válassza ki az „Alkalmazások és értesítések” menüpontot, válassza ki a DeltaChat alkalmazást, majd koppintson az „Engedélyek” menüpontra, és engedélyezze a hozzáférést a „Tárhelyhez”.";
+"perm_explain_access_to_location_denied" = "A hely mellékeléséhez lépjen a rendszer beállításaiba, válassza ki az „Alkalmazások és értesítések” menüpontot, válassza ki a DeltaChat alkalmazást, majd koppintson az „Engedélyek” menüpontra, és engedélyezze a hozzáférést a „Helyadatokhoz”.";
+"perm_explain_access_to_notifications_denied" = "Az értesítések fogadásához lépjen a rendszer beállításaiba, válassza ki az „Alkalmazások és értesítések” menüpontot, válassza ki a DeltaChat alkalmazást, majd koppintson az „Engedélyek” menüpontra, és engedélyezze a hozzáférést a „Értesítésekhez”.";
+// ImageEditorHud
+"ImageEditorHud_draw_anywhere_to_blur" = "Rajzoljon bárhová az elmosódáshoz";
+"ImageEditorHud_add_text" = "Szöveg hozzáadása";
+"ImageEditorHud_blur" = "Elmosás";
+"ImageEditorHud_brush_marker" = "Jelölő ecset";
+"ImageEditorHud_brush_highlight" = "Kiemelő ecset";
+"ImageEditorHud_crop" = "Kivágás";
+"ImageEditorHud_flip" = "Tükrözés";
+"ImageEditorHud_rotate" = "Forgatás";
+"welcome_desktop" = "Üdvözöljük a Delta Chatben!";
+"global_menu_preferences_language_desktop" = "Válasszon nyelvet…";
+"global_menu_file_desktop" = "Fájl";
+"global_menu_file_quit_desktop" = "Kilépés";
+"global_menu_edit_desktop" = "Szerkesztés";
+"global_menu_edit_undo_desktop" = "Visszavonás";
+"global_menu_edit_redo_desktop" = "Újra";
+"global_menu_edit_cut_desktop" = "Kivágás";
+"global_menu_edit_copy_desktop" = "Másolás";
+"global_menu_edit_paste_desktop" = "Beillesztés";
+"global_menu_view_desktop" = "Nézet";
+"global_menu_view_floatontop_desktop" = "Beúszás felülre";
+"global_menu_view_developer_desktop" = "Fejlesztő";
+"global_menu_view_developer_tools_desktop" = "Fejlesztői eszközök";
+"global_menu_help_desktop" = "Súgó";
+"delta_chat_homepage" = "A Delta Chat weboldala";
+"contribute" = "Közreműködés";
+"global_menu_help_report_desktop" = "Jelentsen egy problémát";
+"global_menu_help_about_desktop" = "A Delta Chatről";
+"global_menu_file_open_desktop" = "Delta Chat megnyitása";
+"global_menu_minimize_to_tray" = "Kicsinyítés";
+"no_chat_selected_suggestion_desktop" = "Válasszon ki egy csevegést vagy indítson egy újat";
+"write_message_desktop" = "Írjon üzenetet";
+"encryption_info_title_desktop" = "Titkosítási információ";
+"delete_message_desktop" = "Üzenet törlése";
+"more_info_desktop" = "További információ";
+"timestamp_format_m_desktop" = "MMM D";
+"remove_desktop" = "Eltávolítás";
+"save_desktop" = "Mentés";
+// Opposite of "Save". Undo a "Save" action. Similar to "Unmute", "Unpin". Could also be worded as "Save no longer" or so.
+"unsave" = "Mentés megszüntetése";
+"name_desktop" = "Név";
+"select_group_image_desktop" = "Csoport képének kiválasztása";
+"export_backup_desktop" = "Biztonsági mentés exportálása";
+"message_detail_sent_desktop" = "elküldött";
+"message_detail_received_desktop" = "érkezett";
+"menu.view.developer.open.log.folder" = "Naplófájlok mappájának megnyitása";
+"menu.view.developer.open.current.log.file" = "Jelenlegi naplófájl megnyitása";
+"explain_desktop_minimized_disabled_tray_pref" = "A tálca ikonja nem kapcsolható ki, mivel a Delta Chat a --minimized kapcsolóval indult.";
+// deprecated, used on desktop although there is not spell checker
+"no_spellcheck_suggestions_found" = "Nem találhatók helyesírási javaslatok.";
+"show_window" = "Ablak megjelenítése";
+// title of the "keybindings" dialog (for the keybindings names as such, where possible the normal command strings are used)
+"keybindings" = "Billentyűkötések";
+"switch_between_chats" = "Váltás a csevegések között";
+"scroll_messages" = "Üzenetek görgetése";
+// command to put the cursor to the search input field
+"focus_search_input" = "Keresésre fókuszálás";
+// command to put the cursor to the message input field
+"focus_message_input" = "Szövegbevitelre fókuszálás";
+"force_refresh_network" = "Kényszerített hálózatfrissítés";
+"insert_newline" = "Új sor beszúrása";
+// accessibility, the general idea is to use the normal strings for accessibility hints wherever possible
+"a11y_delivery_status_error" = "Kézbesítés állapota: Hiba";
+"a11y_delivery_status_sending" = "Kézbesítés állapota: Küldés";
+"a11y_delivery_status_draft" = "Kézbesítés állapota: Piszkozat";
+"a11y_delivery_status_delivered" = "Kézbesítés állapota: Kézbesített";
+"a11y_delivery_status_read" = "Kézbesítés állapota: Olvasott";
+"a11y_delivery_status_invalid" = "Érvénytelen kézbesítési állapot";
+"a11y_message_context_menu_btn_label" = "Üzenetakciók";
+"a11y_background_preview_label" = "Háttérkép előnézete";
+"a11y_disappearing_messages_activated" = "Eltűnő üzenetek bekapcsolva";
+// iOS specific strings, developers: please take care to remove strings that are no longer used!
+"stop_sharing_location" = "Helymegosztás kikapcsolása.";
+"a11y_voice_message_hint_ios" = "A felvétel rögzítése után duplán koppintson a küldéshez. A felvétel elvetéséhez csúsztassa két ujjával.";
+"a11y_connectivity_hint" = "Dupla koppintás a tárhely részleteinek megtekintéséhez.";
+"login_error_no_internet_connection" = "Nincs internetkapcsolat, nem sikerült bejelentkezni.";
+"share_account_not_configured" = "A profil nincs konfigurálva.";
+"cannot_play_audio_file" = "A hangfájl nem játszható le.";
+// iOS camera permission alert
+"perm_ios_explain_access_to_camera_denied" = "A fényképek-, videók- vagy QR-kódok rögzítéséhez lépjen a rendszer beállításaiba, válassza ki a „Alkalmazások és értesítések” menüpontot, válassza ki az DeltaChat alkalmazást, majd koppintson az „Engedélyek” menüpontra, és engedélyezze a hozzáférést a „Kamerához”.";
+"open_settings" = "Beállítások megnyitása";
+// iOS device contact alert
+"import_device_contacts" = "Eszköz névjegyeinek importálása";
+"import_device_contacts_hint" = "Az eszközén lévő névjegyekkel való csevegéshez lépjen a rendszer beállításaiba, válassza ki az „Alkalmazások és értesítések” menüpontot, válassza ki a DeltaChat alkalmazást, majd koppintson az „Engedélyek” menüpontra, és engedélyezze a hozzáférést a „Névjegyekhez”.";
+// iOS notification settings
+"disabled_in_dc" = "Letiltva a Delta Chatben";
+"disabled_in_system_settings" = "Letilva a rendszerbeállításokban";
+"bg_app_refresh_disabled" = "„Háttérfrissítések” letiltva a rendszerbeállításokban";
+"notifications_avg_minutes" = "Átlagosan %1$d percenként";
+"notifications_avg_hours" = "Átlagosan %1$d óránként";
+"last_check_at" = "Ellenőrizés ideje: %1$@";
+"system_settings" = "Rendszer-beállítások";
+// shown below the button "System Settings" on the notification screen. this is a hint about what can be edited on System Settings' Notification page - eg. the notification type (banner, lock screen, notification centre), sound, badges and so on. no need to be exhaustive here, it is only to give the user an idea.
+"system_settings_notify_explain_ios" = "Típus-, kitűzők-, előnézet- és egyebek szerkesztése";
+// iOS shortcut widget
+// use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
+"shortcuts_widget_title" = "Parancsikonok";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"shortcuts_widget_description" = "Használja a Delta Chat „Hozzáadás modulhoz” funkcióját az elemek hozzáadásához";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"remove_from_widget" = "Eltávolítás a modulból";
+// use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
+"add_to_widget" = "Hozzáadás modulhoz";
+// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// android specific strings, developers: please take care to remove strings that are no longer used!
+"pref_instant_delivery" = "Azonnali kézbesítés";
+"pref_background_notifications" = "Háttérkapcsolat használata";
+"pref_background_notifications_explain" = "Mellőzött akkumulátor-optimalizációt igényel, akkor használja, ha a Push szolgáltatás nem érhető el";
+"pref_reliable_service" = "Kényszerített háttérkapcsolat";
+"pref_reliable_service_explain" = "Egy állandó értesítést jelenít meg";
+"pref_background_notifications_rationale" = "Az e-mail-kiszolgálóval való kapcsolat fenntartásához és az üzenetek háttérben történő fogadásához mellőzze az akkumulátor-optimalizálást a következő lépésben.\n\nA Delta Chat kevés erőforrást használ, és ügyel arra, hogy ne merítse az akkumulátort.";
+// disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
+"perm_enable_bg_reminder_title" = "Koppintson ide az üzenetek fogadásához, miközben a Delta Chat a háttérben fut.";
+"perm_enable_bg_already_done" = "Már engedélyezve van a Delta Chat számára, hogy a háttérben üzeneteket fogadjon.\n\nHa az üzenetek még mindig nem érkeznek meg a háttérben, ellenőrizze a rendszerbeállításokat is.";
+// device messages for updates
+"update_2_0" = "Újdonságok:\n\n💯 A végpontok közötti titkosítás most már megbízható és örökre megmarad. A lakatok 🔒 eltűntek!\n\n✉️ A végpontok közötti titkosítás nélküli klasszikus e-mailek betűszimbólummal vannak jelölve\n\n😻 Új, továbbfejlesztett profilképernyő az összes névjegyhez\n\n🔲 Új gomb a csevegésben használt alkalmazások gyors eléréséhez\n\n❤️ Ha teheti, adományozzon nekünk, hogy függetlenek maradhassunk és továbbra is fejlesztéseket tudjunk végrehajtani: %1$@";

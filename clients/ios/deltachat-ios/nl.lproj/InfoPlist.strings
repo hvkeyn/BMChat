@@ -1,0 +1,7 @@
+NSCameraUsageDescription = "Geef Delta Chat toegang tot je camera om foto\'s en video\'s te maken en QR-codes te scannen.";
+NSLocationAlwaysAndWhenInUseUsageDescription = "Delta Chat heeft het locatietoegangsrecht nodig om je locatie te tonen en delen voor de door jou aangegeven duur.";
+NSLocationWhenInUseUsageDescription = "Delta Chat heeft het locatietoegangsrecht nodig om je locatie te tonen en delen voor de door jou aangegeven duur.";
+NSMicrophoneUsageDescription = "Geef Delta Chat toegang tot je microfoon om audio op te nemen voor spraakberichten en video\'s.";
+NSPhotoLibraryUsageDescription = "Geef Delta Chat toegang tot je foto\'s om afbeeldingen te versturen.";
+NSPhotoLibraryAddUsageDescription = "Delta Chat wil afbeeldingen opslaan in je fotogalerij.";
+NSFaceIDUsageDescription = "Delta Chat kan gebruikmaken van Face ID om je account te beveiligen, reservekopieën te maken en secundaire apparaten in te stellen.";

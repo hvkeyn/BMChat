@@ -1,0 +1,212 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "OK";
+"cancel" = "Otkaži";
+"yes" = "Da";
+"no" = "Ne";
+"on" = "Uključeno";
+"off" = "Isključeno";
+"def" = "Zadano";
+"custom" = "Prilagođeno";
+"none" = "Ništa";
+"automatic" = "Automatski";
+"strict" = "Strog";
+"open" = "Otvori";
+"delete" = "Obriši";
+"info" = "Info";
+"update" = "Ažuriranje";
+"attachment" = "Privitak";
+"back" = "Nazad";
+"close" = "Zatvori";
+"forward" = "Proslijedi";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "Arhiviraj";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "Dearhiviraj";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "Prigušiti";
+"ephemeral_messages" = "Nestajuće poruke";
+"save" = "Spremi";
+"media" = "Medij";
+"main_menu" = "Glavni izbornik";
+"not_now" = "Ne sada";
+"never" = "Nikada";
+"one_moment" = "Samo trenutak...";
+// For the next view or as "continue". Should be as short as possible.
+"next" = "Dalje";
+"error" = "Greška";
+"error_x" = "Greška: %1$@";
+"file_not_found" = "%1$@ nije pronađeno.";
+"copied_to_clipboard" = "Kopirano u međuspremnik.";
+"contacts_headline" = "Kontakti";
+"password" = "Lozinka";
+"now" = "Sada";
+// Headline for destructive actions with no undo. Could also be "Caution" or "Warning".
+"danger" = "Oprez";
+"today" = "Danas";
+"yesterday" = "Jučer";
+"this_week" = "Ovaj tjedan";
+"this_month" = "Ovog mjeseca";
+"last_week" = "Prošli tjedan";
+"last_month" = "Prošlog mjeseca";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+"self" = "Ja";
+"draft" = "Skica";
+"image" = "Slika";
+"gif" = "Gif";
+"images" = "Slike";
+"video" = "Video";
+"documents" = "Dokumenti";
+"contact" = "Kontakt";
+"camera" = "Kamera";
+"location" = "Lokacija";
+"gallery" = "Galerija";
+"file" = "Datoteka";
+"unknown" = "Nepoznato";
+"green" = "Zeleno";
+"red" = "Crveno";
+"blue" = "Plavo";
+"orange" = "Narančasta";
+"cyan" = "Cijan";
+"magenta" = "Magenta";
+"white" = "Bijelo";
+"small" = "Mala";
+"normal" = "Normalna";
+"large" = "Velika";
+"extra_large" = "Ekstra velika";
+"fast" = "Brzo";
+"slow" = "Sporo";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "Novi kontakt";
+"menu_new_group" = "Nova grupa";
+"menu_send" = "Pošalji";
+"menu_edit_group" = "Uredi grupu";
+"menu_show_global_map" = "Prikaži sve lokacije";
+"menu_add_attachment" = "Dodaj privitak";
+"menu_leave_group" = "Napusti grupu";
+"menu_delete_location" = "Obrisati ovu lokaciju?";
+"menu_message_details" = "Detalji poruke";
+"menu_copy_to_clipboard" = "Kopiraj u međuspremnik";
+"menu_forward" = "Proslijedi poruku";
+"menu_reply" = "Odgovori na poruku";
+"menu_mute" = "Utišaj obavijesti";
+"menu_unmute" = "Ukloni utišanje";
+"menu_all_media" = "Svi mediji";
+"menu_share" = "Podijeli";
+"menu_help" = "Pomoć";
+"menu_select_all" = "Označi sve";
+"menu_settings" = "Postavke";
+"menu_advanced" = "Napredno";
+"mute_for_one_hour" = "Utišaj na 1 sat";
+"mute_for_eight_hours" = "Utišaj na 8 sata";
+"mute_for_one_day" = "Utišaj na 1 dan";
+"mute_for_seven_days" = "Utišaj na 7 dana";
+// contact list
+"contacts_title" = "Kontakti";
+"chat_please_enter_message" = "Molimo unesite poruku.";
+"chat_camera_unavailable" = "Kamera nije dostupna.";
+"chat_record_slide_to_cancel" = "Kliznite za otkazivanje";
+"chat_record_explain" = "Pritisnite i držite kako biste snimili glasovnu poruku, pustite za slanje";
+"chat_share_with_title" = "Podijeli sa";
+"chat_input_placeholder" = "Poruka";
+"chat_archived_label" = "Arhivirano";
+"chat_no_messages" = "Nema poruka.";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "Spremi";
+"saved_messages" = "Sačuvane poruke";
+// search
+"search" = "Traži";
+"search_no_result_for_x" = "Nema pronađenih rezultata za \"%1$@\"";
+// create/edit groups, contact/group profile
+"group_name" = "Naziv grupe";
+"group_avatar" = "Grupni avatar";
+"group_add_members" = "Dodaj članove";
+"profile_encryption" = "Šifriranje";
+"tab_contact" = "Kontakt";
+"tab_group" = "Grupa";
+"tab_gallery" = "Galerija";
+"tab_map" = "Mapa";
+"media_preview" = "Prikaz medija";
+"login_imap_server" = "IMAP server";
+"login_smtp_password" = "SMTP lozinka";
+"login_smtp_server" = "SMTP server";
+"login_error_server" = "Molimo unesite valjan server / IP adresu";
+"delete_account" = "Obriši račun";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "Proslijedi do...";
+"pref_profile_photo" = "Profilna slika";
+"pref_blocked_contacts" = "Blokirani kontakti";
+"pref_your_name" = "Vaše ime";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "Enter šalje poruku";
+"pref_enter_sends_explain" = "Pritisak na Enter će poslati tekst poruku";
+"pref_vibrate" = "Vibracija";
+"pref_screen_security" = "Sigurnost ekrana";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "Onemogući snimanje ekrana na popisu nedavnih i unutar aplikacije";
+"pref_notifications" = "Obavijesti";
+"pref_notifications_show" = "Prikaži";
+"pref_notifications_priority" = "Prioritet";
+"pref_led_color" = "Boja LED";
+"pref_sound" = "Zvuk";
+"pref_silent" = "Tiho";
+"pref_privacy" = "Privatnost";
+"pref_system_default" = "Sustavno zadano";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "Svijetlo";
+"pref_dark_theme" = "Tamno";
+"pref_appearance" = "Izgled";
+"pref_theme" = "Tema";
+"pref_language" = "Jezik";
+"pref_incognito_keyboard" = "Inkognito tipkovnica";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "Zahtijevaj od tipkovnice da onemogući personalizirano učenje";
+"pref_read_receipts" = "Potvrde čitanja";
+"pref_read_receipts_explain" = "Ukoliko ste onemogućili potvrdu čitanja kod sebe, nećete moći vidjeti potvrde čitanja od drugih.";
+"pref_chats" = "Razgovori";
+"pref_in_chat_sounds" = "Zvuk unutar razgovora";
+"pref_other" = "Ostalo";
+"pref_backup" = "Sigurnosna kopija";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "Pozadina";
+"pref_background_btn_gallery" = "Odaberi iz galerije";
+"pref_show_emails_all" = "Sve";
+"pref_background_default" = "Zadana pozadina";
+"pref_background_default_color" = "Zadana boja";
+// %1$s will be replaced by name of the contact removed from the group; this string is used when it's unclear who did the action
+"member_x_removed" = "Član %1$@ uklonjen.";
+// qr code stuff
+"qr_code" = "QR kod";
+"qrscan_fingerprint_label" = "Otisak prsta";
+// notifications
+"notify_reply_button" = "Odgovori";
+"notify_new_message" = "Nova poruka";
+"notify_priority_high" = "Visoko";
+"notify_priority_max" = "Maks";
+"notify_name_and_message" = "Ime i poruka";
+"notify_name_only" = "Samo ime";
+"notify_no_name_or_message" = "Bez imena ili poruke";
+// permissions
+"perm_required_title" = "Potrebna je dozvola";
+"perm_continue" = "Nastavi";
+"welcome_desktop" = "Dobro došli u Delta Chat";
+"global_menu_preferences_language_desktop" = "Jezik";
+"global_menu_file_desktop" = "Datoteka";
+"global_menu_file_quit_desktop" = "Izlaz";
+"global_menu_edit_desktop" = "Uredi";
+"global_menu_edit_undo_desktop" = "Vrati";
+"global_menu_edit_copy_desktop" = "Kopiraj";
+"global_menu_edit_paste_desktop" = "Zalijepi";
+"global_menu_view_desktop" = "Pogledaj";
+"global_menu_help_desktop" = "Pomoć";
+"global_menu_help_report_desktop" = "Prijavite problem";
+"delete_message_desktop" = "Obriši poruku";
+"more_info_desktop" = "Više informacija";
+"timestamp_format_m_desktop" = "MMM D";
+"remove_desktop" = "Ukloni";
+"save_desktop" = "Spremi";
+"name_desktop" = "Ime";
+"message_detail_sent_desktop" = "poslano";
+"message_detail_received_desktop" = "primljeno";

@@ -1,0 +1,64 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build output
+/dist/
+/build/
+/out/
+target/
+bundle_out/
+html-dist/
+DerivedData/
+.gradle/
+captures/
+
+# Desktop packaging
+clients/desktop/packages/target-electron/dist/
+clients/desktop/packages/target-electron/electron-builder.json5
+clients/desktop/packages/target-electron/html-dist/
+clients/desktop/packages/target-electron/bundle_out/
+clients/desktop/packages/frontend/html-dist/
+clients/desktop/packages/target-browser/html-dist/
+clients/desktop/packages/target-tauri/src-tauri/target/
+
+# Android local files
+clients/android/local.properties
+clients/android/.idea/
+clients/android/build/
+clients/android/app/build/
+clients/android/libs/
+
+# iOS local files
+clients/ios/Pods/
+clients/ios/*.xcworkspace/xcuserdata/
+clients/ios/*.xcodeproj/xcuserdata/
+clients/ios/*.xcodeproj/project.xcworkspace/xcuserdata/
+
+# Secrets and signing
+.env
+*.env
+*.keystore
+*.jks
+*.p12
+*.mobileprovision
+*.provisionprofile
+google-services.json
+GoogleService-Info.plist
+secrets/
+SECRETS/
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

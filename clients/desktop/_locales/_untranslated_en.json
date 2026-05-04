@@ -1,0 +1,65 @@
+{
+  "pref_background_sync_disabled": {
+    "message": "Only Synchronize Selected Profile"
+  },
+  "explain_background_sync_disabled": {
+    "message": "Other profiles will be deactivated and get no notifications."
+  },
+  "background_sync_disabled_explaination": {
+    "message": "Background sync disabled, profile is only synced when selected"
+  },
+  "webxdc_beforeunload_dialog_title": {
+    "message": "Close app?"
+  },
+  "webxdc_beforeunload_dialog_message": {
+    "message": "This app is asking you to confirm that you want to close it.\nChanges you made may not be saved."
+  },
+  "camera_access_failed": {
+    "message": "Could not access video camera. You might want to check your video permissions or if the camera is used already by another program"
+  },
+  "explain_desktop_browser_disabled_tray_pref": {
+    "message": "Tray icon does exist in the web version, install the full version from https://get.delta.chat"
+  },
+  "multidevice_connection_takes_too_long": {
+    "message": "This takes longer than expected 🐌 make sure both devices are on the same Wi-Fi or network and check troubleshooting"
+  },
+  "stop_recording": {
+    "message": "Finish recording"
+  },
+  "pref_autostart": {
+    "message": "Autostart"
+  },
+  "pref_autostart_registered": {
+    "message": "Delta Chat is currently registered to startup with the system"
+  },
+  "pref_autostart_not_registered": {
+    "message": "Delta Chat is not registered to startup with the system"
+  },
+  "pref_autostart_not_supported": {
+    "message": "Autostart is not supported on this system"
+  },
+  "need_to_be_logged_in": {
+    "message": "Please log in first"
+  },
+  "need_to_be_logged_out": {
+    "message": "Please log out first"
+  },
+  "chat_list_item_menu_label": {
+    "message": "Actions with Chat"
+  },
+  "accounts_list_item_menu_label": {
+    "message": "Actions with Profile"
+  },
+  "prevent_dialog_spam_checkbox": {
+    "message": "Don't allow the app to open this dialog again"
+  },
+  "who_can_call_me_toggle": {
+    "message": "Show call screen on incoming calls"
+  },
+  "react_more_emojis" : {
+    "message": "More emojis..."
+  },
+  "edit_channel": {
+    "message": "Edit Channel"
+  }
+}

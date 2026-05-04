@@ -1,0 +1,6 @@
+NSCameraUsageDescription = "Delta Chat usa sua câmera para tirar e enviar fotos e vídeos e para escanear códigos QR.";
+NSLocationAlwaysAndWhenInUseUsageDescription = "O Delta Chat precisa da permissão para compartilhar sua localização durante o período de tempo em que você ativou o compartilhamento de localização.";
+NSLocationWhenInUseUsageDescription = "O Delta Chat precisa de permissão para compartilhar sua localização durante o período em que o compartilhamento de localização estiver ativado.";
+NSMicrophoneUsageDescription = "O Delta Chat usa seu microfone para gravar e enviar mensagens de voz e vídeos com som.";
+NSPhotoLibraryUsageDescription = "O Delta Chat permite que você escolha fotos de sua biblioteca para enviar.";
+NSPhotoLibraryAddUsageDescription = "O Delta Chat deseja salvar imagens em sua biblioteca de fotos.";

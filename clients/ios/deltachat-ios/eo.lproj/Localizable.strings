@@ -1,0 +1,388 @@
+// common strings without special context
+"app_name" = "Delta Chat";
+"ok" = "Bone";
+"cancel" = "Nuligi";
+"clear_search" = "Forviŝi Serĉon";
+"yes" = "Jes";
+"no" = "Ne";
+"select" = "Elekti";
+"on" = "Ŝaltita";
+"off" = "Malŝaltita";
+"def" = "Defaŭlta";
+"custom" = "Propran";
+"none" = "Neniu";
+"automatic" = "Aŭtomata";
+"strict" = "Strikta";
+"open" = "Malferma";
+"download" = "Elŝuti";
+"downloading" = "Elŝutado...";
+"open_attachment" = "Malfermu aldonaĵon";
+"join" = "Aliĝi";
+"rejoin" = "Realiĝi";
+"delete" = "Forigi";
+"delete_for_me" = "Forigi por mi";
+"delete_for_everyone" = "Forigi por ĉiuj";
+"info" = "Informoj";
+"update" = "Ĝisdatigi";
+"emoji" = "Emoji";
+"attachment" = "Aldonaĵo";
+"back" = "Reen";
+"close" = "Fermi";
+"close_window" = "Fermi fenestron";
+"forward" = "Plusendi";
+"create" = "Krei";
+"reset" = "Restartigi";
+"later" = "Poste";
+// "Resend" means "Sending the selected message(s) again to the same chat". The string is used in a menu and should be as short as possible. Resending may be needed after failures or to repost old messages to new members.
+"resend" = "Resendi";
+"edited" = "Redaktita";
+"edit_message" = "Redakti mesaĝon";
+// Verb "to archive", as in "put a chat in the archive", not a noun "The Archive".
+"archive" = "Arĥivi";
+// Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
+"unarchive" = "Malarĥivi";
+// Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
+"mute" = "Muta sciigoj";
+// Adjective "smth is muted". used to describe a muted or silenced chat, that e.g. does not make noise or cause notifications
+"muted" = "Silentigita";
+"ephemeral_messages" = "Memviŝontaj mesaĝoj";
+"ephemeral_messages_hint" = "Aplikebla al ĉiuj anoj de tiu ĉi babilejo kiuj uzas Delta Chat; ili ankoraŭ povas kopii, konservi kaj plusendi mesaĝojn, kaj uzi aliajn retpoŝtajn klientojn.";
+"save" = "Konservi";
+"chat" = "Babilo";
+"media" = "Aŭdovidaĵoj";
+"apps_and_media" = "Apoj kaj vidaĵoj";
+"profile" = "Profilo";
+"all_profiles" = "Ĉiuj profiloj";
+"current_profile" = "Aktuala profilo";
+"main_menu" = "Ĉefa menuo";
+"start_chat" = "Komenci Babiladon";
+"show_full_message" = "Afiŝu la tutan mesaĝon...";
+// Stay short here, say ~16 characters. The source string could also be "All Read", maybe that hint can make translations easier :)
+"mark_all_as_read" = "Marki ĉiujn legitaj";
+// Used as an menu entry or button
+"mark_as_read" = "Marki kiel legita";
+// Used beside an icon with very few space. Shortest text for "Mark as being read". In english, this could be "Read" (past tense of "to read"), in german, this could be "Gelesen".
+"mark_as_read_short" = "Legi";
+// Placeholder text when something is loading
+"loading" = "Ŝarĝado...";
+"hide" = "Kaŝi";
+"activate" = "Aktivigi";
+"load_remote_content" = "Ŝargu forajn bildojn ";
+// Possible answers to the question are: Never, Always, Once
+"load_remote_content_ask" = "La foraj bildoj povas spuri vin.\n\nTiu ĉi agordo povas ankaŭ ŝargi tiparojn kaj aliajn enhavojn. Malŝaltite, enkorpigitaj aŭ kaŝmemorigitaj bildoj povas aperi.\n\nŜargu forajn bildojn? ";
+"always" = "Ĉiam";
+"always_load_remote_images" = "Ĉiam ŝargu forajn bildojn";
+"once" = "Unufoje";
+"show_warning" = "Afiŝu averton";
+"not_now" = "Ne nun";
+"never" = "Neniam";
+"one_moment" = "Unu momenton…";
+"done" = "Farita";
+"undo" = "Malfari";
+"offline" = "Nekonektite";
+// For the next view or as "continue". Should be as short as possible.
+"next" = "Sekva";
+"error" = "Eraro";
+"error_x" = "Eraro: %1$@";
+"no_app_to_handle_data" = "Ne povas trovi aplikaĵon por trakti tiun ĉi tipon de datumo.";
+"no_browser_installed" = "Neniu retumilo instalita.";
+"file_not_found" = "Ne povis trovi %1$@.";
+// the placeholder will be replaced by the name of a file
+"cannot_save_file" = "Ne eblas konservi la dosieron %1$@.";
+"copied_to_clipboard" = "Kopiita al tondujo";
+"contacts_headline" = "Kontaktoj";
+"email_address" = "Retadreso";
+"bad_email_address" = "Malbona retadreso.";
+"password" = "Pasvorto";
+"existing_password" = "Estanta Pasvorto";
+"now" = "Nun";
+// Headline for destructive actions with no undo. Could also be "Caution" or "Warning".
+"danger" = "Danĝero";
+"today" = "Hodiaŭ";
+"yesterday" = "Hieraŭ";
+"this_week" = "Ĉi-semajne";
+"this_month" = "Ĉi-monate";
+"last_week" = "Pasint-semajne";
+"last_month" = "Pasint-monate";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by date or time, resulting in "Last seen at 12:13 AM" or "Last seen Nov 12"
+"last_seen_at" = "Laste vidita je%1$@";
+// Refers to the time a contact was last seen. Shown below contact name in the profile. The placeholder will be replaced by a relative point in time as "3 minutes ago" (see https://momentjs.com for more examples and languages)
+"last_seen_relative" = "Laste vidita %1$@";
+"last_seen_unknown" = "Laste vidita: nedisponebla informo";
+// Shown beside messages that are "N minutes old". Prefer short strings, or well-known abbreviations.
+// Shown beside messages that are "N hours old". Prefer short strings, or well-known abbreviations.
+// Short form for "N Items Selected"
+"self" = "Mi";
+"draft" = "Malneto";
+"image" = "Bildo";
+// Used in summaries as "Draft: Reply", similar as "Draft: Image". Use a noun here, not a verb (not: "to reply")
+"reply_noun" = "Respondi";
+"gif" = "Gif";
+// "Stickers" as known from other messengers; in some languages, the English "Sticker" is fine.
+"sticker" = "Glumarko";
+"images" = "Bildoj";
+// a noun, used for "Music" and other "Audio" files
+"audio" = "Sonaĵo";
+"voice_message" = "Voĉmesaĝo";
+"forwarded" = "Plusendita";
+"forwarded_message" = "Plusendita mesaĝo";
+// %1$s will be replaced by the name of the person who forwarded the message
+"forwarded_by" = "Plusendita de %1$@";
+"video" = "Filmo";
+"documents" = "Dokumentoj";
+"contact" = "Kontakto";
+"camera" = "Fotilo";
+// As in "start a video recording" or "take a photo"; eg. the description of the "shutter button" in cameras
+"capture" = "Kapti";
+"switch_camera" = "Elektu alian kameraon";
+"toggle_fullscreen" = "Baskulu el/al la plena ekrano";
+"location" = "Loko";
+"locations" = "Lokoj";
+"gallery" = "Galerio";
+"images_and_videos" = "Bildoj kaj videoj";
+"file" = "Dosiero";
+"files" = "Dosieroj";
+// "App" is used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_app" = "Apo";
+// plural of "App"; used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space).
+"webxdc_apps" = "Apoj";
+"unknown" = "Nekonata";
+"green" = "Verda";
+"red" = "Ruĝa";
+"blue" = "Blua";
+"orange" = "Oranĝkolora";
+"cyan" = "Cejana";
+"purple" = "Purpura";
+"magenta" = "Malva";
+"white" = "Blanka";
+"zoom" = "Grandeco";
+"extra_small" = "Ege malgranda";
+"small" = "Malgranda";
+"normal" = "Normala";
+"large" = "Granda";
+"extra_large" = "Tre granda";
+"fast" = "Rapida";
+"slow" = "Malrapida";
+// menu labels (or icon, buttons...)
+"menu_new_contact" = "Nova kontakto";
+"menu_new_chat" = "Nova babilo";
+"menu_new_group" = "Nova grupo";
+"menu_send" = "Sendi";
+"menu_toggle_keyboard" = "Baskuligi emoĝian klavaron";
+"menu_edit_group" = "Redakti grupon";
+"menu_group_name_and_image" = "Grup-nomo kaj bildo";
+"menu_show_global_map" = "Montri ĉiujn lokojn";
+"menu_archive_chat" = "Enarĥivigi babilon";
+"menu_unarchive_chat" = "Elarĥivigi babilon";
+"menu_add_attachment" = "Aldoni kunsendaĵon";
+"menu_leave_group" = "Forlasi grupon";
+"menu_delete_chat" = "Forigi babilon";
+// Command to delete all messages in a chat. The chat itself will not be deleted but will be empty afterwards, so make sure to be different from "Delete Chat" here. "Clear" is a verb here, "Empty Chat" would also be fine (eg. in German "Chat leeren")
+"clear_chat" = "Viŝi la babilejon";
+"delete_contact" = "Forviŝi Kontakton";
+"menu_delete_location" = "Ĉu forigi tiun ĉi lokon?";
+"menu_message_details" = "Mesaĝ-detaloj";
+"menu_copy_to_clipboard" = "Kopii al tondujo";
+"menu_copy_selection_to_clipboard" = "Kopii tion, kion vi elstarigis";
+"menu_copy_link_to_clipboard" = "Kopii Ligilon";
+"menu_copy_text_to_clipboard" = "Kopii Tekston";
+"menu_copy_image_to_clipboard" = "Kopii Bildon";
+"menu_copy_email_to_clipboard" = "Kopii retpoŝtaĵon";
+"paste_from_clipboard" = "Alglui el la tondujo";
+"menu_forward" = "Plusendi mesaĝon";
+"menu_reply" = "Respondi al mesaĝo";
+"menu_mute" = "Silentigi sciigojn";
+"menu_unmute" = "Malsilentigi";
+"menu_export_attachment" = "Eksporti aldonaĵon";
+"menu_export_attachments" = "Eksporti aldonaĵojn";
+"menu_all_media" = "Ĉiuj aŭvidaĵoj";
+// Command to jump to the original message corresponding to a gallery image or document
+"show_in_chat" = "Afiŝu en la babilejo";
+"menu_share" = "Kunhavigi";
+// Verb "to block sth." usually a mailing list or a contact, not a noun
+"block" = "Bloki";
+"menu_block_contact" = "Bloki kontakton";
+"menu_unblock_contact" = "Malbloki kontakton";
+"accept" = "Akcepti";
+"menu_play" = "Ludi";
+"menu_pause" = "Paŭzigi";
+"menu_scroll_to_bottom" = "Rulumi al la malsupro";
+"menu_scroll_to_top" = "Rulumi al la supro";
+"menu_help" = "Helpo";
+"privacy_policy" = "Politiko pri privateco";
+"menu_select_all" = "Elekti ĉion";
+"select_chat" = "Elektu babilejon";
+"select_more" = "Elekti pli";
+"menu_edit_name" = "Redakti nomon";
+"menu_settings" = "Agordoj";
+"menu_advanced" = "Speciala";
+"menu_view_profile" = "Vidi profilon";
+"menu_zoom_in" = "Zomi";
+"menu_zoom_out" = "Malzomi";
+"menu_save_log" = "Konservi protokolon";
+"menu_more_options" = "Pli da ebloj";
+"menu_learn_spelling" = "Lernu la ortografion";
+"jump_to_message" = "Iru al mesaĝo";
+"title_share_location" = "Konigi lokon al ĉiuj grupanoj";
+"device_talk" = "Aparataj mesaĝoj";
+"device_talk_subtitle" = "Loke generitaj mesaĝoj";
+"device_talk_explain" = "Mesaĝoj en tiu ĉi babilo estas surloke generataj de via Delta Chat apo. Ĝiaj kreintoj uzas ilin por informi pri apaj ĝisdatigoj kaj problemoj dum uzado.";
+"edit_contact" = "Redakti kontakton";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin_chat" = "Alpingli babilon";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin_chat" = "Depingli babilon";
+// Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
+"pin" = "Alpingli";
+// Opposite of "Pin chat", removing the sticky-state from a chat.
+"unpin" = "Depingli";
+"mute_for_one_hour" = "Silentigi por 1 horo";
+"mute_for_eight_hours" = "Silentigi por 8 horoj";
+"mute_for_one_day" = "Silentigi por 1 tago";
+"mute_for_seven_days" = "Silentigi por 7 tagoj";
+"mute_forever" = "Silentigi por ĉiam";
+"share_location_for_5_minutes" = "por 5 minutoj";
+"share_location_for_30_minutes" = "por 30 minutoj";
+"share_location_for_one_hour" = "por 1 horo";
+"share_location_for_two_hours" = "por 2 horoj";
+"share_location_for_six_hours" = "por 6 horoj";
+"file_saved_to" = "Dosiero konservita kiel \"%1$@\".";
+"ask_forward" = "Plusendi mesaĝojn al %1$@?";
+"ask_start_chat_with" = "Babili kun %1$@?";
+// %1$s is replaced by a comma-separated list of names
+"ask_remove_members" = "Forigi %1$@el la grupo?";
+// contact list
+"contacts_title" = "Kontaktoj";
+"contacts_type_email_above" = "Enigu retadreson supren";
+// chatlist and chat view
+"chat_archived_chats_title" = "Enarĥivigitaj babiloj";
+"chat_please_enter_message" = "Bonvolu enigi mesaĝon.";
+"chat_camera_unavailable" = "Fotilo neatingebla.";
+"chat_unable_to_record_audio" = "Ne povas registri aŭdaĵon.";
+"chat_record_slide_to_cancel" = "Gliti por nuligi";
+"chat_record_explain" = "Tuŝadi por registri voĉan mesaĝon, maltuŝadi por sendi";
+"chat_all_archived" = "Ĉiuj babiloj enarĥivigitaj.\nPremu \"+\" por komenci novan babilon.";
+"chat_share_with_title" = "Kunhavigi kun";
+"chat_input_placeholder" = "Mesaĝo";
+"chat_archived_label" = "Enarĥivigitaj";
+"chat_no_messages" = "Neniu mesaĝo.";
+"chat_self_talk_subtitle" = "Mesaĝoj senditaj al mi mem";
+// Action to add a message to "Saved Messages". The longer form (instead of "Save" only) is needed esp. on desktop to make clear this is not about saving a file to disk
+"save_message" = "Konservi";
+"saved_messages" = "Konservitaj mesaĝoj";
+"retry_send" = "Reprovi sendi mesaĝon";
+// search
+"search" = "Serĉi";
+"search_explain" = "Serĉi babilojn, kontaktojn, kaj mesaĝojn";
+"search_no_result_for_x" = "Neniu rezulto trovita por \"%1$@\"";
+// create/edit groups, contact/group profile
+"group_name" = "Grup-nomo";
+"group_avatar" = "Bildo de la grupo";
+"group_create_button" = "Krei grupon";
+// deprecated, use please_enter_chat_name
+"group_please_enter_group_name" = "Bonvolu enigi nomon por la grupo.";
+"group_add_members" = "Aldoni anojn";
+"group_self_not_in_group" = "Vi devas esti grupano por fari tion.";
+"profile_encryption" = "Ĉifrado";
+"profile_shared_chats" = "Kunhavigitaj babiloj";
+"tab_contact" = "Kontakto";
+"tab_group" = "Grupo";
+"tab_gallery" = "Galerio";
+"tab_docs" = "Dokumentoj";
+"tab_links" = "Ligiloj";
+"tab_map" = "Mapo";
+"media_preview" = "Aŭdvida antaŭrigardo";
+"send_message" = "Sendi mesaĝon";
+"login_title" = "Ensaluti";
+"login_inbox" = "Ricevujo";
+"login_imap_login" = "IMAP salutnomo";
+"login_imap_server" = "IMAP servilo";
+"login_imap_port" = "IMAP pordo";
+"login_imap_security" = "IMAP sekureco";
+"login_outbox" = "Senditujo";
+"login_smtp_login" = "SMTP salutnomo";
+"login_smtp_password" = "SMTP pasvorto";
+"login_smtp_server" = "SMTP servilo";
+"login_smtp_port" = "SMTP pordo";
+"login_smtp_security" = "SMTP sekureco";
+"login_certificate_checks" = "Atestilaj kontroloj";
+"login_error_mail" = "Bonvolu enigi validan retadreson";
+"login_error_server" = "Bonvolu enigi validan servilon / IP adreson";
+"login_error_port" = "Bonvolu enigi validan pordon (1-65535)";
+"login_error_required_fields" = "Bonvolu enigi validan retadreson kaj pasvorton";
+"import_backup_title" = "Importi savkopion";
+// TLS certificate checks
+"accept_invalid_certificates" = "Akcepti nevalidajn atestilojn";
+"delete_account" = "Forigi konton";
+"delete_account_ask" = "Ĉu vi certas, ke vi volas forigi ĉiujn datumojn de vi konto?";
+// share and forward messages
+// Translators: shown above a chat/contact list when selecting recipients to forward messages
+"forward_to" = "Plusendi al…";
+"share_abort" = "Kunhavigado ĉesis pro manko de permesoj.";
+"pref_profile_photo" = "Profilbildo";
+"pref_blocked_contacts" = "Blokitaj kontaktoj";
+"pref_your_name" = "Via nomo";
+// Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers.
+"pref_enter_sends" = "La Eniga klavo kaŭzas sendon";
+"pref_enter_sends_explain" = "Premado de la Eniga klavo sendos mesaĝojn";
+"pref_vibrate" = "Vibrado";
+"pref_screen_security" = "Ekrana sekureco";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_screen_security_explain" = "Neebligi ekrankopiojn en la listo de ĵus uzitaj aplikaĵoj kaj ene de la aplikaĵo mem";
+"pref_notifications" = "Sciigoj";
+"pref_notifications_show" = "Montri";
+"pref_notifications_priority" = "Prioritato";
+"pref_led_color" = "LED-a koloro";
+"pref_sound" = "Sono";
+"pref_silent" = "Silenta";
+"pref_privacy" = "Privateco";
+"pref_system_default" = "Sistema defaŭlto";
+// Translators: as in "opposite of dark"
+"pref_light_theme" = "Hela";
+"pref_dark_theme" = "Malhela";
+"pref_appearance" = "Aspekto";
+"pref_theme" = "Etoso";
+"pref_language" = "Lingvo";
+"pref_incognito_keyboard" = "Inkognita klavaro";
+// Translators: Must indicate that there is no guarantee as the system may not honor our request.
+"pref_incognito_keyboard_explain" = "Peti al la klavaro malŝalti personan lernadon";
+"pref_read_receipts" = "Legokonfirmoj";
+"pref_read_receipts_explain" = "Se legokonfirmoj ne estas ŝaltitaj, vi ne vidos aliulajn legokonfirmojn.";
+"pref_manage_keys" = "Administri ŝlosilojn";
+"pref_chats" = "Interparoloj";
+"pref_in_chat_sounds" = "Sonoj dum interparolado";
+"pref_view_log" = "Vidi protokolon";
+"pref_saved_log" = "Konservis protokolon al la elŝuta dosierujo";
+"pref_save_log_failed" = "Malsukcesis konservi protokolon";
+"pref_log_header" = "Protokolo";
+"pref_other" = "Alia";
+"pref_backup" = "Savkopio";
+"pref_backup_explain" = "Savkopii babilojn al ekstera memorilo";
+"pref_backup_export_start_button" = "Komenci savkopiadon";
+"pref_backup_written_to_x" = "Savkopio sukcese konservita al \"%1$@\".";
+// No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
+"pref_background" = "Fono";
+"pref_background_btn_default" = "Uzi defaŭltan bildon";
+"pref_background_btn_gallery" = "Elekti el galerio";
+"pref_show_emails_all" = "Ĉiuj";
+// notifications
+"notify_reply_button" = "Respondi";
+"notify_new_message" = "Nova mesaĝo";
+"notify_priority_high" = "Alta";
+"notify_priority_max" = "Maksimuma";
+"notify_name_and_message" = "Nomon kaj mesaĝon";
+"notify_name_only" = "Nur nomon";
+"notify_no_name_or_message" = "Nek nomon aŭ mesaĝon";
+// permissions
+"perm_required_title" = "Permeso bezonata";
+"perm_continue" = "Daŭrigi";
+"welcome_desktop" = "Bonvenon al Delta Chat";
+"global_menu_preferences_language_desktop" = "Lingvo";
+"global_menu_file_desktop" = "Dosiero";
+"global_menu_edit_desktop" = "Modifi";
+"global_menu_edit_undo_desktop" = "Malfari";
+"global_menu_help_desktop" = "Helpo";
+"more_info_desktop" = "Plia informo";
+"timestamp_format_m_desktop" = "MMM D";
+"remove_desktop" = "Forviŝi";
+"save_desktop" = "Konservi";
