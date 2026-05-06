@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Initial BMChat fork setup plan is complete and pushed to GitHub. First visible BMChat rebrand pass is implemented locally. BMChat server/filtering pass is implemented locally with new test builds. After user feedback against the previous build, a UI-side guard layer was added across Android, desktop, and iOS that hides mailing-list / classic-email noise, suppresses related notifications, scrubs Delta artwork from QR codes, rewrites legacy `i.delta.chat` invite hyperlinks to `i.bmchat.example`, fixes the "Больше информации" button on the Android login form, and rewrites the `secure_join_wait` device message.
+Initial BMChat fork setup plan is complete and pushed to GitHub. First visible BMChat rebrand pass is implemented locally. BMChat server/filtering pass is implemented locally with new test builds. After user feedback against the previous build, a UI-side guard layer was added across Android, desktop, and iOS that hides mailing-list / classic-email noise, suppresses related notifications, scrubs Delta artwork from QR codes, rewrites legacy `i.delta.chat` invite hyperlinks to `i.bmchat.example`, fixes the "Больше информации" button on the Android login form, and rewrites the `secure_join_wait` device message. The BMChat Rust core was then cross-compiled in WSL Ubuntu 24.04 with Rust 1.91.1 and Android NDK r25c, and the resulting `libnative-utils.so` for all four ABIs is now bundled with the APK so the patched core (strict mail filter, BMChat invite host, deactivated donations) is active at runtime.
 
 ## Completed
 
@@ -71,6 +71,11 @@ Initial BMChat fork setup plan is complete and pushed to GitHub. First visible B
   - Desktop `shared/util.ts` exposes `BMCHAT_INVITE_HOST`, `rewriteInviteLink`, `stripDeltaBranding`; `QrCode.tsx` uses them to copy/share a clean invite link and render a Delta-free QR.
   - iOS `Helper/Utils.swift` adds `legacyInviteDomain`, `rewriteInviteLink`, `stripDeltaBranding`; `QrViewController` strips Delta branding before rendering; `ChatListViewModel` skips mailing-list / unencrypted-contact-request chats; `NotificationManager` suppresses notifications for them.
   - Android, iOS, and desktop `secure_join_wait` strings now tell the user to share the QR/invite link manually if the other side isn't on BMChat yet.
+- Cross-compiled the BMChat Rust core for Android via WSL (Ubuntu 24.04 + Rust 1.91.1 + Android NDK r25c at `/opt/android/android-ndk-r25c`):
+  - Normalised every shell script and Makefile under `clients/android/` to LF line endings and added a repository-wide `.gitattributes` policy so `*.sh`, `*.mk`, Rust/C/Java/Kotlin/Swift sources, etc., always check out as LF (Windows-only files keep CRLF).
+  - Ran `clients/android/scripts/ndk-make.sh` end-to-end, producing fresh `libdeltachat.a` and then `libnative-utils.so` per ABI (`armeabi-v7a`, `arm64-v8a`, `x86`, `x86_64`).
+  - Allowed `clients/android/libs/<ABI>/libnative-utils.so` in `.gitignore` so the prebuilt native core ships with the repo and Windows users can assemble the APK without the Rust/NDK toolchain.
+  - Rebuilt and re-archived `BMChat-foss-debug-2.49.0.apk` and `BMChat-gplay-debug-2.49.0.apk` with the BMChat-flavoured native core.
 
 ## In Progress
 
@@ -83,7 +88,7 @@ Manual artifact testing for the new server/filtering builds.
 
 ## Known Issues And Risks
 
-- The Rust core changes (strict mail filter, donation off, BMChat invite host, etc.) are NOT yet compiled into `libnative-utils.so` because cross-compiling needs a Linux+NDK environment. UI guard rails plug the gap on Android/desktop/iOS, but the proper fix is to rebuild the native core.
+- The Rust core for Android is now rebuilt with BMChat patches; the iOS native core mirrored under `clients/ios/deltachat-ios/libraries/deltachat-core-rust` still needs the same cross-compile pass on macOS before the iOS `.framework` reflects the patches at runtime.
 - iOS cannot be fully built on Windows; macOS/Xcode is required.
 - Desktop and Android GPL licensing affects distribution model.
 - Upstream repository sizes are significant, especially Android and iOS.

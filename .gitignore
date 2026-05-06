@@ -28,6 +28,10 @@ clients/android/.idea/
 clients/android/build/
 clients/android/app/build/
 clients/android/libs/
+# but ship the prebuilt native core so the APK can be assembled on Windows without WSL/NDK
+!clients/android/libs/
+!clients/android/libs/**/
+!clients/android/libs/*/libnative-utils.so
 
 # iOS local files
 clients/ios/Pods/
