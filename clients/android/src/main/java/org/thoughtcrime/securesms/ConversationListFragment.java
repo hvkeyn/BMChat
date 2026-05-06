@@ -291,12 +291,15 @@ public class ConversationListFragment extends BaseConversationListFragment
 
     Util.runOnMain(
         () -> {
-          if (chatlist.getCnt() <= 0 && TextUtils.isEmpty(queryFilter)) {
+          ConversationListAdapter adapter = (ConversationListAdapter) list.getAdapter();
+          adapter.changeData(chatlist);
+          int visibleCnt = adapter.getItemCount();
+          if (visibleCnt <= 0 && TextUtils.isEmpty(queryFilter)) {
             list.setVisibility(View.INVISIBLE);
             emptyState.setVisibility(View.VISIBLE);
             emptySearch.setVisibility(View.INVISIBLE);
             fab.startPulse(3 * 1000);
-          } else if (chatlist.getCnt() <= 0 && !TextUtils.isEmpty(queryFilter)) {
+          } else if (visibleCnt <= 0 && !TextUtils.isEmpty(queryFilter)) {
             list.setVisibility(View.INVISIBLE);
             emptyState.setVisibility(View.GONE);
             emptySearch.setVisibility(View.VISIBLE);
@@ -307,8 +310,6 @@ public class ConversationListFragment extends BaseConversationListFragment
             emptySearch.setVisibility(View.INVISIBLE);
             fab.stopPulse();
           }
-
-          ((ConversationListAdapter) list.getAdapter()).changeData(chatlist);
         });
   }
 

@@ -103,6 +103,12 @@ public class NotificationManager {
             else { return }
             let eventContext = dcAccounts.get(id: accountId)
             let chat = eventContext.getChat(chatId: chatId)
+            // BMChat suppresses notifications for noise that is not part of a real chat:
+            // mailing lists and unencrypted contact requests (classic e-mail without Chat-Version).
+            if chat.isMailinglist || (chat.isContactRequest && !chat.isEncrypted) {
+                UIApplication.shared.endBackgroundTask(backgroundTask)
+                return
+            }
             let msg = eventContext.getMessage(id: messageId)
             if let content = UNMutableNotificationContent(forMessage: msg, chat: chat, context: eventContext) {
                 let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)

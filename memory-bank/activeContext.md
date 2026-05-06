@@ -1,6 +1,6 @@
 # Active Context
 
-Current focus: BMChat server-independence, strict mail filtering, the BMCha.jpeg visual direction, and the donation/Delta-Chat metadata cleanup have been implemented across desktop, Android, iOS client layers, and the mirrored Rust core copies.
+Current focus: layered Java/TypeScript/Swift safety nets that keep BMChat clean even while the bundled native core is still the upstream Delta Chat binary. Until the Rust core is rebuilt, the client UI must not surface any Delta-Chat artwork, classic-email noise, or `i.delta.chat` invite hyperlinks.
 
 Recent decisions:
 - Start with all three clients: desktop, Android, and iOS.
@@ -18,8 +18,16 @@ Recent decisions:
 - The onboarding logo, the welcome backdrop, the tray/launcher icons, and the About dialog were re-rendered to match the BMChat burgundy "B" identity. The default chat onboarding string was rewritten to "Свободный чат через вашу почту" / "Free chat through your email".
 - Donation surfaces were removed from the Settings screens, menus, device update messages, metainfo, and stock translations across desktop, Android, and iOS. The core no longer sends a recurring donation device message; `donation_request_maybe` is now a no-op that just disables future checks.
 - All references to delta.chat, transifex, and Delta Chat issue trackers were stripped from active UI; the Help menus only point to the BMChat repository for issues.
+- Even though the Rust core was patched (strict mail filter, donation off, BMChat invite host, etc.), the Android APK still ships upstream `libnative-utils.so` because cross-compiling the Rust core needs Linux+NDK. We added platform-side guard rails that survive the old core:
+  - Android `ConversationListAdapter` filters mailing-list and unencrypted-contact-request chats out of the chat list; `NotificationCenter` skips notifications for those chats.
+  - Desktop `QrCode` dialog and shared `util.ts` rewrite legacy invite links to `i.bmchat.example` and strip the embedded "δ" centerpiece + `get.delta.chat` footer from QR SVGs.
+  - iOS `Utils.rewriteInviteLink` / `Utils.stripDeltaBranding` clean QR SVGs and shared invite URLs; `ChatListViewModel` hides mailing-list and unencrypted-contact-request chats; `NotificationManager` suppresses the matching notifications.
+  - Android `Util.INVITE_DOMAIN` is now `i.bmchat.example` with a `LEGACY_INVITE_DOMAIN` fallback used to match incoming links; `QrShowFragment.fixSVG` strips Delta branding and rewrites copied/shared invite URLs.
+  - The yellow "Больше информации" button in the Android login form now opens an in-app dialog with the full provider hint (or generic login help) instead of trying to open `providers.delta.chat`.
+  - The `secure_join_wait` device message was rewritten to tell users they can keep writing emails directly if the other side is not on BMChat.
 
 Immediate next steps:
+- Build BMChat-flavoured Rust core in Linux/NDK so the strict mail filter and host changes land in the native binary.
 - Retest the new Android APK artifacts on a real device, including strict filtering: ordinary mailbox mail must not appear; BMChat messages with `Chat-Version` must appear.
 - Manually verify desktop Windows installer/portable artifacts.
 - Add strict localization checker scripts before release.

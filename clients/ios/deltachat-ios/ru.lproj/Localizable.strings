@@ -911,7 +911,7 @@
 "secure_join_channel_started" = "%1$@ приглашает вас присоединиться к этому каналу.\n\nОжидаем ответа от устройства %2$@...";
 // placeholder will be replaced by the name of the inviter.
 "secure_join_replies" = "%1$@ ответил(а), ожидаем добавления в группу…";
-"secure_join_wait" = "Устанавливается соединение, пожалуйста, подождите…";
+"secure_join_wait" = "Ожидаем ответа собеседника. Если он не пользуется BMChat — отправьте ему ссылку или QR-код вручную, и можно сразу писать сообщения по почте.";
 "contact_verified" = "%1$@ подтверждён.";
 "contact_blocked" = "Вы заблокировали контакт";
 // Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact.

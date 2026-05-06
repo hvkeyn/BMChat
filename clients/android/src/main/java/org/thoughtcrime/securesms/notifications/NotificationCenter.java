@@ -511,6 +511,12 @@ public class NotificationCenter {
       return;
     }
 
+    // BMChat suppresses notifications for noise that is not part of a real chat:
+    // mailing lists and unencrypted contact requests (classic e-mail without Chat-Version).
+    if (dcChat.isMailingList() || (dcChat.isContactRequest() && !dcChat.isEncrypted())) {
+      return;
+    }
+
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
         && !notificationManager.areNotificationsEnabled()) {

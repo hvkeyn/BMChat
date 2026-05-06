@@ -927,7 +927,7 @@
 "secure_join_channel_started" = "%1$@ invited you to join this channel.\n\nWaiting for the device of %2$@ to reply…";
 // placeholder will be replaced by the name of the inviter.
 "secure_join_replies" = "%1$@ replied, waiting for being added to the group…";
-"secure_join_wait" = "Establishing connection, please wait…";
+"secure_join_wait" = "Waiting for the other side to reply. If they do not use BMChat yet — share the QR/invite link manually and just start writing emails.";
 "contact_verified" = "%1$@ introduced.";
 "contact_blocked" = "You blocked the contact";
 // Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact.

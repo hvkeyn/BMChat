@@ -31,6 +31,10 @@ import useAlertDialog from '../../hooks/dialog/useAlertDialog'
 import QrCodeCopyConfirmationDialog from './QrCodeCopyConfirmationDialog'
 import { useRpcFetch } from '../../hooks/useFetch'
 import { SCAN_CONTEXT_TYPE } from '../../hooks/useProcessQr'
+import {
+  rewriteInviteLink,
+  stripDeltaBranding,
+} from '../../../../shared/util'
 
 const log = getLogger('renderer/dialogs/QrCode')
 
@@ -115,11 +119,13 @@ export function QrCodeShowQrInner({
   const tx = useTranslationFunction()
   const { openDialog } = useDialog()
 
+  const sharedInviteLink = rewriteInviteLink(qrCode)
+
   const onCopy = () => {
     // Pop up confirmation dialog when clicked instead of copying the link directly
     openDialog(QrCodeCopyConfirmationDialog, {
       message: tx('share_invite_link_explain'),
-      content: qrCode,
+      content: sharedInviteLink,
       copyCb: () => {
         userFeedback({
           type: 'success',
@@ -137,8 +143,9 @@ export function QrCodeShowQrInner({
   useLayoutEffect(() => {
     if (qrCodeSVG) {
       try {
+        const sanitized = stripDeltaBranding(qrCodeSVG)
         const url = URL.createObjectURL(
-          new Blob([qrCodeSVG], { type: 'image/svg+xml' })
+          new Blob([sanitized], { type: 'image/svg+xml' })
         )
         // setState inside an effect is needed here since
         // Blob URL creation requires an effect for cleanup

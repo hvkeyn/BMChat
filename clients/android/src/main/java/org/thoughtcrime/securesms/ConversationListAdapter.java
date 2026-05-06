@@ -47,6 +47,12 @@ class ConversationListAdapter
   private final WeakReference<Context> context;
   private @NonNull DcContext dcContext;
   private @NonNull DcChatlist dcChatlist;
+  /**
+   * BMChat keeps mailing-list chats and classic-mail contact requests out of the
+   * chat list entirely. {@code visibleIndices} maps adapter position -> source
+   * chatlist index for the entries that survive that filter.
+   */
+  private @NonNull int[] visibleIndices = new int[0];
   private final @NonNull GlideRequests glideRequests;
   private final @NonNull LayoutInflater inflater;
   private final @Nullable ItemClickListener clickListener;
@@ -63,12 +69,41 @@ class ConversationListAdapter
 
   @Override
   public int getItemCount() {
-    return dcChatlist.getCnt();
+    return visibleIndices.length;
   }
 
   @Override
   public long getItemId(int i) {
-    return dcChatlist.getChatId(i);
+    return dcChatlist.getChatId(visibleIndices[i]);
+  }
+
+  private void rebuildVisibleIndices() {
+    int total = dcChatlist.getCnt();
+    int[] keep = new int[total];
+    int j = 0;
+    for (int i = 0; i < total; i++) {
+      int chatId = dcChatlist.getChatId(i);
+      if (chatId <= DcChat.DC_CHAT_ID_LAST_SPECIAL) {
+        keep[j++] = i;
+        continue;
+      }
+      DcChat chat = dcContext.getChat(chatId);
+      if (chat.isMailingList()) {
+        continue;
+      }
+      if (chat.isContactRequest() && !chat.isEncrypted()) {
+        // Classic-mail contact request, has no Chat-Version handshake -> hide it.
+        continue;
+      }
+      keep[j++] = i;
+    }
+    if (j == total) {
+      visibleIndices = keep;
+    } else {
+      int[] trimmed = new int[j];
+      System.arraycopy(keep, 0, trimmed, 0, j);
+      visibleIndices = trimmed;
+    }
   }
 
   ConversationListAdapter(
@@ -132,13 +167,14 @@ class ConversationListAdapter
       return;
     }
 
-    DcChat chat = dcContext.getChat(dcChatlist.getChatId(i));
-    DcLot summary = dcChatlist.getSummary(i, chat);
+    int idx = visibleIndices[i];
+    DcChat chat = dcContext.getChat(dcChatlist.getChatId(idx));
+    DcLot summary = dcChatlist.getSummary(idx, chat);
     viewHolder
         .getItem()
         .bind(
             DcHelper.getThreadRecord(context, summary, chat),
-            dcChatlist.getMsgId(i),
+            dcChatlist.getMsgId(idx),
             summary,
             glideRequests,
             batchSet,
@@ -147,7 +183,7 @@ class ConversationListAdapter
 
   @Override
   public int getItemViewType(int i) {
-    int chatId = dcChatlist.getChatId(i);
+    int chatId = dcChatlist.getChatId(visibleIndices[i]);
 
     if (chatId == DcChat.DC_CHAT_ID_ARCHIVED_LINK) {
       return MESSAGE_TYPE_SWITCH_ARCHIVE;
@@ -160,7 +196,7 @@ class ConversationListAdapter
 
   @Override
   public void selectAllThreads() {
-    for (int i = 0; i < dcChatlist.getCnt(); i++) {
+    for (int i : visibleIndices) {
       long threadId = dcChatlist.getChatId(i);
       if (threadId > DcChat.DC_CHAT_ID_LAST_SPECIAL) {
         batchSet.add(threadId);
@@ -188,6 +224,7 @@ class ConversationListAdapter
       dcChatlist = chatlist;
       dcContext = DcHelper.getContext(context);
     }
+    rebuildVisibleIndices();
     notifyDataSetChanged();
   }
 }

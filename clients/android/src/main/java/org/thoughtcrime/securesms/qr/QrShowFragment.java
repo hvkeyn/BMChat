@@ -124,14 +124,40 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
     // HACK: move avatar-letter down, baseline alignment not working,
     // see https://github.com/deltachat/deltachat-core-rust/pull/2815#issuecomment-978067378 ,
     // suggestions welcome :)
-    return svg.replace("y=\"281.136\"", "y=\"296\"");
+    String out = svg.replace("y=\"281.136\"", "y=\"296\"");
+    out = stripDeltaBranding(out);
+    return out;
+  }
+
+  /**
+   * Removes Delta Chat branding bits embedded in the QR SVG by the bundled
+   * native core (footer text/logo, centerpiece "δ" overlay) and rewrites
+   * any "i.delta.chat" hyperlinks to the BMChat host. The native lib still
+   * ships the Delta artwork; until the core is rebuilt with BMChat assets we
+   * scrub it here.
+   */
+  static String stripDeltaBranding(String svg) {
+    if (svg == null) return null;
+    String out = svg;
+    // 1. Footer wordmark and delta-logo path.
+    out = out.replace(">get.delta.chat<", ">BMChat<");
+    out = out.replaceAll("(?s)<path[^>]*id=\"path84310\"[^>]*/>", "");
+    // 2. Centerpiece "δ" overlay (white circle + black circle + glyph group).
+    //    Matched by the unique non-uniform scale used for the glyph.
+    out = out.replaceAll(
+        "(?s)<g[^>]*transform=\"scale\\(1\\.1342891,0\\.88160947\\)\"[^>]*>.*?</g>",
+        "");
+    // 3. Hyperlinks pointing at the upstream invite host.
+    out = out.replace("https://i.delta.chat", "https://" + Util.INVITE_DOMAIN);
+    out = out.replace("http://i.delta.chat", "https://" + Util.INVITE_DOMAIN);
+    return out;
   }
 
   public void shareInviteURL() {
     try {
       Intent intent = new Intent(Intent.ACTION_SEND);
       intent.setType("text/plain");
-      String inviteURL = dcContext.getSecurejoinQr(chatId);
+      String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
       intent.putExtra(Intent.EXTRA_TEXT, inviteURL);
       startActivity(Intent.createChooser(intent, getString(R.string.chat_share_with_title)));
     } catch (Exception e) {
@@ -140,7 +166,7 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
   }
 
   public void copyQrData() {
-    String inviteURL = dcContext.getSecurejoinQr(chatId);
+    String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
     Util.writeTextToClipboard(getActivity(), inviteURL);
     Toast.makeText(getActivity(), getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT)
         .show();
@@ -176,7 +202,7 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
 
   public void showInviteLinkDialog() {
     View view = View.inflate(getActivity(), R.layout.dialog_share_invite_link, null);
-    String inviteURL = dcContext.getSecurejoinQr(chatId);
+    String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
     ((TextView) view.findViewById(R.id.invite_link)).setText(inviteURL);
     new AlertDialog.Builder(getActivity())
         .setView(view)

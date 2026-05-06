@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Initial BMChat fork setup plan is complete and pushed to GitHub. First visible BMChat rebrand pass is implemented locally. BMChat server/filtering pass is implemented locally with new test builds.
+Initial BMChat fork setup plan is complete and pushed to GitHub. First visible BMChat rebrand pass is implemented locally. BMChat server/filtering pass is implemented locally with new test builds. After user feedback against the previous build, a UI-side guard layer was added across Android, desktop, and iOS that hides mailing-list / classic-email noise, suppresses related notifications, scrubs Delta artwork from QR codes, rewrites legacy `i.delta.chat` invite hyperlinks to `i.bmchat.example`, fixes the "Больше информации" button on the Android login form, and rewrites the `secure_join_wait` device message.
 
 ## Completed
 
@@ -64,6 +64,13 @@ Initial BMChat fork setup plan is complete and pushed to GitHub. First visible B
   - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Portable.x64.exe`
   - `clients/android/build/outputs/apk/foss/debug/BMChat-foss-debug-2.49.0.apk`
   - `clients/android/build/outputs/apk/gplay/debug/BMChat-gplay-debug-2.49.0.apk`
+- Added a UI guard layer that survives the still-upstream native core:
+  - Android `ConversationListAdapter` filters out mailing-list and unencrypted-contact-request chats; `NotificationCenter` suppresses notifications for the same chats.
+  - Android `Util.INVITE_DOMAIN` is now `i.bmchat.example` with a `LEGACY_INVITE_DOMAIN` fallback; `Util.rewriteInviteLink` and `QrShowFragment.fixSVG`/`stripDeltaBranding` clean QR SVGs and shared invite URLs.
+  - Android login form replaces the broken `providers.delta.chat` link behind the yellow "Больше информации" button with an in-app dialog showing the full provider hint plus a BMChat help link.
+  - Desktop `shared/util.ts` exposes `BMCHAT_INVITE_HOST`, `rewriteInviteLink`, `stripDeltaBranding`; `QrCode.tsx` uses them to copy/share a clean invite link and render a Delta-free QR.
+  - iOS `Helper/Utils.swift` adds `legacyInviteDomain`, `rewriteInviteLink`, `stripDeltaBranding`; `QrViewController` strips Delta branding before rendering; `ChatListViewModel` skips mailing-list / unencrypted-contact-request chats; `NotificationManager` suppresses notifications for them.
+  - Android, iOS, and desktop `secure_join_wait` strings now tell the user to share the QR/invite link manually if the other side isn't on BMChat yet.
 
 ## In Progress
 
@@ -76,6 +83,7 @@ Manual artifact testing for the new server/filtering builds.
 
 ## Known Issues And Risks
 
+- The Rust core changes (strict mail filter, donation off, BMChat invite host, etc.) are NOT yet compiled into `libnative-utils.so` because cross-compiling needs a Linux+NDK environment. UI guard rails plug the gap on Android/desktop/iOS, but the proper fix is to rebuild the native core.
 - iOS cannot be fully built on Windows; macOS/Xcode is required.
 - Desktop and Android GPL licensing affects distribution model.
 - Upstream repository sizes are significant, especially Android and iOS.

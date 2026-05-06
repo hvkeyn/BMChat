@@ -1045,7 +1045,7 @@
     <string name="secure_join_channel_started">%1$s invited you to join this channel.\n\nWaiting for the device of %2$s to reply…</string>
     <!-- placeholder will be replaced by the name of the inviter. -->
     <string name="secure_join_replies">%1$s replied, waiting for being added to the group…</string>
-    <string name="secure_join_wait">Establishing connection, please wait…</string>
+    <string name="secure_join_wait">Waiting for the other side to reply. If they do not use BMChat yet — share the QR/invite link manually and just start writing emails.</string>
     <string name="contact_verified">%1$s introduced.</string>
     <string name="contact_blocked">You blocked the contact</string>
     <!-- Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact. -->

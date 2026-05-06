@@ -23,6 +23,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.Group;
 import chat.delta.rpc.Rpc;
 import chat.delta.rpc.RpcException;
@@ -336,12 +337,29 @@ public class EditRelayActivity extends BaseActionBarActivity
   }
 
   private void onProviderLink() {
-    if (provider != null) {
-      String url = provider.getOverviewPage();
-      if (!url.isEmpty() && !url.startsWith("https://providers.delta.chat/")) {
-        IntentUtils.showInBrowser(this, url);
-      }
+    if (provider == null) {
+      return;
     }
+    String url = provider.getOverviewPage();
+    if (!url.isEmpty() && !url.startsWith("https://providers.delta.chat/")) {
+      IntentUtils.showInBrowser(this, url);
+      return;
+    }
+    // BMChat does not depend on providers.delta.chat anymore. Show the full
+    // provider hint inline so the user can act on it without leaving the app.
+    String hint = provider.getBeforeLoginHint();
+    if (hint == null || hint.isEmpty()) {
+      hint = getString(R.string.login_advanced_hint);
+    }
+    new AlertDialog.Builder(this)
+        .setTitle(R.string.more_info_desktop)
+        .setMessage(hint)
+        .setPositiveButton(android.R.string.ok, null)
+        .setNeutralButton(
+            R.string.menu_help,
+            (d, which) ->
+                IntentUtils.showInBrowser(this, "https://github.com/hvkeyn/BMChat#login"))
+        .show();
   }
 
   private void verifyEmail(TextInputEditText view) {

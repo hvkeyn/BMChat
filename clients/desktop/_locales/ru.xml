@@ -1044,7 +1044,7 @@
     <string name="secure_join_channel_started">%1$s приглашает вас присоединиться к этому каналу.\n\nОжидаем ответа от устройства %2$s...</string>
     <!-- placeholder will be replaced by the name of the inviter. -->
     <string name="secure_join_replies">%1$s ответил(а), ожидаем добавления в группу…</string>
-    <string name="secure_join_wait">Устанавливается соединение, пожалуйста, подождите…</string>
+    <string name="secure_join_wait">Ожидаем ответа собеседника. Если он не пользуется BMChat — отправьте ему ссылку или QR-код вручную, и можно сразу писать сообщения по почте.</string>
     <string name="contact_verified">%1$s подтверждён.</string>
     <string name="contact_blocked">Вы заблокировали контакт</string>
     <!-- Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact. -->
