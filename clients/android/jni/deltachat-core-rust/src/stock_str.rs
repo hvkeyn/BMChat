@@ -131,10 +131,10 @@ pub enum StockMessage {
     ))]
     BadTimeMsgBody = 85,
 
-    #[strum(props(fallback = "⚠️ Your Delta Chat version might be outdated.\n\n\
+    #[strum(props(fallback = "⚠️ Your BMChat version might be outdated.\n\n\
                     This may cause problems because your chat partners use newer versions - \
                     and you are missing the latest features 😳\n\
-                    Please check https://get.delta.chat or your app store for updates."))]
+                    Please check https://bmchat.example or your app store for updates."))]
     UpdateReminderMsgBody = 86,
 
     #[strum(props(
@@ -359,14 +359,13 @@ pub enum StockMessage {
     #[strum(props(fallback = "Establishing connection, please wait…"))]
     SecurejoinWait = 190,
 
-    #[strum(props(fallback = "❤️ Seems you're enjoying Delta Chat!
+    #[strum(props(fallback = "❤️ Seems you're enjoying BMChat!
 
-Please consider donating to help that Delta Chat stays free for everyone.
+BMChat keeps communication free through email systems.
 
-While Delta Chat is free to use and open source, development costs money.
-Help keeping us to keep Delta Chat independent and make it more awesome in the future.
+Project support links will use BMChat infrastructure.
 
-https://delta.chat/donate"))]
+https://bmchat.example/support"))]
     DonationRequest = 193,
 
     #[strum(props(fallback = "Declined call"))]

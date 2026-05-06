@@ -193,7 +193,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="https"
-                    android:host="i.delta.chat" />
+                    android:host="i.bmchat.example" />
             </intent-filter>
 
             <meta-data

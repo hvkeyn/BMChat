@@ -80,13 +80,9 @@
       <caption>Darkmode with default background</caption>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://delta.chat/</url>
-  <url type="vcs-browser">https://github.com/deltachat/deltachat-desktop</url>
-  <url type="bugtracker">https://github.com/deltachat/deltachat-desktop/issues</url>
-  <url type="faq">https://delta.chat/en/help</url>
-  <url type="donation">https://delta.chat/en/contribute#donate-money-or-devices</url>
-  <url type="translate">https://www.transifex.com/delta-chat/public/</url>
-  <url type="contribute">https://delta.chat/en/contribute</url>
+  <url type="homepage">https://github.com/hvkeyn/BMChat</url>
+  <url type="vcs-browser">https://github.com/hvkeyn/BMChat</url>
+  <url type="bugtracker">https://github.com/hvkeyn/BMChat/issues</url>
   <releases>
     <release version="v1.59.2" date="2025-06-25" />
     <release version="v1.58.1" date="2025-05-10" />

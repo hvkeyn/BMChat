@@ -42,6 +42,7 @@ const RINGING_SECONDS: i64 = 120;
 const CALL_ACCEPTED_TIMESTAMP: Param = Param::Arg;
 const CALL_ENDED_TIMESTAMP: Param = Param::Arg4;
 
+#[allow(dead_code)]
 const STUN_PORT: u16 = 3478;
 
 /// Set if incoming call was ended explicitly
@@ -658,6 +659,7 @@ pub(crate) async fn create_ice_servers_from_metadata(
 #[derive(Debug, Clone)]
 pub(crate) enum UnresolvedIceServer {
     /// STUN server.
+    #[allow(dead_code)]
     Stun { hostname: String, port: u16 },
 
     /// TURN server with the username and password.
@@ -739,25 +741,9 @@ pub(crate) async fn resolve_ice_servers(
 
 /// Creates JSON with ICE servers when no TURN servers are known.
 pub(crate) fn create_fallback_ice_servers() -> Vec<UnresolvedIceServer> {
-    // Do not use public STUN server from https://stunprotocol.org/.
-    // It changes the hostname every year
-    // (e.g. stunserver2025.stunprotocol.org
-    // which was previously stunserver2024.stunprotocol.org)
-    // because of bandwidth costs:
-    // <https://github.com/jselbie/stunserver/issues/50>
-
-    vec![
-        UnresolvedIceServer::Stun {
-            hostname: "nine.testrun.org".to_string(),
-            port: STUN_PORT,
-        },
-        UnresolvedIceServer::Turn {
-            hostname: "turn.delta.chat".to_string(),
-            port: STUN_PORT,
-            username: "public".to_string(),
-            credential: "o4tR7yG4rG2slhXqRUf9zgmHz".to_string(),
-        },
-    ]
+    // BMChat does not fall back to Delta Chat relay infrastructure. Calls can
+    // still use ICE servers discovered from the configured mail provider.
+    Vec::new()
 }
 
 /// Returns JSON with ICE servers.

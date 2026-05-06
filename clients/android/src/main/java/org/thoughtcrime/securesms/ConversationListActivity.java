@@ -686,7 +686,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
           // Util.copy(inputStream, new FileOutputStream(outputFile));
           // msg.setFile(outputFile, "image/jpeg");
 
-          msg.setText(getString(R.string.update_2_0, "https://delta.chat/donate"));
+          msg.setText(getString(R.string.update_2_0, ""));
         }
         dcContext.addDeviceMsg(deviceMsgLabel, msg);
 

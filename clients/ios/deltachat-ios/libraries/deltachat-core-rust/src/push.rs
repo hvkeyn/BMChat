@@ -124,29 +124,21 @@ impl PushSubscriber {
     /// Subscribes for heartbeat notifications with previously set device token.
     #[cfg(target_os = "ios")]
     pub(crate) async fn subscribe(&self, context: &Context) -> Result<()> {
-        use crate::net::http;
-
         let mut state = self.inner.write().await;
 
         if state.heartbeat_subscribed {
             return Ok(());
         }
 
-        let Some(ref token) = state.device_token else {
+        if state.device_token.is_none() {
             return Ok(());
-        };
-
-        info!(context, "Subscribing for heartbeat notifications.");
-        if http::post_string(
-            context,
-            "https://notifications.delta.chat/register",
-            format!("{{\"token\":\"{token}\"}}"),
-        )
-        .await?
-        {
-            info!(context, "Subscribed for heartbeat notifications.");
-            state.heartbeat_subscribed = true;
         }
+
+        info!(
+            context,
+            "BMChat heartbeat notification registration is disabled until a BMChat endpoint is configured."
+        );
+        state.heartbeat_subscribed = true;
         Ok(())
     }
 

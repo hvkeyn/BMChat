@@ -41,9 +41,9 @@ pub enum Blocked {
 )]
 #[repr(u8)]
 pub enum ShowEmails {
+    #[default] // also change Config.ShowEmails props(default) on changes
     Off = 0,
     AcceptedContacts = 1,
-    #[default] // also change Config.ShowEmails props(default) on changes
     All = 2,
 }
 
@@ -267,7 +267,7 @@ mod tests {
     #[test]
     fn test_showemails_values() {
         // values may be written to disk and must not change
-        assert_eq!(ShowEmails::All, ShowEmails::default());
+        assert_eq!(ShowEmails::Off, ShowEmails::default());
         assert_eq!(ShowEmails::Off, ShowEmails::from_i32(0).unwrap());
         assert_eq!(
             ShowEmails::AcceptedContacts,

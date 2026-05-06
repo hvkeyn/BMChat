@@ -173,11 +173,11 @@ pub async fn get_securejoin_qr(context: &Context, chat: Option<ChatId>) -> Resul
         if chat.typ == Chattype::OutBroadcast {
             // For historic reansons, broadcasts currently use j instead of i for the invitenumber.
             format!(
-                "https://i.delta.chat/#{fingerprint}&v=3&x={grpid}&j={invitenumber}&s={auth}&a={self_addr_urlencoded}&n={self_name_urlencoded}&b={chat_name_urlencoded}",
+                "https://i.bmchat.example/#{fingerprint}&v=3&x={grpid}&j={invitenumber}&s={auth}&a={self_addr_urlencoded}&n={self_name_urlencoded}&b={chat_name_urlencoded}",
             )
         } else {
             format!(
-                "https://i.delta.chat/#{fingerprint}&v=3&x={grpid}&i={invitenumber}&s={auth}&a={self_addr_urlencoded}&n={self_name_urlencoded}&g={chat_name_urlencoded}",
+                "https://i.bmchat.example/#{fingerprint}&v=3&x={grpid}&i={invitenumber}&s={auth}&a={self_addr_urlencoded}&n={self_name_urlencoded}&g={chat_name_urlencoded}",
             )
         }
     } else {
@@ -190,7 +190,7 @@ pub async fn get_securejoin_qr(context: &Context, chat: Option<ChatId>) -> Resul
         context.scheduler.interrupt_smtp().await;
 
         format!(
-            "https://i.delta.chat/#{fingerprint}&v=3&i={invitenumber}&s={auth}&a={self_addr_urlencoded}&n={self_name_urlencoded}",
+            "https://i.bmchat.example/#{fingerprint}&v=3&i={invitenumber}&s={auth}&a={self_addr_urlencoded}&n={self_name_urlencoded}",
         )
     };
 

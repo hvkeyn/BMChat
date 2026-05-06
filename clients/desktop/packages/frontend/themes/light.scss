@@ -1,41 +1,41 @@
 /* Set theme variables used for theme Generation */
 @use './_themebase' with (
   $themeDarkOrLight: light,
-  $accentColor: #2563eb,
-  $bgChatView: #dbeafe,
+  $accentColor: #7b1226,
+  $bgChatView: #f4d8de,
   $bgImage: url('./images/background_light.svg'),
   $bgMessageBubbleIncoming: #fff,
-  $bgMessageBubbleOutgoing: #ecfdf5,
-  $bgNavBar: #172554,
+  $bgMessageBubbleOutgoing: #fbe8ec,
+  $bgNavBar: #2a030d,
   $bgPrimary: #fff,
-  $bgSecondary: #f8fafc,
-  $chatListItemSelectedBg: #2563eb,
+  $bgSecondary: #fff7f8,
+  $chatListItemSelectedBg: #7b1226,
   $colorNone: #a0a0a0,
-  $colorPrimary: #2563eb,
-  $newChatButtonBg: #2563eb,
-  $keybindingSectionHeaderBackground: #d8e2f1,
+  $colorPrimary: #7b1226,
+  $newChatButtonBg: #7b1226,
+  $keybindingSectionHeaderBackground: #e8c3cb,
   $keybindingActionBackground: rgba(0, 0, 0, 0.05),
-  $keybindingKeyBorder: #94a3b8,
+  $keybindingKeyBorder: #b9828e,
   $textNavBar: #fff,
-  $textPrimary: #0f172a,
-  $textSecondary: #475569,
+  $textPrimary: #1f050b,
+  $textSecondary: #6f3f49,
   $btnPrimaryText: #fff,
-  $colorLessContrast: #64748b,
+  $colorLessContrast: #8f6470,
 
   $scrollbarTransparency: 0.5
 );
 
 .theme-meta {
   --name: 'BMChat Light';
-  --description: 'Clean BMChat theme for communication through email systems.';
+  --description: 'Warm burgundy BMChat theme for communication through email systems.';
 }
 
 /* overwrite themedata */
 :root {
-  --scrollbarThumb: #94a3b8;
-  --scrollbarThumbHover: #64748b;
-  --bp4DialogBgSecondary: #eaf1fb;
-  --chatListItemBgHover: #eff6ff;
+  --scrollbarThumb: #b9828e;
+  --scrollbarThumbHover: #7b1226;
+  --bp4DialogBgSecondary: #f8e6ea;
+  --chatListItemBgHover: #fff0f3;
   --cli-search-result-divider: var(--delta-dialog-separator);
   --cli-search-result-divider-border-width: 0px;
   --emojiMartSelect: var(--chatListItemBgHover);

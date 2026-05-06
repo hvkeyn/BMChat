@@ -24,7 +24,7 @@ use crate::message::{Message, Viewtype};
 use crate::securejoin::QrInvite;
 use crate::tools::time;
 
-pub(crate) const STATISTICS_BOT_EMAIL: &str = "self_reporting@testrun.org";
+pub(crate) const STATISTICS_BOT_EMAIL: &str = "";
 const STATISTICS_BOT_VCARD: &str = include_str!("../assets/statistics-bot.vcf");
 const SENDING_INTERVAL_SECONDS: i64 = 3600 * 24 * 7; // 1 week
 // const SENDING_INTERVAL_SECONDS: i64 = 60; // 1 minute (for testing)
@@ -258,19 +258,10 @@ async fn time_has_passed(context: &Context, config: Config, seconds: i64) -> Res
 }
 
 #[allow(clippy::unused_async, unused)]
-pub(crate) async fn should_send_stats(context: &Context) -> Result<bool> {
-    #[cfg(any(target_os = "android", test))]
-    {
-        context.get_config_bool(Config::StatsSending).await
-    }
-
-    // If the user enables statistics-sending on Android,
-    // and then transfers the account to e.g. Desktop,
-    // we should not send any statistics:
-    #[cfg(not(any(target_os = "android", test)))]
-    {
-        Ok(false)
-    }
+pub(crate) async fn should_send_stats(_context: &Context) -> Result<bool> {
+    // BMChat has no configured statistics recipient yet. Empty endpoints disable
+    // the upstream Delta integration instead of falling back to it.
+    Ok(false)
 }
 
 async fn send_stats(context: &Context) -> Result<ChatId> {

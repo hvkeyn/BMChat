@@ -66,8 +66,8 @@ public class InstantOnboardingActivity extends BaseActionBarActivity
   private static final String TAG = "InstantOnboardingActivity";
   private static final String DCACCOUNT = "dcaccount";
   private static final String DCLOGIN = "dclogin";
-  private static final String INSTANCES_URL = "https://chatmail.at/relays";
-  private static final String DEFAULT_CHATMAIL_HOST = "nine.testrun.org";
+  private static final String INSTANCES_URL = "";
+  private static final String DEFAULT_CHATMAIL_HOST = "chatmail.bmchat.example";
 
   private static final int REQUEST_CODE_AVATAR = 1;
 
@@ -361,8 +361,12 @@ public class InstantOnboardingActivity extends BaseActionBarActivity
     View view = View.inflate(this, R.layout.signup_options_view, null);
     Button otherServerButton = view.findViewById(R.id.use_other_server);
     if (otherServerButton != null) {
-      otherServerButton.setText(
-          TextUtil.markAsExternal(getString(R.string.instant_onboarding_other_server)));
+      if (INSTANCES_URL.isEmpty()) {
+        otherServerButton.setVisibility(View.GONE);
+      } else {
+        otherServerButton.setText(
+            TextUtil.markAsExternal(getString(R.string.instant_onboarding_other_server)));
+      }
     }
     AlertDialog signUpDialog =
         new AlertDialog.Builder(this)
@@ -371,12 +375,14 @@ public class InstantOnboardingActivity extends BaseActionBarActivity
             .setNegativeButton(R.string.cancel, null)
             .create();
 
-    view.findViewById(R.id.use_other_server)
-        .setOnClickListener(
-            (v) -> {
-              IntentUtils.showInBrowser(this, INSTANCES_URL);
-              signUpDialog.dismiss();
-            });
+    if (!INSTANCES_URL.isEmpty()) {
+      view.findViewById(R.id.use_other_server)
+          .setOnClickListener(
+              (v) -> {
+                IntentUtils.showInBrowser(this, INSTANCES_URL);
+                signUpDialog.dismiss();
+              });
+    }
     view.findViewById(R.id.login_button)
         .setOnClickListener(
             (v) -> {

@@ -12,16 +12,29 @@ This file tracks every platform surface that must become BMChat-specific.
 | Android application ID placeholder | `chat.bromore.bmchat` |
 | iOS bundle ID placeholder | `chat.bromore.bmchat` |
 | Public website placeholder | `https://bmchat.example` |
+| Default BMChat relay placeholder | `chatmail.bmchat.example` |
+| Invite host placeholder | `i.bmchat.example` |
 
 First-pass identifiers and design tokens are now implementation defaults. Final production domains, signing identities, Firebase/APNs projects, and store metadata still need release approval before public distribution.
 
+## Infrastructure Defaults
+
+`brand/config/bmchat-brand.json` is the source of truth for BMChat-controlled service endpoints. Empty endpoint values mean the corresponding Delta Chat upstream integration must be disabled rather than falling back to an upstream URL. Manual IMAP/SMTP login remains supported for arbitrary mail servers; BMChat must not silently route profile creation, statistics, push registration, provider help, or relay directory traffic through Delta Chat infrastructure.
+
+Current endpoint policy:
+
+- `defaultChatmailHost`: placeholder BMChat host for instant-account flows until a production relay exists.
+- `relayDirectoryUrl`, `providerOverviewBaseUrl`, `notificationRegisterUrl`, `turnServerHost`, `statsRecipient`, `updateUrl`: empty until BMChat-owned services exist.
+- `inviteHost`: BMChat-owned invite host placeholder replacing `i.delta.chat` in generated/accepted app links.
+- `mailPolicy.showClassicEmailsDefault`: `off`, so normal mail remains in the mailbox and does not become chat UI noise.
+
 ## Visual Direction
 
-BMChat uses the `Tech Utility + friendly messenger` direction documented in `DESIGN.md`:
+BMChat uses the `Burgundy Tech + friendly messenger` direction documented in `DESIGN.md` and sourced from `brand/assets/bmcha-logo-source.jpeg`:
 
-- Primary blue `#2563EB` for trust, transport, and primary actions.
-- Accent green `#10B981` for connection and successful communication.
-- Light canvas `#F8FAFC` and dark canvas `#0F172A`.
+- Primary burgundy `#7B1226` for the B-mark identity, active navigation, and primary actions.
+- Crimson accent `#C62A48` for unread/active states and connection highlights.
+- Light canvas `#FFF7F8` and dark canvas `#160208`.
 - Native system typography and restrained rounded surfaces.
 
 ## Desktop Surfaces
@@ -48,7 +61,7 @@ First-pass implementation keeps upstream workspace package scopes where changing
 Audited after cloning:
 
 - `clients/android/build.gradle`: namespace remains `org.thoughtcrime.securesms`; `applicationId` is `com.b44t.messenger`; gplay flavor overrides it with `chat.delta`; archive base name is `deltachat`.
-- `clients/android/src/main/AndroidManifest.xml`: app label references `@string/app_name`; deeplink host includes `i.delta.chat`; shortcut/provider/authority values require a deeper pass before changing.
+- `clients/android/src/main/AndroidManifest.xml`: app label references `@string/app_name`; deeplink host now uses `i.bmchat.example`; shortcut/provider/authority values require a deeper pass before changing.
 - `clients/android/src/main/res/values/strings.xml`: `app_name` is `Delta Chat` and English product strings are the source baseline.
 - `clients/android/src/main/res/values-ru/strings.xml`: Russian `app_name` is still `Delta Chat`.
 - `clients/android/src/main/res/mipmap-*`, `clients/android/src/debug/res/mipmap-*`, `clients/android/src/main/res/drawable/ic_launcher_foreground_monochrome.xml`: launcher icon resources.

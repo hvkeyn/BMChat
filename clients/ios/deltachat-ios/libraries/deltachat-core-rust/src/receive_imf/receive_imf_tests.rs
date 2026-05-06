@@ -9,7 +9,7 @@ use crate::chat::{
     send_text_msg,
 };
 use crate::chatlist::Chatlist;
-use crate::constants::DC_GCL_FOR_FORWARDING;
+use crate::constants::{DC_GCL_FOR_FORWARDING, ShowEmails};
 use crate::contact;
 use crate::imap::prefetch_should_download;
 use crate::imex::{ImexMode, imex};
@@ -171,39 +171,54 @@ async fn test_adhoc_group_show_accepted_contact_accepted() {
     assert_eq!(chat::get_chat_contacts(&t, chat_id).await.unwrap().len(), 1);
     assert_eq!(chat::get_chat_msgs(&t, chat_id).await.unwrap().len(), 1);
 
-    // receive a non-delta-message from Bob, shows up because of the show_emails setting
+    // receive a non-BMChat email from Bob. Even accepted contacts cannot turn
+    // ordinary mail into chat messages without Chat-Version/thread linkage.
     receive_imf(&t, ONETOONE_NOREPLY_MAIL, false).await.unwrap();
 
-    assert_eq!(chat::get_chat_msgs(&t, chat_id).await.unwrap().len(), 2);
+    assert_eq!(chat::get_chat_msgs(&t, chat_id).await.unwrap().len(), 1);
 
-    // let Bob create an adhoc-group by a non-delta-message, shows up because of the show_emails setting
+    // Bob cannot create an adhoc-group by a non-BMChat email.
     receive_imf(&t, GRP_MAIL, false).await.unwrap();
     let chats = Chatlist::try_load(&t, 0, None, None).await.unwrap();
-    assert_eq!(chats.len(), 2);
-    let chat_id = chats.get_chat_id(0).unwrap();
-    let chat = chat::Chat::load_from_db(&t, chat_id).await.unwrap();
-    assert_eq!(chat.typ, Chattype::Group);
-    assert_eq!(chat.name, "group with Alice, Bob and Claire");
-    assert_eq!(chat::get_chat_contacts(&t, chat_id).await.unwrap().len(), 3);
+    assert_eq!(chats.len(), 1);
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn test_adhoc_group_show_all() {
     let t = TestContext::new_alice().await;
-    assert_eq!(t.get_config_int(Config::ShowEmails).await.unwrap(), 2);
+    assert_eq!(t.get_config_int(Config::ShowEmails).await.unwrap(), 0);
+    t.set_config(Config::ShowEmails, Some("2")).await.unwrap();
     receive_imf(&t, GRP_MAIL, false).await.unwrap();
 
-    // adhoc-group with unknown contacts with show_emails=all will show up in a single chat
+    // BMChat strict mode ignores classic emails even if a legacy config still
+    // contains show_emails=all.
     let chats = Chatlist::try_load(&t, 0, None, None).await.unwrap();
-    assert_eq!(chats.len(), 1);
-    let chat_id = chats.get_chat_id(0).unwrap();
-    let chat = chat::Chat::load_from_db(&t, chat_id).await.unwrap();
-    assert!(chat.is_contact_request());
-    chat_id.accept(&t).await.unwrap();
-    let chat = chat::Chat::load_from_db(&t, chat_id).await.unwrap();
-    assert_eq!(chat.typ, Chattype::Group);
-    assert_eq!(chat.name, "group with Alice, Bob and Claire");
-    assert_eq!(chat::get_chat_contacts(&t, chat_id).await.unwrap().len(), 3);
+    assert_eq!(chats.len(), 0);
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn test_bmchat_ignores_classic_mail_without_chat_version() -> Result<()> {
+    let t = TestContext::new_alice().await;
+    t.set_config(Config::ShowEmails, Some("2")).await?;
+
+    let received = receive_imf(
+        &t,
+        b"From: Facebook <notification@facebookmail.com>\n\
+        To: alice@example.org\n\
+        Subject: You have a new notification\n\
+        Message-ID: <facebook-1@example.com>\n\
+        Date: Sun, 22 Mar 2020 22:37:58 +0000\n\
+        \n\
+        This is a normal mailbox notification, not a BMChat message.\n",
+        false,
+    )
+    .await?
+    .expect("classic mail should be tombstoned to avoid redownload loops");
+
+    assert!(received.chat_id.is_trash());
+    assert_eq!(Chatlist::try_load(&t, 0, None, None).await?.len(), 0);
+    assert_eq!(t.get_fresh_msgs().await?.len(), 0);
+    Ok(())
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
@@ -816,11 +831,9 @@ async fn test_concat_multiple_ndns() -> Result<()> {
 }
 
 async fn load_imf_email(context: &Context, imf_raw: &[u8]) -> Message {
-    context
-        .set_config(Config::ShowEmails, Some("2"))
-        .await
-        .unwrap();
-    let received_msg = receive_imf(context, imf_raw, false)
+    let mut bmchat_raw = b"Chat-Version: 1.0\n".to_vec();
+    bmchat_raw.extend_from_slice(imf_raw);
+    let received_msg = receive_imf(context, &bmchat_raw, false)
         .await
         .expect("receive_imf failure")
         .expect("No message received");

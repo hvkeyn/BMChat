@@ -68,6 +68,8 @@ Notes:
 - Windows may need path/script adjustments for shell scripts.
 - Android APKs must include `libnative-utils.so` for all supported ABIs. A Gradle-only build can produce APKs that install but crash immediately on startup because `System.loadLibrary("native-utils")` fails.
 - The current repaired test APKs were rebuilt after restoring native libraries from the official Delta Chat `2.49.0` APK. Future reproducible builds should run `scripts/ndk-make.sh` in the Linux/Nix/Docker build environment before Gradle packaging.
+- BMChat endpoint placeholders are tracked in `brand/config/bmchat-brand.json`. Empty endpoint values intentionally disable upstream Delta integrations such as relay directories, provider overview pages, heartbeat registration, TURN defaults, statistics recipients, and update links.
+- Manual IMAP/SMTP login remains supported for arbitrary mail servers; classic non-chat mail is filtered by default and should not produce chat list items or notifications.
 - gplay builds require BMChat Firebase configuration.
 - Release builds require BMChat keystore credentials.
 - Current `compileSdk` and `targetSdkVersion` are 36.

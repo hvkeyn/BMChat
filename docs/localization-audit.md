@@ -42,7 +42,7 @@ Desktop and Android XML:
 
 - `app_name`: `Delta Chat`.
 - `invite_friends_text`: invites user to contact via Delta Chat.
-- `donate_device_msg`: donation copy points to `https://delta.chat/donate`.
+- `donate_device_msg`: first-pass English/Russian runtime copy now points to `https://bmchat.example/support`; remaining upstream locale/help copies need a later full localization sweep.
 - `multidevice_*`: instructions say to install/open/update Delta Chat.
 - `send_stats_to_devs` and related stats strings mention Delta Chat.
 - `welcome_desktop`, `delta_chat_homepage`, `global_menu_help_about_desktop`, `global_menu_file_open_desktop`.

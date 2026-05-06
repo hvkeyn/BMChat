@@ -1,8 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
-  <rect width="1600" height="1200" fill="#F8FAFC"/>
-  <circle cx="260" cy="170" r="280" fill="#DBEAFE" opacity=".82"/>
-  <circle cx="1360" cy="1020" r="360" fill="#D1FAE5" opacity=".58"/>
-  <path d="M0 860C260 720 430 760 650 840C880 924 1050 980 1600 780V1200H0Z" fill="#EFF6FF" opacity=".9"/>
-  <path d="M1080 120C1210 190 1330 290 1450 420" fill="none" stroke="#93C5FD" stroke-width="18" stroke-linecap="round" opacity=".35"/>
-  <path d="M1120 210C1240 275 1345 365 1440 475" fill="none" stroke="#10B981" stroke-width="10" stroke-linecap="round" opacity=".22"/>
+  <rect width="1600" height="1200" fill="#FFF7F8"/>
+  <circle cx="260" cy="180" r="300" fill="#F4D8DE" opacity=".82"/>
+  <circle cx="1340" cy="1010" r="380" fill="#E8C3CB" opacity=".55"/>
+  <path d="M0 860C260 720 430 760 650 840C880 924 1050 980 1600 780V1200H0Z" fill="#FBE8EC" opacity=".9"/>
+  <g fill="none" stroke="#7B1226" stroke-linecap="round" stroke-linejoin="round" opacity=".13">
+    <path d="M70 980V820L190 700V560"/>
+    <path d="M160 1040V900L330 730H500"/>
+    <path d="M1080 110V230L1220 370H1510"/>
+    <path d="M1210 1010V850L1370 690V540"/>
+  </g>
+  <g fill="#C62A48" opacity=".18">
+    <circle cx="190" cy="560" r="10"/>
+    <circle cx="500" cy="730" r="10"/>
+    <circle cx="1220" cy="370" r="10"/>
+    <circle cx="1370" cy="540" r="10"/>
+  </g>
 </svg>

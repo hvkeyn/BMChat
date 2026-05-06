@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react'
 import { useSettingsStore } from '../../stores/settings'
 import { SendBackupDialog } from '../dialogs/SetupMultiDevice'
 import { runtime } from '@deltachat-desktop/runtime-interface'
-import { donationUrl } from '../../../../shared/constants'
 import SettingsIconButton from './SettingsIconButton'
 import ConnectivityButton from './ConnectivityButton'
 import ChatsAndMedia from './ChatsAndMedia'
@@ -128,15 +127,6 @@ export default function Settings({ onClose }: DialogProps) {
               {tx('menu_advanced')}
             </SettingsIconButton>
             <SettingsSeparator />
-            {!runtime.getRuntimeInfo().isMac && (
-              <SettingsIconButton
-                icon='favorite'
-                onClick={() => runtime.openLink(donationUrl)}
-                isLink
-              >
-                {tx('donate')}
-              </SettingsIconButton>
-            )}
             <SettingsIconButton
               icon='question_mark'
               onClick={() => runtime.openHelpWindow()}

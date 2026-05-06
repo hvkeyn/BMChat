@@ -3,7 +3,8 @@ import DcCore
 
 class InstantOnboardingViewController: UIViewController {
 
-    static let defaultChatmailDomain: String = "nine.testrun.org"
+    static let defaultChatmailDomain: String = "chatmail.bmchat.example"
+    static let relayDirectoryURL: URL? = nil
 
     private var dcContext: DcContext
     private let dcAccounts: DcAccounts
@@ -172,17 +173,6 @@ class InstantOnboardingViewController: UIViewController {
 
     @objc private func showOtherOptions(_ sender: UIButton) {
         let alertController = UIAlertController(title: String.localized("instant_onboarding_show_more_instances"), message: nil, preferredStyle: .safeActionSheet)
-        let otherServersAction = UIAlertAction(title: String.localized("instant_onboarding_other_server").markAsExternal(), style: .default) { [weak self] _ in
-
-            self?.storeImageAndName()
-
-            guard let url = URL(string: "https://chatmail.at/relays") else { return }
-
-            if UIApplication.shared.canOpenURL(url) {
-                UIApplication.shared.open(url)
-            }
-        }
-
         let manualAccountSetup = UIAlertAction(title: String.localized("manual_account_setup_option"), style: .default) { [weak self] _ in
             DispatchQueue.main.async { [weak self] in
                 guard let self else { return }
@@ -212,7 +202,15 @@ class InstantOnboardingViewController: UIViewController {
 
         let cancelAction = UIAlertAction(title: String.localized("cancel"), style: .cancel)
 
-        alertController.addAction(otherServersAction)
+        if let relayDirectoryURL = InstantOnboardingViewController.relayDirectoryURL {
+            let otherServersAction = UIAlertAction(title: String.localized("instant_onboarding_other_server").markAsExternal(), style: .default) { [weak self] _ in
+                self?.storeImageAndName()
+                if UIApplication.shared.canOpenURL(relayDirectoryURL) {
+                    UIApplication.shared.open(relayDirectoryURL)
+                }
+            }
+            alertController.addAction(otherServersAction)
+        }
         alertController.addAction(scanQRCode)
         alertController.addAction(manualAccountSetup)
         alertController.addAction(cancelAction)
@@ -281,7 +279,7 @@ class InstantOnboardingViewController: UIViewController {
         DispatchQueue.global().async { [weak self] in
             guard let self else { return }
 
-            let qrCodeData = self.qrCodeData ?? "dcaccount:nine.testrun.org"
+            let qrCodeData = self.qrCodeData ?? "dcaccount:\(InstantOnboardingViewController.defaultChatmailDomain)"
             do {
                 _ = try self.dcContext.addTransportFromQr(qrCode: qrCodeData)
             } catch {

@@ -1,8 +1,23 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
-  <rect width="1600" height="1200" fill="#0F172A"/>
-  <circle cx="280" cy="180" r="320" fill="#172554" opacity=".9"/>
-  <circle cx="1320" cy="1020" r="380" fill="#064E3B" opacity=".42"/>
-  <path d="M0 850C260 720 470 750 700 850C950 960 1120 1000 1600 790V1200H0Z" fill="#111827" opacity=".86"/>
-  <path d="M1060 130C1210 200 1340 305 1460 440" fill="none" stroke="#2563EB" stroke-width="18" stroke-linecap="round" opacity=".45"/>
-  <path d="M1110 230C1230 295 1345 390 1450 510" fill="none" stroke="#10B981" stroke-width="10" stroke-linecap="round" opacity=".38"/>
+  <defs>
+    <radialGradient id="glow" cx="45%" cy="38%" r="75%">
+      <stop stop-color="#7B1226" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#160208" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="1200" fill="#160208"/>
+  <rect width="1600" height="1200" fill="url(#glow)"/>
+  <path d="M0 850C260 720 470 750 700 850C950 960 1120 1000 1600 790V1200H0Z" fill="#24050D" opacity=".86"/>
+  <g fill="none" stroke="#F4D8DE" stroke-linecap="round" stroke-linejoin="round" opacity=".11">
+    <path d="M70 980V820L190 700V560"/>
+    <path d="M160 1040V900L330 730H500"/>
+    <path d="M1080 110V230L1220 370H1510"/>
+    <path d="M1210 1010V850L1370 690V540"/>
+  </g>
+  <g fill="#C62A48" opacity=".28">
+    <circle cx="190" cy="560" r="10"/>
+    <circle cx="500" cy="730" r="10"/>
+    <circle cx="1220" cy="370" r="10"/>
+    <circle cx="1370" cy="540" r="10"/>
+  </g>
 </svg>

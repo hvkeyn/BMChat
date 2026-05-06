@@ -338,11 +338,8 @@ public class EditRelayActivity extends BaseActionBarActivity
   private void onProviderLink() {
     if (provider != null) {
       String url = provider.getOverviewPage();
-      if (!url.isEmpty()) {
+      if (!url.isEmpty() && !url.startsWith("https://providers.delta.chat/")) {
         IntentUtils.showInBrowser(this, url);
-      } else {
-        // this should normally not happen
-        Toast.makeText(this, "ErrProviderWithoutUrl", Toast.LENGTH_LONG).show();
       }
     }
   }

@@ -45,11 +45,6 @@
     <PreferenceCategory>
         <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
             android:defaultValue="false"
-            android:key="pref_stats_sending"
-            android:title="@string/send_stats_to_devs" />
-
-        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
-            android:defaultValue="false"
             android:key="pref_screen_security"
             android:summary="@string/pref_screen_security_explain"
             android:title="@string/pref_screen_security" />
@@ -65,12 +60,6 @@
     <PreferenceCategory
         android:key="pref_category_legacy"
         android:title="Legacy">
-
-        <ListPreference
-            android:key="pref_show_emails"
-            android:title="@string/pref_show_emails"
-            android:entries="@array/pref_show_emails_entries"
-            android:entryValues="@array/pref_show_emails_values" />
 
         <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
             android:defaultValue="true"

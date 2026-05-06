@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Initial BMChat fork setup plan is complete and pushed to GitHub. First visible BMChat rebrand pass is implemented locally.
+Initial BMChat fork setup plan is complete and pushed to GitHub. First visible BMChat rebrand pass is implemented locally. BMChat server/filtering pass is implemented locally with new test builds.
 
 ## Completed
 
@@ -44,14 +44,33 @@ Initial BMChat fork setup plan is complete and pushed to GitHub. First visible B
   - `clients/android/build/outputs/apk/foss/debug/BMChat-foss-debug-2.49.0.apk`
   - `clients/android/build/outputs/apk/gplay/debug/BMChat-gplay-debug-2.49.0.apk`
 - Investigated Android startup failure reported during manual testing. The first APKs were missing `libnative-utils.so`; they were rebuilt after restoring native libraries for all supported ABIs from the official Delta Chat `2.49.0` APK, and the rebuilt APKs now contain `native-code: 'arm64-v8a' 'armeabi-v7a' 'x86' 'x86_64'`.
+- Added centralized BMChat endpoint placeholders and policy in `brand/config/bmchat-brand.json`; empty BMChat endpoints disable Delta/upstream fallbacks.
+- Replaced working-path Delta/chatmail infrastructure dependencies for onboarding, invite links, heartbeat registration, statistics, and fallback call ICE servers.
+- Changed core mail filtering so ordinary emails without `Chat-Version` or known BMChat/Delta thread linkage are tombstoned instead of becoming chat list items or notifications.
+- Changed `show_emails` default and migration to `0`, and hid the Show Classic Emails setting in desktop, Android, and iOS.
+- Moved `BMCha.jpeg` source into `brand/assets/bmcha-logo-source.jpeg` and changed tokens/assets to the burgundy B-mark direction.
+- Added and passed the core test `test_bmchat_ignores_classic_mail_without_chat_version`.
+- Verified desktop `pnpm -w check` passes after repairing the local Windows pnpm TypeScript cache issue, with only the two existing upstream eslint warnings in `ChatContext.tsx`.
+- Verified Android `./gradlew.bat assembleDebug` passes and produces:
+  - `clients/android/build/outputs/apk/foss/debug/BMChat-foss-debug-2.49.0.apk`
+  - `clients/android/build/outputs/apk/gplay/debug/BMChat-gplay-debug-2.49.0.apk`
+- Produced Windows desktop artifacts:
+  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Setup.x64.exe`
+  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Portable.x64.exe`
+- Replaced the lingering Delta-Chat onboarding logo, welcome backdrop, tray/launcher icons, About dialog texts, and onboarding tagline with BMChat assets and copy.
+- Removed all donation buttons / device messages / settings entries on desktop, Android, and iOS, plus the `https://delta.chat/...` URLs from the active Help menus and the Tauri/AppStream metadata; `donation_request_maybe` in the mirrored Rust core is now a no-op.
+- Re-built and re-verified the Windows desktop artifacts and both Android debug APKs after the cleanup pass:
+  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Setup.x64.exe`
+  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Portable.x64.exe`
+  - `clients/android/build/outputs/apk/foss/debug/BMChat-foss-debug-2.49.0.apk`
+  - `clients/android/build/outputs/apk/gplay/debug/BMChat-gplay-debug-2.49.0.apk`
 
 ## In Progress
 
-Manual artifact testing.
+Manual artifact testing for the new server/filtering builds.
 
 ## Not Started
 
-- Asset generation for BMChat logos/icons/backgrounds.
 - Strict localization checker scripts.
 - iOS build verification on macOS/Xcode.
 
@@ -64,3 +83,4 @@ Manual artifact testing.
 - Android reproducible release builds must run the upstream native core build (`scripts/ndk-make.sh`) in a Linux/Nix/Docker environment before Gradle packaging. Windows Gradle-only packaging is not enough.
 - Electron Builder produces local Windows artifacts but exits with a GitHub token warning if `GH_TOKEN` is not set for auto-publish.
 - Desktop packaging mutates pnpm/node_modules state via upstream `pack:patch-node-modules`; use a clean install before development checks.
+- On this Windows machine, pnpm can corrupt/restore TypeScript package contents incorrectly (`typescript@5.9.3` or `5.8.3` containing 4.9.5). If `pnpm -w check` reports invalid TS options, fetch the official TypeScript tarball with npm and replace the affected local `node_modules/.pnpm/typescript@.../node_modules/typescript` copy before rerunning checks.

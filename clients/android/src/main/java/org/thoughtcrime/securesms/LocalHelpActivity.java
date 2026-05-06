@@ -71,23 +71,7 @@ public class LocalHelpActivity extends WebViewActivity {
     super.onPrepareOptionsMenu(menu);
     this.getMenuInflater().inflate(R.menu.local_help, menu);
 
-    // Append " ↗" to external link buttons
-    MenuItem item = menu.findItem(R.id.learn_more);
-    if (item != null) {
-      item.setTitle(TextUtil.markAsExternal(getString(R.string.delta_chat_homepage)));
-    }
-
-    item = menu.findItem(R.id.privacy_policy);
-    if (item != null) {
-      item.setTitle(TextUtil.markAsExternal(getString(R.string.privacy_policy)));
-    }
-
-    item = menu.findItem(R.id.contribute);
-    if (item != null) {
-      item.setTitle(TextUtil.markAsExternal(getString(R.string.contribute)));
-    }
-
-    item = menu.findItem(R.id.report_issue);
+    MenuItem item = menu.findItem(R.id.report_issue);
     if (item != null) {
       item.setTitle(TextUtil.markAsExternal(getString(R.string.global_menu_help_report_desktop)));
     }
@@ -102,17 +86,8 @@ public class LocalHelpActivity extends WebViewActivity {
     if (itemId == R.id.log_scroll_up) {
       webView.scrollTo(0, 0);
       return true;
-    } else if (itemId == R.id.learn_more) {
-      openOnlineUrl("https://delta.chat");
-      return true;
-    } else if (itemId == R.id.privacy_policy) {
-      openOnlineUrl("https://delta.chat/gdpr");
-      return true;
-    } else if (itemId == R.id.contribute) {
-      openOnlineUrl("https://delta.chat/contribute");
-      return true;
     } else if (itemId == R.id.report_issue) {
-      openOnlineUrl("https://github.com/deltachat/deltachat-android/issues");
+      openOnlineUrl("https://github.com/hvkeyn/BMChat/issues");
       return true;
     }
     return false;

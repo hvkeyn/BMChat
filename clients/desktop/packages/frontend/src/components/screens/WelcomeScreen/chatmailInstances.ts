@@ -1,12 +1,12 @@
 import type { QrWithUrl } from '../../../backend/qr-types'
 
-// URL to list of various other chatmail instances
-export const CHATMAIL_INSTANCES_LIST_URL = 'https://chatmail.at/relays'
+// Empty until BMChat owns a relay directory. Do not fall back to Delta infrastructure.
+export const CHATMAIL_INSTANCES_LIST_URL = ''
 
 // Hostname of the default chatmail instance
-export const DEFAULT_CHATMAIL_HOSTNAME = 'nine.testrun.org'
+export const DEFAULT_CHATMAIL_HOSTNAME = 'chatmail.bmchat.example'
 
-// URL to privacy policy of default DeltaChat Chatmail instance
+// URL to privacy policy of default BMChat Chatmail instance
 export const DEFAULT_INSTANCE_PRIVACY_POLICY_URL = `https://${DEFAULT_CHATMAIL_HOSTNAME}/privacy.html`
 
 export function isDefaultInstance(value: string): boolean {

@@ -249,7 +249,7 @@
 "share_invite_link" = "Share Invite Link";
 "share_invite_link_explain" = "Anyone with this link can view your profile and start a chat with you. Only share it with people you trust.";
 "invite_friends" = "Invite Friends";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
+// %1$s is replaced by the user's invitation link ("https://i.bmchat.example/...")
 "invite_friends_text" = "Contact me on BMChat:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Copy Selection";
 "menu_copy_link_to_clipboard" = "Copy Link";
@@ -320,8 +320,8 @@
 "source_code" = "Source Code";
 // Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
 "add_to_home_screen" = "Add to Home Screen";
-"donate" = "Donate";
-"donate_device_msg" = "Seems you\'re enjoying BMChat!\n\nBMChat is based on open messenger technology and keeps communication free through email systems. Please support the upstream Delta Chat project if you want to help keep the shared foundation independent.\n\nhttps://delta.chat/donate";
+"donate" = "Project Support";
+"donate_device_msg" = "";
 "mute_for_one_hour" = "Mute for 1 hour";
 "mute_for_eight_hours" = "Mute for 8 hours";
 "mute_for_one_day" = "Mute for 1 day";
@@ -555,7 +555,7 @@
 "instant_onboarding_confirm_contact" = "Create a new profile and start chatting with %1$@?";
 // Question shown when group's/channel's QR code is scanned from onboarding screen
 "instant_onboarding_confirm_group" = "Create a new profile and join \"%1$@\"?";
-"welcome_chat_over_email" = "Secure Decentralized Chat";
+"welcome_chat_over_email" = "Free chat through your email";
 "scan_invitation_code" = "Scan Invitation Code";
 "login_title" = "Log In";
 "login_advanced_hint" = "This login is for advanced users:\n\n• Do not use an address you\'re using in another app.\n\n• Classic email server allow chats without end-to-end encryption marked by a mail icon.";
@@ -744,7 +744,7 @@
 "pref_show_tray_icon" = "Show Tray Icon";
 "pref_edit_profile" = "Edit Profile";
 "send_stats_to_devs" = "Send statistics to BMChat developers";
-"stats_device_message" = "Do you want to help improve BMChat and support research by sending weekly anonymous usage statistics?\n\nTap here...";
+"stats_device_message" = "";
 "stats_confirmation_dialog" = "Do you want to help improve BMChat and support research by sending weekly anonymous usage statistics?";
 "stats_thanks" = "Thank you! You can always disable the sending at \"Settings -> Advanced\".\n\nDo you additionally have 5 minutes to take part in a scientific study on BMChat security?";
 "stats_disable_dialog" = "Sending of statistics is already enabled.\n\nDo you want to disable it?";
@@ -1092,7 +1092,7 @@
 "perm_enable_bg_reminder_title" = "Tap here to receive messages while BMChat is in the background.";
 "perm_enable_bg_already_done" = "You already allowed BMChat to receive messages in the background.\n\nIf messages still do not arrive in background, please also check your system settings.";
 // device messages for updates
-"update_2_0" = "What\'s new?\n\n💯 End-to-end encryption is reliable and forever now. Padlocks 🔒 are gone!\n\n✉️ Classic email without end-to-end encryption is marked with a letter symbol\n\n😻 New enhanced profile screen for all your contacts\n\n🔲 New button for quick access to apps used in a chat\n\n❤️ Please donate to help us remain independent and continue to bring improvements: %1$@";
+"update_2_0" = "What\'s new?\n\n💯 End-to-end encryption is reliable and always on.\n\n✉️ BMChat shows chat-format messages and keeps ordinary mail out of chat notifications.\n\n😻 Profile screens and BMChat visuals were refreshed.\n\n🔲 Quick access to apps used in chats was improved.";
 // iOS specific untranslated strings
 "connectivity_low_data_mode" = "Throttled by system's \"Low Data Mode\".";
 "connectivity_low_power_mode" = "Throttled by system's \"Low Power Mode\".";

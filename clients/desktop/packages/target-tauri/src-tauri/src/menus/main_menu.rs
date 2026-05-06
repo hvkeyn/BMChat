@@ -131,19 +131,19 @@ impl MenuAction<'static> for MainMenuAction {
             }
             MainMenuAction::Contribute => {
                 app.opener().open_url(
-                    "https://github.com/deltachat/deltachat-desktop",
+                    "https://github.com/hvkeyn/BMChat",
                     None::<String>,
                 )?;
             }
             MainMenuAction::Report => {
                 app.opener().open_url(
-                    "https://github.com/deltachat/deltachat-desktop/issues",
+                    "https://github.com/hvkeyn/BMChat/issues",
                     None::<String>,
                 )?;
             }
             MainMenuAction::Learn => {
                 app.opener()
-                    .open_url("https://delta.chat", None::<String>)?;
+                    .open_url("https://github.com/hvkeyn/BMChat", None::<String>)?;
             }
             MainMenuAction::About => {
                 channels

@@ -13,7 +13,7 @@ extension URL {
     }
 }
 struct Utils {
-    public static let inviteDomain = "i.delta.chat"
+    public static let inviteDomain = "i.bmchat.example"
 
     // MARK: - Proxy
 

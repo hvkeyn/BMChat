@@ -317,7 +317,7 @@
     <string name="share_invite_link">Поделиться ссылкой-приглашением</string>
     <string name="share_invite_link_explain">Кто угодно, у кого есть эта ссылка, сможет просмотреть ваш профиль и начать с вами беседу. Делитесь ею только с теми людьми, которым вы доверяете.</string>
     <string name="invite_friends">Пригласить друзей</string>
-    <!-- %1$s is replaced by the user's invitation link ("https://i.delta.chat/...") -->
+    <!-- %1$s is replaced by the user's invitation link ("https://i.bmchat.example/...") -->
     <string name="invite_friends_text">Свяжитесь со мной через BMChat:\n%1$s</string>
     <string name="menu_copy_selection_to_clipboard">Копировать выделенное</string>
     <string name="menu_copy_link_to_clipboard">Копировать ссылку</string>
@@ -388,8 +388,8 @@
     <string name="source_code">Исходный код</string>
     <!-- Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly. -->
     <string name="add_to_home_screen">Добавить на главный экран</string>
-    <string name="donate">Пожертвовать</string>
-    <string name="donate_device_msg">Кажется, вам нравится BMChat!\n\nBMChat основан на открытых технологиях обмена сообщениями и сохраняет свободное общение через почтовые системы. Если вы хотите поддержать общую основу проекта, поддержите upstream-проект Delta Chat.\n\nhttps://delta.chat/donate</string>
+    <string name="donate">Поддержка проекта</string>
+    <string name="donate_device_msg"></string>
 
     <string name="mute_for_one_hour">На 1 час</string>
     <string name="mute_for_eight_hours">На 8 часов</string>
@@ -668,7 +668,7 @@
     <!-- Question shown when group's/channel's QR code is scanned from onboarding screen -->
     <string name="instant_onboarding_confirm_group">Создать новый профиль и присоединиться к \"%1$s\"?</string>
 
-    <string name="welcome_chat_over_email">Безопасный децентрализованный чат</string>
+    <string name="welcome_chat_over_email">Свободный чат через вашу почту</string>
     <string name="scan_invitation_code">Сканировать код приглашения</string>
     <string name="login_title">Войти</string>
     <string name="login_advanced_hint">Этот способ входа предназначен для опытных пользователей:\n\n• Не используйте адрес, который вы уже используете в другом приложении.\n\n• Обычный почтовый сервер позволяет вести чаты без сквозного шифрования, (такие чаты помечаются значком конверта).</string>
@@ -857,7 +857,7 @@
     <string name="pref_show_tray_icon">Показать значок в системном трее</string>
     <string name="pref_edit_profile">Редактировать профиль</string>
     <string name="send_stats_to_devs">Отправить статистику разработчикам BMChat</string>
-    <string name="stats_device_message">Хотите помочь улучшить BMChat и поддержать исследования, отправляя еженедельную анонимную статистику использования?\n\nНажмите здесь...</string>
+    <string name="stats_device_message"></string>
     <string name="stats_confirmation_dialog">Хотите помочь улучшить BMChat и поддержать исследования, отправляя еженедельную анонимную статистику использования?</string>
     <string name="stats_thanks">Спасибо! Вы всегда можете отключить отправку в разделе \"Настройки -> Дополнительно\"\n\nУ вас есть 5 минут, чтобы принять участие в исследовании безопасности BMChat?</string>
     <string name="stats_disable_dialog">Отправка статистики уже включена.\n\nВы хотите отключить её?</string>
@@ -1209,5 +1209,5 @@
     <string name="perm_enable_bg_already_done">Вы уже разрешили BMChat получать сообщения в фоновом режиме.\n\nЕсли сообщения все равно не приходят в фоновом режиме, также проверьте настройки вашей системы.</string>
 
     <!-- device messages for updates -->
-    <string name="update_2_0">Что нового?\n\n💯 Сквозное шифрование стало постоянной и надёжной функцией. Значки замков 🔒 убраны!\n\n✉️ Обычные письма без сквозного шифрования помечены значком конверта\n\n😻 Обновлённый экран профиля для всех контактов\n\n🔲 Новая кнопка быстрого доступа к приложениям, используемым в чате\n\n❤️ Пожалуйста, сделайте пожертвование, чтобы помочь нам сохранить независимость и продолжать работу над улучшениями: %1$s</string>
+    <string name="update_2_0">Что нового?\n\n💯 Сквозное шифрование стало постоянной и надёжной функцией.\n\n✉️ BMChat показывает только сообщения формата чата и не превращает обычную почту в уведомления.\n\n😻 Обновлён экран профиля и оформление BMChat.\n\n🔲 Улучшен быстрый доступ к приложениям, используемым в чате.</string>
 </resources>

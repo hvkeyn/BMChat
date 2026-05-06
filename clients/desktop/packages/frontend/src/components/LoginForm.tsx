@@ -3,7 +3,6 @@ import React, { useState } from 'react'
 import { useDebouncedCallback } from 'use-debounce/lib'
 
 import { DeltaInput, DeltaSelect } from './Login-Styles'
-import { ClickableLink } from './helpers/ClickableLink'
 import { getLogger } from '../../../shared/logger'
 import { BackendRemote, Type } from '../backend-com'
 import Collapse from './Collapse'
@@ -147,9 +146,6 @@ export default function LoginForm({
               }`}
             >
               <p>{providerInfo.beforeLoginHint}</p>
-              <ClickableLink href={providerInfo.overviewPage}>
-                {tx('more_info_desktop')}
-              </ClickableLink>
             </div>
           )}
 

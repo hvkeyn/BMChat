@@ -7,24 +7,39 @@
     "tagline": "Свободный мессенджер через почтовые системы",
     "description": "BMChat combines familiar messenger workflows with decentralized email/chatmail transport."
   },
+  "endpoints": {
+    "defaultChatmailHost": "chatmail.bmchat.example",
+    "relayDirectoryUrl": "",
+    "providerOverviewBaseUrl": "",
+    "inviteHost": "i.bmchat.example",
+    "notificationRegisterUrl": "",
+    "turnServerHost": "",
+    "statsRecipient": "",
+    "updateUrl": ""
+  },
+  "mailPolicy": {
+    "allowClassicEmailLogin": true,
+    "showClassicEmailsDefault": "off",
+    "acceptIncomingWithoutChatVersion": false
+  },
   "identifiers": {
     "androidApplicationId": "chat.bromore.bmchat",
     "iosBundleId": "chat.bromore.bmchat",
     "desktopAppId": "chat.bromore.bmchat.desktop"
   },
   "theme": {
-    "primaryColor": "#2563EB",
-    "primaryDark": "#172554",
-    "primarySoft": "#DBEAFE",
-    "accentColor": "#10B981",
-    "accentDark": "#047857",
-    "backgroundLight": "#F8FAFC",
-    "backgroundDark": "#0F172A",
+    "primaryColor": "#7B1226",
+    "primaryDark": "#2A030D",
+    "primarySoft": "#F4D8DE",
+    "accentColor": "#C62A48",
+    "accentDark": "#8F1830",
+    "backgroundLight": "#FFF7F8",
+    "backgroundDark": "#160208",
     "surfaceLight": "#FFFFFF",
-    "surfaceDark": "#111827",
-    "textPrimary": "#0F172A",
-    "textInverse": "#F8FAFC",
-    "borderLight": "#D8E2F1"
+    "surfaceDark": "#24050D",
+    "textPrimary": "#1F050B",
+    "textInverse": "#FFF7F8",
+    "borderLight": "#E8C3CB"
   },
   "locales": {
     "default": "ru",

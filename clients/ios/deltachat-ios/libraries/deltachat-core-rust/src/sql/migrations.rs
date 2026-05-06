@@ -971,11 +971,9 @@ ALTER TABLE msgs ADD COLUMN mime_references TEXT;"#,
         .await?;
     }
     if dbversion < 50 {
-        // installations <= 0.100.1 used DC_SHOW_EMAILS_ALL implicitly;
-        // keep this default and use DC_SHOW_EMAILS_NO
-        // only for new installations
+        // BMChat keeps classic emails out of chat lists by default.
         if exists_before_update {
-            sql.set_raw_config_int("show_emails", ShowEmails::All as i32)
+            sql.set_raw_config_int("show_emails", ShowEmails::Off as i32)
                 .await?;
         }
         sql.set_db_version(50).await?;
@@ -2311,6 +2309,15 @@ ALTER TABLE contacts ADD COLUMN name_normalized TEXT;
             UPDATE transports SET is_published=0 WHERE addr!=(
                 SELECT value FROM config WHERE keyname='configured_addr'
             )",
+            migration_version,
+        )
+        .await?;
+    }
+
+    inc_and_check(&mut migration_version, 150)?;
+    if dbversion < migration_version {
+        sql.execute_migration(
+            "INSERT OR REPLACE INTO config (keyname, value) VALUES ('show_emails', '0')",
             migration_version,
         )
         .await?;

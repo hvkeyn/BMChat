@@ -3,7 +3,7 @@ export const homePageUrl = 'https://bmchat.example'
 export const gitHubUrl = 'https://github.com/hvkeyn/BMChat'
 export const gitHubIssuesUrl = gitHubUrl + '/issues'
 export const gitHubLicenseUrl = gitHubUrl + '/blob/main/LICENSE'
-export const donationUrl = 'https://delta.chat/donate'
+export const donationUrl = 'https://bmchat.example/support'
 
 export const appWindowTitle = appName
 

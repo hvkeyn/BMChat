@@ -531,7 +531,8 @@ class EditTransportViewController: UITableViewController {
     }
 
     private func openProviderInfo(provider: DcProvider) {
-        guard let url = URL(string: provider.getOverviewPage) else { return }
+        guard !provider.getOverviewPage.hasPrefix("https://providers.delta.chat/"),
+              let url = URL(string: provider.getOverviewPage) else { return }
         UIApplication.shared.open(url)
     }
 }

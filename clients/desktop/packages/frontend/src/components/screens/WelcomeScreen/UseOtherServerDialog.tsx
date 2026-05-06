@@ -33,6 +33,7 @@ export default function UseOtherServerDialog({ onClose }: DialogProps) {
   }
 
   const onShowMoreInstances = () => {
+    if (!CHATMAIL_INSTANCES_LIST_URL) return
     runtime.openLink(CHATMAIL_INSTANCES_LIST_URL)
     onClose()
   }
@@ -45,13 +46,15 @@ export default function UseOtherServerDialog({ onClose }: DialogProps) {
       />
       <DialogBody>
         <DialogContent>
-          <Button
-            className={styles.welcomeScreenButton}
-            onClick={onShowMoreInstances}
-          >
-            {tx('instant_onboarding_other_server')}{' '}
-            <Icon icon='open_in_new' className={styles.openExternalIcon} />
-          </Button>
+          {CHATMAIL_INSTANCES_LIST_URL && (
+            <Button
+              className={styles.welcomeScreenButton}
+              onClick={onShowMoreInstances}
+            >
+              {tx('instant_onboarding_other_server')}{' '}
+              <Icon icon='open_in_new' className={styles.openExternalIcon} />
+            </Button>
+          )}
           <Button
             className={styles.welcomeScreenButton}
             onClick={onClickLogin}

@@ -13,7 +13,6 @@ internal final class AdvancedViewController: UITableViewController {
 
     private enum CellTags: Int {
         case defaultTagValue = 0
-        case showEmails
         case viewLog
         case transportSettings
         case proxySettings
@@ -26,15 +25,6 @@ internal final class AdvancedViewController: UITableViewController {
     private let externalPathDescr = "File Sharing/Delta Chat"
 
     // MARK: - cells
-    private lazy var showEmailsCell: UITableViewCell = {
-        let cell = UITableViewCell(style: .value1, reuseIdentifier: nil)
-        cell.tag = CellTags.showEmails.rawValue
-        cell.textLabel?.text = String.localized("pref_show_emails")
-        cell.accessoryType = .disclosureIndicator
-        cell.detailTextLabel?.text = EmailOptionsViewController.getValString(val: dcContext.showEmails)
-        return cell
-    }()
-
     private lazy var transportSettingsCell: UITableViewCell = {
         let cell = UITableViewCell(style: .default, reuseIdentifier: nil)
         cell.textLabel?.text = String.localized("transports")
@@ -193,7 +183,7 @@ internal final class AdvancedViewController: UITableViewController {
             let legacySection = SectionConfigs(
                 headerTitle: "Legacy Options",
                 footerTitle: nil,
-                cells: [showEmailsCell, mvboxMoveCell, onlyFetchMvboxCell])
+                cells: [mvboxMoveCell, onlyFetchMvboxCell])
             return [viewLogSection, serverSection, experimentalSection, legacySection]
         }
     }()
@@ -241,8 +231,6 @@ internal final class AdvancedViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: false)
 
         switch cellTag {
-        case .showEmails: showClassicMailController()
-
         case .viewLog: showLogViewController()
 
         case .transportSettings:
@@ -279,11 +267,6 @@ internal final class AdvancedViewController: UITableViewController {
 
     private func showLogViewController() {
         let controller = LogViewController(dcContext: dcContext)
-        navigationController?.pushViewController(controller, animated: true)
-    }
-
-    private func showClassicMailController() {
-        let controller = EmailOptionsViewController(dcContext: dcContext)
         navigationController?.pushViewController(controller, animated: true)
     }
 
@@ -325,7 +308,6 @@ internal final class AdvancedViewController: UITableViewController {
 
     // MARK: - updates
     private func updateCells() {
-        showEmailsCell.detailTextLabel?.text = EmailOptionsViewController.getValString(val: dcContext.showEmails)
         proxySettingsCell.detailTextLabel?.text = dcContext.isProxyEnabled ? String.localized("on") : nil
     }
 }
