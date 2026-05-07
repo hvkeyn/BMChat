@@ -311,6 +311,8 @@
     <!-- %1$s is replaced by the invite link -->
     <string name="bmchat_invite_email_body">Hi! I would like to chat with you on BMChat. Just open the link below — if you already have BMChat installed it will pick this invitation up automatically; otherwise the link explains how to get the app.\n\n%1$s</string>
     <string name="bmchat_invite_email_auto_accepted">A BMChat invitation arrived by e-mail and was accepted automatically.</string>
+    <string name="bmchat_send_invite_qr_image">Share QR as image</string>
+    <string name="bmchat_signin_with_email">Sign in with your e-mail</string>
     <string name="menu_copy_selection_to_clipboard">Copy Selection</string>
     <string name="menu_copy_link_to_clipboard">Copy Link</string>
     <string name="menu_copy_text_to_clipboard">Copy Text</string>

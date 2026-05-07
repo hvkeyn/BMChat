@@ -2,10 +2,13 @@ package org.thoughtcrime.securesms.update;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
+import android.content.pm.PackageInstaller;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
@@ -13,22 +16,24 @@ import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.text.format.Formatter;
+import android.widget.Toast;
 
 import androidx.annotation.AnyThread;
 import androidx.annotation.MainThread;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 
 import org.json.JSONObject;
 import org.thoughtcrime.securesms.BuildConfig;
-import org.thoughtcrime.securesms.util.Util;
+import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.util.guava.Optional;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
@@ -38,16 +43,24 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * Lightweight self-update checker for BMChat.
+ * Self-update checker for BMChat.
  *
  * <p>Polls {@code http://5.187.4.132/update.json}, compares the published
- * {@code versionCode} with {@link BuildConfig#VERSION_CODE}, and if newer
- * downloads the APK to the app cache, verifies its SHA-256, then asks the
- * user to install it via {@link Intent#ACTION_VIEW} with
- * {@code application/vnd.android.package-archive}.
+ * {@code versionCode} with {@link BuildConfig#VERSION_CODE}, and if newer:
+ * <ol>
+ *     <li>asks the user once with a single-button dialog whether to update,
+ *     <li>downloads the APK to the app cache and verifies its SHA-256,
+ *     <li>installs the APK <strong>through the modern
+ *         {@link android.content.pm.PackageInstaller} session API</strong>
+ *         which only renders the system "Update?" sheet (no second
+ *         activity). The session holds an open file descriptor to the
+ *         downloaded APK, so the install starts immediately on confirm
+ *         and the running app is replaced once the session commits.
+ * </ol>
  *
- * <p>Runs at most once every {@link #MIN_CHECK_INTERVAL_MS}. Network access
- * is performed on a background thread; UI prompts on the main thread.
+ * <p>Re-checks every {@link #PERIODIC_RECHECK_MS} while the app is in the
+ * foreground, so a fresh release published mid-session also triggers the
+ * prompt.
  *
  * <p>The verification chain is:
  * <ol>
@@ -62,12 +75,20 @@ public final class BMChatUpdater {
 
     private static final String UPDATE_MANIFEST_URL = "http://5.187.4.132/update.json";
 
+    /** Don't issue the same network probe more often than this. */
     private static final long MIN_CHECK_INTERVAL_MS = 6L * 60L * 60L * 1000L;
+    /** Initial delay after launch before the first probe (keeps cold-start snappy). */
     private static final long FOREGROUND_DELAY_MS  = 8L * 1000L;
+    /** While the app stays in foreground, re-poke the updater every 30 minutes
+     *  — the inner debounce on {@link #MIN_CHECK_INTERVAL_MS} still applies. */
+    private static final long PERIODIC_RECHECK_MS  = 30L * 60L * 1000L;
 
     private static final String PREFS_NAME              = "bmchat-updater";
     private static final String PREF_LAST_CHECK_AT      = "last-check-at";
     private static final String PREF_DECLINED_VERSION   = "declined-version-code";
+
+    private static final String INSTALL_ACTION =
+            "org.thoughtcrime.securesms.update.BMChatUpdater.INSTALL_RESULT";
 
     private static final ExecutorService EXEC = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "bmchat-updater");
@@ -79,16 +100,29 @@ public final class BMChatUpdater {
 
     private static final AtomicBoolean RUNNING = new AtomicBoolean(false);
 
+    private static @Nullable Runnable activeRecheck;
+
     private BMChatUpdater() {}
 
     /** Hooks the updater into a foreground {@code Activity}. Safe to call from
-     *  any {@code Activity#onStart} — the actual network/UI work is deferred
+     *  any {@code Activity#onResume} — the actual network/UI work is deferred
      *  by {@link #FOREGROUND_DELAY_MS} so the main launch path is not slowed
-     *  down. */
+     *  down. While the activity stays alive a periodic re-check fires every
+     *  {@link #PERIODIC_RECHECK_MS} so a fresh release announced mid-session
+     *  is also picked up. */
     @MainThread
     public static void scheduleForActivity(final Activity activity) {
         if (activity == null || activity.isFinishing()) return;
-        MAIN.postDelayed(() -> checkInBackground(activity), FOREGROUND_DELAY_MS);
+        if (activeRecheck != null) MAIN.removeCallbacks(activeRecheck);
+        final Runnable poke = new Runnable() {
+            @Override public void run() {
+                if (activity.isFinishing()) return;
+                checkInBackground(activity);
+                MAIN.postDelayed(this, PERIODIC_RECHECK_MS);
+            }
+        };
+        activeRecheck = poke;
+        MAIN.postDelayed(poke, FOREGROUND_DELAY_MS);
     }
 
     @AnyThread
@@ -131,14 +165,14 @@ public final class BMChatUpdater {
     @MainThread
     private static void promptUser(final Activity activity, final Manifest m) {
         if (activity.isFinishing()) return;
-        String body = "Доступно обновление BMChat " + m.versionName + ".\n\n"
-                + "Размер: " + Formatter.formatShortFileSize(activity, m.size)
+        String body = "Доступно обновление BMChat " + m.versionName + "."
+                + "\nРазмер: " + Formatter.formatShortFileSize(activity, m.size)
                 + (m.notes != null && !m.notes.isEmpty() ? "\n\n" + m.notes : "");
         new AlertDialog.Builder(activity)
                 .setTitle("Обновление BMChat")
                 .setMessage(body)
                 .setCancelable(true)
-                .setPositiveButton("Установить", (d, w) -> beginDownload(activity, m))
+                .setPositiveButton("Обновить сейчас", (d, w) -> beginDownload(activity, m))
                 .setNegativeButton("Позже", (d, w) -> {})
                 .setNeutralButton("Не предлагать эту версию", (d, w) -> {
                     activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -149,6 +183,9 @@ public final class BMChatUpdater {
 
     @MainThread
     private static void beginDownload(final Activity activity, final Manifest m) {
+        Toast.makeText(activity,
+                "Загружаем обновление BMChat (" + Formatter.formatShortFileSize(activity, m.size) + ")…",
+                Toast.LENGTH_SHORT).show();
         EXEC.submit(() -> {
             try {
                 File apk = downloadApk(activity.getApplicationContext(), m);
@@ -175,22 +212,111 @@ public final class BMChatUpdater {
                     activity.startActivity(new Intent(
                             Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
                             Uri.parse("package:" + activity.getPackageName())));
-                } catch (ActivityNotFoundException ignore) {}
+                } catch (Throwable ignore) {}
+                Toast.makeText(activity,
+                        "Разрешите установку обновлений BMChat и снова откройте приложение.",
+                        Toast.LENGTH_LONG).show();
                 return;
             }
         }
-        Uri uri = FileProvider.getUriForFile(
-                activity,
-                BuildConfig.APPLICATION_ID + ".fileprovider",
-                apk);
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setDataAndType(uri, "application/vnd.android.package-archive");
-        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
         try {
-            activity.startActivity(i);
-        } catch (ActivityNotFoundException e) {
-            android.util.Log.w(TAG, "no installer activity", e);
+            installViaPackageInstaller(activity.getApplicationContext(), apk);
+        } catch (Throwable t) {
+            android.util.Log.w(TAG, "PackageInstaller failed; falling back to ACTION_VIEW", t);
+            try {
+                Uri uri = androidx.core.content.FileProvider.getUriForFile(
+                        activity,
+                        BuildConfig.APPLICATION_ID + ".fileprovider",
+                        apk);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setDataAndType(uri, "application/vnd.android.package-archive");
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_ACTIVITY_NEW_TASK);
+                activity.startActivity(i);
+            } catch (Throwable t2) {
+                android.util.Log.w(TAG, "fallback installer also failed", t2);
+            }
+        }
+    }
+
+    /**
+     * Installs the supplied APK via the modern {@link PackageInstaller} session
+     * API. The system shows its own concise "Update X?" sheet, the existing
+     * BMChat process gets replaced once the session commits, and the installer
+     * surfaces a single result broadcast that we listen for to log success.
+     */
+    @MainThread
+    private static void installViaPackageInstaller(Context ctx, File apk) throws IOException {
+        PackageInstaller installer = ctx.getPackageManager().getPackageInstaller();
+        PackageInstaller.SessionParams params = new PackageInstaller.SessionParams(
+                PackageInstaller.SessionParams.MODE_FULL_INSTALL);
+        params.setAppPackageName(ctx.getPackageName());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            // We've already prompted the user explicitly; suppress the second
+            // confirmation sheet on Android 12+ when the app holds
+            // REQUEST_INSTALL_PACKAGES.
+            try {
+                params.setRequireUserAction(PackageInstaller.SessionParams.USER_ACTION_NOT_REQUIRED);
+            } catch (Throwable ignore) {}
+        }
+        if (apk.length() > 0) params.setSize(apk.length());
+
+        int sessionId = installer.createSession(params);
+        try (PackageInstaller.Session session = installer.openSession(sessionId)) {
+            try (InputStream in = new FileInputStream(apk);
+                 OutputStream out = session.openWrite(
+                         "bmchat-" + System.currentTimeMillis() + ".apk", 0, apk.length())) {
+                byte[] buf = new byte[64 * 1024];
+                for (int n; (n = in.read(buf)) > 0; ) {
+                    out.write(buf, 0, n);
+                }
+                session.fsync(out);
+            }
+            registerInstallReceiver(ctx);
+            Intent statusIntent = new Intent(INSTALL_ACTION).setPackage(ctx.getPackageName());
+            int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                flags |= PendingIntent.FLAG_MUTABLE;
+            }
+            PendingIntent pi = PendingIntent.getBroadcast(
+                    ctx, sessionId, statusIntent, flags);
+            session.commit(pi.getIntentSender());
+        }
+    }
+
+    private static volatile boolean receiverRegistered = false;
+
+    private static void registerInstallReceiver(Context ctx) {
+        if (receiverRegistered) return;
+        synchronized (BMChatUpdater.class) {
+            if (receiverRegistered) return;
+            BroadcastReceiver receiver = new BroadcastReceiver() {
+                @Override public void onReceive(Context c, Intent intent) {
+                    if (intent == null) return;
+                    int status = intent.getIntExtra(
+                            PackageInstaller.EXTRA_STATUS, PackageInstaller.STATUS_FAILURE);
+                    String msg = intent.getStringExtra(PackageInstaller.EXTRA_STATUS_MESSAGE);
+                    if (status == PackageInstaller.STATUS_PENDING_USER_ACTION) {
+                        Intent confirm = intent.getParcelableExtra(Intent.EXTRA_INTENT);
+                        if (confirm != null) {
+                            confirm.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            try { c.startActivity(confirm); } catch (Throwable ignore) {}
+                        }
+                    } else if (status == PackageInstaller.STATUS_SUCCESS) {
+                        android.util.Log.i(TAG, "BMChat update installed.");
+                    } else {
+                        android.util.Log.w(TAG, "install failed status=" + status + " msg=" + msg);
+                    }
+                }
+            };
+            IntentFilter filter = new IntentFilter(INSTALL_ACTION);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ctx.getApplicationContext().registerReceiver(
+                        receiver, filter, Context.RECEIVER_NOT_EXPORTED);
+            } else {
+                ctx.getApplicationContext().registerReceiver(receiver, filter);
+            }
+            receiverRegistered = true;
         }
     }
 
@@ -327,7 +453,6 @@ public final class BMChatUpdater {
         }
     }
 
-    // Kept for tests/diagnostics.
     @SuppressWarnings("unused")
     static Optional<Long> getInstalledVersionCode(Context ctx) {
         try {

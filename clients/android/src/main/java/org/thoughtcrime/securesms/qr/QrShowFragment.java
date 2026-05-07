@@ -1,8 +1,15 @@
 package org.thoughtcrime.securesms.qr;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Picture;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.PictureDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -17,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContext;
@@ -25,6 +33,9 @@ import com.b44t.messenger.DcMsg;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGImageView;
 import com.caverock.androidsvg.SVGParseException;
+import java.io.File;
+import java.io.FileOutputStream;
+import org.thoughtcrime.securesms.BuildConfig;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.ScaleStableImageView;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
@@ -171,6 +182,72 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
     }
   }
 
+  /**
+   * Renders the BMChat-cleaned QR SVG into a 1024x1024 PNG, hands it to the
+   * system share sheet via the existing FileProvider so any messenger / mail
+   * app can attach it natively. Avoids the previous regression where the
+   * share menu had no image option at all.
+   */
+  public void shareQrImage() {
+    final Activity activity = getActivity();
+    if (activity == null) return;
+    final String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
+    try {
+      String rawSvg = dcContext.getSecurejoinQrSvg(chatId);
+      if (rawSvg == null || rawSvg.isEmpty()) {
+        Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
+        return;
+      }
+      String cleanedSvg = fixSVG(rawSvg);
+      Bitmap bmp = renderSvgToBitmap(cleanedSvg, 1024);
+      if (bmp == null) {
+        Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
+        return;
+      }
+      File dir = new File(activity.getCacheDir(), "qr-share");
+      //noinspection ResultOfMethodCallIgnored
+      dir.mkdirs();
+      File out = new File(dir, "bmchat-invite-qr.png");
+      try (FileOutputStream fos = new FileOutputStream(out)) {
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, fos);
+      } finally {
+        bmp.recycle();
+      }
+      Uri uri = FileProvider.getUriForFile(
+          activity,
+          BuildConfig.APPLICATION_ID + ".fileprovider",
+          out);
+      Intent share = new Intent(Intent.ACTION_SEND);
+      share.setType("image/png");
+      share.putExtra(Intent.EXTRA_STREAM, uri);
+      if (inviteURL != null) share.putExtra(Intent.EXTRA_TEXT, inviteURL);
+      share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+      startActivity(Intent.createChooser(share, getString(R.string.chat_share_with_title)));
+    } catch (Throwable t) {
+      Log.e(TAG, "failed to share QR image", t);
+      Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private static @androidx.annotation.Nullable Bitmap renderSvgToBitmap(String svgText, int sizePx) {
+    try {
+      SVG svg = SVG.getFromString(svgText);
+      svg.setDocumentWidth(sizePx);
+      svg.setDocumentHeight(sizePx);
+      Picture pic = svg.renderToPicture(sizePx, sizePx);
+      Bitmap bmp = Bitmap.createBitmap(sizePx, sizePx, Bitmap.Config.ARGB_8888);
+      Canvas c = new Canvas(bmp);
+      c.drawColor(Color.WHITE);
+      PictureDrawable pd = new PictureDrawable(pic);
+      pd.setBounds(0, 0, sizePx, sizePx);
+      pd.draw(c);
+      return bmp;
+    } catch (Throwable t) {
+      Log.w(TAG, "renderSvgToBitmap", t);
+      return null;
+    }
+  }
+
   public void copyQrData() {
     String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
     Util.writeTextToClipboard(getActivity(), inviteURL);
@@ -224,6 +301,13 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
       mailBtn.setOnClickListener(v -> {
         dialog.dismiss();
         showSendByEmailDialog();
+      });
+    }
+    Button qrImageBtn = view.findViewById(R.id.bmchat_share_qr_image);
+    if (qrImageBtn != null) {
+      qrImageBtn.setOnClickListener(v -> {
+        dialog.dismiss();
+        shareQrImage();
       });
     }
     dialog.show();

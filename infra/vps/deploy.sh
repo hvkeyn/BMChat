@@ -123,6 +123,40 @@ if m:
 else:
     sys.exit("[bmchat-deploy] could not find pristine port-80 server block to split")
 
+# ALSO patch the existing 443 server: if a request reaches it with
+# `Host: 5.187.4.132` (i.e. someone clicked an `https://5.187.4.132/...`
+# link), redirect to the plain-HTTP BMChat block instead of letting the
+# nod-tracker frontend swallow it. The redirect preserves the URL fragment
+# (browsers re-attach the original fragment to a 3xx target without one).
+
+ssl_pattern = re.compile(
+    r"(server\s*\{\s*listen\s+443\s+ssl[^{]*?server_name\s+[^;]*5\.187\.4\.132[^;]*?;)",
+    re.DOTALL,
+)
+ssl_match = ssl_pattern.search(text)
+if ssl_match:
+    head = ssl_match.group(1)
+    # Idempotency: don't add the redirect twice.
+    insert_at = ssl_match.end(1)
+    if "BMChat: redirect HTTPS-by-IP" not in text[:insert_at + 1024]:
+        redirect_snippet = (
+            "\n\n    # BMChat: redirect HTTPS-by-IP traffic to the plain-HTTP\n"
+            "    # BMChat block. Without this, the nod-tracker frontend\n"
+            "    # (which still includes 5.187.4.132 in server_name for\n"
+            "    # backward compatibility) silently swallows invite links\n"
+            "    # of the form https://5.187.4.132/i#... that older or\n"
+            "    # cross-platform clients may emit.\n"
+            "    if ($host = \"5.187.4.132\") {\n"
+            "        return 302 http://$host$request_uri;\n"
+            "    }\n"
+        )
+        text = text[:insert_at] + redirect_snippet + text[insert_at:]
+        print("[bmchat-deploy] inserted HTTPS-by-IP -> HTTP redirect into 443 server block")
+    else:
+        print("[bmchat-deploy] HTTPS-by-IP redirect already present — skipping")
+else:
+    print("[bmchat-deploy] no 443 ssl block referencing 5.187.4.132 found — skipping HTTPS patch")
+
 site_path.write_text(text)
 PYEOF
 

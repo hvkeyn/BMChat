@@ -36,6 +36,7 @@ import org.thoughtcrime.securesms.permissions.Permissions;
 import org.thoughtcrime.securesms.qr.BackupTransferActivity;
 import org.thoughtcrime.securesms.qr.QrCodeHandler;
 import org.thoughtcrime.securesms.qr.RegistrationQrActivity;
+import org.thoughtcrime.securesms.relay.EditRelayActivity;
 import org.thoughtcrime.securesms.service.GenericForegroundService;
 import org.thoughtcrime.securesms.service.NotificationController;
 import org.thoughtcrime.securesms.util.Prefs;
@@ -87,8 +88,14 @@ public class WelcomeActivity extends BaseActionBarActivity
               signInDialog.dismiss();
             });
 
+    // BMChat does not run a "chatmail" relay, so the primary onboarding path
+    // is the classic IMAP/SMTP login form (`EditRelayActivity`). The previous
+    // "Instant account" flow that registered against an upstream Delta Chat
+    // server has been retired — clicking the primary button now goes straight
+    // to e-mail credentials entry, no third-party signup involved.
+    signUpButton.setText(R.string.bmchat_signin_with_email);
     signUpButton.setOnClickListener(
-        (v) -> startActivity(new Intent(this, InstantOnboardingActivity.class)));
+        (v) -> startActivity(new Intent(this, EditRelayActivity.class)));
     signInButton.setOnClickListener((v) -> signInDialog.show());
 
     registerForEvents();

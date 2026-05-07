@@ -332,6 +332,8 @@
     <!-- %1$s is replaced by the invite link -->
     <string name="bmchat_invite_email_body">Привет! Я хочу пообщаться с тобой через BMChat. Открой ссылку ниже — если у тебя уже установлен BMChat, приглашение подхватится автоматически; иначе на странице по ссылке есть инструкция, как поставить приложение.\n\n%1$s</string>
     <string name="bmchat_invite_email_auto_accepted">Получено приглашение BMChat по e-mail — принято автоматически.</string>
+    <string name="bmchat_send_invite_qr_image">Отправить QR картинкой</string>
+    <string name="bmchat_signin_with_email">Войти через свою почту</string>
     <string name="menu_copy_selection_to_clipboard">Копировать выделенное</string>
     <string name="menu_copy_link_to_clipboard">Копировать ссылку</string>
     <string name="menu_copy_text_to_clipboard">Копировать текст</string>
@@ -1168,7 +1170,7 @@
     <!-- deprecated, used on desktop although there is not spell checker -->
     <string name="no_spellcheck_suggestions_found">Не найдены варианты исправления орфографии.</string>
     <string name="show_window">Показать окно</string>
-    <string name="data_found_other_installation_message">Профили из другой установки BMChat или Delta Chat недоступны - разные экземпляры приложения хранят данные в отдельных папках.\n\nЧтобы сохранить существующие профили:\n1. Выйдите сейчас.\n2. Откройте другое приложение - если потребуется, переустановите его из %1$s\n3. Создайте резервные копии каждого профиля в разделе \"Настройки/Чаты\"\n4. Запустите текущую версию приложения\n5. Восстановите данные из резервных копий, выбрав \"У меня уже есть профиль\"\n\nПродолжить без предыдущих профилей?</string>
+    <string name="data_found_other_installation_message">Профили из другой установки BMChat недоступны — разные экземпляры приложения хранят данные в отдельных папках.\n\nЧтобы сохранить существующие профили:\n1. Выйдите сейчас.\n2. Откройте другое приложение — если потребуется, переустановите его из %1$s\n3. Создайте резервные копии каждого профиля в разделе \"Настройки/Чаты\"\n4. Запустите текущую версию приложения\n5. Восстановите данные из резервных копий, выбрав \"У меня уже есть профиль\"\n\nПродолжить без предыдущих профилей?</string>
 
     <!-- title of the "keybindings" dialog (for the keybindings names as such, where possible the normal command strings are used) -->
     <string name="keybindings">Горячие клавиши</string>
