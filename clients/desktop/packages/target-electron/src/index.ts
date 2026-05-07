@@ -162,6 +162,7 @@ import {
   cleanupInternalTempDirs,
 } from './cleanup_temp_dir.js'
 import { shouldHandleLinkInMainApp } from '@deltachat-desktop/shared/util.js'
+import { scheduleUpdateCheck as scheduleBMChatUpdateCheck } from './bmchat-updater.js'
 
 app.ipcReady = false
 app.isQuitting = false
@@ -283,6 +284,9 @@ async function onReady([_appReady, _loadedState, _appx, _webxdc_cleanup]: [
   cleanupInternalTempDirs()
   // NOTE: Make sure to use `powerMonitor` only when electron signals it is ready
   initialisePowerMonitor()
+  // BMChat self-update probe. The function debounces internally so it is
+  // safe to call once on every launch even if the user immediately quits.
+  scheduleBMChatUpdateCheck()
 }
 
 app.once('ipcReady' as any, () => {

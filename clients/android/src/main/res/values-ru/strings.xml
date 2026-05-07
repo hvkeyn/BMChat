@@ -324,6 +324,14 @@
     <string name="invite_friends">Пригласить друзей</string>
     <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...") -->
     <string name="invite_friends_text">Свяжитесь со мной через BMChat:\n%1$s</string>
+
+    <!-- BMChat: отправка инвайт-ссылки на e-mail через SMTP пользователя -->
+    <string name="bmchat_send_invite_by_email">Отправить на e-mail</string>
+    <string name="bmchat_send_invite_by_email_explain">BMChat отправит инвайт-ссылку получателю через ваш почтовый ящик. Если у него установлен BMChat — переписка подхватится автоматически.</string>
+    <string name="bmchat_send_invite_by_email_sent">Приглашение поставлено в очередь отправки. Чат уже открыт — можно писать дальше.</string>
+    <!-- %1$s is replaced by the invite link -->
+    <string name="bmchat_invite_email_body">Привет! Я хочу пообщаться с тобой через BMChat. Открой ссылку ниже — если у тебя уже установлен BMChat, приглашение подхватится автоматически; иначе на странице по ссылке есть инструкция, как поставить приложение.\n\n%1$s</string>
+    <string name="bmchat_invite_email_auto_accepted">Получено приглашение BMChat по e-mail — принято автоматически.</string>
     <string name="menu_copy_selection_to_clipboard">Копировать выделенное</string>
     <string name="menu_copy_link_to_clipboard">Копировать ссылку</string>
     <string name="menu_copy_text_to_clipboard">Копировать текст</string>

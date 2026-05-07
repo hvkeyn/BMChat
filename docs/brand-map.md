@@ -14,8 +14,10 @@ This file tracks every platform surface that must become BMChat-specific.
 | Public website / landing | `http://5.187.4.132/` |
 | Default BMChat relay | _none — users authenticate to their own IMAP/SMTP server_ |
 | Invite link prefix | `http://5.187.4.132/i#…` |
-| Auto-update manifest | `http://5.187.4.132/update.json` |
+| Auto-update manifest (Android) | `http://5.187.4.132/update.json` |
+| Auto-update manifest (Desktop) | `http://5.187.4.132/desktop-update.json` |
 | APK distribution base | `http://5.187.4.132/apk/` |
+| Desktop installer base | `http://5.187.4.132/desktop/<platform-arch>/` |
 
 First-pass identifiers and design tokens are now implementation defaults. Final production domains, signing identities, Firebase/APNs projects, and store metadata still need release approval before public distribution.
 

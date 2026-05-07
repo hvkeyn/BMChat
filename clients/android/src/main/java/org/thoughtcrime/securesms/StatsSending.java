@@ -11,9 +11,7 @@ import androidx.appcompat.app.AlertDialog;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcMsg;
-import java.util.Locale;
 import org.thoughtcrime.securesms.connect.DcHelper;
-import org.thoughtcrime.securesms.util.IntentUtils;
 import org.thoughtcrime.securesms.util.Prefs;
 
 public class StatsSending {
@@ -77,21 +75,13 @@ public class StatsSending {
   }
 
   private static void showStatsThanksDialog(Activity activity) {
-    String stats_id = DcHelper.get(activity, DcHelper.CONFIG_STATS_ID);
+    // BMChat is decoupled from Delta Chat's Qualtrics survey. The opt-in
+    // toggle is kept (some sensitive users may still want to share their
+    // own stats with self-hosted infrastructure later), but the third-party
+    // follow-up survey is removed.
     new AlertDialog.Builder(activity)
         .setMessage(R.string.stats_thanks)
-        .setNeutralButton(R.string.no, (d, i) -> {})
-        .setPositiveButton(
-            R.string.yes,
-            (d, i) -> {
-              String ln = Locale.getDefault().getLanguage();
-              IntentUtils.showInBrowser(
-                  activity,
-                  "https://cispa.qualtrics.com/jfe/form/SV_9YmhkpGa48KxfLg?id="
-                      + stats_id
-                      + "&ln="
-                      + ln);
-            })
+        .setPositiveButton(R.string.ok, (d, i) -> {})
         .show();
   }
 

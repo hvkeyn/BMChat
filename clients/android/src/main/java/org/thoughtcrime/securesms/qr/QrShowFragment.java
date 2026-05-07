@@ -4,12 +4,15 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -18,6 +21,7 @@ import androidx.fragment.app.Fragment;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcEvent;
+import com.b44t.messenger.DcMsg;
 import com.caverock.androidsvg.SVG;
 import com.caverock.androidsvg.SVGImageView;
 import com.caverock.androidsvg.SVGParseException;
@@ -206,13 +210,93 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
     View view = View.inflate(getActivity(), R.layout.dialog_share_invite_link, null);
     String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
     ((TextView) view.findViewById(R.id.invite_link)).setText(inviteURL);
-    new AlertDialog.Builder(getActivity())
+    AlertDialog dialog = new AlertDialog.Builder(getActivity())
         .setView(view)
         .setNegativeButton(R.string.cancel, null)
         .setNeutralButton(R.string.menu_copy_to_clipboard, (d, b) -> copyQrData())
         .setPositiveButton(R.string.menu_share, (d, b) -> shareInviteURL())
-        .create()
+        .create();
+    // Append a third button "Отправить на e-mail". The dialog has only one
+    // POSITIVE / NEUTRAL / NEGATIVE slot so we attach an explicit button via
+    // the dialog content instead.
+    Button mailBtn = view.findViewById(R.id.bmchat_share_via_email);
+    if (mailBtn != null) {
+      mailBtn.setOnClickListener(v -> {
+        dialog.dismiss();
+        showSendByEmailDialog();
+      });
+    }
+    dialog.show();
+  }
+
+  /**
+   * Opens an input dialog asking for a recipient e-mail address. On confirm,
+   * BMChat creates (or reuses) a 1:1 chat with that contact and sends the
+   * invite link as a regular email through the user's own SMTP server. The
+   * receiving side, if running BMChat, will pick the message up via IMAP and
+   * the embedded link will trigger the SecureJoin handshake.
+   */
+  public void showSendByEmailDialog() {
+    final Activity activity = getActivity();
+    if (activity == null) return;
+    final String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
+    if (inviteURL == null || inviteURL.isEmpty()) {
+      Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    final EditText input = new EditText(activity);
+    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+    input.setHint(R.string.email_address);
+    int padding = (int) (16 * activity.getResources().getDisplayMetrics().density);
+    input.setPadding(padding, padding / 2, padding, padding / 2);
+
+    new AlertDialog.Builder(activity)
+        .setTitle(R.string.menu_share)
+        .setMessage(activity.getString(R.string.bmchat_send_invite_by_email_explain))
+        .setView(input)
+        .setNegativeButton(R.string.cancel, null)
+        .setPositiveButton(R.string.menu_send, (d, w) -> {
+          String email = input.getText().toString().trim();
+          if (!isValidEmail(email)) {
+            Toast.makeText(activity, R.string.bad_email_address, Toast.LENGTH_SHORT).show();
+            return;
+          }
+          sendInviteByEmail(email, inviteURL);
+        })
         .show();
+  }
+
+  private static boolean isValidEmail(String s) {
+    return s != null && Patterns.EMAIL_ADDRESS.matcher(s).matches();
+  }
+
+  /**
+   * Creates (or reuses) a 1:1 chat with `email` and sends a single message
+   * with the invite link in the body. The whole transport runs over the
+   * user's own IMAP/SMTP credentials — no third-party server is involved.
+   */
+  private void sendInviteByEmail(String email, String inviteURL) {
+    final Activity activity = getActivity();
+    try {
+      int contactId = dcContext.createContact(null, email);
+      if (contactId == 0) {
+        Toast.makeText(activity, R.string.bad_email_address, Toast.LENGTH_SHORT).show();
+        return;
+      }
+      int targetChatId = dcContext.createChatByContactId(contactId);
+      if (targetChatId == 0) {
+        Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
+        return;
+      }
+      String body = activity.getString(R.string.bmchat_invite_email_body, inviteURL);
+      DcMsg msg = new DcMsg(dcContext, DcMsg.DC_MSG_TEXT);
+      msg.setText(body);
+      dcContext.sendMsg(targetChatId, msg);
+      Toast.makeText(activity, R.string.bmchat_send_invite_by_email_sent, Toast.LENGTH_LONG).show();
+    } catch (Throwable t) {
+      Log.e(TAG, "failed to send invite by email", t);
+      Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
+    }
   }
 
   @Override

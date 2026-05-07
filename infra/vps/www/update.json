@@ -1,11 +1,11 @@
 {
-  "versionCode": 748,
-  "versionName": "2.49.0",
+  "versionCode": 749,
+  "versionName": "2.49.1",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.0.apk",
-  "sha256": "01f3fe6578475f59b80af442639a6474a3d08a8d0a94b56b14951bf64f39daf6",
-  "size": 76412639,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.1.apk",
+  "sha256": "d852b2fd60f72babe75dd44db4d9a90f5489f0cfa134b70351f77c710bc68afd",
+  "size": 76419302,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-07T01:00:00Z",
-  "notes": "Сборка с пересобранным Rust core: invite-host BMChat (http://5.187.4.132/i#…), строгий фильтр писем, авто-обновления."
+  "publishedAt": "2026-05-07T04:30:00Z",
+  "notes": "Email-приглашения: можно отправить инвайт на конкретный e-mail прямо из BMChat — приём идёт через ваш SMTP. На стороне получателя BMChat автоматически распознаёт приглашение в письме и запускает SecureJoin без ручного нажатия. Сервер используется только для landing/обновлений, всё остальное — через почту."
 }

@@ -196,6 +196,12 @@ public class DcEventCenter {
       case DcContext.DC_EVENT_INCOMING_MSG:
         DcHelper.getNotificationCenter(context)
             .notifyMessage(accountId, event.getData1Int(), event.getData2Int());
+        // BMChat: detect e-mailed invite links and auto-trigger SecureJoin so
+        // the user gets a verified contact without having to tap the link.
+        if (accountId == context.getDcContext().getAccountId()) {
+          BMChatInviteAutoAcceptor.onIncomingMsg(
+              context, context.getDcContext(), event.getData1Int(), event.getData2Int());
+        }
         break;
 
       case DcContext.DC_EVENT_INCOMING_REACTION:

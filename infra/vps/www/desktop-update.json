@@ -1,0 +1,27 @@
+{
+  "version": "2.49.1",
+  "publishedAt": "2026-05-07T01:00:00Z",
+  "notes": "Текущая стабильная сборка BMChat для рабочего стола.",
+  "platforms": {
+    "win32-x64": {
+      "url": "http://5.187.4.132/desktop/win-x64/BMChat-2.49.1-Setup.x64.exe",
+      "size": 0
+    },
+    "win-x64": {
+      "url": "http://5.187.4.132/desktop/win-x64/BMChat-2.49.1-Setup.x64.exe",
+      "size": 0
+    },
+    "darwin-arm64": {
+      "url": "http://5.187.4.132/desktop/mac-arm64/BMChat-2.49.1-arm64.dmg",
+      "size": 0
+    },
+    "darwin-x64": {
+      "url": "http://5.187.4.132/desktop/mac-x64/BMChat-2.49.1-x64.dmg",
+      "size": 0
+    },
+    "linux-x64": {
+      "url": "http://5.187.4.132/desktop/linux-x64/BMChat-2.49.1-x64.AppImage",
+      "size": 0
+    }
+  }
+}

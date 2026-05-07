@@ -11,13 +11,24 @@ NGINX_SITE=/etc/nginx/sites-enabled/nod-tracker
 stamp() { date +%Y%m%d%H%M%S; }
 
 echo "[bmchat-deploy] preparing webroot at $WEBROOT"
-mkdir -p "$WEBROOT/apk"
-cp -f "$PAYLOAD/www/index.html"   "$WEBROOT/index.html"
-cp -f "$PAYLOAD/www/i.html"       "$WEBROOT/i.html"
-cp -f "$PAYLOAD/www/update.json"  "$WEBROOT/update.json"
+mkdir -p "$WEBROOT/apk" "$WEBROOT/desktop"
+cp -f "$PAYLOAD/www/index.html"           "$WEBROOT/index.html"
+cp -f "$PAYLOAD/www/i.html"               "$WEBROOT/i.html"
+cp -f "$PAYLOAD/www/update.json"          "$WEBROOT/update.json"
+cp -f "$PAYLOAD/www/desktop-update.json"  "$WEBROOT/desktop-update.json"
 if [ -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.0.apk" ]; then
     cp -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.0.apk" "$WEBROOT/apk/"
+fi
+if [ -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.1.apk" ]; then
+    cp -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.1.apk" "$WEBROOT/apk/"
+    ln -sfn "BMChat-foss-debug-2.49.1.apk" "$WEBROOT/apk/BMChat-foss-debug-latest.apk"
+elif [ -f "$WEBROOT/apk/BMChat-foss-debug-2.49.0.apk" ]; then
     ln -sfn "BMChat-foss-debug-2.49.0.apk" "$WEBROOT/apk/BMChat-foss-debug-latest.apk"
+fi
+# Copy any prebuilt desktop installers (electron-builder outputs) into per-arch
+# subfolders if the deploying side staged them under $PAYLOAD/desktop/.
+if [ -d "$PAYLOAD/desktop" ]; then
+    cp -rf "$PAYLOAD/desktop/." "$WEBROOT/desktop/"
 fi
 chown -R www-data:www-data "$WEBROOT"
 find "$WEBROOT" -type d -exec chmod 0755 {} +
@@ -59,51 +70,58 @@ locations_path = pathlib.Path(sys.argv[2])
 text = site_path.read_text()
 locations = locations_path.read_text()
 
-block_marker = "# >>> bmchat injected locations >>>"
-end_marker   = "# <<< bmchat injected locations <<<"
+# Split the original `server { listen 80; server_name X Y; return 301 ...; }`
+# into TWO server blocks:
+#  * one for the BMChat IP, with our static locations and a final 301 fallback;
+#  * one for the original duckdns.org domain, that keeps the unconditional
+#    HTTP -> HTTPS redirect untouched.
+# This keeps the existing nod-tracker user experience intact and avoids any
+# `if (host = …)` magic inside a single server block.
 
-# Drop a previous injection (locations + the catch-all location / we add below).
-text = re.sub(re.escape(block_marker) + r".*?" + re.escape(end_marker) + r"\n?", "", text, flags=re.DOTALL)
-
-# Build the injection. We turn the server-scope `return 301 ...;` (which would
-# short-circuit all requests including our locations) into a `location /` so
-# nginx can prefer a more specific location match.
-indent = "    "
-indented = "\n".join(indent + l for l in locations.splitlines() if l)
-fallback = (
-    indent + "# Fallback: anything not matched above keeps the original 80->443 redirect.\n"
-    + indent + "location / {\n"
-    + indent + indent + "return 301 https://$host$request_uri;\n"
-    + indent + "}\n"
-)
-inject = (
-    indent + block_marker + "\n"
-    + indented + "\n"
-    + fallback
-    + indent + end_marker + "\n"
-)
-
-# Find the http server block (listen 80) for nod-tracker and replace its
-# server-scope `return 301 ...;` with our injection.
 pattern = re.compile(
-    r"(server\s*\{[^{}]*?listen\s+80;[^{}]*?server_name[^;]*5\.187\.4\.132[^;]*;[^{}]*?)(\n\s*return\s+301\s+https://\$host\$request_uri;\s*\n)",
+    r"server\s*\{\s*listen\s+80;\s*server_name\s+([^;]+);\s*return\s+301\s+https://\$host\$request_uri;\s*\}",
     re.DOTALL,
 )
+
+def build_blocks(server_names):
+    names = [n for n in re.split(r"\s+", server_names.strip()) if n]
+    bmchat_names = [n for n in names if n == "5.187.4.132"]
+    other_names = [n for n in names if n != "5.187.4.132"]
+    if not bmchat_names:
+        bmchat_names = ["5.187.4.132"]
+    indent = "    "
+    indented = "\n".join(indent + l for l in locations.splitlines() if l)
+    bmchat_block = (
+        "# BMChat invite / update / APK distribution on plain HTTP (port 80).\n"
+        "server {\n"
+        + indent + "listen 80;\n"
+        + indent + "server_name " + " ".join(bmchat_names) + ";\n\n"
+        + indented + "\n\n"
+        + indent + "# Fallback: anything not explicitly listed redirects to HTTPS\n"
+        + indent + "# so accidental browsing of root via IP still ends up somewhere safe.\n"
+        + indent + "location / {\n"
+        + indent + indent + "return 301 https://$host$request_uri;\n"
+        + indent + "}\n"
+        "}\n"
+    )
+    other_block = ""
+    if other_names:
+        other_block = (
+            "# Original nod-tracker / duckdns HTTP -> HTTPS redirect (untouched).\n"
+            "server {\n"
+            + indent + "listen 80;\n"
+            + indent + "server_name " + " ".join(other_names) + ";\n"
+            + indent + "return 301 https://$host$request_uri;\n"
+            "}\n"
+        )
+    return bmchat_block + ("\n" + other_block if other_block else "")
+
 m = pattern.search(text)
 if m:
-    text = text[:m.start(2)] + "\n" + inject + text[m.end(2):]
-    print("[bmchat-deploy] replaced server-scope `return 301` with location /, injected locations")
+    text = text[:m.start()] + build_blocks(m.group(1)) + text[m.end():]
+    print("[bmchat-deploy] split port-80 server into BMChat (IP) + nod-tracker (duckdns)")
 else:
-    # If we already replaced it on a previous run, just inject locations near the end of the server block.
-    pattern_block = re.compile(
-        r"(server\s*\{[^{}]*?listen\s+80;[^{}]*?server_name[^;]*5\.187\.4\.132[^;]*;.*?)(\n\})",
-        re.DOTALL,
-    )
-    mb = pattern_block.search(text)
-    if not mb:
-        sys.exit("[bmchat-deploy] could not locate port-80 server block with server_name 5.187.4.132")
-    text = text[:mb.start(2)] + "\n" + inject + text[mb.end(2)-1:]
-    print("[bmchat-deploy] re-injected locations into existing port-80 server")
+    sys.exit("[bmchat-deploy] could not find pristine port-80 server block to split")
 
 site_path.write_text(text)
 PYEOF
@@ -117,10 +135,11 @@ systemctl reload nginx
 echo "[bmchat-deploy] verifying endpoints"
 sleep 1
 H="Host: 5.187.4.132"
-curl -sS -H "$H" -o /dev/null -w "  GET /             -> %{http_code}\n" http://127.0.0.1/
-curl -sS -H "$H" -o /dev/null -w "  GET /i            -> %{http_code}\n" http://127.0.0.1/i
-curl -sS -H "$H" -o /dev/null -w "  GET /update.json  -> %{http_code}\n" http://127.0.0.1/update.json
-curl -sS -H "$H" -I -o /dev/null -w "  HEAD /apk/...   -> %{http_code}\n" "http://127.0.0.1/apk/BMChat-foss-debug-latest.apk"
+curl -sS -H "$H" -o /dev/null -w "  GET /                     -> %{http_code}\n" http://127.0.0.1/
+curl -sS -H "$H" -o /dev/null -w "  GET /i                    -> %{http_code}\n" http://127.0.0.1/i
+curl -sS -H "$H" -o /dev/null -w "  GET /update.json          -> %{http_code}\n" http://127.0.0.1/update.json
+curl -sS -H "$H" -o /dev/null -w "  GET /desktop-update.json  -> %{http_code}\n" http://127.0.0.1/desktop-update.json
+curl -sS -H "$H" -I -o /dev/null -w "  HEAD /apk/...             -> %{http_code}\n" "http://127.0.0.1/apk/BMChat-foss-debug-latest.apk"
 curl -sS -H "$H" http://127.0.0.1/update.json | head -20
 
 echo "[bmchat-deploy] done."
