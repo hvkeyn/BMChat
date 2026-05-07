@@ -313,6 +313,12 @@
     <string name="bmchat_invite_email_auto_accepted">A BMChat invitation arrived by e-mail and was accepted automatically.</string>
     <string name="bmchat_send_invite_qr_image">Share QR as image</string>
     <string name="bmchat_signin_with_email">Sign in with your e-mail</string>
+    <string name="bmchat_check_for_updates">Check for updates</string>
+    <string name="bmchat_check_for_updates_summary">Current build: %1$s %2$s</string>
+    <string name="bmchat_resend_invite_title">Resend invite to this contact?</string>
+    <string name="bmchat_resend_invite_explain">Sends a fresh BMChat invitation by e-mail to %1$s using your own SMTP. They can open it with BMChat to start a verified chat — no third-party server is involved.</string>
+    <string name="bmchat_resend_invite_done">Invitation re-sent.</string>
+    <string name="bmchat_resend_invite_menu">Re-send invite by e-mail</string>
     <string name="menu_copy_selection_to_clipboard">Copy Selection</string>
     <string name="menu_copy_link_to_clipboard">Copy Link</string>
     <string name="menu_copy_text_to_clipboard">Copy Text</string>

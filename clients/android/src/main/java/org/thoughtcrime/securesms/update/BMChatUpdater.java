@@ -75,8 +75,11 @@ public final class BMChatUpdater {
 
     private static final String UPDATE_MANIFEST_URL = "http://5.187.4.132/update.json";
 
-    /** Don't issue the same network probe more often than this. */
-    private static final long MIN_CHECK_INTERVAL_MS = 6L * 60L * 60L * 1000L;
+    /** Don't issue the same network probe more often than this. Tightened from
+     *  the original 6 h to 1 h: between two installed bug-fix builds users
+     *  routinely hit a half-day gap where the app saw a pending update but
+     *  refused to retry, which forced them to clear data manually. */
+    private static final long MIN_CHECK_INTERVAL_MS = 60L * 60L * 1000L;
     /** Initial delay after launch before the first probe (keeps cold-start snappy). */
     private static final long FOREGROUND_DELAY_MS  = 8L * 1000L;
     /** While the app stays in foreground, re-poke the updater every 30 minutes
@@ -86,6 +89,12 @@ public final class BMChatUpdater {
     private static final String PREFS_NAME              = "bmchat-updater";
     private static final String PREF_LAST_CHECK_AT      = "last-check-at";
     private static final String PREF_DECLINED_VERSION   = "declined-version-code";
+    /** Last {@link BuildConfig#VERSION_CODE} that performed a check. When the
+     *  installed app jumps versions (the user just upgraded) we forcibly clear
+     *  the debounce so the freshly-launched build always polls the manifest
+     *  once — otherwise a back-to-back hot-fix release would silently sit
+     *  behind a stale {@link #PREF_LAST_CHECK_AT} timestamp. */
+    private static final String PREF_LAST_CHECK_VC      = "last-check-version-code";
 
     private static final String INSTALL_ACTION =
             "org.thoughtcrime.securesms.update.BMChatUpdater.INSTALL_RESULT";
@@ -125,6 +134,52 @@ public final class BMChatUpdater {
         MAIN.postDelayed(poke, FOREGROUND_DELAY_MS);
     }
 
+    /**
+     * Manual entry point invoked from "Settings → Advanced → Check for
+     * updates". Bypasses the silent debounce and the previously-declined
+     * cache, and reports the result inline so the user always knows whether
+     * a probe actually happened.
+     */
+    @MainThread
+    public static void checkNowFromUi(final Activity activity) {
+        if (activity == null || activity.isFinishing()) return;
+        Toast.makeText(activity, "Проверяем обновления BMChat…", Toast.LENGTH_SHORT).show();
+        EXEC.submit(() -> {
+            try {
+                final Manifest manifest = fetchManifest();
+                if (manifest == null) {
+                    MAIN.post(() -> Toast.makeText(activity,
+                            "Не удалось получить update.json — проверьте сеть.",
+                            Toast.LENGTH_LONG).show());
+                    return;
+                }
+                Context ctx = activity.getApplicationContext();
+                ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                        .edit()
+                        .putLong(PREF_LAST_CHECK_AT, System.currentTimeMillis())
+                        .putLong(PREF_LAST_CHECK_VC, BuildConfig.VERSION_CODE)
+                        // Clear any "don't ask again for this version" stamp,
+                        // since the user explicitly asked us to check.
+                        .remove(PREF_DECLINED_VERSION)
+                        .apply();
+
+                if (manifest.versionCode <= BuildConfig.VERSION_CODE) {
+                    MAIN.post(() -> Toast.makeText(activity,
+                            "У вас уже установлена последняя версия BMChat ("
+                                    + BuildConfig.VERSION_NAME + ").",
+                            Toast.LENGTH_LONG).show());
+                    return;
+                }
+                MAIN.post(() -> promptUser(activity, manifest));
+            } catch (Throwable t) {
+                android.util.Log.w(TAG, "manual update check failed", t);
+                MAIN.post(() -> Toast.makeText(activity,
+                        "Ошибка проверки обновлений: " + t.getMessage(),
+                        Toast.LENGTH_LONG).show());
+            }
+        });
+    }
+
     @AnyThread
     private static void checkInBackground(final Activity activity) {
         if (!RUNNING.compareAndSet(false, true)) return;
@@ -143,20 +198,29 @@ public final class BMChatUpdater {
     private static void runCheck(final Activity activity) throws Exception {
         Context ctx = activity.getApplicationContext();
         long now = System.currentTimeMillis();
-        long last = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .getLong(PREF_LAST_CHECK_AT, 0L);
+        android.content.SharedPreferences prefs =
+                ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        long last = prefs.getLong(PREF_LAST_CHECK_AT, 0L);
+        long lastVc = prefs.getLong(PREF_LAST_CHECK_VC, 0L);
+        // Reset the debounce when the app itself was updated since the last
+        // check: a fresh build should always re-probe the manifest at least
+        // once on first launch.
+        if (lastVc != BuildConfig.VERSION_CODE) {
+            last = 0L;
+        }
         if (now - last < MIN_CHECK_INTERVAL_MS) return;
 
         Manifest manifest = fetchManifest();
         if (manifest == null) return;
 
-        ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .edit().putLong(PREF_LAST_CHECK_AT, now).apply();
+        prefs.edit()
+                .putLong(PREF_LAST_CHECK_AT, now)
+                .putLong(PREF_LAST_CHECK_VC, BuildConfig.VERSION_CODE)
+                .apply();
 
         if (manifest.versionCode <= BuildConfig.VERSION_CODE) return;
 
-        long declined = ctx.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .getLong(PREF_DECLINED_VERSION, 0L);
+        long declined = prefs.getLong(PREF_DECLINED_VERSION, 0L);
         if (declined == manifest.versionCode) return;
 
         MAIN.post(() -> promptUser(activity, manifest));

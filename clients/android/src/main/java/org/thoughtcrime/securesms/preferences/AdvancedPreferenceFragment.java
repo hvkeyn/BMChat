@@ -32,12 +32,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Objects;
 import org.thoughtcrime.securesms.ApplicationPreferencesActivity;
+import org.thoughtcrime.securesms.BuildConfig;
 import org.thoughtcrime.securesms.LogViewActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.StatsSending;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.proxy.ProxySettingsActivity;
 import org.thoughtcrime.securesms.relay.RelayListActivity;
+import org.thoughtcrime.securesms.update.BMChatUpdater;
 import org.thoughtcrime.securesms.util.Prefs;
 import org.thoughtcrime.securesms.util.ScreenLockUtil;
 import org.thoughtcrime.securesms.util.StreamUtil;
@@ -140,6 +142,16 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
       screenSecurity.setOnPreferenceChangeListener(new ScreenShotSecurityListener());
     }
 
+    Preference checkForUpdates = this.findPreference("pref_check_for_updates");
+    if (checkForUpdates != null) {
+      checkForUpdates.setSummary(getString(R.string.bmchat_check_for_updates_summary,
+              getString(R.string.app_name), BuildConfig.VERSION_NAME));
+      checkForUpdates.setOnPreferenceClickListener(p -> {
+        BMChatUpdater.checkNowFromUi(requireActivity());
+        return true;
+      });
+    }
+
     Preference submitDebugLog = this.findPreference("pref_view_log");
     if (submitDebugLog != null) {
       submitDebugLog.setOnPreferenceClickListener(new ViewLogListener());
@@ -215,7 +227,10 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
     }
 
     if (dcContext.isChatmail()) {
-      findPreference("pref_category_legacy").setVisible(false);
+      Preference legacyCategory = findPreference("pref_category_legacy");
+      if (legacyCategory != null) {
+        legacyCategory.setVisible(false);
+      }
     }
   }
 
@@ -231,14 +246,27 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
             ((ApplicationPreferencesActivity) requireActivity()).getSupportActionBar())
         .setTitle(R.string.menu_advanced);
 
-    String value = Integer.toString(dcContext.getConfigInt("show_emails"));
-    showEmails.setValue(value);
-    updateListSummary(showEmails, value);
-
-    selfReportingCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_STATS_SENDING));
-    multiDeviceCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_BCC_SELF));
-    mvboxMoveCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_MVBOX_MOVE));
-    onlyFetchMvboxCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_ONLY_FETCH_MVBOX));
+    // BMChat hides several upstream preferences (Show Classic Emails,
+    // self-reporting/stats), so the corresponding `findPreference` lookup
+    // returns null. The original Delta Chat code assumed all of these were
+    // always present and would NPE on screen open. Guard each one.
+    if (showEmails != null) {
+      String value = Integer.toString(dcContext.getConfigInt("show_emails"));
+      showEmails.setValue(value);
+      updateListSummary(showEmails, value);
+    }
+    if (selfReportingCheckbox != null) {
+      selfReportingCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_STATS_SENDING));
+    }
+    if (multiDeviceCheckbox != null) {
+      multiDeviceCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_BCC_SELF));
+    }
+    if (mvboxMoveCheckbox != null) {
+      mvboxMoveCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_MVBOX_MOVE));
+    }
+    if (onlyFetchMvboxCheckbox != null) {
+      onlyFetchMvboxCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_ONLY_FETCH_MVBOX));
+    }
   }
 
   protected File copyToCacheDir(Uri uri) throws IOException {

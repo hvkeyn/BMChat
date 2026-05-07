@@ -334,6 +334,12 @@
     <string name="bmchat_invite_email_auto_accepted">Получено приглашение BMChat по e-mail — принято автоматически.</string>
     <string name="bmchat_send_invite_qr_image">Отправить QR картинкой</string>
     <string name="bmchat_signin_with_email">Войти через свою почту</string>
+    <string name="bmchat_check_for_updates">Проверить обновления</string>
+    <string name="bmchat_check_for_updates_summary">Текущая сборка: %1$s %2$s</string>
+    <string name="bmchat_resend_invite_title">Повторно отправить приглашение?</string>
+    <string name="bmchat_resend_invite_explain">BMChat отправит письмо с приглашением на %1$s через ваш SMTP. Получатель сможет открыть его в BMChat и автоматически установить защищённый канал — стороннние серверы не задействуются.</string>
+    <string name="bmchat_resend_invite_done">Приглашение отправлено повторно.</string>
+    <string name="bmchat_resend_invite_menu">Повторно пригласить по e-mail</string>
     <string name="menu_copy_selection_to_clipboard">Копировать выделенное</string>
     <string name="menu_copy_link_to_clipboard">Копировать ссылку</string>
     <string name="menu_copy_text_to_clipboard">Копировать текст</string>

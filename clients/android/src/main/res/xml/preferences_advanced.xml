@@ -3,6 +3,11 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
+        android:key="pref_check_for_updates"
+        android:title="@string/bmchat_check_for_updates"
+        android:summary="@string/bmchat_check_for_updates_summary" />
+
+    <Preference
         android:key="pref_view_log"
         android:title="@string/pref_view_log" />
 

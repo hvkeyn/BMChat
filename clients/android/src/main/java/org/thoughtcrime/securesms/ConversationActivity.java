@@ -560,6 +560,36 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       menu.findItem(R.id.menu_archive_chat).setTitle(R.string.menu_unarchive_chat);
     }
 
+    // BMChat: when this is a 1:1 chat the other side has not yet replied to,
+    // expose a "Re-send invite by e-mail" entry so the user can nudge them
+    // again from the conversation itself instead of digging into Settings →
+    // QR-code → Share-by-email.
+    {
+      MenuItem resendItem = menu.findItem(R.id.menu_bmchat_resend_invite);
+      if (resendItem != null) {
+        boolean show = false;
+        try {
+          if (!dcChat.isMultiUser()
+              && !dcChat.isSelfTalk()
+              && !dcChat.isMailingList()
+              && !dcChat.isInBroadcast()
+              && !dcChat.isOutBroadcast()) {
+            DcContext dcCtx = DcHelper.getContext(context);
+            int[] contacts = dcCtx.getChatContacts(chatId);
+            if (contacts != null && contacts.length == 1) {
+              DcContact c = dcCtx.getContact(contacts[0]);
+              show = c != null
+                  && c.getAddr() != null
+                  && !c.getAddr().isEmpty();
+            }
+          }
+        } catch (Throwable t) {
+          Log.w(TAG, "resend-invite menu visibility check failed", t);
+        }
+        resendItem.setVisible(show);
+      }
+    }
+
     Util.redMenuItem(menu, R.id.menu_leave);
     Util.redMenuItem(menu, R.id.menu_clear_chat);
     Util.redMenuItem(menu, R.id.menu_delete_chat);
@@ -619,6 +649,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       return true;
     } else if (itemId == R.id.menu_archive_chat) {
       handleArchiveChat();
+      return true;
+    } else if (itemId == R.id.menu_bmchat_resend_invite) {
+      handleBMChatResendInvite();
       return true;
     } else if (itemId == R.id.menu_clear_chat) {
       fragment.handleClearChat();
@@ -777,6 +810,53 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
             .show();
     Util.redPositiveButton(dialog);
     Util.redButton(dialog, AlertDialog.BUTTON_NEGATIVE);
+  }
+
+  /**
+   * BMChat: re-send the SecureJoin invite by ordinary e-mail to the contact
+   * of the current 1:1 chat. The body contains the canonical
+   * {@code http://5.187.4.132/i#…} link (rewritten via {@link Util}); the
+   * receiver's BMChat picks it up automatically through
+   * {@code BMChatInviteAutoAcceptor}, so the contact lands in a fresh
+   * verified chat without manually tapping the link.
+   */
+  private void handleBMChatResendInvite() {
+    final DcContext dcCtx = DcHelper.getContext(context);
+    int[] contacts = dcCtx.getChatContacts(chatId);
+    if (contacts == null || contacts.length != 1) {
+      Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    DcContact contact = dcCtx.getContact(contacts[0]);
+    final String addr = contact != null ? contact.getAddr() : null;
+    if (addr == null || addr.isEmpty()) {
+      Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    final String inviteUrl = Util.rewriteInviteLink(dcCtx.getSecurejoinQr(0));
+    if (inviteUrl == null || inviteUrl.isEmpty()) {
+      Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    new AlertDialog.Builder(this)
+        .setTitle(R.string.bmchat_resend_invite_title)
+        .setMessage(getString(R.string.bmchat_resend_invite_explain, addr))
+        .setNegativeButton(R.string.cancel, null)
+        .setPositiveButton(R.string.menu_send, (d, w) -> {
+          try {
+            int targetChatId =
+                dcCtx.createChatByContactId(contacts[0]);
+            DcMsg msg = new DcMsg(dcCtx, DcMsg.DC_MSG_TEXT);
+            msg.setText(getString(R.string.bmchat_invite_email_body, inviteUrl));
+            dcCtx.sendMsg(targetChatId, msg);
+            Toast.makeText(this, R.string.bmchat_resend_invite_done,
+                Toast.LENGTH_LONG).show();
+          } catch (Throwable t) {
+            Log.w(TAG, "resend-invite failed", t);
+            Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
+          }
+        })
+        .show();
   }
 
   private void handleArchiveChat() {
