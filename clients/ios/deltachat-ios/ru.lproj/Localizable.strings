@@ -244,7 +244,7 @@
 "share_invite_link" = "Поделиться ссылкой-приглашением";
 "share_invite_link_explain" = "Кто угодно, у кого есть эта ссылка, сможет просмотреть ваш профиль и начать с вами беседу. Делитесь ею только с теми людьми, которым вы доверяете.";
 "invite_friends" = "Пригласить друзей";
-// %1$s is replaced by the user's invitation link ("https://i.bmchat.example/...")
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...")
 "invite_friends_text" = "Свяжитесь со мной через BMChat:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Копировать выделенное";
 "menu_copy_link_to_clipboard" = "Копировать ссылку";

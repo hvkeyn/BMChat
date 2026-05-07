@@ -2,7 +2,7 @@
 
 ## Current Status
 
-Initial BMChat fork setup plan is complete and pushed to GitHub. First visible BMChat rebrand pass is implemented locally. BMChat server/filtering pass is implemented locally with new test builds. After user feedback against the previous build, a UI-side guard layer was added across Android, desktop, and iOS that hides mailing-list / classic-email noise, suppresses related notifications, scrubs Delta artwork from QR codes, rewrites legacy `i.delta.chat` invite hyperlinks to `i.bmchat.example`, fixes the "Больше информации" button on the Android login form, and rewrites the `secure_join_wait` device message. The BMChat Rust core was then cross-compiled in WSL Ubuntu 24.04 with Rust 1.91.1 and Android NDK r25c, and the resulting `libnative-utils.so` for all four ABIs is now bundled with the APK so the patched core (strict mail filter, BMChat invite host, deactivated donations) is active at runtime.
+BMChat now runs against a real distribution VPS at `5.187.4.132`. Invite links and QR codes use the canonical form `http://5.187.4.132/i#FRAGMENT` across the Rust core, Android, desktop, and iOS clients, with legacy `i.bmchat.example` and upstream `i.delta.chat` hosts kept readable for compatibility. The Rust core was recompiled in WSL Ubuntu 24.04 with Rust 1.91.1 and Android NDK r25c so the new host is baked into the native library, and the Android APK was rebuilt with `versionCode 748`. A nginx site on the VPS serves a landing page (`/`), an invite landing page (`/i`), the auto-update manifest (`/update.json`), and the APK (`/apk/BMChat-foss-debug-2.49.0.apk`); the deployment is idempotent because `infra/vps/deploy.sh` keeps a pristine copy of the original nginx config and re-patches it from scratch on every run. An in-app updater (`BMChatUpdater`) polls the manifest at most every 6 hours, verifies SHA-256, and prompts the user to install via `PackageInstaller`. Cleartext HTTP is whitelisted only for `5.187.4.132` via `network_security_config.xml`.
 
 ## Completed
 
@@ -76,10 +76,15 @@ Initial BMChat fork setup plan is complete and pushed to GitHub. First visible B
   - Ran `clients/android/scripts/ndk-make.sh` end-to-end, producing fresh `libdeltachat.a` and then `libnative-utils.so` per ABI (`armeabi-v7a`, `arm64-v8a`, `x86`, `x86_64`).
   - Allowed `clients/android/libs/<ABI>/libnative-utils.so` in `.gitignore` so the prebuilt native core ships with the repo and Windows users can assemble the APK without the Rust/NDK toolchain.
   - Rebuilt and re-archived `BMChat-foss-debug-2.49.0.apk` and `BMChat-gplay-debug-2.49.0.apk` with the BMChat-flavoured native core.
+- Switched the BMChat invite link host from the placeholder `i.bmchat.example` to a real distribution VPS at `5.187.4.132`:
+  - Stood up nginx on the VPS to serve `/` (landing), `/i` (invite landing that decodes the URL fragment client-side), `/update.json` (auto-update manifest), and `/apk/...` (signed APKs). Wrote `infra/vps/deploy.sh` + `infra/vps/nginx/bmchat-locations.conf` + `infra/vps/www/{index,i}.html` and made the deploy idempotent by capturing the pristine nginx site as `/etc/nginx/backups/nod-tracker.original` and re-patching from it.
+  - Updated `qr.rs`, `securejoin.rs`, and `stock_str.rs` in both copies of the bundled Rust core; `Util.java` (`INVITE_HOST`/`LEGACY_INVITE_HOSTS`/`rewriteInviteLink`/`isInviteURL`), `QrShowFragment.fixSVG`, `WebViewActivity`, and `AndroidManifest.xml` deep-link intent filter on Android; `shared/util.ts` and `constants.ts` on desktop; `Utils.swift`, `WebxdcViewController`, and `AppDelegate` on iOS. Older invite URLs (`https://i.bmchat.example/#…`, `https://i.delta.chat/#…`) are still recognised on input.
+  - Recompiled the Rust core in WSL and rebuilt both Android APKs as `versionCode 748` (still `versionName 2.49.0`); SHA-256 of the FOSS debug APK is `01f3fe65…f64f39daf6`.
+- Added an in-app auto-updater for Android (`org.thoughtcrime.securesms.update.BMChatUpdater`) wired into `ConversationListActivity.onResume`. It polls `http://5.187.4.132/update.json` at most every 6 hours, downloads the APK to `cacheDir/updates/`, verifies SHA-256, and launches `Intent.ACTION_VIEW` against a FileProvider URI so the system installer can replace the running app. `network_security_config.xml` whitelists cleartext only for `5.187.4.132`.
 
 ## In Progress
 
-Manual artifact testing for the new server/filtering builds.
+Real-device smoke test of the auto-update flow + invite link rewriting in the freshly compiled APK.
 
 ## Not Started
 

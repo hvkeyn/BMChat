@@ -8,14 +8,19 @@
     "description": "BMChat combines familiar messenger workflows with decentralized email/chatmail transport."
   },
   "endpoints": {
-    "defaultChatmailHost": "chatmail.bmchat.example",
+    "defaultChatmailHost": "",
     "relayDirectoryUrl": "",
     "providerOverviewBaseUrl": "",
-    "inviteHost": "i.bmchat.example",
+    "inviteScheme": "http",
+    "inviteHost": "5.187.4.132",
+    "invitePath": "/i",
+    "legacyInviteHosts": ["i.bmchat.example", "i.delta.chat"],
     "notificationRegisterUrl": "",
     "turnServerHost": "",
     "statsRecipient": "",
-    "updateUrl": ""
+    "updateUrl": "http://5.187.4.132/update.json",
+    "updateApkBaseUrl": "http://5.187.4.132/apk",
+    "websiteUrl": "http://5.187.4.132/"
   },
   "mailPolicy": {
     "allowClassicEmailLogin": true,

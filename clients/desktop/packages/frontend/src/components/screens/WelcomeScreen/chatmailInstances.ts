@@ -4,7 +4,9 @@ import type { QrWithUrl } from '../../../backend/qr-types'
 export const CHATMAIL_INSTANCES_LIST_URL = ''
 
 // Hostname of the default chatmail instance
-export const DEFAULT_CHATMAIL_HOSTNAME = 'chatmail.bmchat.example'
+// BMChat does not run a chatmail relay; users always log in to their own
+// IMAP/SMTP server, so there is no default hostname to seed.
+export const DEFAULT_CHATMAIL_HOSTNAME = ''
 
 // URL to privacy policy of default BMChat Chatmail instance
 export const DEFAULT_INSTANCE_PRIVACY_POLICY_URL = `https://${DEFAULT_CHATMAIL_HOSTNAME}/privacy.html`

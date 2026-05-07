@@ -444,6 +444,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     if (DcHelper.getContext(this).isSendingLocationsToChat(0)) {
       LocationStreamingService.ensureRunning(this);
     }
+    org.thoughtcrime.securesms.update.BMChatUpdater.scheduleForActivity(this);
   }
 
   @Override

@@ -67,7 +67,9 @@ public class InstantOnboardingActivity extends BaseActionBarActivity
   private static final String DCACCOUNT = "dcaccount";
   private static final String DCLOGIN = "dclogin";
   private static final String INSTANCES_URL = "";
-  private static final String DEFAULT_CHATMAIL_HOST = "chatmail.bmchat.example";
+  /** No default chatmail host: BMChat does not run a chatmail relay, the user
+   *  brings their own mail account. Empty string disables instant onboarding. */
+  private static final String DEFAULT_CHATMAIL_HOST = "";
 
   private static final int REQUEST_CODE_AVATAR = 1;
 

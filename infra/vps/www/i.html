@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BMChat invite</title>
+<style>
+  :root { --bg: #2a0c14; --bg2: #4a121f; --fg: #f7f1ec; --acc: #c84a5e; --muted: #d3b9a8; }
+  html, body { margin: 0; padding: 0; height: 100%; background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 56px 24px; }
+  h1 { font-size: 2rem; margin: 0 0 8px; }
+  h1 span { color: var(--acc); }
+  p { line-height: 1.55; color: var(--muted); }
+  .b { display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 24px; background: var(--acc); color: #fff; font-weight: 700; font-size: 44px; margin-bottom: 16px; }
+  .actions { margin-top: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .btn { display: block; padding: 14px 18px; border-radius: 12px; background: var(--acc); color: #fff; text-decoration: none; font-weight: 600; text-align: center; }
+  .btn.secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--fg); }
+  code { display: block; word-break: break-all; background: rgba(255,255,255,0.07); padding: 12px; border-radius: 10px; font-size: 0.85em; margin-top: 12px; }
+  small { color: rgba(255,255,255,0.5); }
+</style>
+</head>
+<body>
+<main>
+  <div class="b">B</div>
+  <h1>Вас пригласили в <span>BMChat</span></h1>
+  <p>BMChat — это мессенджер, который работает через вашу почту. Для подключения по этому приглашению нужно установить приложение и открыть ссылку из него.</p>
+  <div class="actions">
+    <a id="open" class="btn" href="#">Открыть в BMChat</a>
+    <a class="btn secondary" href="/apk/BMChat-foss-debug-latest.apk">Скачать APK для Android</a>
+  </div>
+  <p><small>Если кнопка «Открыть в BMChat» ничего не делает — приложение пока не установлено. Скопируйте ссылку ниже и вставьте её в BMChat → Сканер QR / Вставить ссылку.</small></p>
+  <code id="raw"></code>
+</main>
+<script>
+  // The invite payload is in the fragment (#...) and never reaches the server.
+  // We just turn the same fragment back into an OPENPGP4FPR/DCACCOUNT URI for the app.
+  (function () {
+    var raw = location.hash.replace(/^#/, "");
+    document.getElementById("raw").textContent = raw ? "https://5.187.4.132/i#" + raw : "(нет данных приглашения в ссылке)";
+    if (raw) {
+      var openLink = document.getElementById("open");
+      // Try the regular https link first, then the dcaccount/openpgp4fpr fallback.
+      // Android's intent filter on BMChat handles all of them.
+      openLink.href = "https://5.187.4.132/i#" + raw;
+    }
+  })();
+</script>
+</body>
+</html>

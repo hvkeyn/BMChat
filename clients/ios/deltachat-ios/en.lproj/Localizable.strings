@@ -249,7 +249,7 @@
 "share_invite_link" = "Share Invite Link";
 "share_invite_link_explain" = "Anyone with this link can view your profile and start a chat with you. Only share it with people you trust.";
 "invite_friends" = "Invite Friends";
-// %1$s is replaced by the user's invitation link ("https://i.bmchat.example/...")
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...")
 "invite_friends_text" = "Contact me on BMChat:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Copy Selection";
 "menu_copy_link_to_clipboard" = "Copy Link";

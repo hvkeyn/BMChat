@@ -1,0 +1,11 @@
+{
+  "versionCode": 748,
+  "versionName": "2.49.0",
+  "releaseChannel": "debug",
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.0.apk",
+  "sha256": "01f3fe6578475f59b80af442639a6474a3d08a8d0a94b56b14951bf64f39daf6",
+  "size": 76412639,
+  "minSdkVersion": 21,
+  "publishedAt": "2026-05-07T01:00:00Z",
+  "notes": "Сборка с пересобранным Rust core: invite-host BMChat (http://5.187.4.132/i#…), строгий фильтр писем, авто-обновления."
+}

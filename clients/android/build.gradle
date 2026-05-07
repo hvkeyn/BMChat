@@ -28,7 +28,7 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        versionCode 747
+        versionCode 748
         versionName "2.49.0"
 
         applicationId "chat.bromore.bmchat.foss"

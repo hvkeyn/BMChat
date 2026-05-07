@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BMChat</title>
+<style>
+  :root { --bg: #2a0c14; --bg2: #4a121f; --fg: #f7f1ec; --acc: #c84a5e; --muted: #d3b9a8; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; height: 100%; background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+  main { max-width: 720px; margin: 0 auto; padding: 56px 24px; }
+  h1 { font-size: 2.4rem; margin: 0 0 8px; letter-spacing: 0.5px; }
+  h1 span { color: var(--acc); }
+  p { line-height: 1.55; color: var(--muted); }
+  .b { display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 28px; background: var(--acc); color: #fff; font-weight: 700; font-size: 56px; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+  ul { padding-left: 1.2em; }
+  li { margin: 6px 0; }
+  .actions { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { display: inline-block; padding: 12px 18px; border-radius: 12px; background: var(--acc); color: #fff; text-decoration: none; font-weight: 600; }
+  .btn.secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--fg); }
+  footer { margin-top: 48px; font-size: 0.85rem; color: rgba(255,255,255,0.4); }
+  code { background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 6px; font-size: 0.9em; }
+</style>
+</head>
+<body>
+<main>
+  <div class="b">B</div>
+  <h1>BMChat <span>•</span> бесплатный мессенджер по почте</h1>
+  <p>BMChat — это форк Delta Chat с фирменным интерфейсом BroMoreChat. Общение идёт прямо через ваш почтовый сервер по IMAP/SMTP, без посредников и закрытых API.</p>
+  <ul>
+    <li>Подключитесь к любому почтовому ящику.</li>
+    <li>Добавляйте контакты по e-mail или QR-инвайту.</li>
+    <li>Сообщения шифруются end-to-end через Autocrypt, если вторая сторона тоже на BMChat.</li>
+    <li>Если её нет — переписка просто идёт обычной почтой.</li>
+  </ul>
+  <div class="actions">
+    <a class="btn" href="/apk/BMChat-foss-debug-latest.apk">Скачать APK для Android</a>
+    <a class="btn secondary" href="/update.json">update.json</a>
+    <a class="btn secondary" href="https://github.com/hvkeyn/BMChat">GitHub</a>
+  </div>
+  <footer>
+    Хост: <code>5.187.4.132</code>. Раздаёт invite-страницы, манифест автообновлений и сборки APK для BMChat-клиента.
+  </footer>
+</main>
+</body>
+</html>

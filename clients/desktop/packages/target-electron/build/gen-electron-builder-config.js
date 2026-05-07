@@ -158,7 +158,7 @@ build['linux'] = {
   files: [...files, PREBUILD_FILTERS.NOT_MAC, PREBUILD_FILTERS.NOT_WINDOWS],
   icon: 'build/icon.icns', // electron builder gets the icon out of the mac icon archive
   description:
-    'BMChat messenger for communication through email systems (https://bmchat.example)',
+    'BMChat messenger for communication through email systems (http://5.187.4.132/)',
 }
 
 build['appImage'] = {

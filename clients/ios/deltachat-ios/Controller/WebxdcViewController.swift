@@ -370,7 +370,8 @@ class WebxdcViewController: WebViewViewController {
         case "mailto":
             openChatFor(url: url)
             decisionHandler(.cancel)
-        case "https" where url.host == Utils.inviteDomain,
+        case "https" where Utils.isInviteHost(url.host),
+             "http" where Utils.isInviteHost(url.host),
              "openpgp4fpr":
             _ = UIApplication.shared.delegate?.application?(UIApplication.shared, open: url)
             decisionHandler(.cancel)

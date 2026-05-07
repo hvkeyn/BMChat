@@ -134,7 +134,7 @@ pub enum StockMessage {
     #[strum(props(fallback = "⚠️ Your BMChat version might be outdated.\n\n\
                     This may cause problems because your chat partners use newer versions - \
                     and you are missing the latest features 😳\n\
-                    Please check https://bmchat.example or your app store for updates."))]
+                    Please check http://5.187.4.132/ or your app store for updates."))]
     UpdateReminderMsgBody = 86,
 
     #[strum(props(
@@ -365,7 +365,7 @@ BMChat keeps communication free through email systems.
 
 Project support links will use BMChat infrastructure.
 
-https://bmchat.example/support"))]
+http://5.187.4.132/"))]
     DonationRequest = 193,
 
     #[strum(props(fallback = "Declined call"))]

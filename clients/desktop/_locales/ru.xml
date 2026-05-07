@@ -317,7 +317,7 @@
     <string name="share_invite_link">Поделиться ссылкой-приглашением</string>
     <string name="share_invite_link_explain">Кто угодно, у кого есть эта ссылка, сможет просмотреть ваш профиль и начать с вами беседу. Делитесь ею только с теми людьми, которым вы доверяете.</string>
     <string name="invite_friends">Пригласить друзей</string>
-    <!-- %1$s is replaced by the user's invitation link ("https://i.bmchat.example/...") -->
+    <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...") -->
     <string name="invite_friends_text">Свяжитесь со мной через BMChat:\n%1$s</string>
     <string name="menu_copy_selection_to_clipboard">Копировать выделенное</string>
     <string name="menu_copy_link_to_clipboard">Копировать ссылку</string>

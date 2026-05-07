@@ -147,9 +147,11 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
     out = out.replaceAll(
         "(?s)<g[^>]*transform=\"scale\\(1\\.1342891,0\\.88160947\\)\"[^>]*>.*?</g>",
         "");
-    // 3. Hyperlinks pointing at the upstream invite host.
-    out = out.replace("https://i.delta.chat", "https://" + Util.INVITE_DOMAIN);
-    out = out.replace("http://i.delta.chat", "https://" + Util.INVITE_DOMAIN);
+    // 3. Hyperlinks pointing at any upstream/legacy invite host.
+    for (String legacy : Util.LEGACY_INVITE_HOSTS) {
+      out = out.replace("https://" + legacy, Util.INVITE_LINK_PREFIX);
+      out = out.replace("http://"  + legacy, Util.INVITE_LINK_PREFIX);
+    }
     return out;
   }
 

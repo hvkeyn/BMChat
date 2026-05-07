@@ -69,3 +69,7 @@ pnpm-debug.log*
 
 # Local test artifacts (kept on disk for ad-hoc handoff, not committed)
 artifacts/
+
+# Throw-away VPS deploy scripts that contain credentials / SSH passwords.
+.tmp-vps-*.sh
+.tmp-*.sh

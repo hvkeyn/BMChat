@@ -11,9 +11,11 @@ This file tracks every platform surface that must become BMChat-specific.
 | Desktop package name | bmchat-desktop |
 | Android application ID placeholder | `chat.bromore.bmchat` |
 | iOS bundle ID placeholder | `chat.bromore.bmchat` |
-| Public website placeholder | `https://bmchat.example` |
-| Default BMChat relay placeholder | `chatmail.bmchat.example` |
-| Invite host placeholder | `i.bmchat.example` |
+| Public website / landing | `http://5.187.4.132/` |
+| Default BMChat relay | _none — users authenticate to their own IMAP/SMTP server_ |
+| Invite link prefix | `http://5.187.4.132/i#…` |
+| Auto-update manifest | `http://5.187.4.132/update.json` |
+| APK distribution base | `http://5.187.4.132/apk/` |
 
 First-pass identifiers and design tokens are now implementation defaults. Final production domains, signing identities, Firebase/APNs projects, and store metadata still need release approval before public distribution.
 
@@ -61,7 +63,7 @@ First-pass implementation keeps upstream workspace package scopes where changing
 Audited after cloning:
 
 - `clients/android/build.gradle`: namespace remains `org.thoughtcrime.securesms`; `applicationId` is `com.b44t.messenger`; gplay flavor overrides it with `chat.delta`; archive base name is `deltachat`.
-- `clients/android/src/main/AndroidManifest.xml`: app label references `@string/app_name`; deeplink host now uses `i.bmchat.example`; shortcut/provider/authority values require a deeper pass before changing.
+- `clients/android/src/main/AndroidManifest.xml`: app label references `@string/app_name`; deeplink host now uses `5.187.4.132` with path `/i` (legacy `i.bmchat.example` and `i.delta.chat` are also accepted); shortcut/provider/authority values require a deeper pass before changing.
 - `clients/android/src/main/res/values/strings.xml`: `app_name` is `Delta Chat` and English product strings are the source baseline.
 - `clients/android/src/main/res/values-ru/strings.xml`: Russian `app_name` is still `Delta Chat`.
 - `clients/android/src/main/res/mipmap-*`, `clients/android/src/debug/res/mipmap-*`, `clients/android/src/main/res/drawable/ic_launcher_foreground_monochrome.xml`: launcher icon resources.

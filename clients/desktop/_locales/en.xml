@@ -300,7 +300,7 @@
     <string name="share_invite_link">Share Invite Link</string>
     <string name="share_invite_link_explain">Anyone with this link can view your profile and start a chat with you. Only share it with people you trust.</string>
     <string name="invite_friends">Invite Friends</string>
-    <!-- %1$s is replaced by the user's invitation link ("https://i.bmchat.example/...") -->
+    <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...") -->
     <string name="invite_friends_text">Contact me on BMChat:\n%1$s</string>
     <string name="menu_copy_selection_to_clipboard">Copy Selection</string>
     <string name="menu_copy_link_to_clipboard">Copy Link</string>
