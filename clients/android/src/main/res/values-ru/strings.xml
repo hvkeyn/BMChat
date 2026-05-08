@@ -861,8 +861,8 @@
     <string name="pref_multidevice">Режим нескольких устройств</string>
     <string name="pref_multidevice_explain">Синхронизируйте свои сообщения с другими устройствами. Функция включается автоматически при добавлении второго устройства</string>
     <string name="pref_multidevice_change_warn">Режим нескольких устройств должен быть включен, если вы используете один и тот же профиль на нескольких устройствах. Отключайте эту настройку, только если вы удалили этот профиль со всех остальных устройств.\n\nОтключение режима нескольких устройств при использовании профиля на нескольких устройствах приведет к потере сообщений и возникновению других проблем.</string>
-    <string name="pref_auto_folder_moves">Автоперемещение в папку DeltaChat</string>
-    <string name="pref_only_fetch_mvbox_title">Загружать только из папки DeltaChat</string>
+    <string name="pref_auto_folder_moves">Автоперемещение в служебную папку</string>
+    <string name="pref_only_fetch_mvbox_title">Загружать только из служебной папки</string>
     <string name="pref_show_emails">Показывать обычную почту</string>
     <string name="pref_show_emails_no">Нет, только чаты</string>
     <string name="pref_show_emails_accepted_contacts">Для принятых контактов</string>

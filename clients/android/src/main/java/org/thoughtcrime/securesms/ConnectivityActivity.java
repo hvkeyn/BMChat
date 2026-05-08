@@ -32,11 +32,30 @@ public class ConnectivityActivity extends WebViewActivity implements DcEventCent
   }
 
   private void refresh() {
-    final String connectivityHtml =
-        DcHelper.getContext(this)
-            .getConnectivityHtml()
-            .replace("</style>", " html { color-scheme: dark light; }</style>");
-    webView.loadDataWithBaseURL(null, connectivityHtml, "text/html", "utf-8", null);
+    String html = DcHelper.getContext(this).getConnectivityHtml();
+    // BMChat is e-mail-first, so the upstream "Хранилище на сервере / Storage
+    // on server" reporting that surfaces a stand-alone "Не поддерживается
+    // вашим провайдером" / "Not supported by your provider" line for plain
+    // IMAP servers (it lives next to "Входящие сообщения" with no header,
+    // see screenshot from May 8) is just visual noise here. Strip the bare
+    // status line — and any sibling section headers that now contain only
+    // that line — before rendering.
+    html =
+        html
+            .replaceAll(
+                "(?si)<[^>]*>\\s*Не поддерживается вашим провайдером\\.?\\s*</[^>]*>",
+                "")
+            .replaceAll(
+                "(?si)<[^>]*>\\s*Not supported by your provider\\.?\\s*</[^>]*>",
+                "")
+            // After the bullet is gone an empty <h3>Storage on Server</h3>
+            // would still take a slot — drop any header followed only by
+            // whitespace and the next header.
+            .replaceAll(
+                "(?si)<h3[^>]*>[^<]*</h3>\\s*(?=<h3|</body)",
+                "");
+    html = html.replace("</style>", " html { color-scheme: dark light; }</style>");
+    webView.loadDataWithBaseURL(null, html, "text/html", "utf-8", null);
   }
 
   @Override
