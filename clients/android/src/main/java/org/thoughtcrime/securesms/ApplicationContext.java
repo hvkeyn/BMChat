@@ -263,6 +263,15 @@ public class ApplicationContext extends MultiDexApplication {
                 // Revert it to the default if it was changed in the past.
                 ac.setConfigInt("webxdc_realtime_enabled", 1);
 
+                // BMChat 2.49.71: enable Spam/Junk fetching by default for
+                // existing users that never toggled the flag, otherwise
+                // BMChat silently drops legitimate messages routed to Spam
+                // by the IMAP server.
+                String fetchSpam = ac.getConfig(DcHelper.CONFIG_FETCH_SPAM);
+                if (fetchSpam == null || fetchSpam.isEmpty()) {
+                  ac.setConfigInt(DcHelper.CONFIG_FETCH_SPAM, 1);
+                }
+
                 // 2025-11-12: this is needed until core starts ignoring "delete_server_after" for
                 // chatmail
                 if (ac.isChatmail()) {

@@ -56,10 +56,13 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
   private DcContext dcContext;
   private StorageUsage usage;
 
+  private ScrollView scrollView;
   private TextView totalText;
   private TextView freeText;
   private TextView evictableText;
   private StorageDonutView donutView;
+  private TextView categorySectionTitle;
+  private TextView chatSectionTitle;
   private LinearLayout categoryList;
   private LinearLayout chatList;
   private TextView emptyText;
@@ -86,20 +89,29 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
 
   @NonNull
   private View buildContentView() {
-    ScrollView scroll = new ScrollView(this);
-    scroll.setFillViewport(true);
+    scrollView = new ScrollView(this);
+    scrollView.setFillViewport(true);
+    // Prevent CheckBoxes inside the lists from stealing initial focus and
+    // auto-scrolling the ScrollView so far that the donut header is hidden.
+    scrollView.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+    scrollView.setFocusable(true);
+    scrollView.setFocusableInTouchMode(true);
     LinearLayout root = new LinearLayout(this);
     root.setOrientation(LinearLayout.VERTICAL);
-    int pad = dp(16);
-    root.setPadding(pad, pad, pad, pad + dp(24));
-    scroll.addView(root, new ScrollView.LayoutParams(-1, -2));
+    int padH = dp(16);
+    int padTop = dp(12);
+    int padBottom = dp(24);
+    root.setPadding(padH, padTop, padH, padBottom);
+    scrollView.addView(root, new ScrollView.LayoutParams(-1, -2));
 
     LinearLayout header = card();
     header.setGravity(Gravity.CENTER_HORIZONTAL);
     donutView = new StorageDonutView(this);
-    header.addView(donutView, new LinearLayout.LayoutParams(dp(160), dp(160)));
+    header.addView(donutView, new LinearLayout.LayoutParams(dp(132), dp(132)));
     totalText = titleText();
     totalText.setGravity(Gravity.CENTER);
+    totalText.setTextSize(16);
+    totalText.setPadding(0, dp(8), 0, 0);
     header.addView(totalText, new LinearLayout.LayoutParams(-1, -2));
     freeText = subtitleText();
     freeText.setGravity(Gravity.CENTER);
@@ -109,32 +121,38 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
     header.addView(evictableText, new LinearLayout.LayoutParams(-1, -2));
     root.addView(header);
 
-    root.addView(sectionTitle(R.string.bmchat_storage_by_type));
+    categorySectionTitle = sectionTitle(R.string.bmchat_storage_by_type);
+    root.addView(categorySectionTitle);
     categoryList = card();
     root.addView(categoryList);
 
-    root.addView(sectionTitle(R.string.bmchat_storage_by_chat));
+    chatSectionTitle = sectionTitle(R.string.bmchat_storage_by_chat);
+    root.addView(chatSectionTitle);
     chatList = card();
     root.addView(chatList);
 
     emptyText = subtitleText();
     emptyText.setText(R.string.bmchat_storage_loading);
     emptyText.setGravity(Gravity.CENTER);
-    root.addView(emptyText, margins(new LinearLayout.LayoutParams(-1, -2), 0, 12, 0, 0));
+    root.addView(emptyText, margins(new LinearLayout.LayoutParams(-1, -2), 0, 12, 0, 12));
 
     Button clear = primaryButton(R.string.bmchat_storage_clear_selected);
     clear.setOnClickListener(v -> confirmClearSelected());
-    root.addView(clear, margins(new LinearLayout.LayoutParams(-1, dp(48)), 0, 16, 0, 0));
+    root.addView(clear, margins(new LinearLayout.LayoutParams(-1, dp(48)), 0, 8, 0, 0));
 
     Button autoCleanup = secondaryButton(R.string.bmchat_storage_auto_cleanup);
     autoCleanup.setOnClickListener(v -> showAutoCleanupDialog());
-    root.addView(autoCleanup, margins(new LinearLayout.LayoutParams(-1, dp(48)), 0, 10, 0, 0));
+    root.addView(autoCleanup, margins(new LinearLayout.LayoutParams(-1, dp(48)), 0, 8, 0, 0));
 
     Button serverCleanup = dangerButton(R.string.bmchat_storage_server_cleanup);
     serverCleanup.setOnClickListener(v -> showServerCleanupDialog());
-    root.addView(serverCleanup, margins(new LinearLayout.LayoutParams(-1, dp(48)), 0, 10, 0, 0));
+    root.addView(serverCleanup, margins(new LinearLayout.LayoutParams(-1, dp(48)), 0, 8, 0, 0));
 
-    return scroll;
+    // Make sure the scroll view starts at the very top so the donut is fully
+    // visible — the first time the activity renders, Android otherwise scrolls
+    // the first focusable descendant (a checkbox) into view.
+    scrollView.post(() -> scrollView.scrollTo(0, 0));
+    return scrollView;
   }
 
   private void loadStorageUsage() {
@@ -176,6 +194,7 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
 
     if (usage.byCategory != null) {
       for (StorageCategoryUsage item : usage.byCategory) {
+        if (safeLong(item.bytes) <= 0L) continue;
         CheckBox box =
             addCheckRow(
                 categoryList,
@@ -191,6 +210,7 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
 
     if (usage.byChat != null) {
       for (StorageChatUsage item : usage.byChat) {
+        if (safeLong(item.bytes) <= 0L) continue;
         CheckBox box =
             addCheckRow(
                 chatList,
@@ -206,9 +226,19 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
       }
     }
 
-    emptyText.setVisibility(
-        categoryChecks.isEmpty() && chatChecks.isEmpty() ? View.VISIBLE : View.GONE);
+    boolean noCategories = categoryChecks.isEmpty();
+    boolean noChats = chatChecks.isEmpty();
+    categorySectionTitle.setVisibility(noCategories ? View.GONE : View.VISIBLE);
+    categoryList.setVisibility(noCategories ? View.GONE : View.VISIBLE);
+    chatSectionTitle.setVisibility(noChats ? View.GONE : View.VISIBLE);
+    chatList.setVisibility(noChats ? View.GONE : View.VISIBLE);
+
+    emptyText.setVisibility(noCategories && noChats ? View.VISIBLE : View.GONE);
     emptyText.setText(R.string.bmchat_storage_empty);
+
+    if (scrollView != null) {
+      scrollView.post(() -> scrollView.scrollTo(0, 0));
+    }
   }
 
   private void confirmClearSelected() {

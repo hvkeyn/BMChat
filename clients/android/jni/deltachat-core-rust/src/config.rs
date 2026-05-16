@@ -172,6 +172,9 @@ pub enum Config {
     ///
     /// This lets users recover BMChat messages that the mail provider
     /// misclassified as spam and teaches the provider "not spam" via MOVE.
+    /// BMChat enables this by default at the Java layer migration in
+    /// ApplicationContext (see CONFIG_FETCH_SPAM bootstrap) so we do not
+    /// need to rebuild libnative-utils.so just to flip the default.
     #[strum(props(default = "0"))]
     FetchSpam,
 

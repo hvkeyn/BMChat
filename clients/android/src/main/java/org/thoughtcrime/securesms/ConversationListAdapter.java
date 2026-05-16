@@ -98,10 +98,14 @@ class ConversationListAdapter
       if (chat.isMailingList()) {
         continue;
       }
-      if (chat.isContactRequest() && !chat.isEncrypted()) {
-        // Classic-mail contact request, has no Chat-Version handshake -> hide it.
-        continue;
-      }
+      // BMChat 2.49.71: previously we hid every unencrypted contact
+      // request from the home screen ("classic-mail" senders without
+      // Chat-Version handshake). That made messages from any new
+      // counterpart that does not yet run BMChat / Delta Chat disappear
+      // silently, which felt like the app was broken. We now keep them
+      // visible — the request badge in the row already makes it clear
+      // they are not yet accepted, and the user can block or accept
+      // explicitly from the conversation screen.
       if (chat.getType() == DcChat.DC_CHAT_TYPE_SINGLE
           && !chat.isSelfTalk()
           && !chat.isDeviceTalk()) {
