@@ -25,9 +25,12 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcChatlist;
+import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcLot;
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Locale;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -81,6 +84,10 @@ class ConversationListAdapter
     int total = dcChatlist.getCnt();
     int[] keep = new int[total];
     int j = 0;
+    // BMChat: enforce one 1:1 chat per e-mail. The chatlist arrives sorted
+    // newest-first, so the first chat we see for a given peer e-mail wins
+    // and any later mirror entries are hidden from the home screen.
+    final HashSet<String> seenAddrs = new HashSet<>();
     for (int i = 0; i < total; i++) {
       int chatId = dcChatlist.getChatId(i);
       if (chatId <= DcChat.DC_CHAT_ID_LAST_SPECIAL) {
@@ -94,6 +101,26 @@ class ConversationListAdapter
       if (chat.isContactRequest() && !chat.isEncrypted()) {
         // Classic-mail contact request, has no Chat-Version handshake -> hide it.
         continue;
+      }
+      if (chat.getType() == DcChat.DC_CHAT_TYPE_SINGLE
+          && !chat.isSelfTalk()
+          && !chat.isDeviceTalk()) {
+        int[] members = dcContext.getChatContacts(chatId);
+        if (members != null && members.length == 1
+            && members[0] != DcContact.DC_CONTACT_ID_SELF) {
+          String addr = null;
+          try {
+            addr = dcContext.getContact(members[0]).getAddr();
+          } catch (Throwable ignored) {
+            // ignored: fall through to the default keep path
+          }
+          if (addr != null) {
+            String key = addr.trim().toLowerCase(Locale.ROOT);
+            if (!key.isEmpty() && !seenAddrs.add(key)) {
+              continue;
+            }
+          }
+        }
       }
       keep[j++] = i;
     }

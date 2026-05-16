@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BMChat 2.49.67: picker layout — adds `fitsSystemWindows` so the toolbar
+  sits below the translucent status bar (otherwise the title and the
+  "Отправить (N)" action overlap the system clock / battery icons), and
+  pads the grid with `bmchat_gallery_grid_bottom_padding` so the last row
+  isn't hidden by the navigation bar.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="@android:color/black">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/bmchat_gallery_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/bmchat_gallery_grid"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none"
+        android:clipToPadding="false"
+        android:paddingTop="2dp"
+        android:paddingLeft="2dp"
+        android:paddingRight="2dp"
+        android:paddingBottom="16dp"/>
+
+</LinearLayout>

@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.LinearLayout;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.core.content.ContextCompat;
 import androidx.emoji2.emojipicker.EmojiPickerView;
@@ -24,12 +25,23 @@ import org.thoughtcrime.securesms.util.ViewUtil;
 public class AddReactionView extends LinearLayout {
   private AppCompatTextView[] defaultReactionViews;
   private AppCompatTextView anyReactionView;
+  // Telegram-style single-tap action icons sitting under the
+  // reactions row. Bound lazily because they live in a layout
+  // subtree that is only inflated when the host fragment exists.
+  private AppCompatImageView actionReplyView;
+  private AppCompatImageView actionQuoteFragmentView;
+  private AppCompatImageView actionEditView;
+  private AppCompatImageView actionCopyView;
+  private AppCompatImageView actionForwardView;
+  private AppCompatImageView actionDeleteView;
+  private View actionsRow;
   private boolean anyReactionClearsReaction;
   private Context context;
   private DcContext dcContext;
   private Rpc rpc;
   private DcMsg msgToReactTo;
   private AddReactionListener listener;
+  private QuickActionListener actionListener;
 
   public AddReactionView(Context context) {
     super(context);
@@ -58,40 +70,91 @@ public class AddReactionView extends LinearLayout {
       }
       anyReactionView = findViewById(R.id.reaction_any);
       anyReactionView.setOnClickListener(v -> anyReactionClicked());
+
+      // Telegram-style action icons. They are optional — only
+      // wired when the host layout actually inflated them.
+      actionsRow        = findViewById(R.id.add_reaction_actions);
+      actionReplyView         = findViewById(R.id.action_reply);
+      actionQuoteFragmentView = findViewById(R.id.action_quote_fragment);
+      actionEditView          = findViewById(R.id.action_edit);
+      actionCopyView          = findViewById(R.id.action_copy);
+      actionForwardView       = findViewById(R.id.action_forward);
+      actionDeleteView        = findViewById(R.id.action_delete);
+      if (actionReplyView != null) {
+        actionReplyView.setOnClickListener(v -> dispatchAction(Action.REPLY));
+      }
+      if (actionQuoteFragmentView != null) {
+        actionQuoteFragmentView.setOnClickListener(
+            v -> dispatchAction(Action.QUOTE_FRAGMENT));
+      }
+      if (actionEditView != null) {
+        actionEditView.setOnClickListener(v -> dispatchAction(Action.EDIT));
+      }
+      if (actionCopyView != null) {
+        actionCopyView.setOnClickListener(v -> dispatchAction(Action.COPY));
+      }
+      if (actionForwardView != null) {
+        actionForwardView.setOnClickListener(v -> dispatchAction(Action.FORWARD));
+      }
+      if (actionDeleteView != null) {
+        actionDeleteView.setOnClickListener(v -> dispatchAction(Action.DELETE));
+      }
     }
   }
 
   public void show(DcMsg msgToReactTo, View parentView, AddReactionListener listener) {
     init(); // init delayed as needed
 
-    if (msgToReactTo.isInfo() || !dcContext.getChat(msgToReactTo.getChatId()).canSend()) {
+    // 2.49.38: only info bubbles are categorically excluded. In
+    // 2.49.37 we also bailed out when canSend()==false, which
+    // hides the popup entirely on channel posts the user is just
+    // subscribed to — even though Copy / Forward / Delete are
+    // still perfectly valid actions there. We now show the popup
+    // unconditionally for non-info messages and let
+    // updateActionsVisibility() and the reactions row decide what
+    // to render.
+    if (msgToReactTo.isInfo()) {
       return;
     }
 
     this.msgToReactTo = msgToReactTo;
     this.listener = listener;
 
-    final String existingReaction = getSelfReaction();
-    boolean existingHilited = false;
-    for (AppCompatTextView defaultReactionView : defaultReactionViews) {
-      if (defaultReactionView.getText().toString().equals(existingReaction)) {
-        defaultReactionView.setBackground(
-            ContextCompat.getDrawable(context, R.drawable.reaction_pill_background_selected));
-        existingHilited = true;
-      } else {
-        defaultReactionView.setBackground(null);
-      }
+    boolean canSend = dcContext.getChat(msgToReactTo.getChatId()).canSend();
+
+    // Hide the entire reactions row when sending is forbidden —
+    // reactions in Delta Chat are real outgoing messages and they
+    // would fail to deliver. Quick-actions row stays.
+    View reactionsRow = findViewById(R.id.add_reaction_row);
+    if (reactionsRow != null) {
+      reactionsRow.setVisibility(canSend ? View.VISIBLE : View.GONE);
     }
 
-    if (existingReaction != null && !existingHilited) {
-      anyReactionView.setText(existingReaction);
-      anyReactionView.setBackground(
-          ContextCompat.getDrawable(context, R.drawable.reaction_pill_background_selected));
-      anyReactionClearsReaction = true;
-    } else {
-      anyReactionView.setText("⋯");
-      anyReactionView.setBackground(null);
-      anyReactionClearsReaction = false;
+    updateActionsVisibility(msgToReactTo);
+
+    final String existingReaction = canSend ? getSelfReaction() : null;
+    if (canSend) {
+      boolean existingHilited = false;
+      for (AppCompatTextView defaultReactionView : defaultReactionViews) {
+        if (defaultReactionView.getText().toString().equals(existingReaction)) {
+          defaultReactionView.setBackground(
+              ContextCompat.getDrawable(context, R.drawable.reaction_pill_background_selected));
+          existingHilited = true;
+        } else {
+          defaultReactionView.setBackground(null);
+        }
+      }
+
+      if (existingReaction != null && !existingHilited) {
+        anyReactionView.setText(existingReaction);
+        anyReactionView.setBackground(
+            ContextCompat.getDrawable(context, R.drawable.reaction_pill_background_selected));
+        anyReactionClearsReaction = true;
+      } else {
+        anyReactionView.setText("⋯");
+        anyReactionView.setBackground(null);
+        anyReactionClearsReaction = false;
+      }
     }
 
     final int offset = (int) (this.getHeight() * 0.666);
@@ -191,5 +254,60 @@ public class AddReactionView extends LinearLayout {
 
   public interface AddReactionListener {
     void onShallHide();
+  }
+
+  /** Bind the Telegram-style action row to a host callback. */
+  public void setQuickActionListener(QuickActionListener l) {
+    this.actionListener = l;
+  }
+
+  /**
+   * Decides which one-tap icons are visible for the current message.
+   * Mirrors the logic that lives in
+   * {@code ConversationFragment#setCorrectMenuVisibility} so the
+   * floating actions stay in sync with the toolbar action mode.
+   */
+  private void updateActionsVisibility(DcMsg msg) {
+    if (actionsRow == null) return;
+    boolean canSend = dcContext.getChat(msg.getChatId()).canSend();
+    boolean hasText = msg.getText() != null && !msg.getText().isEmpty();
+    boolean isOutgoing = msg.isOutgoing();
+    boolean canReply  = canSend && !msg.isInfo();
+    boolean canQuoteFragment = canReply && hasText;
+    boolean canEdit   = canSend && isOutgoing && hasText;
+    boolean canCopy   = hasText;
+    boolean canFwd    = !msg.isInfo();
+    boolean canDelete = true;
+
+    show(actionReplyView,         canReply);
+    show(actionQuoteFragmentView, canQuoteFragment);
+    show(actionEditView,          canEdit);
+    show(actionCopyView,          canCopy);
+    show(actionForwardView,       canFwd);
+    show(actionDeleteView,        canDelete);
+
+    boolean anyVisible = canReply || canQuoteFragment || canEdit
+        || canCopy || canFwd || canDelete;
+    actionsRow.setVisibility(anyVisible ? View.VISIBLE : View.GONE);
+  }
+
+  private static void show(View v, boolean visible) {
+    if (v != null) v.setVisibility(visible ? View.VISIBLE : View.GONE);
+  }
+
+  private void dispatchAction(Action action) {
+    if (actionListener != null && msgToReactTo != null) {
+      actionListener.onQuickAction(action, msgToReactTo);
+    }
+    if (listener != null) {
+      listener.onShallHide();
+    }
+  }
+
+  public enum Action { REPLY, QUOTE_FRAGMENT, EDIT, COPY, FORWARD, DELETE }
+
+  /** Receives one-tap actions issued from the floating bubble. */
+  public interface QuickActionListener {
+    void onQuickAction(Action action, DcMsg message);
   }
 }

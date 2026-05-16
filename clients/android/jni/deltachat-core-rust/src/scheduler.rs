@@ -783,10 +783,32 @@ impl Scheduler {
 
             if ctx.should_watch_mvbox().await? {
                 let (conn_state, handlers) =
-                    ImapConnectionState::new(ctx, transport_id, configured_login_param).await?;
+                    ImapConnectionState::new(ctx, transport_id, configured_login_param.clone())
+                        .await?;
                 let (start_send, start_recv) = oneshot::channel();
                 let ctx = ctx.clone();
                 let meaning = FolderMeaning::Mvbox;
+                let handle = task::spawn(simple_imap_loop(ctx, start_send, handlers, meaning));
+                oboxes.push(SchedBox {
+                    addr: addr.clone(),
+                    meaning,
+                    conn_state,
+                    handle,
+                });
+                start_recvs.push(start_recv);
+            }
+
+            if ctx.get_config_bool(Config::FetchSpam).await?
+                && ctx
+                    .get_config(Config::ConfiguredSpamFolder)
+                    .await?
+                    .is_some()
+            {
+                let (conn_state, handlers) =
+                    ImapConnectionState::new(ctx, transport_id, configured_login_param).await?;
+                let (start_send, start_recv) = oneshot::channel();
+                let ctx = ctx.clone();
+                let meaning = FolderMeaning::Spam;
                 let handle = task::spawn(simple_imap_loop(ctx, start_send, handlers, meaning));
                 oboxes.push(SchedBox {
                     addr,

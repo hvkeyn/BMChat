@@ -40,6 +40,11 @@ public class ThumbnailView extends FrameLayout {
 
   private final ImageView image;
   private final View playOverlay;
+  /** When true, the play overlay is shown regardless of the slide
+   *  type. Used by ConversationItem to mark "video poster" image
+   *  bubbles (BMChat-specific Telegram-bot fallback for >20 MB
+   *  videos) so they look and feel like the native video bubble. */
+  private boolean forcePlayOverlay = false;
   private OnClickListener parentClickListener;
 
   private final int[] dimens = new int[2];
@@ -205,6 +210,19 @@ public class ThumbnailView extends FrameLayout {
     super.setFocusable(focusable);
   }
 
+  /** Toggle the "always show ▶ play badge" mode used by BMChat
+   *  inline-video posters; see field doc above. Has effect on the
+   *  next {@link #setImageResource(GlideRequests, Slide)} call —
+   *  cheap to invoke before binding the slide. */
+  public void setForcePlayOverlay(boolean force) {
+    this.forcePlayOverlay = force;
+    if (force) {
+      this.playOverlay.setVisibility(View.VISIBLE);
+    }
+  }
+
+  public View getPlayOverlay() { return playOverlay; }
+
   @Override
   public void setClickable(boolean clickable) {
     super.setClickable(clickable);
@@ -223,7 +241,7 @@ public class ThumbnailView extends FrameLayout {
       @NonNull Slide slide,
       int naturalWidth,
       int naturalHeight) {
-    if (slide.hasPlayOverlay()) {
+    if (slide.hasPlayOverlay() || forcePlayOverlay) {
       this.playOverlay.setVisibility(View.VISIBLE);
     } else {
       this.playOverlay.setVisibility(View.GONE);

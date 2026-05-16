@@ -2323,6 +2323,74 @@ ALTER TABLE contacts ADD COLUMN name_normalized TEXT;
         .await?;
     }
 
+    inc_and_check(&mut migration_version, 151)?;
+    if dbversion < migration_version {
+        sql.execute_migration(
+            "
+CREATE TEMP TABLE bmchat_contact_merge AS
+SELECT c.id AS duplicate_id,
+       (
+         SELECT d.id FROM contacts d
+         WHERE d.id>9 AND d.addr<>'' AND LOWER(d.addr)=LOWER(c.addr)
+         ORDER BY d.origin DESC, d.last_seen DESC, (d.fingerprint<>'') DESC, d.id DESC
+         LIMIT 1
+       ) AS keep_id
+FROM contacts c
+WHERE c.id>9 AND c.addr<>'';
+
+DELETE FROM bmchat_contact_merge
+WHERE keep_id IS NULL OR duplicate_id=keep_id;
+
+UPDATE contacts
+SET origin=(
+      SELECT MAX(d.origin) FROM contacts d
+      WHERE d.id>9 AND d.addr<>'' AND LOWER(d.addr)=LOWER(contacts.addr)
+    ),
+    blocked=(
+      SELECT MIN(d.blocked) FROM contacts d
+      WHERE d.id>9 AND d.addr<>'' AND LOWER(d.addr)=LOWER(contacts.addr)
+    ),
+    last_seen=(
+      SELECT MAX(d.last_seen) FROM contacts d
+      WHERE d.id>9 AND d.addr<>'' AND LOWER(d.addr)=LOWER(contacts.addr)
+    )
+WHERE id IN (SELECT keep_id FROM bmchat_contact_merge);
+
+INSERT OR IGNORE INTO chats_contacts (chat_id, contact_id, add_timestamp, remove_timestamp)
+SELECT cc.chat_id, m.keep_id, cc.add_timestamp, cc.remove_timestamp
+FROM chats_contacts cc
+JOIN bmchat_contact_merge m ON cc.contact_id=m.duplicate_id;
+DELETE FROM chats_contacts
+WHERE contact_id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+
+UPDATE msgs SET from_id=(SELECT keep_id FROM bmchat_contact_merge WHERE duplicate_id=from_id)
+WHERE from_id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+UPDATE msgs SET to_id=(SELECT keep_id FROM bmchat_contact_merge WHERE duplicate_id=to_id)
+WHERE to_id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+UPDATE msgs_mdns SET contact_id=(SELECT keep_id FROM bmchat_contact_merge WHERE duplicate_id=contact_id)
+WHERE contact_id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+UPDATE smtp_mdns SET from_id=(SELECT keep_id FROM bmchat_contact_merge WHERE duplicate_id=from_id)
+WHERE from_id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+UPDATE locations SET from_id=(SELECT keep_id FROM bmchat_contact_merge WHERE duplicate_id=from_id)
+WHERE from_id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+UPDATE contacts SET verifier=(SELECT keep_id FROM bmchat_contact_merge WHERE duplicate_id=verifier)
+WHERE verifier IN (SELECT duplicate_id FROM bmchat_contact_merge);
+
+INSERT OR IGNORE INTO reactions (msg_id, contact_id, reaction)
+SELECT r.msg_id, m.keep_id, r.reaction
+FROM reactions r
+JOIN bmchat_contact_merge m ON r.contact_id=m.duplicate_id;
+DELETE FROM reactions
+WHERE contact_id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+
+DELETE FROM contacts
+WHERE id IN (SELECT duplicate_id FROM bmchat_contact_merge);
+DROP TABLE bmchat_contact_merge;",
+            migration_version,
+        )
+        .await?;
+    }
+
     let new_version = sql
         .get_raw_config_int(VERSION_CFG)
         .await?

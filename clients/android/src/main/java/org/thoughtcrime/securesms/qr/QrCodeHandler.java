@@ -18,6 +18,7 @@ import com.b44t.messenger.DcLot;
 import org.thoughtcrime.securesms.ConversationActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.AccountManager;
+import org.thoughtcrime.securesms.connect.BMChatChatDedupe;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.relay.RelayListActivity;
 import org.thoughtcrime.securesms.util.IntentUtils;
@@ -324,6 +325,8 @@ public class QrCodeHandler {
         R.string.start_chat,
         (dialogInterface, i) -> {
           int chatId = dcContext.createChatByContactId(qrParsed.getId());
+          // BMChat: collapse mirror 1:1 chats with the same e-mail.
+          BMChatChatDedupe.runNow(dcContext);
           Intent intent = new Intent(activity, ConversationActivity.class);
           intent.putExtra(ConversationActivity.CHAT_ID_EXTRA, chatId);
           if (qrParsed.getText1Meaning() == DcLot.DC_TEXT1_DRAFT) {
@@ -393,6 +396,11 @@ public class QrCodeHandler {
           DcHelper.getRpc(activity)
               .secureJoinWithUxInfo(dcContext.getAccountId(), qrRawString, source, uipath);
       if (newChatId == 0) throw new Exception("Securejoin failed to create a chat");
+
+      // BMChat: enforce one chat per e-mail. If the core just spawned a new
+      // key-contact for an e-mail we already had a chat with, archive the
+      // older mirror entries so the user does not see duplicate threads.
+      BMChatChatDedupe.runNow(dcContext);
 
       Intent intent = new Intent(activity, ConversationActivity.class);
       intent.putExtra(ConversationActivity.CHAT_ID_EXTRA, newChatId);

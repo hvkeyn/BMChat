@@ -8,6 +8,21 @@
         android:summary="@string/bmchat_check_for_updates_summary" />
 
     <Preference
+        android:key="pref_publish_profile"
+        android:title="@string/bmchat_profile_publish_menu"
+        android:summary="@string/bmchat_profile_publish_explain" />
+
+    <Preference
+        android:key="pref_telegram_bots"
+        android:title="@string/bmchat_bots_title"
+        android:summary="@string/bmchat_bots_summary" />
+
+    <Preference
+        android:key="pref_email_bots"
+        android:title="@string/bmchat_email_bots_title"
+        android:summary="@string/bmchat_email_bots_summary" />
+
+    <Preference
         android:key="pref_view_log"
         android:title="@string/pref_view_log" />
 
@@ -38,7 +53,8 @@
         <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="pref_location_streaming_enabled"
-            android:title="@string/pref_on_demand_location_streaming" />
+            android:title="@string/pref_on_demand_location_streaming"
+            android:summary="@string/pref_on_demand_location_streaming_summary" />
 
         <Preference
             android:key="pref_webxdc_store_url"
@@ -64,17 +80,25 @@
 
     <PreferenceCategory
         android:key="pref_category_legacy"
-        android:title="Legacy">
+        android:title="@string/bmchat_mail_folder_category">
 
         <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="pref_mvbox_move"
-            android:title="@string/pref_auto_folder_moves" />
+            android:title="@string/pref_auto_folder_moves"
+            android:summary="@string/pref_auto_folder_moves_summary" />
 
         <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="pref_only_fetch_mvbox"
-            android:title="@string/pref_only_fetch_mvbox_title" />
+            android:title="@string/pref_only_fetch_mvbox_title"
+            android:summary="@string/pref_only_fetch_mvbox_summary" />
+
+        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="pref_fetch_spam"
+            android:title="@string/bmchat_pref_fetch_spam_title"
+            android:summary="@string/bmchat_pref_fetch_spam_summary" />
 
     </PreferenceCategory>
 

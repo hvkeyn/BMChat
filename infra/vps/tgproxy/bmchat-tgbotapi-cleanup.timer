@@ -1,0 +1,15 @@
+[Unit]
+Description=Periodic cleanup for BMChat tg-bot-api cache
+
+[Timer]
+# 2 min after boot, then every 5 min. Short enough to keep disk
+# pressure under control, long enough not to interrupt an in-flight
+# 2 GB download (it'll just outpace one cleanup window and survive
+# to the next one untouched — find -mmin only deletes idle files).
+OnBootSec=2min
+OnUnitActiveSec=5min
+Unit=bmchat-tgbotapi-cleanup.service
+AccuracySec=30s
+
+[Install]
+WantedBy=timers.target

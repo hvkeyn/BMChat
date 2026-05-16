@@ -1,0 +1,12 @@
+[Unit]
+Description=Cleanup BMChat tg-bot-api on-disk cache (LRU + age based)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/bmchat-tgbotapi-cleanup.sh
+Nice=10
+IOSchedulingClass=idle
+ReadWritePaths=/var/lib/telegram-bot-api
+ProtectSystem=full
+PrivateTmp=true
+NoNewPrivileges=true

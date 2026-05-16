@@ -167,6 +167,11 @@ build['appImage'] = {
 
 build['deb'] = {
   packageName: previewBuild ? 'bmchat-desktop-preview' : 'bmchat-desktop',
+  // electron-builder 26 requires an explicit maintainer for fpm; the
+  // upstream package.json doesn't carry one because Delta Chat sets
+  // it via `build.deb.maintainer` from CI. We hard-code a stable
+  // BMChat contact instead so local rebuilds work without env vars.
+  maintainer: 'BMChat Developers <bmchat@5.187.4.132>',
   depends: [
     'libasound2',
     'libgtk-3-0',

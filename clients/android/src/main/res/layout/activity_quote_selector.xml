@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Telegram-parity "select part of a message to quote" screen.
+
+  Top: a regular Toolbar so the action looks at home in the app.
+  Middle: a faux chat bubble that mirrors the source message (avatar
+          accent strip on the left + a selectable TextView for the
+          actual text). The TextView is the real selection surface:
+          the user drags the standard Android handles to pick the
+          fragment they want to cite. We deliberately re-use the OS
+          floating-action mode (Copy / Share / …) and only inject a
+          "Цитировать выделенный фрагмент" action via the
+          CustomSelectionActionMode in the Activity.
+  Bottom: a sticky "Цитировать выделенный фрагмент" button — kept
+          enabled even with no selection so the user can quote the
+          whole message in one tap, matching the Telegram default.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/quote_selector_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:fitsSystemWindows="true"
+    android:background="?android:attr/colorBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/quote_selector_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:minHeight="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="?attr/actionBarStyle" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:scrollbars="vertical"
+        android:padding="16dp">
+
+        <!-- Faux quote bubble. Background uses the standard android
+             window background so we avoid project-private theme
+             attributes (?attr/conversation_item_background was not
+             defined in TextSecure.* themes and crashed the inflate
+             with UnsupportedOperationException: Failed to resolve
+             attribute). -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="?android:attr/colorBackground"
+            android:padding="14dp">
+
+            <View
+                android:layout_width="3dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="10dp"
+                android:background="@color/delta_accent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/quote_selector_author"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="@color/delta_accent"
+                    tools:text="Брат Сергей" />
+
+                <TextView
+                    android:id="@+id/quote_selector_body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:textSize="16sp"
+                    android:textIsSelectable="true"
+                    android:textColor="?android:attr/textColorPrimary"
+                    tools:text="7 минут, или чуть больше, не было мобильного интернета" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+    <!-- AppCompatButton, not MaterialButton: the host activity uses
+         the AppCompat theme. -->
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/quote_selector_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="12dp"
+        android:textAllCaps="false"
+        android:text="@string/bmchat_quote_selector_confirm_all" />
+
+</LinearLayout>

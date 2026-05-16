@@ -1,27 +1,40 @@
 {
   "version": "2.49.1",
-  "publishedAt": "2026-05-07T01:00:00Z",
-  "notes": "Текущая стабильная сборка BMChat для рабочего стола.",
+  "publishedAt": "2026-05-15T01:55:00Z",
+  "releaseChannel": "stable",
+  "mirrors": [
+    "http://5.187.4.132",
+    "http://158.160.104.107:8080"
+  ],
   "platforms": {
-    "win32-x64": {
-      "url": "http://5.187.4.132/desktop/win-x64/BMChat-2.49.1-Setup.x64.exe",
-      "size": 0
+    "linux-x64-appimage": {
+      "label": "AppImage x86_64",
+      "url": "http://5.187.4.132/desktop/BMChat-x86_64.AppImage",
+      "versionedFile": "BMChat-2.49.1-x86_64.AppImage",
+      "size": 153768843,
+      "sha256": "9b42c65005f363b3ff3126f007d54cc67d8e85f9699046fe29af43a4f57880ab"
     },
-    "win-x64": {
-      "url": "http://5.187.4.132/desktop/win-x64/BMChat-2.49.1-Setup.x64.exe",
-      "size": 0
+    "linux-x64-deb": {
+      "label": ".deb (amd64)",
+      "url": "http://5.187.4.132/desktop/bmchat-amd64.deb",
+      "versionedFile": "bmchat-desktop_2.49.1_amd64.deb",
+      "size": 122477736,
+      "sha256": "4622234ba7bbfdaa7ed6a1aa30efbf628e076baf9dc25f0bfc4938589048d476"
     },
-    "darwin-arm64": {
-      "url": "http://5.187.4.132/desktop/mac-arm64/BMChat-2.49.1-arm64.dmg",
-      "size": 0
+    "win-x64-installer": {
+      "label": "Setup x64 (.exe)",
+      "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
+      "versionedFile": "BMChat-2.49.1-Setup.x64.exe",
+      "size": 127123667,
+      "sha256": "eaac5cff736b367c38c05a99816f5be4c65f8c7005575bc28287ea77a4c08380"
     },
-    "darwin-x64": {
-      "url": "http://5.187.4.132/desktop/mac-x64/BMChat-2.49.1-x64.dmg",
-      "size": 0
-    },
-    "linux-x64": {
-      "url": "http://5.187.4.132/desktop/linux-x64/BMChat-2.49.1-x64.AppImage",
-      "size": 0
+    "win-x64-portable": {
+      "label": "Portable x64 (.exe)",
+      "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
+      "versionedFile": "BMChat-2.49.1-Portable.x64.exe",
+      "size": 126807241,
+      "sha256": "3994fa43427bdc27cb361ab60c09a4efb8155c7987bcd0e408fa797fe2b30471"
     }
-  }
+  },
+  "notes": "BMChat Desktop 2.49.1 — первая публичная сборка десктоп-клиента под бренд BMChat.\n\n• Linux: AppImage x86_64 + .deb (amd64) на базе Electron + deltachat-stdio-rpc-server.\n• Windows: NSIS installer + Portable x64.\n• macOS: пока не подписан, временно отсутствует.\n\nПри установке Windows/Linux SmartScreen / репутационный фильтр первый раз предупредит, потому что подписи кода у нас пока нет — это ожидаемо для self-hosted дистрибутива. Файлы можно проверить по SHA-256 (см. desktop-update.json или подсказку под кнопкой).\n\nAuto-update внутри клиента (electron-updater) пока не настроен; манифест нужен сайту для отображения версий. Обновление — повторной установкой, либо .deb upgrade."
 }

@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#7B1226" />
+<title>BMChat Email Bot API — Telegram-совместимое API через почту</title>
+<meta name="description" content="Документация BMChat Email Bot API: пишите ботов в стиле Telegram BotFather, но транспорт — обычная электронная почта." />
+<link rel="icon" href="/bmchat/static/favicon.svg" type="image/svg+xml" />
+<style>
+:root {
+  --c-primary: #7B1226;
+  --c-accent: #C62A48;
+  --c-canvas: #FFF7F8;
+  --c-surface: #FFFFFF;
+  --c-ink: #1F050B;
+  --c-muted: #6B4A52;
+  --c-border: #E8C3CB;
+  --c-code-bg: #281015;
+  --c-code-fg: #FFE0E5;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
+  background: var(--c-canvas);
+  color: var(--c-ink);
+  line-height: 1.55;
+}
+.wrap { max-width: 920px; margin: 0 auto; padding: 32px 24px 80px; }
+header { border-bottom: 1px solid var(--c-border); padding-bottom: 20px; margin-bottom: 32px; }
+h1 { margin: 0 0 4px; color: var(--c-primary); font-size: 28px; }
+header p { margin: 6px 0 0; color: var(--c-muted); }
+h2 { margin: 38px 0 12px; color: var(--c-primary); font-size: 22px; }
+h3 { margin: 24px 0 8px; font-size: 16px; }
+a { color: var(--c-accent); }
+code, pre { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+code { background: rgba(0,0,0,0.06); border-radius: 4px; padding: 1px 6px; font-size: 0.92em; }
+pre { background: var(--c-code-bg); color: var(--c-code-fg); padding: 16px; border-radius: var(--radius-md); overflow-x: auto; font-size: 13px; }
+pre code { background: transparent; color: inherit; padding: 0; }
+.note { background: #FFF; border-left: 4px solid var(--c-accent); padding: 12px 16px; border-radius: var(--radius-sm); margin: 16px 0; }
+.note strong { color: var(--c-primary); }
+table { width: 100%; border-collapse: collapse; margin: 12px 0 24px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--c-border); font-size: 14px; }
+th { background: #FFF; color: var(--c-primary); }
+.toc { background: #FFF; border: 1px solid var(--c-border); border-radius: var(--radius-md); padding: 14px 20px; margin-bottom: 28px; }
+.toc ol { margin: 0; padding-left: 22px; }
+.toc li { margin: 3px 0; }
+ul li { margin: 4px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>BMChat Email Bot API <span style="font-size:14px;color:var(--c-muted)">v1 · 2.49.50</span></h1>
+  <p>Telegram BotFather — но транспорт обычная электронная почта.</p>
+  <p><a href="/">← на главную BMChat</a></p>
+</header>
+
+<div class="toc">
+  <strong>Содержание</strong>
+  <ol>
+    <li><a href="#why">Зачем оно</a></li>
+    <li><a href="#model">Модель бота</a></li>
+    <li><a href="#create">Создание бота</a></li>
+    <li><a href="#start">Команда <code>/start</code> и подписка</a></li>
+    <li><a href="#wire">Формат писем (wire format)</a></li>
+    <li><a href="#update">Update — что приходит разработчику</a></li>
+    <li><a href="#reply">Ответ — что разработчик отправляет назад</a></li>
+    <li><a href="#keyboard">Inline-клавиатуры и callback</a></li>
+    <li><a href="#auth">Аутентификация и безопасность</a></li>
+    <li><a href="#example-python">Пример: Python (IMAP+SMTP)</a></li>
+    <li><a href="#legacy">Legacy HTTP webhook</a></li>
+    <li><a href="#limits">Ограничения и отличия от Telegram</a></li>
+  </ol>
+</div>
+
+<h2 id="why">Зачем оно</h2>
+<p>BMChat — это форк Delta&nbsp;Chat: чат поверх IMAP/SMTP без центральных серверов.
+Бот не отдельный «account» где-то в облаке, а виртуальный участник на стороне
+владельца почтового ящика. Бот живёт ровно до тех пор, пока работает почтовый
+аккаунт владельца — удалили аккаунт → бот замолкает, аналог отключения
+webhook у Telegram-бота.</p>
+
+<p>Реализация поверх e-mail даёт три эффекта, которых нет у Telegram Bot API:</p>
+<ul>
+  <li>любой почтовый сервер — это полноценный bot-runtime, не нужен публичный HTTPS-endpoint;</li>
+  <li>каждый IMAP-клиент (Thunderbird, mutt, MS Outlook) — это годный backend для бота;</li>
+  <li>история переписки бота физически хранится у самого разработчика — ничего не уходит на сторонний сервер.</li>
+</ul>
+
+<h2 id="model">Модель бота</h2>
+<table>
+<thead><tr><th>Поле</th><th>Тип</th><th>Описание</th></tr></thead>
+<tbody>
+<tr><td><code>name</code></td><td>string</td><td>username бота. <strong>Обязательно</strong> оканчивается на <code>bot</code> или <code>_bot</code> (правило Telegram BotFather). Латиница, цифры, <code>_</code>.</td></tr>
+<tr><td><code>display_name</code></td><td>string</td><td>Человеко-читаемое имя («Помощник по погоде»). Аналог <code>first_name</code> в Telegram.</td></tr>
+<tr><td><code>description</code></td><td>string</td><td>Краткое описание. Пользователь видит его после <code>/start</code>.</td></tr>
+<tr><td><code>avatar</code></td><td>file</td><td>Локальный путь к аватарке бота (опционально). Хранится только у владельца, нет центрального реестра.</td></tr>
+<tr><td><code>developer_email</code></td><td>string</td><td><strong>«Вебхук на почту»:</strong> e-mail вашего бэкенда. Каждое сообщение подписанного пользователя приедет туда обычным письмом.</td></tr>
+<tr><td><code>token</code></td><td>string</td><td>Стабильная производная от <code>id</code> бота. Используется для аутентификации webhook и callback-нажатий.</td></tr>
+<tr><td><code>commands</code></td><td>map</td><td>Опциональная таблица «команда → шаблон ответа» для статичных бот-ов, не требующих внешнего бэкенда. Совместима с шаблонами <code>{{arg}}</code>, <code>{{from}}</code>, <code>{{bot}}</code>.</td></tr>
+</tbody>
+</table>
+
+<h2 id="create">Создание бота</h2>
+<ol>
+  <li>BMChat → <em>Настройки → Дополнительно → Email-боты → +</em>.</li>
+  <li>Заполняете <code>name</code> (с суффиксом <code>bot</code>), <code>display_name</code>, <code>description</code>, <code>developer_email</code>. Аватарку, при желании, можно добавить позже (раздел в разработке).</li>
+  <li>BMChat генерирует <code>token</code>, кладёт его на экран редактирования — копируете в свой бэкенд.</li>
+  <li>Включаете переключатель «Бот включён». Готово — бот живой.</li>
+</ol>
+
+<div class="note">
+  Бот <strong>не имеет</strong> собственного отдельного e-mail. Он отвечает в чатах
+  от имени владельца BMChat с префиксом <code>@botname:</code>, что повторяет
+  поведение Telegram-ботов в групповых чатах.
+</div>
+
+<h2 id="start">Команда <code>/start</code> и подписка</h2>
+<p>Как у Telegram-ботов, BMChat-бот <strong>не реагирует</strong> на людей,
+которые не нажали <code>/start</code>. Это защищает разработчика от мусора и
+повторяет привычный сценарий.</p>
+
+<ol>
+  <li>Пользователь в чате с владельцем пишет <code>@helper_bot /start</code> (или <code>/start</code>, если у владельца ровно один бот).</li>
+  <li>BMChat добавляет e-mail отправителя в <code>subscribed_users</code> бота.</li>
+  <li>Отвечает приветствием — либо вашим шаблоном из таблицы <code>commands["start"]</code>, либо автоматически сгенерированным из <code>display_name</code> + <code>description</code> + список команд.</li>
+  <li>С этого момента <em>любое</em> сообщение этого e-mail в адрес бота попадает в ваш почтовый webhook.</li>
+</ol>
+
+<p>До <code>/start</code> бот молча игнорирует все обращения — никакого «не понял команду», ровно как у Telegram.</p>
+
+<h2 id="wire">Формат писем (wire format)</h2>
+<p>Все письма bot-протокола имеют опознавательный маркер в <strong>первой строке тела</strong>. Delta-chat (на котором стоит BMChat) автоматически берёт первую строку как <code>Subject</code>, поэтому маркер виден ещё до загрузки тела — удобно для серверных фильтров.</p>
+
+<h3>1. BMChat → разработчик (update)</h3>
+<pre><code>From: alice@example.com           ← владелец бота
+To:   developer@example.com       ← поле "developer_email"
+Subject: BMCHAT-BOT-UPDATE v1 @helper_bot chat=42 message=1715812345 from=bob@example.com
+
+BMCHAT-BOT-UPDATE v1 @helper_bot chat=42 message=1715812345 from=bob@example.com
+---
+{
+  "update_id": 1715812345,
+  "message": {
+    "message_id": 1715812345,
+    "chat": { "id": 42, "type": "private" },
+    "from": { "email": "bob@example.com" },
+    "text": "/forecast Москва",
+    "date": 1715812345
+  },
+  "bmchat": {
+    "bot": "helper_bot",
+    "token_suffix": "&lt;первые 16 символов token&gt;",
+    "command": "forecast",
+    "argument": "Москва",
+    "reply_to": "alice@example.com"
+  }
+}
+</code></pre>
+
+<h3>2. Разработчик → BMChat (reply)</h3>
+<pre><code>From: developer@example.com
+To:   alice@example.com           ← поле "reply_to" из update
+Subject: BMCHAT-BOT-REPLY v1 @helper_bot chat=42 in_reply_to=1715812345
+
+BMCHAT-BOT-REPLY v1 @helper_bot chat=42 in_reply_to=1715812345
+---
+{
+  "text": "Москва: +7°C, облачно",
+  "parse_mode": "Markdown",
+  "reply_markup": {
+    "inline_keyboard": [
+      [{ "text": "Обновить", "callback_data": "refresh:moscow" }],
+      [{ "text": "Открыть прогноз", "url": "https://weather.example.com/moscow" }]
+    ]
+  }
+}
+</code></pre>
+
+<div class="note">
+  <strong>Маркер обязателен</strong> и в Subject, и в первой строке тела. Если ваш
+  почтовый клиент дописал <code>Re:</code> — это нормально, BMChat ищет
+  маркер по подстроке.
+</div>
+
+<h2 id="update">Update — что приходит разработчику</h2>
+<p>Top-level и <code>message</code> — повторяют схему <a href="https://core.telegram.org/bots/api#update">Telegram Update</a>; неподдерживаемые поля (entities, photo, voice…) пока не включены.</p>
+
+<ul>
+  <li><code>update_id</code> — целое, монотонно растёт (равно message_id во входящем письме).</li>
+  <li><code>message.chat.id</code> — ID чата на стороне владельца, нужен для маршрутизации reply.</li>
+  <li><code>message.from.email</code> — обычный e-mail пользователя. BMChat не выдаёт <code>first_name</code>/<code>last_name</code> — у нас единственный идентификатор это e-mail.</li>
+  <li><code>message.text</code> — полный текст сообщения, как он пришёл. Команда уже выкушена в <code>bmchat.command</code>, но текст лежит в исходном виде.</li>
+  <li><code>bmchat.token_suffix</code> — первые 16 символов вашего токена. Сверьте с тем, что хранится у вас, чтобы убедиться, что сообщение реально пришло из BMChat.</li>
+</ul>
+
+<h2 id="reply">Ответ — что разработчик отправляет назад</h2>
+<table>
+<thead><tr><th>Поле</th><th>Описание</th></tr></thead>
+<tbody>
+<tr><td><code>text</code></td><td>Тело ответа. Поддерживается Markdown подмножество BMChat (<code>*жирный*</code>, <code>_курсив_</code>, <code>~зачёркнутый~</code>, ссылки <code>[label](url)</code>).</td></tr>
+<tr><td><code>parse_mode</code></td><td>Подсказка для логирования. BMChat всегда применяет свой Markdown.</td></tr>
+<tr><td><code>reply_markup.inline_keyboard</code></td><td>2-D массив кнопок — <a href="#keyboard">см. ниже</a>.</td></tr>
+<tr><td><code>reply</code></td><td>Устаревший alias для <code>text</code> из BMChat 2.49.47. Если оба заданы — победит <code>text</code>.</td></tr>
+</tbody>
+</table>
+
+<h2 id="keyboard">Inline-клавиатуры и callback</h2>
+<p>BMChat рендерит inline-кнопки как Markdown-ссылки на pseudo-схему <code>bmchat-bot://cb/&lt;bot&gt;/&lt;callback_data&gt;</code>. Тап по такой ссылке открывает <code>EmailBotCallbackActivity</code>, которая:</p>
+<ol>
+  <li>отправляет вам обратное письмо <code>BMCHAT-BOT-UPDATE v1 … command=callback_query argument=&lt;callback_data&gt;</code>;</li>
+  <li>ждёт ваш <code>BMCHAT-BOT-REPLY</code> и публикует его в чат.</li>
+</ol>
+
+<p>Кнопки с <code>"url"</code> вместо <code>"callback_data"</code> рендерятся как обычная гипертекстовая ссылка — BMChat откроет её в браузере, никакого callback не будет.</p>
+
+<h2 id="auth">Аутентификация и безопасность</h2>
+<ul>
+  <li><strong>From на bot-апдейтах</strong> — это e-mail владельца BMChat. Привяжите вашу backend-логику только к этому адресу.</li>
+  <li><strong>token_suffix</strong> внутри JSON — первые 16 символов вашего бот-токена. Используйте как «общий секрет».</li>
+  <li><strong>Reply-маршрут жёсткий</strong>: BMChat принимает <code>BMCHAT-BOT-REPLY</code> <em>только</em> от того адреса, который указан в <code>developer_email</code>. Любой другой источник игнорируется.</li>
+  <li>Удаление бота или отключение переключателя — мгновенно прекращает доставку апдейтов. Полный аналог «Revoke token» у BotFather.</li>
+</ul>
+
+<h2 id="example-python">Пример: Python (IMAP + SMTP)</h2>
+<pre><code>import email, imaplib, smtplib, json, re, ssl
+from email.message import EmailMessage
+
+ACC = "developer@example.com"
+PWD = "&lt;app password&gt;"
+TOKEN_PREFIX = "f8d2a1b0c4e5..."
+
+def serve():
+    imap = imaplib.IMAP4_SSL("imap.example.com")
+    imap.login(ACC, PWD)
+    imap.select("INBOX")
+    while True:
+        _, data = imap.search(None, '(UNSEEN SUBJECT "BMCHAT-BOT-UPDATE")')
+        for num in data[0].split():
+            _, msg_data = imap.fetch(num, "(RFC822)")
+            msg = email.message_from_bytes(msg_data[0][1])
+            handle(msg)
+            imap.store(num, "+FLAGS", "\\Seen")
+        imap.idle()  # use IDLE in production
+
+def handle(msg):
+    body = msg.get_payload(decode=True).decode("utf-8", "replace")
+    header, _, payload = body.partition("\n---\n")
+    update = json.loads(payload)
+    if not update.get("bmchat", {}).get("token_suffix", "").startswith(TOKEN_PREFIX):
+        return  # spoof attempt
+
+    sender_owner = msg["From"]  # BMChat owner
+    chat_id   = update["message"]["chat"]["id"]
+    msg_id    = update["message"]["message_id"]
+    bot_slug  = update["bmchat"]["bot"]
+    cmd       = update["bmchat"]["command"]
+    arg       = update["bmchat"]["argument"]
+
+    reply = {"text": f"Привет, {update['message']['from']['email']}!"}
+    if cmd == "forecast":
+        reply["text"] = f"Прогноз для {arg}: +7°C"
+
+    out = EmailMessage()
+    out["From"] = ACC
+    out["To"]   = sender_owner
+    subj = f"BMCHAT-BOT-REPLY v1 @{bot_slug} chat={chat_id} in_reply_to={msg_id}"
+    out["Subject"] = subj
+    out.set_content(subj + "\n---\n" + json.dumps(reply, ensure_ascii=False, indent=2))
+
+    with smtplib.SMTP_SSL("smtp.example.com", 465, context=ssl.create_default_context()) as s:
+        s.login(ACC, PWD)
+        s.send_message(out)
+</code></pre>
+
+<h2 id="legacy">Legacy HTTP webhook</h2>
+<p>До 2.49.49 BMChat поддерживал POST на HTTP-эндпоинт (заголовок <code>X-BMChat-Bot-Token</code>, тело — Telegram-shaped Update). Этот канал по-прежнему работает: если вы заполните поле <em>HTTP webhook URL</em> в редакторе, BMChat сделает POST <strong>параллельно</strong> с почтовой отправкой. Удобно для интеграций, где proxy/relay уже подняты.</p>
+
+<h2 id="limits">Ограничения и отличия от Telegram</h2>
+<ul>
+  <li>Задержка — это задержка вашей почты. SMTP+IMAP IDLE на обычных провайдерах укладывается в 5–15 секунд.</li>
+  <li>Файлы и медиа в ответе бота пока не поддерживаются — только текст и inline-кнопки. Будут добавлены в 2.49.5x.</li>
+  <li>Нет <code>edit_message_text</code>, <code>delete_message</code>: в почте нет понятия «изменить уже доставленное письмо».</li>
+  <li>Нет групповых ботов с правами администратора — бот разговаривает только в чатах, где сидит владелец.</li>
+  <li>Один пользователь BMChat может держать любое количество ботов; ограничений нет.</li>
+</ul>
+
+<footer style="margin-top:48px;color:var(--c-muted);font-size:13px;border-top:1px solid var(--c-border);padding-top:14px">
+  Это документация бота для BMChat 2.49.50. Версия API: <code>v1</code>.
+  Зеркало: <a href="http://158.160.104.107:8080/email-bot-api.html">158.160.104.107:8080/email-bot-api.html</a>.
+</footer>
+
+</div>
+</body>
+</html>

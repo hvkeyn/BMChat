@@ -380,10 +380,17 @@ public class ProfileAdapter extends RecyclerView.Adapter {
     if (memberList != null && !isInBroadcast && !isMailingList) {
       itemData.add(new ItemData(ITEM_DIVIDER, null, 0));
       if (dcChat != null) {
-        if (dcChat.canSend() && dcChat.isEncrypted()) {
-          if (!isOutBroadcast) {
+        if (isOutBroadcast) {
+          // Broadcasts (channels) don't take regular dc_add_contact_to_chat
+          // members. We still want users to invite contacts the easy way,
+          // so the row sends an invite link via a 1:1 chat instead — see
+          // ProfileFragment#inviteToBroadcast.
+          if (dcChat.canSend()) {
             itemData.add(new ItemData(ITEM_MEMBERS, DcContact.DC_CONTACT_ID_ADD_MEMBER, 0));
+            itemData.add(new ItemData(ITEM_MEMBERS, DcContact.DC_CONTACT_ID_QR_INVITE, 0));
           }
+        } else if (dcChat.canSend() && dcChat.isEncrypted()) {
+          itemData.add(new ItemData(ITEM_MEMBERS, DcContact.DC_CONTACT_ID_ADD_MEMBER, 0));
           itemData.add(new ItemData(ITEM_MEMBERS, DcContact.DC_CONTACT_ID_QR_INVITE, 0));
         }
       }

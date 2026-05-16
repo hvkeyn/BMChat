@@ -24,6 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.os.Build;
 import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -78,6 +79,7 @@ import org.thoughtcrime.securesms.util.Linkifier;
 import org.thoughtcrime.securesms.util.LongClickCopySpan;
 import org.thoughtcrime.securesms.util.LongClickMovementMethod;
 import org.thoughtcrime.securesms.util.MediaUtil;
+import org.thoughtcrime.securesms.util.MessageMarkdown;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.views.Stub;
@@ -99,6 +101,17 @@ public class ConversationItem extends BaseConversationItem {
   // Whether the sender's avatar and name should be shown (usually the case in group threads):
   private boolean showSender;
   private GlideRequests glideRequests;
+  /** BMChat 2.49.57: parsed Telegram-style album marker for the message currently bound,
+   *  or {@code null} for non-album messages. Populated during {@link #bind} from the raw
+   *  {@code DcMsg.getText()} and used by {@link #setBodyText} (badge above the bubble) as
+   *  well as {@link #setMessageSpacing} (collapse vertical paddings between consecutive
+   *  album members so the bubbles look like a single visual block). */
+  @Nullable private org.thoughtcrime.securesms.album.AlbumMarker.Info albumInfo;
+
+  /** BMChat 2.49.63: lazy-built grid view that renders all live members of an
+   *  album as a single mosaic in the body bubble. Created on demand for the
+   *  first member of a multi-photo album, hidden for everything else. */
+  @Nullable private org.thoughtcrime.securesms.album.AlbumThumbnailLayout albumGrid;
 
   protected ViewGroup bodyBubble;
   protected ReactionsConversationView reactionsView;
@@ -190,6 +203,39 @@ public class ConversationItem extends BaseConversationItem {
     this.showSender =
         ((dcChat.isMultiUser() || dcChat.isSelfTalk()) && !messageRecord.isOutgoing())
             || messageRecord.getOverrideSenderName() != null;
+    // BMChat 2.49.57: parse the album marker once per bind so the rest of the bind path
+    // (setBodyText for the badge, setMessageSpacing for the collapsed vertical paddings)
+    // can rely on a single ground truth for "is this message inside an album?".
+    //
+    // BMChat 2.49.60: instead of trusting the static (idx,total) baked into the marker
+    // at send time, we recompute the message's *current* position among album siblings
+    // that are still alive in the local DB. This way deleting the first photo of a
+    // 3-photo album immediately re-numbers the survivors as "1/2" / "2/2", and deleting
+    // down to a single photo turns the marker off entirely so the lonely survivor
+    // renders as a regular standalone bubble (no "1/1" badge, no compressed footer).
+    org.thoughtcrime.securesms.album.AlbumMarker.Info stamped =
+        org.thoughtcrime.securesms.album.AlbumMarker.parse(messageRecord.getText());
+    if (stamped != null) {
+      try {
+        org.thoughtcrime.securesms.album.AlbumMarker.Info live =
+            org.thoughtcrime.securesms.album.AlbumMarker.livePosition(
+                dcContext, messageRecord.getChatId(), messageRecord.getId(), stamped);
+        if (live != null && live.total > 1) {
+          this.albumInfo = live;
+        } else {
+          // Either the message is the only surviving member, or it is no longer
+          // findable in the chat (just deleted, view holder hanging around for an
+          // animation tick). Either way: render as a standalone bubble.
+          this.albumInfo = null;
+        }
+      } catch (Throwable t) {
+        // Defensive fallback: if recompute fails, honour the stamped marker so we
+        // never *worsen* the rendering relative to 2.49.59.
+        this.albumInfo = stamped.total > 1 ? stamped : null;
+      }
+    } else {
+      this.albumInfo = null;
+    }
 
     if (showSender) {
       this.dcContact = dcContext.getContact(messageRecord.getFromId());
@@ -215,9 +261,15 @@ public class ConversationItem extends BaseConversationItem {
     setContactPhoto();
     setGroupMessageStatus();
     setAuthor(messageRecord, showSender);
-    setMessageSpacing(context);
     setReactions(messageRecord);
     setFooter(messageRecord);
+    setReadReceiptInteraction(messageRecord, dcChat);
+    // BMChat 2.49.59: setMessageSpacing must run *after* setFooter, because for
+    // album members it forces the active footer to GONE on every bubble except
+    // the last one of the cluster. setFooter unconditionally sets VISIBLE, so
+    // running spacing first (as in 2.49.58) was being silently overwritten —
+    // that is exactly why the album bubbles still had the timestamp gap.
+    setMessageSpacing(context);
     setQuote(messageRecord);
     if (Util.isTouchExplorationEnabled(context)) {
       setContentDescription();
@@ -414,6 +466,135 @@ public class ConversationItem extends BaseConversationItem {
         && !hasSticker(messageRecord);
   }
 
+  /**
+   * BMChat 2.49.63/64: install (or update) the in-bubble grid that renders
+   * all live members of an album as a single mosaic.
+   *
+   * <p>The grid is added to {@link #bodyBubble} the first time it's needed
+   * and re-used across recycles via the {@code R.id.bmchat_album_grid} tag.
+   *
+   * <p>Per-tile behaviour (2.49.64):
+   *
+   * <ul>
+   *   <li><b>Short tap</b> on a tile, no batch-select active → launches
+   *       {@link MediaPreviewActivity} via {@link ThumbnailClickListener}
+   *       for that specific {@link DcMsg}. Each tile uses its own
+   *       click-listener so the preview lands on the tapped photo, not
+   *       just the album's first member.</li>
+   *   <li><b>Short tap</b> on a tile with an active batch-select session
+   *       (i.e. {@code batchSelected} not empty) → toggles just that
+   *       message into / out of the selection set, exactly like Telegram
+   *       does in "Forward N" mode.</li>
+   *   <li><b>Long press</b> on a tile → calls the adapter's
+   *       {@code onItemLongClick(DcMsg)} with the long-pressed message,
+   *       starting a fresh batch-select session for that one tile (no
+   *       longer the entire album).</li>
+   * </ul>
+   *
+   * <p>Selected tiles get a coloured frame as a foreground drawable so the
+   * highlight never bleeds onto neighbouring tiles.
+   */
+  private void showAlbumGrid(@NonNull DcMsg first) {
+    if (albumInfo == null) return;
+    org.thoughtcrime.securesms.album.AlbumMarker.LiveAlbumSnapshot snap =
+        org.thoughtcrime.securesms.album.AlbumMarker.liveMembers(
+            dcContext, first.getChatId(), albumInfo.albumId);
+    if (snap == null || snap.total() < 2) return;
+
+    if (albumGrid == null) {
+      // Look for an existing grid attached to this body bubble in case the
+      // ViewHolder is being recycled with the field already cleared.
+      View existing = bodyBubble.findViewById(R.id.bmchat_album_grid);
+      if (existing instanceof org.thoughtcrime.securesms.album.AlbumThumbnailLayout) {
+        albumGrid = (org.thoughtcrime.securesms.album.AlbumThumbnailLayout) existing;
+      } else {
+        albumGrid = new org.thoughtcrime.securesms.album.AlbumThumbnailLayout(context);
+        albumGrid.setId(R.id.bmchat_album_grid);
+        // Insert immediately *before* the body text so caption stays below
+        // the mosaic (the LinearLayout inside body_bubble lays out children
+        // vertically).
+        int insertAt = -1;
+        for (int i = 0; i < bodyBubble.getChildCount(); i++) {
+          if (bodyBubble.getChildAt(i) == bodyText) {
+            insertAt = i;
+            break;
+          }
+        }
+        ViewGroup.LayoutParams lp =
+            new android.widget.LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        if (insertAt >= 0) {
+          bodyBubble.addView(albumGrid, insertAt, lp);
+        } else {
+          bodyBubble.addView(albumGrid, lp);
+        }
+      }
+    }
+    albumGrid.setVisibility(View.VISIBLE);
+
+    java.util.ArrayList<Integer> ids = new java.util.ArrayList<>(snap.total());
+    for (int id : snap.msgIdsSorted) ids.add(id);
+
+    // Snapshot the IDs that are part of the current batch-select session so
+    // matching tiles render with a coloured frame.
+    java.util.HashSet<Integer> selectedIds = new java.util.HashSet<>();
+    for (DcMsg sel : batchSelected) {
+      selectedIds.add(sel.getId());
+    }
+
+    final ThumbnailClickListener thumbnailClickListener = new ThumbnailClickListener();
+
+    org.thoughtcrime.securesms.album.AlbumThumbnailLayout.AlbumTileEvents tileEvents =
+        new org.thoughtcrime.securesms.album.AlbumThumbnailLayout.AlbumTileEvents() {
+          @Override
+          public void onTileClick(@NonNull DcMsg msg, @NonNull View tile) {
+            // Active batch-select → toggle this specific message in/out via
+            // the adapter's long-click handler (same code path Telegram uses
+            // for short-taps during a multi-select session).
+            if (!batchSelected.isEmpty()) {
+              if (eventListener instanceof ConversationAdapter.ItemClickListener) {
+                ((ConversationAdapter.ItemClickListener) eventListener)
+                    .onItemLongClick(msg, tile);
+              }
+              return;
+            }
+            // Normal mode → launch full-screen preview anchored on this
+            // tile's specific DcMsg. ThumbnailClickListener already knows
+            // how to start MediaPreviewActivity for the slide we give it.
+            Slide slide;
+            int t = msg.getType();
+            if (t == DcMsg.DC_MSG_VIDEO) {
+              slide = new org.thoughtcrime.securesms.mms.VideoSlide(context, msg);
+            } else {
+              slide = new org.thoughtcrime.securesms.mms.ImageSlide(context, msg);
+            }
+            thumbnailClickListener.onClick(tile, slide);
+          }
+
+          @Override
+          public boolean onTileLongClick(@NonNull DcMsg msg, @NonNull View tile) {
+            // Forward to the same long-click path the rest of the chat
+            // uses: ItemClickListener.onItemLongClick(msg) → fragment will
+            // toggle batch-select and bring up the action-mode toolbar.
+            if (eventListener instanceof ConversationAdapter.ItemClickListener) {
+              ((ConversationAdapter.ItemClickListener) eventListener)
+                  .onItemLongClick(msg, tile);
+              return true;
+            }
+            return false;
+          }
+        };
+
+    albumGrid.bind(dcContext, ids, glideRequests, tileEvents, selectedIds);
+  }
+
+  /** Hide and detach the album grid so non-album bubbles render normally. */
+  private void hideAlbumGrid() {
+    if (albumGrid != null) {
+      albumGrid.setVisibility(View.GONE);
+    }
+  }
+
   private boolean hasWebxdc(DcMsg dcMsg) {
     return dcMsg.getType() == DcMsg.DC_MSG_WEBXDC;
   }
@@ -437,19 +618,61 @@ public class ConversationItem extends BaseConversationItem {
     linkActionIds.clear();
 
     String text = messageRecord.getText();
+    // BMChat bot-video poster bubbles carry a zero-width
+    // [bmchat:tgvideo url=…] token in the caption that ConversationItem
+    // turns into a play-overlay + in-app player. Strip it before
+    // Markdown / Linkify see the body so the user never sees the raw
+    // marker text. Cheap no-op for non-bot messages.
+    text = org.thoughtcrime.securesms.bots.BotMediaMarker.strip(text);
+    // BMChat 2.49.57 album marker: when several photos / videos were
+    // sent as a single Telegram-style media group, every message in
+    // that group carries a hidden "[bmchat:album id=…;idx=…;total=…]"
+    // token. Strip it from the visible caption.
+    //
+    // BMChat 2.49.62: drop the "🖼 i / N" badge altogether. Telegram
+    // does not show such a badge inside a media album either — the
+    // visual cue is purely the merged cluster of photos with a single
+    // timestamp underneath the last one. The position remains visible
+    // in the full-screen media viewer ("Имя • 1 / 3" header from
+    // 2.49.59). Inside the chat we let the photos speak for themselves
+    // and skip the in-bubble caption entirely so {@link
+    // #setMessageSpacing} can fully collapse album members into one
+    // tight block. Per-message captions typed by the sender are still
+    // rendered on the *first* member of the album (the canonical
+    // Telegram contract: the album's caption is the caption of its
+    // first message).
+    text = org.thoughtcrime.securesms.album.AlbumMarker.strip(text);
+    if (albumInfo != null && albumInfo.total > 1 && albumInfo.index > 1) {
+      // Non-first members of the album never carry a caption — the
+      // sender-supplied caption is owned by the first message only.
+      text = "";
+    }
+    // BMChat P2P update broadcast: if the sender embedded an
+    // invisible "BMU(…)" marker advertising a newer build, ingest
+    // it into local prefs so the updater can fall back to that
+    // snapshot when 5.187.4.132 is unreachable. The strip step
+    // removes the marker from what we render so the user only sees
+    // the original prose. Cheap no-op when no marker is present.
+    text = org.thoughtcrime.securesms.update.UpdateBroadcast
+        .stripAndIngest(getContext(), text);
 
     if (messageRecord.getType() == DcMsg.DC_MSG_CALL || text.isEmpty()) {
       bodyText.setVisibility(View.GONE);
     } else {
-      SpannableString spannable = new SpannableString(text);
+      // Apply MessageMarkdown FIRST so the wrapper characters
+      // (** __ ~~ || ` ```) are stripped before Linkify sees the
+      // text — otherwise inline-code with a URL inside it would
+      // double-link, and a bold-wrapped phone number would have its
+      // asterisks treated as part of the linkified label.
+      SpannableStringBuilder spannable = MessageMarkdown.apply(text);
       if (batchSelected.isEmpty()) {
-        spannable = Linkifier.linkify(spannable);
+        Linkifier.linkify(spannable);
       }
       bodyText.setText(spannable);
       bodyText.setVisibility(View.VISIBLE);
 
       // Register a TalkBack "Actions" entry for each link in the message
-      Spanned spanned = (Spanned) spannable;
+      Spanned spanned = spannable;
       final TextView tv = bodyText;
       for (LongClickCopySpan span :
           spanned.getSpans(0, spanned.length(), LongClickCopySpan.class)) {
@@ -532,6 +755,14 @@ public class ConversationItem extends BaseConversationItem {
       boolean showSender,
       AudioPlaybackViewModel playbackViewModel,
       AudioView.OnActionListener audioPlayPauseListener) {
+    // BMChat 2.49.63: be defensive about RecyclerView reuse — strip any
+    // album-grid we may have added on a previous bind unless the current
+    // message also asks for one. The hasThumbnail branch will toggle it back
+    // on if needed.
+    if (!(albumInfo != null && albumInfo.total > 1 && albumInfo.index == 1)) {
+      hideAlbumGrid();
+    }
+
     if (hasAudio(messageRecord)) {
       audioViewStub.get().setVisibility(View.VISIBLE);
       if (mediaThumbnailStub.resolved()) mediaThumbnailStub.get().setVisibility(View.GONE);
@@ -658,6 +889,47 @@ public class ConversationItem extends BaseConversationItem {
           ViewGroup.LayoutParams.WRAP_CONTENT,
           ViewGroup.LayoutParams.WRAP_CONTENT);
     } else if (hasThumbnail(messageRecord)) {
+      // BMChat 2.49.63: Telegram-style album grid.
+      //
+      // For the *first* live member of a multi-photo album we render every
+      // sibling in a single bubble using AlbumThumbnailLayout — the standard
+      // mediaThumbnailStub is hidden and replaced by the grid. For subsequent
+      // members we collapse the entire ConversationItem (height=0 below in
+      // setMessageSpacing) so the chat shows one cluster instead of N bubbles.
+      boolean useAlbumGrid =
+          albumInfo != null && albumInfo.total > 1 && albumInfo.index == 1;
+
+      if (useAlbumGrid) {
+        if (mediaThumbnailStub.resolved()) mediaThumbnailStub.get().setVisibility(View.GONE);
+        if (audioViewStub.resolved()) audioViewStub.get().setVisibility(View.GONE);
+        if (documentViewStub.resolved()) documentViewStub.get().setVisibility(View.GONE);
+        if (webxdcViewStub.resolved()) webxdcViewStub.get().setVisibility(View.GONE);
+        if (stickerStub.resolved()) stickerStub.get().setVisibility(View.GONE);
+        if (vcardViewStub.resolved()) vcardViewStub.get().setVisibility(View.GONE);
+        if (callViewStub.resolved()) callViewStub.get().setVisibility(View.GONE);
+
+        showAlbumGrid(messageRecord);
+
+        bodyBubble.getLayoutParams().width =
+            ViewUtil.dpToPx(readDimen(R.dimen.media_bubble_max_width));
+        ViewUtil.updateLayoutParams(
+            bodyText, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ViewUtil.updateLayoutParams(
+            groupSenderHolder,
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT);
+        footer.setVisibility(VISIBLE);
+
+        // Match the per-thumbnail click semantics of the regular path: tap
+        // launches the swipe-through MediaPreviewActivity starting at the
+        // tapped member; long-press is a passthrough so batch-select keeps
+        // working at the bubble level.
+        bodyBubble.setOnLongClickListener(passthroughClickListener);
+        return;
+      }
+
+      hideAlbumGrid();
+
       mediaThumbnailStub.get().setVisibility(View.VISIBLE);
       if (audioViewStub.resolved()) audioViewStub.get().setVisibility(View.GONE);
       if (documentViewStub.resolved()) documentViewStub.get().setVisibility(View.GONE);
@@ -681,6 +953,15 @@ public class ConversationItem extends BaseConversationItem {
         }
         messageRecord.lateFilingMediaSize(thumbnailSize.width, thumbnailSize.height, 0);
       }
+
+      // BMChat-specific: image bubbles that are actually
+      // "streamable video posters" (Telegram-bot fallback for videos
+      // >20 MB) carry a hidden marker in their caption. When present
+      // we flip on the ▶ play overlay so the bubble visually matches
+      // Telegram's native video item.
+      org.thoughtcrime.securesms.bots.BotMediaMarker.Info bmInline =
+          org.thoughtcrime.securesms.bots.BotMediaMarker.parse(messageRecord.getText());
+      mediaThumbnailStub.get().setForcePlayOverlay(bmInline != null);
 
       mediaThumbnailStub
           .get()
@@ -870,6 +1151,23 @@ public class ConversationItem extends BaseConversationItem {
     activeFooter.setMessageRecord(current);
   }
 
+  private void setReadReceiptInteraction(@NonNull DcMsg current, @NonNull DcChat chat) {
+    ConversationItemFooter activeFooter = getActiveFooter(current);
+    boolean canShowReceipts = current.isOutgoing() && chat.isMultiUser();
+    activeFooter.setClickable(canShowReceipts);
+    activeFooter.setFocusable(canShowReceipts);
+    activeFooter.setOnClickListener(
+        canShowReceipts && eventListener != null
+            ? view -> {
+              if (batchSelected.isEmpty()) {
+                eventListener.onReadReceiptsClicked(current);
+              } else {
+                passthroughClickListener.onClick(view);
+              }
+            }
+            : null);
+  }
+
   private void setReactions(@NonNull DcMsg current) {
     try {
       Reactions reactions = rpc.getMessageReactions(dcContext.getAccountId(), current.getId());
@@ -972,6 +1270,69 @@ public class ConversationItem extends BaseConversationItem {
     int spacingTop = readDimen(context, R.dimen.conversation_vertical_message_spacing_collapse);
     int spacingBottom = spacingTop;
 
+    // BMChat 2.49.63: completely new strategy for Telegram-style albums. The
+    // "first" member draws every photo as a grid in its own bubble (see
+    // showAlbumGrid) so the chat sees a single mosaic; every *other* member
+    // becomes invisible — height 0, no padding, no margins, no footer — so
+    // the album reads exactly like Telegram's grouped-photos messages.
+    //
+    // The previous negative-margin trick (2.49.61/62) made bubbles overlap,
+    // but selection borders and tap-to-select highlights spilled onto the
+    // neighbouring bubble (see screenshots #2 and #3 from user feedback).
+    // Collapsing the row entirely sidesteps that whole class of issues.
+    boolean collapseEntireRow =
+        albumInfo != null && albumInfo.total > 1 && albumInfo.index > 1;
+
+    // Reset any previously-tweaked container margin / self top-margin so that
+    // RecyclerView reuse from a collapsed album row to a regular bubble does
+    // not leave the next message hidden.
+    View container = findViewById(R.id.container);
+    if (container != null) {
+      ViewGroup.LayoutParams baseLp = container.getLayoutParams();
+      if (baseLp instanceof ViewGroup.MarginLayoutParams) {
+        ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) baseLp;
+        int defaultBelow = readDimen(context, R.dimen.below_bubble);
+        int target = collapseEntireRow ? 0 : defaultBelow;
+        if (mlp.bottomMargin != target) {
+          mlp.bottomMargin = target;
+          container.setLayoutParams(mlp);
+        }
+      }
+    }
+
+    // Always clear the negative top-margin we used to apply in 2.49.62 — it
+    // is no longer needed and was the root cause of the selection-overlap
+    // bug.
+    ViewGroup.LayoutParams selfLp = getLayoutParams();
+    if (selfLp instanceof ViewGroup.MarginLayoutParams) {
+      ViewGroup.MarginLayoutParams mlp = (ViewGroup.MarginLayoutParams) selfLp;
+      int targetHeight =
+          collapseEntireRow ? 0 : ViewGroup.LayoutParams.WRAP_CONTENT;
+      boolean dirty = false;
+      if (mlp.topMargin != 0) {
+        mlp.topMargin = 0;
+        dirty = true;
+      }
+      if (mlp.height != targetHeight) {
+        mlp.height = targetHeight;
+        dirty = true;
+      }
+      if (dirty) setLayoutParams(mlp);
+    }
+
+    if (collapseEntireRow) {
+      // Strip every visible component of this row so the layout pass treats
+      // it as a zero-height spacer.
+      bodyBubble.setVisibility(GONE);
+      ConversationItemFooter active = getActiveFooter(messageRecord);
+      if (active != null) active.setVisibility(GONE);
+      ViewUtil.setPaddingTop(this, 0);
+      ViewUtil.setPaddingBottom(this, 0);
+      return;
+    }
+
+    bodyBubble.setVisibility(VISIBLE);
+
     ViewUtil.setPaddingTop(this, spacingTop);
     ViewUtil.setPaddingBottom(this, spacingBottom);
   }
@@ -1017,7 +1378,23 @@ public class ConversationItem extends BaseConversationItem {
     public void onClick(final View v, final Slide slide) {
       if (shouldInterceptClicks(messageRecord) || !batchSelected.isEmpty()) {
         performClick();
-      } else if (slide.isWebxdcDocument()) {
+        return;
+      }
+      // BMChat bot-video poster: tap on the image launches the in-app
+      // progressive video player against the signed BMChat tgproxy
+      // URL embedded in the caption. We do this *before* the generic
+      // MediaPreviewActivity branch because the slide is technically
+      // an image and would otherwise be handed off to the image
+      // viewer, which has no idea how to stream a remote video.
+      org.thoughtcrime.securesms.bots.BotMediaMarker.Info info =
+          org.thoughtcrime.securesms.bots.BotMediaMarker.parse(messageRecord.getText());
+      if (info != null) {
+        Intent intent = org.thoughtcrime.securesms.bots.ui.TgMediaPlayerActivity.newIntent(
+            context, info.url, null, info.mime);
+        context.startActivity(intent);
+        return;
+      }
+      if (slide.isWebxdcDocument()) {
         WebxdcActivity.openWebxdcActivity(context, messageRecord);
       } else if (slide.isVcard()) {
         try {

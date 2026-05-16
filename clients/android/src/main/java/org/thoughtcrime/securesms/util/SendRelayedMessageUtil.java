@@ -111,6 +111,56 @@ public class SendRelayedMessageUtil {
     }
   }
 
+  /**
+   * BMChat 2.49.57: Telegram-style media album send path.
+   *
+   * <p>Each photo / video in the picked group goes out as its own DcMsg,
+   * but every message has the same {@code album_id} stamped into its
+   * caption via {@link
+   * org.thoughtcrime.securesms.album.AlbumMarker AlbumMarker} so the
+   * receiver can render a "Альбом 1/N" header above each bubble and
+   * group the bubbles visually. Documents / audio aren't routed here —
+   * those go through {@link #sendMultipleMsgs} unchanged.
+   *
+   * <p>The shared caption is appended to the {@em first} message of the
+   * album only, mirroring Telegram's "single caption per group"
+   * convention.
+   */
+  public static void sendAlbum(
+      Context context, int chatId, ArrayList<Uri> mediaUris, String sharedText) {
+    if (mediaUris == null || mediaUris.isEmpty()) return;
+    DcContext dcContext = DcHelper.getContext(context);
+    if (mediaUris.size() == 1) {
+      // Not really an album — fall through to the regular send path so
+      // there's no stray marker on a single photo.
+      dcContext.sendMsg(chatId, createMessage(context, mediaUris.get(0), sharedText));
+      return;
+    }
+    String albumId = newAlbumId();
+    int total = mediaUris.size();
+    for (int i = 0; i < total; i++) {
+      String visibleText = (i == 0 && sharedText != null && !sharedText.isEmpty()) ? sharedText : "";
+      String caption =
+          org.thoughtcrime.securesms.album.AlbumMarker.append(
+              visibleText, new org.thoughtcrime.securesms.album.AlbumMarker.Info(
+                  albumId, i + 1, total));
+      dcContext.sendMsg(chatId, createMessage(context, mediaUris.get(i), caption));
+    }
+  }
+
+  private static String newAlbumId() {
+    // 12 random hex chars are plenty unique within a chat — collisions
+    // between two different albums in the same conversation become
+    // statistically negligible (~ 1 in 2.8 * 10^14) and the marker
+    // detector also guards via index/total bounds.
+    java.security.SecureRandom rnd = new java.security.SecureRandom();
+    byte[] buf = new byte[6];
+    rnd.nextBytes(buf);
+    StringBuilder sb = new StringBuilder(12);
+    for (byte b : buf) sb.append(String.format("%02x", b & 0xFF));
+    return sb.toString();
+  }
+
   public static boolean containsVideoType(Context context, ArrayList<Uri> uris) {
     for (final Uri uri : uris) {
       final String mimeType = MediaUtil.getMimeType(context, uri);

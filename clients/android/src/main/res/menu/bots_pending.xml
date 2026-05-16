@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/menu_pending_publish_all"
+        android:title="@string/bmchat_bots_queue_publish_all"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/menu_pending_clear"
+        android:title="@string/bmchat_bots_queue_clear"
+        app:showAsAction="never" />
+</menu>

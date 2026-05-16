@@ -2,59 +2,69 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
-        android:key="pref_enable_notifications"
-        android:title="@string/pref_notifications"
-        android:defaultValue="true" />
+    <PreferenceCategory android:title="@string/bmchat_notifications_section_general">
+        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
+            android:key="pref_enable_notifications"
+            android:title="@string/pref_notifications"
+            android:summary="@string/bmchat_notifications_master_summary"
+            android:defaultValue="true" />
 
-    <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
-        android:dependency="pref_enable_notifications"
-        android:key="pref_enable_mention_notifications"
-        android:title="@string/pref_mention_notifications"
-        android:summary="@string/pref_mention_notifications_explain"
-        android:defaultValue="true" />
+        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
+            android:dependency="pref_enable_notifications"
+            android:key="pref_enable_mention_notifications"
+            android:title="@string/pref_mention_notifications"
+            android:summary="@string/pref_mention_notifications_explain"
+            android:defaultValue="true" />
+    </PreferenceCategory>
 
-    <Preference
-        android:dependency="pref_enable_notifications"
-        android:key="pref_key_ringtone"
-        android:title="@string/pref_sound"
-        android:persistent="false"
-        android:defaultValue="content://settings/system/notification_sound" />
+    <PreferenceCategory android:title="@string/bmchat_notifications_section_sound">
+        <Preference
+            android:dependency="pref_enable_notifications"
+            android:key="pref_key_ringtone"
+            android:title="@string/pref_sound"
+            android:summary="@string/bmchat_notifications_sound_summary"
+            android:persistent="false"
+            android:defaultValue="content://settings/system/notification_sound" />
 
-    <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
-        android:dependency="pref_enable_notifications"
-        android:key="pref_key_vibrate"
-        android:defaultValue="true"
-        android:title="@string/pref_vibrate" />
+        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
+            android:dependency="pref_enable_notifications"
+            android:key="pref_key_vibrate"
+            android:defaultValue="true"
+            android:title="@string/pref_vibrate" />
 
-    <ListPreference
-        android:key="pref_led_color"
-        android:defaultValue="purple"
-        android:title="@string/pref_led_color"
-        android:dependency="pref_enable_notifications"
-        android:entries="@array/pref_led_color_entries"
-        android:entryValues="@array/pref_led_color_values" />
+        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
+            android:key="pref_key_inthread_notifications"
+            android:title="@string/pref_in_chat_sounds"
+            android:summary="@string/bmchat_notifications_inchat_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
 
-    <ListPreference
-        android:key="pref_notification_privacy"
-        android:title="@string/pref_notifications_show"
-        android:dependency="pref_enable_notifications"
-        android:defaultValue="all"
-        android:entries="@array/pref_notification_privacy_entries"
-        android:entryValues="@array/pref_notification_privacy_values" />
+    <PreferenceCategory android:title="@string/bmchat_notifications_section_display">
+        <ListPreference
+            android:key="pref_led_color"
+            android:defaultValue="purple"
+            android:title="@string/pref_led_color"
+            android:dependency="pref_enable_notifications"
+            android:entries="@array/pref_led_color_entries"
+            android:entryValues="@array/pref_led_color_values" />
 
-    <ListPreference
-        android:key="pref_notification_priority"
-        android:title="@string/pref_notifications_priority"
-        android:dependency="pref_enable_notifications"
-        android:defaultValue="1"
-        android:entries="@array/pref_notification_priority_entries"
-        android:entryValues="@array/pref_notification_priority_values" />
+        <ListPreference
+            android:key="pref_notification_privacy"
+            android:title="@string/pref_notifications_show"
+            android:summary="@string/bmchat_notifications_privacy_summary"
+            android:dependency="pref_enable_notifications"
+            android:defaultValue="all"
+            android:entries="@array/pref_notification_privacy_entries"
+            android:entryValues="@array/pref_notification_privacy_values" />
 
-    <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
-        android:key="pref_key_inthread_notifications"
-        android:title="@string/pref_in_chat_sounds"
-        android:defaultValue="true" />
+        <ListPreference
+            android:key="pref_notification_priority"
+            android:title="@string/pref_notifications_priority"
+            android:dependency="pref_enable_notifications"
+            android:defaultValue="1"
+            android:entries="@array/pref_notification_priority_entries"
+            android:entryValues="@array/pref_notification_priority_values" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_instant_delivery">
         <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
@@ -68,6 +78,12 @@
             android:defaultValue="false"
             android:title="@string/pref_reliable_service"
             android:summary="@string/pref_reliable_service_explain" />
+
+        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
+            android:key="pref_bmchat_hide_fg_notification"
+            android:defaultValue="false"
+            android:title="@string/bmchat_hide_fg_notification_title"
+            android:summary="@string/bmchat_hide_fg_notification_summary" />
     </PreferenceCategory>
 
 </PreferenceScreen>

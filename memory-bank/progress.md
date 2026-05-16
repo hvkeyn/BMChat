@@ -91,7 +91,86 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## In Progress
 
-- Real-device smoke test: install 2.49.0, observe auto-update prompt for 2.49.1, then exercise "Поделиться → Отправить на e-mail" with two BMChat accounts on different e-mail providers and verify auto-acceptance on the receiver.
+- Real-device smoke test: update an installed Android build to 2.49.25, send a Telegram post/album into BMChatBot, and confirm there is no `queue ENQUEUE FAIL`; Device messages should show `queue +1 ... всего: N`, the bot card should show `очередь: N`, and `Очередь сообщений` should show the post. Also verify the toast says `Получено: N · в очередь/журнал: N` (plus `в чат: N` when auto-publish is on).
+
+## Latest Completed
+
+- Implemented PR branch `bmchat-24969-spam-camera-read-receipts` for Spam-fetch, live CameraX picker tile, and group read receipts:
+  - core adds `fetch_spam`, stores `configured_spam_folder`, watches Spam/Junk when enabled, starts a Spam `simple_imap_loop`, and moves eligible chat messages out of Spam so they are fetched from Inbox/Mvbox and the provider learns "not spam";
+  - Android Advanced Settings has the new "Проверять папку «Спам»" switch wired to core config `fetch_spam`;
+  - gallery picker first tile is a live CameraX `PreviewView`; tapping it captures into MediaStore, inserts the shot at the top of the grid, and preselects it for sending;
+  - outgoing group message footers/galки open a Telegram-style "Прочитали" dialog using `getMessageReadReceipts`;
+  - rebuilt Android native `libnative-utils.so` for `armeabi-v7a`, `arm64-v8a`, `x86`, and `x86_64`; verified `cargo check -p deltachat`, Android `:assembleFossDebug`, installation/launch on `SM-G991B`, picker launch, live camera capture selection, and no new picker crash.
+- Built and deployed Android `2.49.68` (`versionCode 816`) — BMU marker cleanup and notification-test correction:
+  - disabled outbound peer-to-peer update markers in `UpdateBroadcast.maybeAppend()` because mail servers can strip zero-width wrappers and expose raw `BMU(base64...)` text to users;
+  - stripped existing BMU markers from full-message HTML/title, notification summaries/MessagingStyle rows, and conversation-list previews, in addition to the existing chat-bubble strip path;
+  - confirmed logcat contained an `adb force-stop` before the reported notification test; documented that Android blocks background services/receivers after force-stop until the user manually opens the app once;
+  - installed the build without force-stop and verified `KeepAliveService` is `isForeground=true`;
+  - deployed `BMChat-foss-debug-2.49.68.apk` (76 880 127 bytes, SHA-256 `890dabedb468c07a1f1c23b7bf9534ace3633bc5e7db40a7b264998b84f3e608`) and repointed `update.json` + `BMChat-foss-debug-latest.apk` on primary and mirror VPS.
+- Built and deployed Android `2.49.25` (`versionCode 773`) — first-write fix for Telegram-bot queue:
+  - diagnosed the user's `Device messages: queue ENQUEUE FAIL (пост) / error: null` as an `UnsupportedOperationException` thrown by adding to `Collections.emptyList()` on the first write into an empty `PendingPostStore` queue;
+  - changed empty/parse-failure reads to mutable `ArrayList` and wrapped all mutating read paths before add/set/remove;
+  - changed queue persistence from `apply()` to synchronous `commit()` so immediate count diagnostics see the saved entry;
+  - changed dispatcher diagnostics to include exception class names instead of blank/null messages;
+  - deployed `BMChat-foss-debug-2.49.25.apk` (76 574 341 bytes, SHA-256 `e3397f11e9fac111825652f17582af18599a06cd854a743990f6ef8b05dc4298`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`. Verified `/update.json` advertises `2.49.25` and `HEAD /apk/BMChat-foss-debug-2.49.25.apk` returns 200.
+- Built and deployed Android `2.49.24` (`versionCode 772`) — stable Telegram-bot queue key:
+  - fixed the remaining "received N, queue empty" scenario caused by storing `PendingPostStore` entries under local `BotConfig.id` UUID while the same Telegram bot/token could exist as multiple local rows after remove/re-add cycles;
+  - `PendingPostStore` now uses a canonical `SHA-256(token)` preference key for BotConfig-based operations and automatically merges legacy UUID-keyed entries into that canonical queue on read;
+  - dispatcher, scheduler, bot-list counts, and `PendingPostsActivity` now use BotConfig overloads, while remove/schedule/markPublished also touch legacy keys so migrated entries do not reappear;
+  - poll stats now count every successful enqueue as `queued`, even when auto-publish is enabled, and the toast says `в очередь/журнал`;
+  - deployed `BMChat-foss-debug-2.49.24.apk` (76 574 367 bytes, SHA-256 `561ebe1a081f2b1a0be7563fe8a5e3355810d4fb6f97b24bdd98a6019c5b6858`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`. Verified `/update.json` advertises `2.49.24` and `HEAD /apk/BMChat-foss-debug-2.49.24.apk` returns 200.
+- Built and deployed Android `2.49.5` (`versionCode 753`) after the May 8 follow-up:
+  - fixed `/i` "Открыть в BMChat" by moving the invite payload from the broken `#PAYLOAD#Intent` form into `?bmchat_invite=...` and restoring the canonical `http://5.187.4.132/i#...` link in Android before SecureJoin handling;
+  - repaired `clients/android/src/main/assets/help/ru/help.html` from mojibake to real UTF-8 and kept explicit UTF-8 WebView loading in `LocalHelpActivity`;
+  - added detailed local statistics to the Android "Соединение" screen;
+  - shortened/traced long advanced-settings labels with explanatory summaries;
+  - moved the Android foreground notification to a fresh visible BMChat channel and added a Windows desktop AppUserModelID for notification identity;
+  - deployed `BMChat-foss-debug-2.49.5.apk` (76 441 671 bytes, SHA-256 `79a8e2044f95663679be2503972c50f298292ec2ceb62ebbb8af044a8378f808`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`.
+- Built and deployed Android `2.49.6` (`versionCode 754`) for contact deduplication:
+  - core contact lists now return one contact per normalized e-mail address;
+  - migration 151 merges existing duplicate contacts and rewrites chat/message/reaction/location references to the chosen primary contact;
+  - Android/Desktop/iOS creation flows lookup by e-mail before creating a contact, and Android/Desktop hide "create contact" when the e-mail already exists;
+  - Android native core was rebuilt for `armeabi-v7a`, `arm64-v8a`, `x86`, and `x86_64`;
+  - deployed `BMChat-foss-debug-2.49.6.apk` (76 445 188 bytes, SHA-256 `96fe0ae547cf41dcc4b09fb9207ae21a3e9f8b309e28fe5721be7c213f54f7d1`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`.
+- Built and deployed Android `2.49.7` (`versionCode 755`) — one-chat-per-e-mail enforcement:
+  - new `BMChatChatDedupe` helper archives mirror 1:1 chats with the same peer e-mail, keeping the freshest one;
+  - the helper is triggered on `DC_EVENT_INCOMING_MSG`, `DC_EVENT_CHAT_MODIFIED`, `DC_EVENT_CONTACTS_CHANGED`, `DC_EVENT_MSGS_CHANGED`, after `BMChatInviteAutoAcceptor` finishes the SecureJoin handshake, and after `QrCodeHandler.secureJoinByQr` / `showFingerprintOrQrSuccess`;
+  - `ConversationListAdapter.rebuildVisibleIndices()` is now a UI-side safety net that hides extra 1:1 chats per peer e-mail even if archiving has not yet run;
+  - no Rust core changes — `libnative-utils.so` from 2.49.6 is reused;
+  - deployed `BMChat-foss-debug-2.49.7.apk` (76 447 615 bytes, SHA-256 `8a1e6291adc747ccf45372e244ddf9f6af0ac74b9fa90c1583e06bc40e4f9b4f`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`. Verified `/`, `/i`, `/update.json`, `/desktop-update.json` all return 200 and `update.json` advertises `2.49.7`.
+- Built and deployed Android `2.49.8` (`versionCode 756`) — heads-up alerts and launcher-icon unread badge:
+  - bumped `CH_MSG_VERSION 5 → 6`; `NotificationCenter` now deletes any previous `ch_msgV*_*` channel before creating the new v6 one with `IMPORTANCE_HIGH` and `setLockscreenVisibility(VISIBILITY_PUBLIC)`, falling back to `RingtoneManager.getDefaultUri(TYPE_NOTIFICATION)` when no ringtone is configured (otherwise Android silently demotes the heads-up to a quiet drawer entry);
+  - per-message builder now sets `setVisibility(VISIBILITY_PUBLIC)` + `setBadgeIconType(BADGE_ICON_LARGE)` and falls back to the system default sound on pre-O;
+  - added `me.leolin:ShortcutBadger:1.1.22@aar` plus a new `BMChatBadge` helper that updates the launcher-icon unread count via OEM-specific intent broadcasts (Xiaomi MIUI, Huawei EMUI, OPPO/Vivo, Sony, etc.). Bound to every relevant `DC_EVENT_*`, all notification add/remove paths, and an initial refresh in `ApplicationContext.onCreate()` so the badge is correct after reboot;
+  - replaced the hard-coded "Delta Chat / New messages" summary text with `R.string.app_name` + a new `notify_new_messages` (RU "Новые сообщения" / EN "New messages");
+  - no Rust core changes — `libnative-utils.so` from 2.49.6 is reused;
+  - deployed `BMChat-foss-debug-2.49.8.apk` (76 456 014 bytes, SHA-256 `a1f960fee085a52671b2137bc1493ed525bba58438ac03eb92778e900cfab68b`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`. Verified `/`, `/i`, `/update.json`, `/desktop-update.json` all return 200 and `update.json` advertises `2.49.8`.
+- Built and deployed Android `2.49.9` (`versionCode 757`) — notification content (sender name/avatar/preview) and quiet foreground service:
+  - per-chat notifications switched from `InboxStyle` to `NotificationCompat.MessagingStyle`. Each row in the heads-up / drawer entry now carries the sender's `Person` (name + circular avatar bitmap rendered through Glide via `getAvatarForContact(DcContact)`) plus the actual text or media-summary content; the chat avatar still rides as `setLargeIcon` for the collapsed view;
+  - new helper `BMChatNames#humanize(rawName, addr)` derives a friendly label from the local-part of an e-mail (`john.doe@yandex.ru` → `John Doe`) when the peer hasn't supplied a Display Name yet. Wired into `Recipient.getName()` (chat list, conversation header, picker dialogs) and into `NotificationCenter.notifyMessage`/`notifyReaction` and the per-chat title;
+  - notification priority is forced to `>= NotificationCompat.PRIORITY_HIGH` for older OEM ROMs that silently demote heads-up otherwise; `getNotificationChannel()` always binds the platform default notification sound when the user hasn't picked one (prevents Samsung One UI from creating a silent channel on first install);
+  - `CH_MSG_VERSION 6 → 7` so devices upgrading from 2.49.8 get the freshly-created channel with the guaranteed sound;
+  - `BMChatInviteAutoAcceptor.processLink` now extracts `n=` and `a=` from the invite URL (fragment or query) and calls `dcContext.createContact(name, addr)` BEFORE `joinSecurejoin`, so the chat list shows the peer's nickname immediately;
+  - foreground service notification ("BMChat работает в фоне") collapsed into a bare status-bar icon: `KeepAliveService` channel id bumped to `bmchat_fg_notification_ch_v3` with `IMPORTANCE_MIN`, `setShowBadge(false)`, `setSound(null,null)`, `setLockscreenVisibility(VISIBILITY_SECRET)`; legacy `*_v2`/`*` channels are deleted on first run; builder uses `PRIORITY_MIN`, `VISIBILITY_SECRET`, no body text, short `notify_background_connection_title = "BMChat"`;
+  - no Rust core changes — `libnative-utils.so` from 2.49.6 is reused;
+  - deployed `BMChat-foss-debug-2.49.9.apk` (76 461 802 bytes, SHA-256 `6d1fd55a664abc9d4049458033057ddcf7dc432528860138e8d568068dacbf31`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`. Verified `/`, `/i`, `/update.json`, `/desktop-update.json` all return 200 and `update.json` advertises `2.49.9`.
+- Built and deployed Android `2.49.10` (`versionCode 758`) — auto-update fires on every foreground transition:
+  - `BMChatUpdater.bindGlobalLifecycle(Application)` hooks an `ActivityLifecycleCallbacks` from `ApplicationContext.onCreate()`. It tracks the top activity for hosting the dialog and detects process-level background→foreground transitions to force a fresh manifest probe;
+  - `forceCheckOnForeground()` bypasses the silent debounce on every foreground return, with a `60 s` mini-debounce so quick back-to-back transitions don't hammer the manifest;
+  - `MIN_CHECK_INTERVAL_MS` 1 h → 15 min and `PERIODIC_RECHECK_MS` 30 min → 15 min, since BMChat ships hot-fix builds in quick succession and `update.json` is ~700 bytes;
+  - the prompt is now hosted by the latest resumed activity (chat list, conversation, settings, …), buttons read «Скачать и установить» / «Позже» / «Пропустить эту версию», and a `promptShown` flag prevents double-open on rotation or simultaneous probes;
+  - download dialog now shows a real horizontal progress bar and "X MB of Y MB" status, driven by a `ProgressListener` callback fed by `downloadApk()` (reports every 200 ms), with a re-entrancy guard against duplicate taps;
+  - `ConversationListActivity.onResume` still calls `BMChatUpdater.scheduleForActivity()` (kept as a deprecated compatibility entry point) but the actual work is driven by the global lifecycle hook;
+  - no Rust core changes — `libnative-utils.so` from 2.49.6 is reused;
+  - deployed `BMChat-foss-debug-2.49.10.apk` (76 464 357 bytes, SHA-256 `c63a8ab5e4ace31509126eac59e1cb1825cdf0da70717ad3ff816616aabf804d`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`. Verified `/`, `/i`, `/update.json`, `/desktop-update.json` all return 200 and `update.json` advertises `2.49.10`.
+- Built and deployed Android `2.49.11` (`versionCode 759`) — proactive profile broadcast to peers:
+  - new `BMChatProfilePublisher` walks `getChatlist()` for the active account, picks every active 1:1 chat (no self/device/info/mailing list/contact request/group/non-canSend), deduplicates peer contact IDs, and sends a short `🔄 Profile updated.` text into each one. The actual profile carrier is the message's `From:` name and `Chat-User-Avatar` header that Delta Chat core already attaches — Delta Chat resets `contacts.selfavatar_sent=0` on every `Selfavatar` config write, so this fan-out delivers the new card to every recipient even if they never reply;
+  - hard cap of 200 recipients per pass; group chats are intentionally skipped to avoid spamming many participants per profile change;
+  - `CreateProfileActivity.updateProfile()` now compares the pre/post name and avatar-changed flag and, if either differs, surfaces a "Разослать новый профиль контактам?" AlertDialog after the local save with «Разослать» / «Не сейчас» buttons (the latter just finishes the screen, the former fires the publisher first);
+  - new manual entry point `Settings → Дополнительные параметры → Разослать профиль контактам` wired in `AdvancedPreferenceFragment` to the same dialog → publisher path;
+  - localised strings (RU/EN) for the publish dialog, menu entry, success/empty toasts, and the broadcast body marker;
+  - no Rust core changes — `libnative-utils.so` from 2.49.6 is reused;
+  - deployed `BMChat-foss-debug-2.49.11.apk` (76 471 695 bytes, SHA-256 `1a2b4c08395366498dcf9b711fc71745aa5632ab6887b60f32bbb3f03e268d15`) and repointed `update.json` + `BMChat-foss-debug-latest.apk`. Verified `/`, `/i`, `/update.json`, `/desktop-update.json` all return 200 and `update.json` advertises `2.49.11`.
 
 ## Not Started
 

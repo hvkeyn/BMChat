@@ -84,7 +84,10 @@ export async function createChatByContactId(
       throw new Error('either contactId or email needs to be set')
     }
 
-    contactId = await BackendRemote.rpc.createContact(accountId, email, null)
+    contactId = await BackendRemote.rpc.lookupContactIdByAddr(accountId, email)
+    if (!contactId) {
+      contactId = await BackendRemote.rpc.createContact(accountId, email, null)
+    }
   }
 
   return await BackendRemote.rpc.createChatByContactId(accountId, contactId)

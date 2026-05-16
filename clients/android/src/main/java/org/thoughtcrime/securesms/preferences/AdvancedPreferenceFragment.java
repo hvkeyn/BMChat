@@ -3,6 +3,7 @@ package org.thoughtcrime.securesms.preferences;
 import static android.app.Activity.RESULT_OK;
 import static android.text.InputType.TYPE_TEXT_VARIATION_URI;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_BCC_SELF;
+import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_FETCH_SPAM;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_MVBOX_MOVE;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_ONLY_FETCH_MVBOX;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_SHOW_EMAILS;
@@ -54,6 +55,7 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
   CheckBoxPreference multiDeviceCheckbox;
   CheckBoxPreference mvboxMoveCheckbox;
   CheckBoxPreference onlyFetchMvboxCheckbox;
+  CheckBoxPreference fetchSpamCheckbox;
   private ActivityResultLauncher<Intent> screenLockLauncher;
 
   @Override
@@ -137,6 +139,16 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
           }));
     }
 
+    fetchSpamCheckbox = this.findPreference("pref_fetch_spam");
+    if (fetchSpamCheckbox != null) {
+      fetchSpamCheckbox.setOnPreferenceChangeListener(
+          (preference, newValue) -> {
+            boolean enabled = (Boolean) newValue;
+            dcContext.setConfigInt(CONFIG_FETCH_SPAM, enabled ? 1 : 0);
+            return true;
+          });
+    }
+
     Preference screenSecurity = this.findPreference(Prefs.SCREEN_SECURITY_PREF);
     if (screenSecurity != null) {
       screenSecurity.setOnPreferenceChangeListener(new ScreenShotSecurityListener());
@@ -148,6 +160,39 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
               getString(R.string.app_name), BuildConfig.VERSION_NAME));
       checkForUpdates.setOnPreferenceClickListener(p -> {
         BMChatUpdater.checkNowFromUi(requireActivity());
+        return true;
+      });
+    }
+
+    Preference publishProfile = this.findPreference("pref_publish_profile");
+    if (publishProfile != null) {
+      publishProfile.setOnPreferenceClickListener(p -> {
+        new AlertDialog.Builder(requireContext())
+            .setTitle(R.string.bmchat_profile_publish_title)
+            .setMessage(R.string.bmchat_profile_publish_explain)
+            .setPositiveButton(R.string.bmchat_profile_publish_now, (d, w) ->
+                org.thoughtcrime.securesms.connect.BMChatProfilePublisher
+                    .publishToActiveContacts(requireContext(), true))
+            .setNegativeButton(R.string.bmchat_profile_publish_skip, null)
+            .show();
+        return true;
+      });
+    }
+
+    Preference telegramBots = this.findPreference("pref_telegram_bots");
+    if (telegramBots != null) {
+      telegramBots.setOnPreferenceClickListener(p -> {
+        startActivity(org.thoughtcrime.securesms.bots.ui.BotsActivity
+            .newIntent(requireContext()));
+        return true;
+      });
+    }
+
+    Preference emailBots = this.findPreference("pref_email_bots");
+    if (emailBots != null) {
+      emailBots.setOnPreferenceClickListener(p -> {
+        startActivity(org.thoughtcrime.securesms.emailbots.ui.EmailBotsActivity
+            .newIntent(requireContext()));
         return true;
       });
     }
@@ -266,6 +311,9 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
     }
     if (onlyFetchMvboxCheckbox != null) {
       onlyFetchMvboxCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_ONLY_FETCH_MVBOX));
+    }
+    if (fetchSpamCheckbox != null) {
+      fetchSpamCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_FETCH_SPAM));
     }
   }
 

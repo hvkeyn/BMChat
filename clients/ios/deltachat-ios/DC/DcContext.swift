@@ -159,6 +159,10 @@ public class DcContext {
     }
 
     public func createContact(name: String?, email: String) -> Int {
+        let existingContactId = lookupContactIdByAddress(email)
+        if existingContactId != 0 {
+            return existingContactId
+        }
         return Int(dc_create_contact(contextPointer, name, email))
     }
 

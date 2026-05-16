@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Composer text-input caret. Thicker than the Android default (1dp →
+  3dp) and painted in the BMChat brand accent so it stays visible on
+  the light grey composer bar. Dark-theme override lives in
+  drawable-night/compose_cursor.xml, where it switches to white for
+  the same reason: contrast against the dark composer background.
+
+  EditText's blinking is driven by Android itself; the only thing we
+  control here is colour and width. No animation required.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+       android:shape="rectangle">
+    <size android:width="3dp" />
+    <solid android:color="@color/delta_accent" />
+</shape>
