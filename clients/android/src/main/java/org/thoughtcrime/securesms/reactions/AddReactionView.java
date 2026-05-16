@@ -174,14 +174,34 @@ public class AddReactionView extends LinearLayout {
       }
     }
 
-    final int offset = (int) (this.getHeight() * 0.666);
+    // Position the popup after measure pass so getWidth()/getHeight()
+    // are known, otherwise the trailing "⋯" emoji can land off-screen.
+    setVisibility(View.INVISIBLE);
+    final DcMsg targetMsg = msgToReactTo;
+    post(() -> positionPopup(parentView, targetMsg));
+  }
+
+  private void positionPopup(View parentView, DcMsg targetMsg) {
+    if (targetMsg != msgToReactTo) return;
+    int popupWidth = getWidth();
+    int popupHeight = getHeight();
+    int parentWidth = 0;
+    if (getParent() instanceof View) {
+      parentWidth = ((View) getParent()).getWidth();
+    }
+    final int offset = (int) (popupHeight * 0.666);
     int x = (int) parentView.getX();
-    if (msgToReactTo.isOutgoing()) {
-      x += parentView.getWidth() - offset - this.getWidth();
+    if (msgToReactTo != null && msgToReactTo.isOutgoing()) {
+      x += parentView.getWidth() - offset - popupWidth;
     } else {
       x += offset;
     }
-    ViewUtil.setLeftMargin(this, Math.max(x, 0));
+    int sidePadding = ViewUtil.dpToPx(context, 8);
+    if (parentWidth > 0) {
+      int maxX = parentWidth - popupWidth - sidePadding;
+      x = Math.min(x, Math.max(0, maxX));
+    }
+    ViewUtil.setLeftMargin(this, Math.max(x, sidePadding));
 
     int y = Math.max((int) parentView.getY() - offset, offset / 2);
     ViewUtil.setTopMargin(this, y);

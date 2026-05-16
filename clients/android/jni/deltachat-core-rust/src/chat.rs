@@ -3059,7 +3059,10 @@ pub(crate) async fn save_text_edit_to_db(
 
 async fn donation_request_maybe(context: &Context) -> Result<()> {
     context
-        .set_config_internal(Config::DonationRequestNextCheck, Some(&i64::MAX.to_string()))
+        .set_config_internal(
+            Config::DonationRequestNextCheck,
+            Some(&i64::MAX.to_string()),
+        )
         .await
 }
 

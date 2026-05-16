@@ -83,18 +83,27 @@
 
         <!-- Row 1: Telegram-style emoji reaction picker. Tap inserts
              the emoji as a reaction. The "⋯" tile opens the full
-             emoji picker for any other character. -->
+             emoji picker for any other character. The row is wrapped
+             in a HorizontalScrollView so a wider set of defaults plus
+             the trailing "⋯" always stay reachable on narrow screens. -->
+        <HorizontalScrollView
+            android:id="@+id/add_reaction_row_scroll"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:fillViewport="false"
+            android:background="@drawable/reaction_pill_background">
         <LinearLayout
             android:id="@+id/add_reaction_row"
             android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="7dp"
-            android:paddingEnd="7dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
-            android:gravity="center"
-            android:background="@drawable/reaction_pill_background">
+            android:gravity="center">
 
             <!-- BMChat quick reactions: keep the full emoji picker behind
                  the final ⋯ button, but expose the common Telegram-style
@@ -155,6 +164,7 @@
                 android:layout_height="wrap_content"
                 style="@style/AddReaction" />
         </LinearLayout>
+        </HorizontalScrollView>
 
         <!-- Row 2: Telegram-style one-tap action icons. Same pill
              background, just below the reactions. Visibility of

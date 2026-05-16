@@ -95,6 +95,12 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Latest Completed
 
+- Implemented Android storage management and safe local cache cleanup:
+  - core `storage_usage` now exposes structured total/db/blobdir usage, category breakdowns, per-chat breakdowns, and `evictable_bytes` based on whether a message can be downloaded again from IMAP;
+  - new JSON-RPC methods `get_storage_usage` and `clear_local_storage` support Android now and provide a cross-client API for Desktop/iOS later;
+  - local cleanup removes only safe cached blobs, converts affected messages back to downloadable placeholders, skips files without a known IMAP copy, and reports freed/skipped bytes;
+  - Android Settings now has "Память и данные" with a Telegram-like donut summary, type/chat checklists, progress/result dialogs, automatic cache cleanup via WorkManager, and a separate dangerous server cleanup flow using `delete_server_after` with explicit confirmation;
+  - added RU strings, a storage settings icon, Java RPC types, and `StorageCleanupWorker`; rebuilt Android native `libnative-utils.so` for all ABIs and verified `cargo fmt --check`, `cargo check -p deltachat-jsonrpc`, `./gradlew.bat :assembleFossDebug`, APK install, and app launch on device.
 - Implemented PR branch `bmchat-24969-spam-camera-read-receipts` for Spam-fetch, live CameraX picker tile, and group read receipts:
   - core adds `fetch_spam`, stores `configured_spam_folder`, watches Spam/Junk when enabled, starts a Spam `simple_imap_loop`, and moves eligible chat messages out of Spam so they are fetched from Inbox/Mvbox and the provider learns "not spam";
   - Android Advanced Settings has the new "Проверять папку «Спам»" switch wired to core config `fetch_spam`;

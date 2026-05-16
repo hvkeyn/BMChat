@@ -35,7 +35,10 @@ use deltachat::qr_code_generator::{create_qr_svg, generate_backup_qr, get_secure
 use deltachat::reaction::{get_msg_reactions, send_reaction};
 use deltachat::securejoin;
 use deltachat::stock_str::StockMessage;
-use deltachat::storage_usage::{get_blobdir_storage_usage, get_storage_usage};
+use deltachat::storage_usage::{
+    clear_local_storage as core_clear_local_storage, get_blobdir_storage_usage,
+    get_storage_usage as get_core_storage_usage, get_storage_usage_summary,
+};
 use deltachat::webxdc::StatusUpdateSerial;
 use deltachat::EventEmitter;
 use sanitize_filename::is_sanitized;
@@ -57,6 +60,7 @@ use types::message::{MessageData, MessageObject, MessageReadReceipt};
 use types::notify_state::JsonrpcNotifyState;
 use types::provider_info::ProviderInfo;
 use types::reactions::JsonrpcReactions;
+use types::storage::{StorageClearRequest, StorageClearResult, StorageUsage};
 use types::webxdc::WebxdcMessageInfo;
 
 use self::types::message::{MessageInfo, MessageLoadResult};
@@ -375,8 +379,26 @@ impl CommandApi {
     /// Get storage usage report as formatted string
     async fn get_storage_usage_report_string(&self, account_id: u32) -> Result<String> {
         let ctx = self.get_context(account_id).await?;
-        let storage_usage = get_storage_usage(&ctx).await?;
+        let storage_usage = get_core_storage_usage(&ctx).await?;
         Ok(storage_usage.to_string())
+    }
+
+    /// Get structured storage usage for UI clients.
+    async fn get_storage_usage(&self, account_id: u32) -> Result<StorageUsage> {
+        let ctx = self.get_context(account_id).await?;
+        let usage = get_storage_usage_summary(&ctx).await?;
+        Ok(usage.into())
+    }
+
+    /// Clear locally cached media while keeping messages available for download.
+    async fn clear_local_storage(
+        &self,
+        account_id: u32,
+        request: StorageClearRequest,
+    ) -> Result<StorageClearResult> {
+        let ctx = self.get_context(account_id).await?;
+        let result = core_clear_local_storage(&ctx, request.into()).await?;
+        Ok(result.into())
     }
 
     /// Get the blob dir.

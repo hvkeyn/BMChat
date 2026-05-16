@@ -12,6 +12,13 @@
         android:layout="@layout/preference_item" />
 
     <Preference
+        android:key="preference_category_storage"
+        android:title="@string/bmchat_storage_title"
+        android:summary="@string/bmchat_storage_summary"
+        android:icon="@drawable/ic_storage_24"
+        android:layout="@layout/preference_item" />
+
+    <Preference
         android:key="preference_category_notifications"
         android:title="@string/pref_notifications"
         android:icon="@drawable/ic_notifications_24dp"

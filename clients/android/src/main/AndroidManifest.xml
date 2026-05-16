@@ -308,6 +308,11 @@
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
 
         <activity
+            android:name=".storage.StorageManagementActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
             android:name=".WelcomeActivity"
             android:launchMode="singleTop"
             android:theme="@style/TextSecure.LightNoActionBar"

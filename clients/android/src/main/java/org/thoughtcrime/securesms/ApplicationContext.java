@@ -181,6 +181,12 @@ public class ApplicationContext extends MultiDexApplication {
       Log.w(TAG, "BotPollManager.ensurePeriodicScheduled failed", t);
     }
 
+    try {
+      org.thoughtcrime.securesms.storage.StorageCleanupWorker.schedule(this);
+    } catch (Throwable t) {
+      Log.w(TAG, "StorageCleanupWorker.schedule failed", t);
+    }
+
     System.loadLibrary("native-utils");
 
     // Initialize DcAccounts in background to avoid ANR during SQL migrations
