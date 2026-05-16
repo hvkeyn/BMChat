@@ -1153,7 +1153,7 @@ public class ConversationItem extends BaseConversationItem {
 
   private void setReadReceiptInteraction(@NonNull DcMsg current, @NonNull DcChat chat) {
     ConversationItemFooter activeFooter = getActiveFooter(current);
-    boolean canShowReceipts = current.isOutgoing() && chat.isMultiUser();
+    boolean canShowReceipts = chat.isMultiUser() && !current.isInfo();
     activeFooter.setClickable(canShowReceipts);
     activeFooter.setFocusable(canShowReceipts);
     activeFooter.setOnClickListener(

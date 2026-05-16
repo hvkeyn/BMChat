@@ -70,6 +70,9 @@ public class AddReactionView extends LinearLayout {
             findViewById(R.id.reaction_2),
             findViewById(R.id.reaction_3),
             findViewById(R.id.reaction_4),
+            findViewById(R.id.reaction_5),
+            findViewById(R.id.reaction_6),
+            findViewById(R.id.reaction_7),
           };
       for (int i = 0; i < defaultReactionViews.length; i++) {
         final int ii = i;
@@ -312,24 +315,20 @@ public class AddReactionView extends LinearLayout {
     readReceiptsAvatars.removeAllViews();
 
     try {
-      if (!msg.isOutgoing() || !dcContext.getChat(msg.getChatId()).isMultiUser()) {
+      if (!dcContext.getChat(msg.getChatId()).isMultiUser() || msg.isInfo()) {
         readReceiptsRow.setVisibility(View.GONE);
         return;
       }
 
       List<MessageReadReceipt> receipts =
           rpc.getMessageReadReceipts(dcContext.getAccountId(), msg.getId());
-      if (receipts == null || receipts.isEmpty()) {
-        readReceiptsRow.setVisibility(View.GONE);
-        return;
-      }
-
+      int receiptCount = receipts == null ? 0 : receipts.size();
       readReceiptsLabel.setText(
-          context.getString(R.string.bmchat_read_receipts_seen_n, receipts.size()));
+          context.getString(R.string.bmchat_read_receipts_seen_n, receiptCount));
 
       int avatarSize = ViewUtil.dpToPx(context, 28);
       int overlap = ViewUtil.dpToPx(context, -6);
-      int maxAvatars = Math.min(receipts.size(), 4);
+      int maxAvatars = Math.min(receiptCount, 4);
       for (int i = 0; i < maxAvatars; i++) {
         MessageReadReceipt receipt = receipts.get(i);
         DcContact contact = dcContext.getContact(receipt.contactId);

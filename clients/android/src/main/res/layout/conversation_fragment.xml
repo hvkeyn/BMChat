@@ -96,10 +96,9 @@
             android:gravity="center"
             android:background="@drawable/reaction_pill_background">
 
-            <!-- BMChat 2.49.67: added 🔥 as one of the quick reactions
-                 (replacing 🙁 which was rarely used in our chats).
-                 Selection by position: 👍 ❤️ 🔥 😂 👎 → Telegram-style
-                 order so the most popular ones live in the middle. -->
+            <!-- BMChat quick reactions: keep the full emoji picker behind
+                 the final ⋯ button, but expose the common Telegram-style
+                 set directly so most reactions are one tap. -->
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/reaction_0"
                 android:text="👍"
@@ -126,6 +125,24 @@
                 style="@style/AddReaction" />
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/reaction_4"
+                android:text="😮"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_5"
+                android:text="😢"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_6"
+                android:text="🙏"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_7"
                 android:text="👎"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
