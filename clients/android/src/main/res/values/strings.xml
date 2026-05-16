@@ -1536,9 +1536,16 @@
     <string name="bmchat_gallery_picker_send_n">Отправить (%1$d)</string>
     <string name="bmchat_gallery_picker_camera">Камера</string>
     <string name="bmchat_gallery_picker_camera_error">Не удалось сделать фото</string>
+    <string name="bmchat_gallery_picker_camera_capture">Сделать фото</string>
+    <string name="bmchat_gallery_picker_camera_fullscreen_hint">Наведите камеру и нажмите кнопку</string>
     <string name="bmchat_read_receipts_title">Прочитали</string>
     <string name="bmchat_read_receipts_empty">Пока никто из участников не прислал подтверждение прочтения.</string>
     <string name="bmchat_read_receipts_error">Не удалось открыть список прочитавших</string>
+    <string name="bmchat_read_receipts_seen_n">%1$d прочитали</string>
+    <string name="bmchat_read_receipts_action">Прочитал(а)</string>
+    <string name="bmchat_msg_info_sent">Отправлено</string>
+    <string name="bmchat_msg_info_read">Прочитано</string>
+    <string name="bmchat_msg_info_technical">Технические детали</string>
 
     <!-- BMChat 2.49.55: provider-specific login help. Most large mail providers require an
          "app password" rather than the web-cabinet password for IMAP/SMTP, which is why the

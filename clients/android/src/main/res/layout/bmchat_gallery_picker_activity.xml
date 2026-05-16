@@ -6,30 +6,90 @@
   pads the grid with `bmchat_gallery_grid_bottom_padding` so the last row
   isn't hidden by the navigation bar.
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:fitsSystemWindows="true"
     android:background="@android:color/black">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/bmchat_gallery_toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/bmchat_gallery_grid"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none"
-        android:clipToPadding="false"
-        android:paddingTop="2dp"
-        android:paddingLeft="2dp"
-        android:paddingRight="2dp"
-        android:paddingBottom="16dp"/>
+        android:orientation="vertical"
+        android:fitsSystemWindows="true"
+        android:background="@android:color/black">
 
-</LinearLayout>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/bmchat_gallery_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bmchat_gallery_grid"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="none"
+            android:clipToPadding="false"
+            android:paddingTop="2dp"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:paddingBottom="16dp"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/bmchat_gallery_camera_fullscreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@android:color/black">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/bmchat_gallery_camera_fullscreen_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageButton
+            android:id="@+id/bmchat_gallery_camera_close"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="top|start"
+            android:layout_margin="20dp"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/cancel"
+            android:padding="14dp"
+            android:src="@drawable/ic_close_white_24dp"
+            android:tint="#FFFFFFFF" />
+
+        <TextView
+            android:id="@+id/bmchat_gallery_camera_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginTop="34dp"
+            android:background="#66000000"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="7dp"
+            android:paddingBottom="7dp"
+            android:text="@string/bmchat_gallery_picker_camera_fullscreen_hint"
+            android:textColor="#FFFFFFFF"
+            android:textSize="14sp" />
+
+        <ImageButton
+            android:id="@+id/bmchat_gallery_camera_capture"
+            android:layout_width="84dp"
+            android:layout_height="84dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="44dp"
+            android:background="@drawable/bmchat_gallery_camera_capture_bg"
+            android:contentDescription="@string/bmchat_gallery_picker_camera_capture"
+            android:padding="22dp"
+            android:src="@drawable/ic_photo_camera_white_36dp"
+            android:tint="#FFFFFFFF" />
+
+    </FrameLayout>
+
+</FrameLayout>

@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat;
 import androidx.emoji2.emojipicker.EmojiPickerView;
 import chat.delta.rpc.Rpc;
 import chat.delta.rpc.RpcException;
+import chat.delta.rpc.types.MessageReadReceipt;
 import chat.delta.rpc.types.Reactions;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
@@ -19,7 +20,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.components.AvatarImageView;
 import org.thoughtcrime.securesms.connect.DcHelper;
+import org.thoughtcrime.securesms.mms.GlideApp;
+import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.util.ViewUtil;
 
 public class AddReactionView extends LinearLayout {
@@ -35,6 +39,9 @@ public class AddReactionView extends LinearLayout {
   private AppCompatImageView actionForwardView;
   private AppCompatImageView actionDeleteView;
   private View actionsRow;
+  private LinearLayout readReceiptsRow;
+  private LinearLayout readReceiptsAvatars;
+  private AppCompatTextView readReceiptsLabel;
   private boolean anyReactionClearsReaction;
   private Context context;
   private DcContext dcContext;
@@ -74,6 +81,9 @@ public class AddReactionView extends LinearLayout {
       // Telegram-style action icons. They are optional — only
       // wired when the host layout actually inflated them.
       actionsRow        = findViewById(R.id.add_reaction_actions);
+      readReceiptsRow        = findViewById(R.id.add_reaction_read_receipts);
+      readReceiptsAvatars    = findViewById(R.id.add_reaction_read_receipts_avatars);
+      readReceiptsLabel      = findViewById(R.id.add_reaction_read_receipts_label);
       actionReplyView         = findViewById(R.id.action_reply);
       actionQuoteFragmentView = findViewById(R.id.action_quote_fragment);
       actionEditView          = findViewById(R.id.action_edit);
@@ -98,6 +108,9 @@ public class AddReactionView extends LinearLayout {
       }
       if (actionDeleteView != null) {
         actionDeleteView.setOnClickListener(v -> dispatchAction(Action.DELETE));
+      }
+      if (readReceiptsRow != null) {
+        readReceiptsRow.setOnClickListener(v -> dispatchAction(Action.READ_RECEIPTS));
       }
     }
   }
@@ -131,6 +144,7 @@ public class AddReactionView extends LinearLayout {
     }
 
     updateActionsVisibility(msgToReactTo);
+    updateReadReceiptsSummary(msgToReactTo);
 
     final String existingReaction = canSend ? getSelfReaction() : null;
     if (canSend) {
@@ -291,6 +305,50 @@ public class AddReactionView extends LinearLayout {
     actionsRow.setVisibility(anyVisible ? View.VISIBLE : View.GONE);
   }
 
+  private void updateReadReceiptsSummary(DcMsg msg) {
+    if (readReceiptsRow == null || readReceiptsAvatars == null || readReceiptsLabel == null) {
+      return;
+    }
+    readReceiptsAvatars.removeAllViews();
+
+    try {
+      if (!msg.isOutgoing() || !dcContext.getChat(msg.getChatId()).isMultiUser()) {
+        readReceiptsRow.setVisibility(View.GONE);
+        return;
+      }
+
+      List<MessageReadReceipt> receipts =
+          rpc.getMessageReadReceipts(dcContext.getAccountId(), msg.getId());
+      if (receipts == null || receipts.isEmpty()) {
+        readReceiptsRow.setVisibility(View.GONE);
+        return;
+      }
+
+      readReceiptsLabel.setText(
+          context.getString(R.string.bmchat_read_receipts_seen_n, receipts.size()));
+
+      int avatarSize = ViewUtil.dpToPx(context, 28);
+      int overlap = ViewUtil.dpToPx(context, -6);
+      int maxAvatars = Math.min(receipts.size(), 4);
+      for (int i = 0; i < maxAvatars; i++) {
+        MessageReadReceipt receipt = receipts.get(i);
+        DcContact contact = dcContext.getContact(receipt.contactId);
+        AvatarImageView avatar = new AvatarImageView(context);
+        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(avatarSize, avatarSize);
+        if (i > 0) lp.setMarginStart(overlap);
+        avatar.setLayoutParams(lp);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+          avatar.setForeground(ContextCompat.getDrawable(context, R.drawable.contact_photo_background));
+        }
+        avatar.setAvatar(GlideApp.with(context), new Recipient(context, contact), false);
+        readReceiptsAvatars.addView(avatar);
+      }
+      readReceiptsRow.setVisibility(View.VISIBLE);
+    } catch (RpcException e) {
+      readReceiptsRow.setVisibility(View.GONE);
+    }
+  }
+
   private static void show(View v, boolean visible) {
     if (v != null) v.setVisibility(visible ? View.VISIBLE : View.GONE);
   }
@@ -304,7 +362,7 @@ public class AddReactionView extends LinearLayout {
     }
   }
 
-  public enum Action { REPLY, QUOTE_FRAGMENT, EDIT, COPY, FORWARD, DELETE }
+  public enum Action { REPLY, QUOTE_FRAGMENT, EDIT, COPY, FORWARD, DELETE, READ_RECEIPTS }
 
   /** Receives one-tap actions issued from the floating bubble. */
   public interface QuickActionListener {

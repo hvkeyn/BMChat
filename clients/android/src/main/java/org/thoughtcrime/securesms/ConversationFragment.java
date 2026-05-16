@@ -34,6 +34,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -62,6 +64,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.thoughtcrime.securesms.ConversationAdapter.ItemClickListener;
+import org.thoughtcrime.securesms.components.AvatarImageView;
 import org.thoughtcrime.securesms.components.audioplay.AudioPlaybackViewModel;
 import org.thoughtcrime.securesms.components.reminder.DozeReminder;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
@@ -160,6 +163,7 @@ public class ConversationFragment extends MessageSelectorFragment {
         case EDIT:           handleEditMessage(message); break;
         case COPY:           handleCopyMessage(one); break;
         case FORWARD:        handleForwardMessage(one); break;
+        case READ_RECEIPTS:   showReadReceiptsDialog(message); break;
         case DELETE: {
           AudioPlaybackViewModel pvm =
               new ViewModelProvider(requireActivity()).get(AudioPlaybackViewModel.class);
@@ -1240,42 +1244,111 @@ public class ConversationFragment extends MessageSelectorFragment {
           .show();
     }
 
-    private void showReadReceiptsDialog(@NonNull DcMsg messageRecord) {
-      try {
-        List<MessageReadReceipt> receipts =
-            rpc.getMessageReadReceipts(DcHelper.getContext(getContext()).getAccountId(), messageRecord.getId());
-        StringBuilder body = new StringBuilder();
-        if (receipts.isEmpty()) {
-          body.append(getString(R.string.bmchat_read_receipts_empty));
-        } else {
-          for (MessageReadReceipt receipt : receipts) {
-            DcContact contact =
-                DcHelper.getContext(getContext()).getContact(receipt.contactId);
-            String name = contact.getDisplayName();
-            if (name == null || name.trim().isEmpty()) {
-              name = contact.getAddr();
-            }
-            long timestampMillis = receipt.timestamp == null ? 0 : receipt.timestamp * 1000L;
-            String when =
-                timestampMillis > 0
-                    ? DateUtils.getExtendedRelativeTimeSpanString(requireContext(), timestampMillis)
-                    : "";
-            if (body.length() > 0) body.append('\n');
-            body.append(name);
-            if (!when.isEmpty()) {
-              body.append(" · ").append(when);
-            }
-          }
-        }
-        new AlertDialog.Builder(requireContext())
-            .setTitle(R.string.bmchat_read_receipts_title)
-            .setMessage(body)
-            .setPositiveButton(android.R.string.ok, null)
-            .show();
-      } catch (RpcException e) {
-        Toast.makeText(getContext(), R.string.bmchat_read_receipts_error, Toast.LENGTH_SHORT).show();
+  }
+
+  private void showReadReceiptsDialog(@NonNull DcMsg messageRecord) {
+    try {
+      List<MessageReadReceipt> receipts =
+          rpc.getMessageReadReceipts(
+              DcHelper.getContext(getContext()).getAccountId(), messageRecord.getId());
+      View content = buildReadReceiptsView(receipts);
+      new AlertDialog.Builder(requireContext())
+          .setTitle(R.string.bmchat_read_receipts_title)
+          .setView(content)
+          .setPositiveButton(android.R.string.ok, null)
+          .show();
+    } catch (RpcException e) {
+      Toast.makeText(getContext(), R.string.bmchat_read_receipts_error, Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private View buildReadReceiptsView(@NonNull List<MessageReadReceipt> receipts) {
+    Context context = requireContext();
+    int pad = ViewUtil.dpToPx(context, 20);
+    int rowGap = ViewUtil.dpToPx(context, 12);
+    LinearLayout list = new LinearLayout(context);
+    list.setOrientation(LinearLayout.VERTICAL);
+    list.setPadding(pad, ViewUtil.dpToPx(context, 8), pad, ViewUtil.dpToPx(context, 4));
+
+    if (receipts.isEmpty()) {
+      TextView empty = new TextView(context);
+      empty.setText(R.string.bmchat_read_receipts_empty);
+      empty.setTextSize(15);
+      list.addView(empty);
+    } else {
+      for (MessageReadReceipt receipt : receipts) {
+        list.addView(
+            buildReadReceiptRow(context, receipt),
+            list.getChildCount() == 0
+                ? new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                : withTopMargin(rowGap));
       }
     }
+
+    ScrollView scroll = new ScrollView(context);
+    scroll.addView(list);
+    return scroll;
+  }
+
+  private View buildReadReceiptRow(@NonNull Context context, @NonNull MessageReadReceipt receipt) {
+    DcContact contact = DcHelper.getContext(context).getContact(receipt.contactId);
+    Recipient recipient = new Recipient(context, contact);
+    LinearLayout row = new LinearLayout(context);
+    row.setOrientation(LinearLayout.HORIZONTAL);
+    row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+    int avatarSize = ViewUtil.dpToPx(context, 44);
+    AvatarImageView avatar = new AvatarImageView(context);
+    row.addView(avatar, new LinearLayout.LayoutParams(avatarSize, avatarSize));
+    avatar.setAvatar(GlideApp.with(context), recipient, false);
+
+    LinearLayout texts = new LinearLayout(context);
+    texts.setOrientation(LinearLayout.VERTICAL);
+    LinearLayout.LayoutParams textLp =
+        new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+    textLp.setMarginStart(ViewUtil.dpToPx(context, 12));
+    row.addView(texts, textLp);
+
+    TextView nameView = new TextView(context);
+    nameView.setText(displayName(contact));
+    nameView.setTextSize(16);
+    nameView.setTypeface(null, android.graphics.Typeface.BOLD);
+    texts.addView(nameView);
+
+    TextView detailsView = new TextView(context);
+    detailsView.setText(buildReadReceiptDetails(receipt));
+    detailsView.setTextSize(14);
+    texts.addView(detailsView);
+
+    return row;
+  }
+
+  private LinearLayout.LayoutParams withTopMargin(int margin) {
+    LinearLayout.LayoutParams lp =
+        new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    lp.topMargin = margin;
+    return lp;
+  }
+
+  private String buildReadReceiptDetails(@NonNull MessageReadReceipt receipt) {
+    long timestampMillis = receipt.timestamp == null ? 0 : receipt.timestamp * 1000L;
+    String when =
+        timestampMillis > 0
+            ? DateUtils.getExtendedRelativeTimeSpanString(requireContext(), timestampMillis)
+            : "";
+    return when.isEmpty()
+        ? getString(R.string.bmchat_read_receipts_action)
+        : getString(R.string.bmchat_read_receipts_action) + " · " + when;
+  }
+
+  private String displayName(@NonNull DcContact contact) {
+    String name = contact.getDisplayName();
+    if (name == null || name.trim().isEmpty()) {
+      name = contact.getAddr();
+    }
+    return name;
   }
 
   private class ActionModeCallback implements ActionMode.Callback {

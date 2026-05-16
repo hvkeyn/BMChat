@@ -87,6 +87,8 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
   private ProcessCameraProvider cameraProvider;
   private ImageCapture imageCapture;
   private PreviewView activeCameraPreview;
+  private View cameraFullscreen;
+  private PreviewView cameraFullscreenPreview;
 
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -112,6 +114,10 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
 
     toolbar = findViewById(R.id.bmchat_gallery_toolbar);
     grid = findViewById(R.id.bmchat_gallery_grid);
+    cameraFullscreen = findViewById(R.id.bmchat_gallery_camera_fullscreen);
+    cameraFullscreenPreview = findViewById(R.id.bmchat_gallery_camera_fullscreen_preview);
+    findViewById(R.id.bmchat_gallery_camera_close).setOnClickListener(v -> closeFullscreenCamera());
+    findViewById(R.id.bmchat_gallery_camera_capture).setOnClickListener(v -> captureCameraFrame());
     setSupportActionBar(toolbar);
     if (getSupportActionBar() != null) {
       getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -308,6 +314,9 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
 
   private void startCameraPreview(@NonNull PreviewView previewView) {
     activeCameraPreview = previewView;
+    if (cameraFullscreen != null && cameraFullscreen.getVisibility() == View.VISIBLE) {
+      return;
+    }
     if (!hasCameraPermission()) {
       return;
     }
@@ -343,16 +352,61 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
     imageCapture = capture;
   }
 
+  private void openFullscreenCamera() {
+    if (!hasCameraPermission()) {
+      ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, 1);
+      return;
+    }
+    cameraFullscreen.setVisibility(View.VISIBLE);
+    bindFullscreenCameraPreview();
+  }
+
+  private void bindFullscreenCameraPreview() {
+    if (cameraProvider != null) {
+      bindCameraPreview(cameraFullscreenPreview);
+      return;
+    }
+
+    ListenableFuture<ProcessCameraProvider> future = ProcessCameraProvider.getInstance(this);
+    future.addListener(
+        () -> {
+          try {
+            cameraProvider = future.get();
+            if (cameraFullscreen.getVisibility() == View.VISIBLE) {
+              bindCameraPreview(cameraFullscreenPreview);
+            }
+          } catch (Exception e) {
+            imageCapture = null;
+          }
+        },
+        ContextCompat.getMainExecutor(this));
+  }
+
+  private void closeFullscreenCamera() {
+    cameraFullscreen.setVisibility(View.GONE);
+    if (activeCameraPreview != null) {
+      startCameraPreview(activeCameraPreview);
+    }
+  }
+
   private void captureCameraFrame() {
     if (!hasCameraPermission()) {
       ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA}, 1);
       return;
     }
     if (imageCapture == null) {
-      if (activeCameraPreview != null) {
-        startCameraPreview(activeCameraPreview);
+      if (cameraFullscreen.getVisibility() == View.VISIBLE) {
+        bindFullscreenCameraPreview();
+        android.widget.Toast.makeText(
+                this,
+                R.string.bmchat_gallery_picker_camera_error,
+                android.widget.Toast.LENGTH_SHORT)
+            .show();
+      } else if (activeCameraPreview != null) {
+        openFullscreenCamera();
+      } else {
+        launchCamera();
       }
-      launchCamera();
       return;
     }
 
@@ -372,6 +426,7 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
             Uri shot = outputFileResults.getSavedUri();
             if (shot != null) {
               addCapturedShot(shot);
+              closeFullscreenCamera();
             }
           }
 
@@ -465,6 +520,15 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
     super.onDestroy();
   }
 
+  @Override
+  public void onBackPressed() {
+    if (cameraFullscreen != null && cameraFullscreen.getVisibility() == View.VISIBLE) {
+      closeFullscreenCamera();
+      return;
+    }
+    super.onBackPressed();
+  }
+
   /** A single item shown in the grid. */
   private static final class MediaItem {
     final Uri uri;
@@ -540,7 +604,7 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
 
     void bind() {
       startCameraPreview(previewView);
-      itemView.setOnClickListener(v -> captureCameraFrame());
+      itemView.setOnClickListener(v -> openFullscreenCamera());
     }
   }
 
