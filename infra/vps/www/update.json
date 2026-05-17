@@ -1,15 +1,15 @@
 {
-  "versionCode": 824,
-  "versionName": "2.49.76",
+  "versionCode": 825,
+  "versionName": "2.49.77",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.76.apk",
-  "sha256": "f0491dd6caf428378edecaecd2400a727fa0b51a650df0d5b689b25c0bbdc623",
-  "size": 77690075,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.77.apk",
+  "sha256": "044077b502d2705c59ba2e2ec8e4510a08a91c330c0fb62e649c6b907eb50706",
+  "size": 77248348,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-17T13:35:00Z",
+  "publishedAt": "2026-05-17T14:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.49.76 — полная чистка упоминаний Delta Chat в видимом интерфейсе.\n\nИЗМЕНЕНИЯ:\n• 237 локалей и help-страниц переведены: app_name, About, разрешения, уведомления и FAQ — везде BMChat вместо Delta Chat.\n• Внешние ссылки delta.chat / get.delta.chat / support.delta.chat / github.com/deltachat/* в видимом UI заменены на http://5.187.4.132 и github.com/hvkeyn/BMChat/issues; ссылки на пожертвования и delta.chat/help удалены.\n• Канал уведомлений звонков, лог-теги, имена экспортируемых файлов, сообщения краш-скрина и stdio core теперь говорят «BMChat».\n• Внутренние package-имена, NPM-зависимости @deltachat/*, миграционные пути и legacy-host i.delta.chat для совместимости QR-кодов оставлены без изменений."
+  "notes": "BMChat 2.49.77 — пост-rebrand уборка.\n\nИЗМЕНЕНИЯ:\n• Удалён артефакт-каталог clients/android/<garbled>/ из репозитория.\n• Help-страницы переписаны под BMChat: компактный en/ru FAQ с актуальными ссылками (5.187.4.132, github.com/hvkeyn/BMChat). Остальные локали удалены, неподдерживаемые языки автоматически фолбэчатся на английский.\n• Никаких функциональных изменений Android UI: только assets/help и сам репозиторий.\n• Внутренние package-имена и сабмодули core оставлены без изменений."
 }
