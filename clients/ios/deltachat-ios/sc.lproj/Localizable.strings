@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "AB";
 "cancel" = "Annulla";
 "yes" = "Eja";
@@ -31,7 +31,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "Boga su sonu";
 "ephemeral_messages" = "Messàgios chi isparessent";
-"ephemeral_messages_hint" = "Custas impostatziones s\'àplicant a totu sos partetzipantes chi impreant Delta Chat. Nointames custu podent copiare, sarvare e torrare a imbiare messàgios o impreare àteros clientes de posta eletrònica.";
+"ephemeral_messages_hint" = "Custas impostatziones s\'àplicant a totu sos partetzipantes chi impreant BMChat. Nointames custu podent copiare, sarvare e torrare a imbiare messàgios o impreare àteros clientes de posta eletrònica.";
 "save" = "Sarva";
 "chat" = "Tzarrada";
 "media" = "Cuntenutu multimediale";
@@ -147,7 +147,7 @@
 "title_share_location" = "Cumpartzi sa positzione cun totu sos membros de su grupu";
 "device_talk" = "Messàgios de su dispositivu";
 "device_talk_subtitle" = "Messàgios ingendrados localmente";
-"device_talk_explain" = "Sos messàgios in custa tzarrada benint ingendrados localmente dae s\'aplicatzone Delta Chat tua. Sos isvilupadores los impreant pro informare a pitzu de sos agiornamentos de s\'aplicatzione e de problemas durante s\'impreu.";
+"device_talk_explain" = "Sos messàgios in custa tzarrada benint ingendrados localmente dae s\'aplicatzone BMChat tua. Sos isvilupadores los impreant pro informare a pitzu de sos agiornamentos de s\'aplicatzione e de problemas durante s\'impreu.";
 "edit_contact" = "Modìfica su cuntatu";
 // Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
 "pin_chat" = "Apica sa tzarrada";
@@ -187,7 +187,7 @@
 "chat_please_enter_message" = "Pro praghere inserta unu messàgiu.";
 "chat_camera_unavailable" = "Fotocàmera non disponìbile";
 "chat_unable_to_record_audio" = "Registratzione de su sonu fallida";
-"chat_new_group_hint" = "Imbia su primu messàgiu, permitende a sos àteros de ti rispòndere in intro de custu grupu.\n\n•Lu podes fàghere fintzas si non totu sos membros impreant Delta Chat.Sa cunsinna de su primu messàgiu diat pòdere pigare un\'agigu de tempus.";
+"chat_new_group_hint" = "Imbia su primu messàgiu, permitende a sos àteros de ti rispòndere in intro de custu grupu.\n\n•Lu podes fàghere fintzas si non totu sos membros impreant BMChat.Sa cunsinna de su primu messàgiu diat pòdere pigare un\'agigu de tempus.";
 "chat_record_slide_to_cancel" = "Iscurre pro annulare";
 "chat_record_explain" = "Incarca e mantene incarcadu pro registrare unu messàgiu vocale, lassa pro imbiare";
 "chat_no_chats_yet_title" = "Cartella de intrada bòida.\nIncarca \"+\" pro abèrrere una tzarrada noa.";
@@ -327,7 +327,7 @@
 "pref_background_btn_default" = "Imprea s\'immàgine predefinida";
 "pref_background_btn_gallery" = "Ischerta dae sa galleria";
 "pref_imap_folder_warn_disable_defaults" = "Si disabìlitas custa opztione assegura·ti chi su serbidore tuo e totu sos àteros clientes siant cunfigurados in sa matessi manera\n\nSi nono sas cosas diant pòdere non funtzionare pro nudda.";
-"pref_auto_folder_moves" = "Tramudòngios automàticos a sa cartella DeltaChat";
+"pref_auto_folder_moves" = "Tramudòngios automàticos a sa cartella BMChat";
 "pref_show_emails" = "Ammustra sas lìteras traditzionales";
 "pref_show_emails_no" = "Nono, tzarradas ebbia";
 "pref_show_emails_accepted_contacts" = "Pro sos cuntatos atzetados";

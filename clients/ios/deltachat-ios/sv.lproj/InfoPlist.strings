@@ -1,7 +1,7 @@
-NSCameraUsageDescription = "Delta Chat använder din kamera för att ta och skicka foton och filmer, och för att skanna QR-koder.";
-NSLocationAlwaysAndWhenInUseUsageDescription = "Delta Chat behöver tillstånd för att dela din plats under den tidsperiod som du har aktiverat platsdelning.";
-NSLocationWhenInUseUsageDescription = "Delta Chat behöver tillstånd för att dela din plats under den tidsperiod som du har aktiverat platsdelning.";
-NSMicrophoneUsageDescription = "Delta Chat använder din mikrofon för att spela in och skicka röstmeddelanden, och filmer med ljud.";
-NSPhotoLibraryUsageDescription = "Delta Chat låter dig välja vilka bilder från ditt galleri som du vill skicka.";
-NSPhotoLibraryAddUsageDescription = "Delta Chat vill spara bilder i ditt fotogalleri.";
-NSFaceIDUsageDescription = "Delta Chat kan använda Face ID för att skydda din lokala profil, skapa säkerhetskopior och konfigurera en andra enhet.";
+NSCameraUsageDescription = "BMChat använder din kamera för att ta och skicka foton och filmer, och för att skanna QR-koder.";
+NSLocationAlwaysAndWhenInUseUsageDescription = "BMChat behöver tillstånd för att dela din plats under den tidsperiod som du har aktiverat platsdelning.";
+NSLocationWhenInUseUsageDescription = "BMChat behöver tillstånd för att dela din plats under den tidsperiod som du har aktiverat platsdelning.";
+NSMicrophoneUsageDescription = "BMChat använder din mikrofon för att spela in och skicka röstmeddelanden, och filmer med ljud.";
+NSPhotoLibraryUsageDescription = "BMChat låter dig välja vilka bilder från ditt galleri som du vill skicka.";
+NSPhotoLibraryAddUsageDescription = "BMChat vill spara bilder i ditt fotogalleri.";
+NSFaceIDUsageDescription = "BMChat kan använda Face ID för att skydda din lokala profil, skapa säkerhetskopior och konfigurera en andra enhet.";

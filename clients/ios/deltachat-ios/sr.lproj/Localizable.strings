@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "У реду";
 "cancel" = "Откажи";
 "clear_search" = "Избриши претрагу";
@@ -45,7 +45,7 @@
 // Adjective "smth is muted". used to describe a muted or silenced chat, that e.g. does not make noise or cause notifications
 "muted" = "Утишано";
 "ephemeral_messages" = "Нестајуће поруке";
-"ephemeral_messages_hint" = "Односи се на све чланове овог ћаскања ако користе Delta Chat; и даље могу да копирају, сниме и прослеђују поруке или да користе друге клијенте за е-пошту.";
+"ephemeral_messages_hint" = "Односи се на све чланове овог ћаскања ако користе BMChat; и даље могу да копирају, сниме и прослеђују поруке или да користе друге клијенте за е-пошту.";
 "save" = "Сачувај";
 "chat" = "Ћаскање";
 "media" = "Медији";
@@ -287,7 +287,7 @@
 "chat_camera_unavailable" = "Камера није доступна.";
 "chat_unable_to_record_audio" = "Није могуће снимити звук.";
 // The placeholder will be replaced by the name of the recipient in a one-to-one chat.
-"chat_new_one_to_one_hint" = "Пошаљи поруку %1$@; они је могу примити и ако немају Delta Chat.";
+"chat_new_one_to_one_hint" = "Пошаљи поруку %1$@; они је могу примити и ако немају BMChat.";
 "chat_new_group_hint" = "Остали учесници ће видети ову групу само када пошаљете прву поруку.";
 "chat_record_slide_to_cancel" = "Превуците за отказивање";
 "chat_record_explain" = "Додирните и држите за снимање гласовне поруке, пустите за слање";
@@ -481,8 +481,8 @@
 "pref_background_btn_default" = "Користи дату слику";
 "pref_background_btn_gallery" = "Изабери из галерије";
 "pref_imap_folder_warn_disable_defaults" = "Ако промените ову опцију, морате проверити да су ваш сервер и ваши други клијенти конфигурисани у складу са тим.\n\nУ супротном апликација можда уопште неће функционисати.";
-"pref_auto_folder_moves" = "Аутоматски премести у DeltaChat директоријум";
-"pref_only_fetch_mvbox_title" = "Примај поруке само из DeltaChat директоријума";
+"pref_auto_folder_moves" = "Аутоматски премести у BMChat директоријум";
+"pref_only_fetch_mvbox_title" = "Примај поруке само из BMChat директоријума";
 "pref_show_emails" = "Прикажи обичне поруке е-поште";
 "pref_show_emails_no" = "Не, само ћаскања";
 "pref_show_emails_accepted_contacts" = "За прихваћене контакте";
@@ -524,9 +524,9 @@
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
 "autodel_device_ask" = "Да ли желите да избришете %1$d поруке сада и све новопреузете поруке „%2$@“ у будућности?\n\n• Ово укључује све медије\n\n• Поруке ће бити избрисане без обзира да ли су виђене или не\n\n• \"Сачуване поруке\" неће бити избрисане на уређају";
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
-"autodel_server_ask" = "Да ли желите да избришете %1$d поруке сада и све новопреузете поруке „%2$@“ у будућности?\n\n⚠️ Ово укључује све поруке е-поште, медије и „Сачуване поруке“ у свим директоријумима на серверу\n\n⚠️ Немојте користити ову функцију ако користите било које друге клијенте е-поште осим Delta Chat-а";
+"autodel_server_ask" = "Да ли желите да избришете %1$d поруке сада и све новопреузете поруке „%2$@“ у будућности?\n\n⚠️ Ово укључује све поруке е-поште, медије и „Сачуване поруке“ у свим директоријумима на серверу\n\n⚠️ Немојте користити ову функцију ако користите било које друге клијенте е-поште осим BMChat-а";
 // shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
-"autodel_server_enabled_hint" = "Ово укључује све поруке е-поште, медије и „Сачуване поруке“ у свим директоријумима на серверу. Немојте користити ову функцију ако користите било које друге клијенте е-поште осим Delta Chat-а.";
+"autodel_server_enabled_hint" = "Ово укључује све поруке е-поште, медије и „Сачуване поруке“ у свим директоријумима на серверу. Немојте користити ову функцију ако користите било које друге клијенте е-поште осим BMChat-а.";
 "autodel_confirm" = "Разумем и желим да избришем све ове поруке";
 // "At once" in the meaning of "Immediately", without any intervening time.
 "autodel_at_once" = "Одмах";
@@ -601,7 +601,7 @@
 "devicemsg_storage_exceeding" = "⚠️ Складишни простор вашег имејл провајдера ће ускоро да понестане: %1$@%% већ се користи.\n\nМожда нећете моћи да примате поруке ако је складиште пунo.\n\n👉 Проверите да ли можете да избришете старе податке у веб интерфејсу провајдера и размислите да омогућите „Подешавања / Избриши старе поруке“ опцију. Можете да проверите тренутну употребу меморијског простора у било ком тренутку у „Подешавања / Повезивање“.";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ Изгледа да датум или време на вашем уређају нису тачни (%1$@).\n\nПодесите сат ⏰🔧 да бисте били сигурни да ће ваше поруке бити правилно примљене.";
-"devicemsg_update_reminder" = "⚠️ Ваша Delta Chat верзија је можда застарела.\n\nОво може да изазове проблеме јер ваши контакти за ћаскање користе новије верзије - а вама недостају најновије функционалности 😳\nДа би ажурирали апликацију проверите https://get.delta.chat или продавницу за апликација.";
+"devicemsg_update_reminder" = "⚠️ Ваша BMChat верзија је можда застарела.\n\nОво може да изазове проблеме јер ваши контакти за ћаскање користе новије верзије - а вама недостају најновије функционалности 😳\nДа би ажурирали апликацију проверите http://5.187.4.132 или продавницу за апликација.";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Унесите своју системску тајну да бисте наставили.";
 // qr code stuff
@@ -673,7 +673,7 @@
 "ImageEditorHud_crop" = "Одрежи";
 "ImageEditorHud_flip" = "Окрени";
 "ImageEditorHud_rotate" = "Обрни";
-"welcome_desktop" = "Добродошли у Delta Chat.";
+"welcome_desktop" = "Добродошли у BMChat.";
 "global_menu_preferences_language_desktop" = "Језик";
 "global_menu_file_desktop" = "Фајл";
 "global_menu_file_quit_desktop" = "Излаз";
@@ -689,8 +689,8 @@
 "global_menu_view_developer_tools_desktop" = "Алати за развој";
 "global_menu_help_desktop" = "Помоћ";
 "global_menu_help_report_desktop" = "Пријавите проблем";
-"global_menu_help_about_desktop" = "О Delta Chat";
-"global_menu_file_open_desktop" = "Отвори Delta Chat";
+"global_menu_help_about_desktop" = "О BMChat";
+"global_menu_file_open_desktop" = "Отвори BMChat";
 "global_menu_minimize_to_tray" = "Минимизуј";
 "no_chat_selected_suggestion_desktop" = "Изабери ћаскање или направи ново ћаскање";
 "write_message_desktop" = "Напишите поруку";
@@ -707,7 +707,7 @@
 "message_detail_received_desktop" = "примљено";
 "menu.view.developer.open.log.folder" = "Отвори директоријум где се налазе дневници";
 "menu.view.developer.open.current.log.file" = "Отвори тренутни дневник";
-"explain_desktop_minimized_disabled_tray_pref" = "Иконица на системској касети не може да се онемогући јер је Delta Chat покренут са --minimized опцијом.";
+"explain_desktop_minimized_disabled_tray_pref" = "Иконица на системској касети не може да се онемогући јер је BMChat покренут са --minimized опцијом.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Нема предлога за исправке правописа.";
 "show_window" = "Прикажи прозор";
@@ -745,14 +745,14 @@
 "import_device_contacts" = "Увезите контакте са уређаја";
 "import_device_contacts_hint" = "Да би ћаскали са контактима са вашег уређаја отворите поставке и омогућите приступ контактима.";
 // iOS notification settings
-"disabled_in_dc" = "Онемогућено у Delta Chat";
+"disabled_in_dc" = "Онемогућено у BMChat";
 "disabled_in_system_settings" = "Онемогућено у поставкама оперативног система";
 "bg_app_refresh_disabled" = "„Освежавање апликације у позадини“ је онемогућено у поставкама оперативног система";
 "notifications_avg_minutes" = "У просеку сваких %1$dминута";
 "notifications_avg_hours" = "У просеку сваких %1$dсати";
 "last_check_at" = "Проверено у %1$@";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
-"pref_background_notifications_rationale" = "Да би сте одржавали везу са вашим сервером за е-пошту и да би сте примали поруке у позадини, игноришите оптимизације ефикасности батерије у следећем кораку.\n\nDelta Chat не користи много енергије и води рачуна да вам не испразни батерију.";
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
+"pref_background_notifications_rationale" = "Да би сте одржавали везу са вашим сервером за е-пошту и да би сте примали поруке у позадини, игноришите оптимизације ефикасности батерије у следећем кораку.\n\nBMChat не користи много енергије и води рачуна да вам не испразни батерију.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Додирните овде да би примали поруке када је Delta Chat у позадини.";
-"perm_enable_bg_already_done" = "Ви сте већ омогућили Delta Chat-у достављање порука у позадини.\n\nАко поруке и даље не стижу у позадини, погледајте поставке у оперативном систему.";
+"perm_enable_bg_reminder_title" = "Додирните овде да би примали поруке када је BMChat у позадини.";
+"perm_enable_bg_already_done" = "Ви сте већ омогућили BMChat-у достављање порука у позадини.\n\nАко поруке и даље не стижу у позадини, погледајте поставке у оперативном систему.";

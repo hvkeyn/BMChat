@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "OK";
 "cancel" = "Imtina";
 "yes" = "Bəli";
@@ -154,7 +154,7 @@
 "chat_please_enter_message" = "Mesajı daxıl edin";
 "chat_camera_unavailable" = "Camera əlçatmazdır.";
 "chat_unable_to_record_audio" = "Səs yaza bilmir.";
-"chat_new_group_hint" = "Başqalarının bu qrup daxilində cavab verməsinə imkan verən ilk mesajı yaradın. \n\n• Bütün üzvlər Delta Chat istifadə etsələr daha yaxşıdır. \n\n• İlk mesajı çatdırmaq bir müddət ala bilər.";
+"chat_new_group_hint" = "Başqalarının bu qrup daxilində cavab verməsinə imkan verən ilk mesajı yaradın. \n\n• Bütün üzvlər BMChat istifadə etsələr daha yaxşıdır. \n\n• İlk mesajı çatdırmaq bir müddət ala bilər.";
 "chat_record_slide_to_cancel" = "Ləğv etmək üçün sürüşdürün";
 "chat_record_explain" = "Bir səsli mesajı yazmaq üçün toxunun və saxlayın, göndərmək üçün buraxın";
 "chat_no_chats_yet_title" = "Qutu boşdur.\nYeni çata başlamaq üçün \"+\" işarəsinə toxunun. ";
@@ -271,7 +271,7 @@
 "pref_background_btn_default" = "Hal hazırdaki şəkili istifadə edin";
 "pref_background_btn_gallery" = "Fotoalbomdan götürün";
 "pref_imap_folder_warn_disable_defaults" = "Bu seçimi ləğv etsəniz, serverinizin və digər müştərilərinizin müvafiq olaraq konfiqurasiya olunduğundan əmin olun. \n\nAyrıca şeylər işləməyəcəkdir.";
-"pref_auto_folder_moves" = "DeltaChat qovluğuna avtomatik keçid";
+"pref_auto_folder_moves" = "BMChat qovluğuna avtomatik keçid";
 "pref_show_emails" = "Klassik e-poçtları göstər";
 "pref_show_emails_no" = "Xeyir, ancaq çatlar";
 "pref_show_emails_accepted_contacts" = "Qəbul edilən kontaktlar üçün";
@@ -330,11 +330,11 @@
 // permissions
 "perm_required_title" = "İzin tələb olunur";
 "perm_continue" = "Davam edin";
-"perm_explain_access_to_camera_denied" = "Delta Chat şəkillər və ya video çəkmək üçün kamera icazə tələb edir, lakin bu, əbədi imtina edilmişdir. Proqramın sistem ayarlarına gedib \"İcazələr\"-i seçin və \"kamera\" izni verin.";
+"perm_explain_access_to_camera_denied" = "BMChat şəkillər və ya video çəkmək üçün kamera icazə tələb edir, lakin bu, əbədi imtina edilmişdir. Proqramın sistem ayarlarına gedib \"İcazələr\"-i seçin və \"kamera\" izni verin.";
 // give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
-"perm_explain_access_to_mic_denied" = "Delta Chat yer əlavə etmək üçün yer icazə tələb edir, lakin daimi olaraq rədd edilmişdir. \"İcazələr\"-i seçin və\"Yerləşmə\" izni verin. ";
-"perm_explain_access_to_storage_denied" = "Delta Chat, fotoşəkilləri, videoları və ya səsləri əlavə etmək və ya ixrac etmək üçün saxlama icazəsini tələb edir, lakin bu daimi olaraq rədd edildi. Xahiş edirik tətbiq ayarları menyusuna davam edin, \"İzinlər\" seçin və \"Yaddaş\" funksiyasını aktivləşdirin.";
-"perm_explain_access_to_location_denied" = "Delta Chat yer əlavə etmək üçün yer icazə tələb edir, lakin daimi olaraq rədd edilmişdir. \"İcazələr\"-i seçin və\"Yerləşmə\" izni verin. ";
+"perm_explain_access_to_mic_denied" = "BMChat yer əlavə etmək üçün yer icazə tələb edir, lakin daimi olaraq rədd edilmişdir. \"İcazələr\"-i seçin və\"Yerləşmə\" izni verin. ";
+"perm_explain_access_to_storage_denied" = "BMChat, fotoşəkilləri, videoları və ya səsləri əlavə etmək və ya ixrac etmək üçün saxlama icazəsini tələb edir, lakin bu daimi olaraq rədd edildi. Xahiş edirik tətbiq ayarları menyusuna davam edin, \"İzinlər\" seçin və \"Yaddaş\" funksiyasını aktivləşdirin.";
+"perm_explain_access_to_location_denied" = "BMChat yer əlavə etmək üçün yer icazə tələb edir, lakin daimi olaraq rədd edilmişdir. \"İcazələr\"-i seçin və\"Yerləşmə\" izni verin. ";
 "global_menu_preferences_language_desktop" = "Dil səç";
 "global_menu_file_desktop" = "Fayl";
 "global_menu_file_quit_desktop" = "Çıxış";
@@ -366,4 +366,4 @@
 "menu.view.developer.open.log.folder" = "Loq mələfini açın";
 "menu.view.developer.open.current.log.file" = "Loq-faylı açın";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Delta Chat arxa fonda mesajları almaq üçün bura toxunun.";
+"perm_enable_bg_reminder_title" = "BMChat arxa fonda mesajları almaq üçün bura toxunun.";

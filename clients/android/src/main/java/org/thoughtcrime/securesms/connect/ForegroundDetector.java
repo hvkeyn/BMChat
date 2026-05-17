@@ -37,15 +37,15 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
   public void onActivityStarted(@NonNull Activity activity) {
     if (refs == 0) {
       Log.i(
-          "DeltaChat",
+          "BMChat",
           "++++++++++++++++++ first ForegroundDetector.onActivityStarted() ++++++++++++++++++");
       DcHelper.getAccounts(application).startIo();
       if (DcHelper.isNetworkConnected(application)) {
         new Thread(
                 () -> {
-                  Log.i("DeltaChat", "calling maybeNetwork()");
+                  Log.i("BMChat", "calling maybeNetwork()");
                   DcHelper.getAccounts(application).maybeNetwork();
-                  Log.i("DeltaChat", "maybeNetwork() returned");
+                  Log.i("BMChat", "maybeNetwork() returned");
                 })
             .start();
       }
@@ -62,7 +62,7 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
       try {
         KeepAliveService.onUiForeground();
       } catch (Throwable t) {
-        Log.w("DeltaChat", "onUiForeground failed", t);
+        Log.w("BMChat", "onUiForeground failed", t);
       }
     }
 
@@ -72,7 +72,7 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
   @Override
   public void onActivityStopped(@NonNull Activity activity) {
     if (refs <= 0) {
-      Log.w("DeltaChat", "invalid call to ForegroundDetector.onActivityStopped()");
+      Log.w("BMChat", "invalid call to ForegroundDetector.onActivityStopped()");
       return;
     }
 
@@ -80,7 +80,7 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
 
     if (refs == 0) {
       Log.i(
-          "DeltaChat",
+          "BMChat",
           "++++++++++++++++++ last ForegroundDetector.onActivityStopped() ++++++++++++++++++");
       // BMChat: the user just put BMChat into the background. Re-attach
       // the foreground-service notification so the OS keeps the IDLE
@@ -88,7 +88,7 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
       try {
         KeepAliveService.onUiBackground(application);
       } catch (Throwable t) {
-        Log.w("DeltaChat", "onUiBackground failed", t);
+        Log.w("BMChat", "onUiBackground failed", t);
       }
     }
   }

@@ -286,7 +286,7 @@ public class CallActivity extends AppCompatActivity {
     if (powerManager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
       proximityWakeLock =
           powerManager.newWakeLock(
-              PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "DeltaChat:ProximityLock");
+              PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "BMChat:ProximityLock");
       proximityWakeLock.setReferenceCounted(false);
       Log.d(TAG, "Proximity wake lock initialized");
     } else {

@@ -9,7 +9,7 @@ public class BootReceiver extends BroadcastReceiver {
 
   @Override
   public void onReceive(Context context, Intent intent) {
-    Log.i("DeltaChat", "*** BootReceiver.onReceive()");
+    Log.i("BMChat", "*** BootReceiver.onReceive()");
     // there's nothing more to do here as all initialisation stuff is already done in
     // on program startup which is done before this broadcast is sent.
   }

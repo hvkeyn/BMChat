@@ -47,17 +47,17 @@ export class CrashScreen extends React.Component<
         <div className='crash-screen'>
           <h1>Ooops something crashed</h1>
           <h2>
-            Please restart Deltachat, if this problem persists please notify the
+            Please restart BMChat, if this problem persists please notify the
             developers on github issues (
             <a
               href='#'
               onClick={_ =>
                 runtime.openLink(
-                  'https://github.com/deltachat/deltachat-desktop/issues'
+                  'https://github.com/hvkeyn/BMChat/issues'
                 )
               }
             >
-              github.com/deltachat/deltachat-desktop/issues
+              github.com/hvkeyn/BMChat/issues
             </a>
             )
           </h2>
@@ -79,7 +79,7 @@ export class CrashScreen extends React.Component<
             </a>
           </p>
           <p>
-            DeltaChat Version: {VERSION} (git: {GIT_REF})
+            BMChat Version: {VERSION} (git: {GIT_REF})
           </p>
         </div>
       )

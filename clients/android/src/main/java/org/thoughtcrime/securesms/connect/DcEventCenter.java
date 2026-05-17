@@ -145,7 +145,7 @@ public class DcEventCenter {
   private void handleError(int event, String string) {
     // log error
     boolean showAsToast;
-    Log.e("DeltaChat", string);
+    Log.e("BMChat", string);
     synchronized (lastErrorLock) {
       showAsToast = showNextErrorAsToast;
       showNextErrorAsToast = true;
@@ -174,15 +174,15 @@ public class DcEventCenter {
     final String logPrefix = "[accId=" + event.getAccountId() + "] ";
     switch (event.getId()) {
       case DcContext.DC_EVENT_INFO:
-        Log.i("DeltaChat", logPrefix + event.getData2Str());
+        Log.i("BMChat", logPrefix + event.getData2Str());
         break;
 
       case DcContext.DC_EVENT_WARNING:
-        Log.w("DeltaChat", logPrefix + event.getData2Str());
+        Log.w("BMChat", logPrefix + event.getData2Str());
         break;
 
       case DcContext.DC_EVENT_ERROR:
-        Log.e("DeltaChat", logPrefix + event.getData2Str());
+        Log.e("BMChat", logPrefix + event.getData2Str());
         break;
     }
   }
@@ -201,7 +201,7 @@ public class DcEventCenter {
         // not parsed, …). Pair with NotificationCenter logs to trace the
         // full pipeline in `adb logcat -s DeltaChat NotificationCenter`.
         android.util.Log.i(
-            "DeltaChat",
+            "BMChat",
             "DC_EVENT_INCOMING_MSG account=" + accountId
                 + " chat=" + event.getData1Int()
                 + " msg=" + event.getData2Int());

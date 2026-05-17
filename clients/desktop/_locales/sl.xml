@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- common strings without special context -->
-    <string name="app_name">Delta Chat</string>
+    <string name="app_name">BMChat</string>
     <string name="ok">OK</string>
     <string name="cancel">Prekliči</string>
     <string name="clear_search">Počisti iskanje</string>
@@ -257,8 +257,8 @@
     <string name="menu_delete_chat">Zbriši klepet</string>
     <!-- Command to delete all messages in a chat. The chat itself will not be deleted but will be empty afterwards, so make sure to be different from "Delete Chat" here. "Clear" is a verb here, "Empty Chat" would also be fine (eg. in German "Chat leeren") -->
     <string name="clear_chat">Izbriši vsa sporočila v klepetu</string>
-    <!-- %1$s is replaced by the user's invitation link ("https://i.delta.chat/...") -->
-    <string name="invite_friends_text">Kontraktiraj me na Delta Chat:\n%1$s</string>
+    <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...") -->
+    <string name="invite_friends_text">Kontraktiraj me na BMChat:\n%1$s</string>
     <string name="menu_reply">Odziv na sporočilo</string>
     <!-- Command to jump to the original message corresponding to a gallery image or document -->
     <string name="show_in_chat">Prikaži v klepetu</string>

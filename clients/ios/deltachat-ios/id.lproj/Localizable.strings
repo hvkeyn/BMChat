@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "OK";
 "cancel" = "Batalkan";
 "clear_search" = "Hapus pencarian";
@@ -38,7 +38,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "Diam";
 "ephemeral_messages" = "Pesan yang berhilangan";
-"ephemeral_messages_hint" = "Pengaturan ini berlaku untuk semua peserta yang menggunakan Delta Chat. Namun, mereka dapat menyalin, menyimpan, dan meneruskan pesan atau menggunakan klien email lainnya.";
+"ephemeral_messages_hint" = "Pengaturan ini berlaku untuk semua peserta yang menggunakan BMChat. Namun, mereka dapat menyalin, menyimpan, dan meneruskan pesan atau menggunakan klien email lainnya.";
 "save" = "Simpan";
 "chat" = "Chat";
 "media" = "Media";
@@ -207,7 +207,7 @@
 "title_share_location" = "Bagikan lokasi kepada seluruh anggota grup";
 "device_talk" = "Pesan perangkat";
 "device_talk_subtitle" = "Pesan-pesan buatan lokal";
-"device_talk_explain" = "Pesan dalam obrolan ini dihasilkan dalam aplikasi Delta Chat anda secara lokal. Para penciptanya memakai obrolan ini untuk memberi tahu aplikasi mutakhir dan masalah-masalah selama digunakan.";
+"device_talk_explain" = "Pesan dalam obrolan ini dihasilkan dalam aplikasi BMChat anda secara lokal. Para penciptanya memakai obrolan ini untuk memberi tahu aplikasi mutakhir dan masalah-masalah selama digunakan.";
 "edit_contact" = "Edit kontak";
 // Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
 "pin_chat" = "Pin obrolan";
@@ -248,7 +248,7 @@
 "chat_please_enter_message" = "Silakan masukkan pesan.";
 "chat_camera_unavailable" = "Kamera tak tersedia.";
 "chat_unable_to_record_audio" = "Tak bias merekam audio.";
-"chat_new_group_hint" = "Buat pesan pertama, perbolehkan yang lain untuk membalas dalam grup ini.\n\n• Tak masalah jika tidak semua anggota menggunakan Delta Chat.\n\n• Mengirim pesan pertama membutuhkan waktu.";
+"chat_new_group_hint" = "Buat pesan pertama, perbolehkan yang lain untuk membalas dalam grup ini.\n\n• Tak masalah jika tidak semua anggota menggunakan BMChat.\n\n• Mengirim pesan pertama membutuhkan waktu.";
 "chat_record_slide_to_cancel" = "Geser untuk batalkan";
 "chat_record_explain" = "Ketuk dan tahan untuk merekam pesan suara, lepaskan untuk mengirim";
 "chat_no_chats_yet_title" = "Kosongkan inbox.\nTekan \"+\" untuk memulai obrolan baru.";
@@ -381,7 +381,7 @@
 "pref_background" = "Latar belakang";
 "pref_background_btn_default" = "Menggunakan gambar default";
 "pref_background_btn_gallery" = "Pilih dari galeri";
-"pref_auto_folder_moves" = "Perpindahan otomatis ke berkas DeltaChat";
+"pref_auto_folder_moves" = "Perpindahan otomatis ke berkas BMChat";
 "pref_show_emails" = "Tampilkan email klasik";
 "pref_show_emails_no" = "Tidak, hanya obrolan saja";
 "pref_show_emails_accepted_contacts" = "Untuk kontak yang telah diterima";
@@ -478,7 +478,7 @@
 "perm_explain_access_to_location_denied" = "Untuk melampirkan lokasi, lihat pengaturan aplikasi, pilih \"Perizinan\", dan aktifkan \"Lokasi\".";
 // ImageEditorHud
 "ImageEditorHud_draw_anywhere_to_blur" = "Gambar di mana saja untuk diburamkan";
-"welcome_desktop" = "Selamat Datang di Delta Chat";
+"welcome_desktop" = "Selamat Datang di BMChat";
 "global_menu_preferences_language_desktop" = "Bahasa";
 "global_menu_file_desktop" = "Berkas";
 "global_menu_file_quit_desktop" = "Keluar";
@@ -493,7 +493,7 @@
 "global_menu_view_developer_tools_desktop" = "Alat pengembang";
 "global_menu_help_desktop" = "Bantuan";
 "global_menu_help_report_desktop" = "Laporkan masalah";
-"global_menu_help_about_desktop" = "Tentang Delta Chat";
+"global_menu_help_about_desktop" = "Tentang BMChat";
 "no_chat_selected_suggestion_desktop" = "Pilih obrolan atau buat sebuah obrolan baru";
 "write_message_desktop" = "Tulis sebuah pesan";
 "encryption_info_title_desktop" = "Info enkripsi";

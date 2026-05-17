@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "Gerai";
 "cancel" = "Atsisakyti";
 "clear_search" = "Išvalyti paiešką";
@@ -46,7 +46,7 @@
 // Verb "to unarchive", as in "remove a chat from the archive", opposite of the previous string
 "unarchive" = "Išarchyvuoti";
 "ephemeral_messages" = "Išnykstančios žinutės";
-"ephemeral_messages_hint" = "Šie nustatymai taikomi visiems Delta Chat besinaudojantiems dalyviams. Vis dėlto, jie gali kopijuoti, įrašyti ir persiųsti žinutes arba naudoti kitas el. pašto kliento programas.";
+"ephemeral_messages_hint" = "Šie nustatymai taikomi visiems BMChat besinaudojantiems dalyviams. Vis dėlto, jie gali kopijuoti, įrašyti ir persiųsti žinutes arba naudoti kitas el. pašto kliento programas.";
 "save" = "Įrašyti";
 "media" = "Medija";
 "apps_and_media" = "Programėlės ir medija";
@@ -216,8 +216,8 @@
 "share_invite_link" = "Bendrinti pakvietimo nuorodą";
 "share_invite_link_explain" = "Kiekvienas, turintis šią nuorodą, gali peržiūrėti jūsų profilį ar pradėti su jumis pokalbį. Bendrinkite ją tik su žmonėmis, kuriais pasitikite.";
 "invite_friends" = "Pakviesti draugus";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
-"invite_friends_text" = "Susisiekite su manimi Delta Chat programoje:\n%1$@";
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
+"invite_friends_text" = "Susisiekite su manimi BMChat programoje:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Kopijuoti žymėjimą";
 "menu_copy_link_to_clipboard" = "Kopijuoti nuorodą";
 "menu_copy_text_to_clipboard" = "Kopijuoti tekstą";
@@ -281,7 +281,7 @@
 "reply_privately" = "Atsakyti privačiai";
 "source_code" = "Pirminis kodas";
 "donate" = "Paaukoti";
-"donate_device_msg" = "❤️ Atrodo, kad mėgaujatės naudodami Delta Chat!\n\nApsvarstykite galimybę paaukoti, kad užtikrintumėte, jog Delta Chat ir toliau visiems būtų nemokama.\n\nNors Delta Chat yra nemokama ir atvirojo kodo, jos plėtojimas kainuoja pinigus. Padėkite mums išlaikyti Delta Chat nepriklausomą ir paversti ją ateityje dar labiau nuostabia.\n\nhttps://delta.chat/donate";
+"donate_device_msg" = "❤️ Atrodo, kad mėgaujatės naudodami BMChat!\n\nApsvarstykite galimybę paaukoti, kad užtikrintumėte, jog BMChat ir toliau visiems būtų nemokama.\n\nNors BMChat yra nemokama ir atvirojo kodo, jos plėtojimas kainuoja pinigus. Padėkite mums išlaikyti BMChat nepriklausomą ir paversti ją ateityje dar labiau nuostabia.\n\n";
 "mute_for_one_hour" = "Išjungti 1 valandai";
 "mute_for_eight_hours" = "Išjungti 8 valandoms";
 "mute_for_one_day" = "Išjungti 1 dienai";
@@ -348,7 +348,7 @@
 "chat_unable_to_record_audio" = "Nepavyko įrašyti garso.";
 // The placeholder will be replaced by the name of the recipient in a one-to-one chat.
 "chat_new_one_to_one_hint" = "Siųsti žinutę naudotojui %1$@.";
-"chat_new_group_hint" = "Rašykite pirmąją žinutę, taip leisdami kitiems atsakyti šioje grupėje..\n\n• Nieko tokio, jei ne visi dalyviai naudoja Delta Chat.\n\n• Pirmosios žinutės pristatymas gali šiek tiek užtrukti.";
+"chat_new_group_hint" = "Rašykite pirmąją žinutę, taip leisdami kitiems atsakyti šioje grupėje..\n\n• Nieko tokio, jei ne visi dalyviai naudoja BMChat.\n\n• Pirmosios žinutės pristatymas gali šiek tiek užtrukti.";
 "chat_record_slide_to_cancel" = "Perbraukite, norėdami atsisakyti";
 "chat_record_explain" = "Bakstelėkite ir laikykite, norėdami įrašyti balso žinutę. Atleiskite, norėdami išsiųsti";
 "chat_no_chats_yet_title" = "Nėra pokalbių.\nPaspauskite „+“ norėdami pradėti naują pokalbį.";
@@ -421,15 +421,15 @@
 "multidevice_title" = "Pridėti antrąjį įrenginį";
 "multidevice_same_network_hint" = "Įsitikinkite, kad abu įrenginiai yra prisijungę prie to pačio belaidžio (Wi-Fi) arba laidinio tinklo";
 "multidevice_this_creates_a_qr_code" = "Tai sukuria QR kodą, kurį antrasis įrenginys gali nuskenuoti, kad nukopijuotų profilį.\n\nĮsitikinkite, kad joks pašalinis stebėtojas ar kamera nematys lango, kuris bus parodytas paspaudus mygtuką.";
-"multidevice_install_dc_on_other_device" = "Įsidiekite Delta Chat kitame savo įrenginyje (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Įsidiekite BMChat kitame savo įrenginyje (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Paleiskite Delta Chat, bakstelėkite „Aš jau turiu profilį / Pridėti kaip antrąjį įrenginį“ ir nuskenuokite čia rodomą kodą";
+"multidevice_tap_scan_on_other_device" = "Paleiskite BMChat, bakstelėkite „Aš jau turiu profilį / Pridėti kaip antrąjį įrenginį“ ir nuskenuokite čia rodomą kodą";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "Nuskenuokite norėdami nustatyti antrąjį įrenginį, skirtą %1$@";
 "multidevice_receiver_title" = "Pridėti kaip antrąjį įrenginį";
 "multidevice_open_settings_on_other_device" = "Pirmajame įrenginyje pereikite į „Nustatymai / Pridėti antrąjį įrenginį“ ir nuskenuokite ten rodomą kodą";
 "multidevice_receiver_scanning_ask" = "Kopijuoti profilį iš kito įrenginio į šį įrenginį?";
-"multidevice_receiver_needs_update" = "Profilis, kurį norite importuoti, yra iš naujesnės Delta Chat versijos.\n\nNorėdami tęsti ir nustatyti antrąjį įrenginį, atnaujinkite šiame įrenginyje Delta Chat į naujausią versiją.";
+"multidevice_receiver_needs_update" = "Profilis, kurį norite importuoti, yra iš naujesnės BMChat versijos.\n\nNorėdami tęsti ir nustatyti antrąjį įrenginį, atnaujinkite šiame įrenginyje BMChat į naujausią versiją.";
 "multidevice_abort" = "Nutraukti antrojo įrenginio nustatymą?";
 "multidevice_abort_will_invalidate_copied_qr" = "Tai padarys į iškarpinę nukopijuotą QR kodą negaliojantį.";
 "multidevice_transfer_done_devicemsg" = "ℹ️ Profilis perduotas į jūsų antrąjį įrenginį.";
@@ -620,10 +620,10 @@
 "pref_background_btn_default" = "Naudoti numatytąjį paveikslą";
 "pref_background_btn_gallery" = "Pasirinkti iš galerijos";
 "pref_imap_folder_warn_disable_defaults" = "Jeigu išjungiate šį parametrą, įsitikinkite, kad jūsų serveris ir kiti klientai yra sukonfigūruoti atitinkamai.\n\nPriešingu atveju, tai gali iš viso neveikti.";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "Kelių įrenginių veiksena";
 "pref_multidevice_explain" = "Sinchronizuoti jūsų žinutes su kitais įrenginiais. Automatiškai įjungta, kai pridėtas antrasis įrenginys";
-"pref_auto_folder_moves" = "Automatiniai perkėlimai į DeltaChat aplanką";
+"pref_auto_folder_moves" = "Automatiniai perkėlimai į BMChat aplanką";
 "pref_show_emails" = "Rodyti klasikinius el. laiškus";
 "pref_show_emails_no" = "Ne, tik pokalbius";
 "pref_show_emails_accepted_contacts" = "Iš priimtų adresatų";
@@ -646,9 +646,9 @@
 "profile_image_delete" = "Ištrinti profilio nuotrauką";
 "pref_show_tray_icon" = "Rodyti dėklo piktogramą";
 "pref_edit_profile" = "Taisyti profilį";
-"send_stats_to_devs" = "Siųsti statistiką Delta Chat plėtotojams";
-"stats_device_message" = "Ar norite padėti tobulinti Delta Chat ir pagelbėti tyrimams, kas savaitę siunčiant anoniminę statistiką apie naudojimąsi Delta Chat?\n\n👉 Bakstelėkite čia… 👈";
-"stats_confirmation_dialog" = "Ar norite padėti tobulinti Delta Chat ir pagelbėti tyrimams, kas savaitę siunčiant anoniminę statistiką apie naudojimąsi Delta Chat?";
+"send_stats_to_devs" = "Siųsti statistiką BMChat plėtotojams";
+"stats_device_message" = "Ar norite padėti tobulinti BMChat ir pagelbėti tyrimams, kas savaitę siunčiant anoniminę statistiką apie naudojimąsi BMChat?\n\n👉 Bakstelėkite čia… 👈";
+"stats_confirmation_dialog" = "Ar norite padėti tobulinti BMChat ir pagelbėti tyrimams, kas savaitę siunčiant anoniminę statistiką apie naudojimąsi BMChat?";
 "disable" = "Išjungti";
 "stats_keep_sending" = "Siųsti ir toliau";
 // Emoji picker and categories
@@ -751,7 +751,7 @@
 "devicemsg_self_deleted" = "Jūs ištrynėte „Įrašytų žinučių“ pokalbį.\n\nℹ️ Norėdami vėl naudotis „Įrašytų žinučių“ ypatybe, sukurkite naują pokalbį su savimi.";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ Atrodo, kad jūsų įrenginyje yra nustatyta netiksli data ar laikas (%1$@).\n\nSuderinkite savo laikrodį ⏰🔧 kad užtikrintumėte, jog žinutės bus gaunamos teisingai.";
-"devicemsg_update_reminder" = "⚠️ Gali būti, kad jūsų Delta Chat versija yra pasenusi.\n\nTai gali sukelti problemų, nes jūsų pokalbių partneriai naudoja naujesnę versiją ir jūs netenkate galimybės naudotis naujausiomis ypatybėmis 😳\nPatikrinkite, ar yra atnaujinimų, apsilankę adresu https://get.delta.chat arba atvėrę programėlių parduotuvę.";
+"devicemsg_update_reminder" = "⚠️ Gali būti, kad jūsų BMChat versija yra pasenusi.\n\nTai gali sukelti problemų, nes jūsų pokalbių partneriai naudoja naujesnę versiją ir jūs netenkate galimybės naudotis naujausiomis ypatybėmis 😳\nPatikrinkite, ar yra atnaujinimų, apsilankę adresu http://5.187.4.132 arba atvėrę programėlių parduotuvę.";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Atrakinkite, norėdami tęsti";
 // qr code stuff
@@ -809,7 +809,7 @@
 "notify_no_name_or_message" = "Jokio vardo ar žinutės";
 "notifications_disabled" = "Pranešimai išjungti";
 "new_messages" = "Naujos žinutės";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "Yra naujų žinučių";
 // permissions
 "perm_required_title" = "Reikalingas leidimas";
@@ -821,7 +821,7 @@
 "ImageEditorHud_crop" = "Apkirpti";
 "ImageEditorHud_flip" = "Apversti";
 "ImageEditorHud_rotate" = "Pasukti";
-"welcome_desktop" = "Sveiki atvykę į Delta Chat";
+"welcome_desktop" = "Sveiki atvykę į BMChat";
 "global_menu_preferences_language_desktop" = "Pasirinkti kalbą...";
 "global_menu_file_desktop" = "Failas";
 "global_menu_file_quit_desktop" = "Išeiti";
@@ -837,8 +837,8 @@
 "global_menu_view_developer_tools_desktop" = "Plėtotojo įrankiai";
 "global_menu_help_desktop" = "Žinynas";
 "global_menu_help_report_desktop" = "Pranešti apie klaidą";
-"global_menu_help_about_desktop" = "Apie Delta Chat";
-"global_menu_file_open_desktop" = "Atverti Delta Chat";
+"global_menu_help_about_desktop" = "Apie BMChat";
+"global_menu_file_open_desktop" = "Atverti BMChat";
 "global_menu_minimize_to_tray" = "Suskleisti";
 "no_chat_selected_suggestion_desktop" = "Pasirinkite arba sukurkite naują pokalbį";
 "write_message_desktop" = "Rašykite žinutę";
@@ -855,7 +855,7 @@
 "message_detail_received_desktop" = "Gauta";
 "menu.view.developer.open.log.folder" = "Atverti žurnalų aplanką";
 "menu.view.developer.open.current.log.file" = "Atverti dabartinio žurnalo failą";
-"explain_desktop_minimized_disabled_tray_pref" = "Dėklo piktograma negali būti išjungta, nes Delta Chat buvo paleista naudojant --minimized parinktį.";
+"explain_desktop_minimized_disabled_tray_pref" = "Dėklo piktograma negali būti išjungta, nes BMChat buvo paleista naudojant --minimized parinktį.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Nerasta jokių rašybos pasiūlymų.";
 "show_window" = "Rodyti langą";
@@ -878,7 +878,7 @@
 // iOS device contact alert
 "import_device_contacts" = "Importuoti įrenginio adresatus";
 // iOS notification settings
-"disabled_in_dc" = "Išjungta Delta Chat programėlėje";
+"disabled_in_dc" = "Išjungta BMChat programėlėje";
 "disabled_in_system_settings" = "Išjungta sistemos nustatymuose";
 "notifications_avg_minutes" = "Vidutiniškai kas %1$d min.";
 "notifications_avg_hours" = "Vidutiniškai kas %1$d val.";
@@ -889,9 +889,9 @@
 "pref_background_notifications" = "Naudoti foninį ryšį";
 "pref_reliable_service" = "Priverstinai naudoti foninį ryšį";
 "pref_reliable_service_explain" = "Rodo pastovų pranešimą";
-"pref_background_notifications_rationale" = "Norėdami palaikyti ryšį su savo el. pašto serveriu ir gauti žinutes fone, kitame žingsnyje nepaisykite akumuliatoriaus optimizavimų (leiskite vykdyti programą fone).\n\nDelta Chat naudoja nedaug išteklių ir rūpinasi, kad neeikvotų jūsų akumuliatoriaus energijos.";
+"pref_background_notifications_rationale" = "Norėdami palaikyti ryšį su savo el. pašto serveriu ir gauti žinutes fone, kitame žingsnyje nepaisykite akumuliatoriaus optimizavimų (leiskite vykdyti programą fone).\n\nBMChat naudoja nedaug išteklių ir rūpinasi, kad neeikvotų jūsų akumuliatoriaus energijos.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Bakstelėkite čia, norėdami gauti žinutes, kol Delta Chat veikia fone.";
-"perm_enable_bg_already_done" = "Jūs jau leidote Delta Chat gauti žinutes fone.\n\nJei žinutės vis tiek nepristatomos fone, patikrinkite taip pat savo sistemos nustatymus.";
+"perm_enable_bg_reminder_title" = "Bakstelėkite čia, norėdami gauti žinutes, kol BMChat veikia fone.";
+"perm_enable_bg_already_done" = "Jūs jau leidote BMChat gauti žinutes fone.\n\nJei žinutės vis tiek nepristatomos fone, patikrinkite taip pat savo sistemos nustatymus.";
 // device messages for updates
 "update_2_0" = "Kas naujo?\n\n💯 Ištisinis šifravimas yra patikimas ir visą laiką. Pakabinamųjų spynų 🔒 nebėra!\n\n✉️ Klasikiniai el. laiškai be ištisinio šifravimo yra pažymėti voko simboliu\n\n😻 Naujas, pagerintas profilio langas visiems jūsų adresatams\n\n🔲 Naujas mygtukas, skirtas greitai pasiekti pokalbyje naudojamas programėles\n\n❤️ Prašome paaukoti, kad padėtumėte mums išlikti nepriklausomiems ir galėtume toliau teikti patobulinimus: %1$@";

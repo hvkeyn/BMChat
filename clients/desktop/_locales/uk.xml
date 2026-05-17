@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- common strings without special context -->
-    <string name="app_name">Delta Chat</string>
+    <string name="app_name">BMChat</string>
     <string name="ok">Гаразд</string>
     <string name="cancel">Скасувати</string>
     <string name="clear_search">Очистити пошук</string>
@@ -317,8 +317,8 @@
     <string name="share_invite_link">Поділитися посиланням на запрошення</string>
     <string name="share_invite_link_explain">Будь-хто за цим посиланням може переглянути ваш профіль і почати з вами чат. Діліться ним лише з людьми, яким ви довіряєте.</string>
     <string name="invite_friends">Запросити друзів</string>
-    <!-- %1$s is replaced by the user's invitation link ("https://i.delta.chat/...") -->
-    <string name="invite_friends_text">Зв\'яжіться зі мною в Delta Chat:\n%1$s</string>
+    <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...") -->
+    <string name="invite_friends_text">Зв\'яжіться зі мною в BMChat:\n%1$s</string>
     <string name="menu_copy_selection_to_clipboard">Скопіювати позначене</string>
     <string name="menu_copy_link_to_clipboard">Скопіювати посилання</string>
     <string name="menu_copy_text_to_clipboard">Копіювати текст</string>
@@ -389,7 +389,7 @@
     <!-- Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly. -->
     <string name="add_to_home_screen">Додати на стартовий екран</string>
     <string name="donate">Задонатити</string>
-    <string name="donate_device_msg">❤️ Здається, вам подобається Delta Chat!\n\nПодумайте про пожертвування, щоб допомогти забезпечити безкоштовність Delta Chat для всіх.\n\nХоча Delta Chat є безкоштовним у використанні та з відкритим вихідним кодом, розробка коштує грошей. Допоможіть нам зберегти незалежність Delta Chat і зробити його ще більш чудовим у майбутньому.\n\nhttps://delta.chat/donate</string>
+    <string name="donate_device_msg">❤️ Здається, вам подобається BMChat!\n\nПодумайте про пожертвування, щоб допомогти забезпечити безкоштовність BMChat для всіх.\n\nХоча BMChat є безкоштовним у використанні та з відкритим вихідним кодом, розробка коштує грошей. Допоможіть нам зберегти незалежність BMChat і зробити його ще більш чудовим у майбутньому.\n\n</string>
 
     <string name="mute_for_one_hour">Вимкнути сповіщення на годину</string>
     <string name="mute_for_eight_hours">Вимкнути сповіщення на 8 годин</string>
@@ -601,15 +601,15 @@
     <string name="multidevice_title">Додати другий пристрій</string>
     <string name="multidevice_same_network_hint">Переконайтеся, що обидва пристрої підключено до однієї мережі Wi-Fi</string>
     <string name="multidevice_this_creates_a_qr_code">Це створить QR-код, який другий пристрій зможе відсканувати, щоб скопіювати профіль.\n\nПереконайтеся, що жоден небажаний спостерігач або камера не зможе побачити наступний екран.</string>
-    <string name="multidevice_install_dc_on_other_device">Установіть Delta Chat на Ваш інший пристрій (https://get.delta.chat)</string>
+    <string name="multidevice_install_dc_on_other_device">Установіть BMChat на Ваш інший пристрій (http://5.187.4.132)</string>
     <!-- "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title -->
-    <string name="multidevice_tap_scan_on_other_device">Запустіть Delta Chat, торкніться \"Я вже маю профіль / Додати як другий пристрій\" і відскануйте код, показаний тут</string>
+    <string name="multidevice_tap_scan_on_other_device">Запустіть BMChat, торкніться \"Я вже маю профіль / Додати як другий пристрій\" і відскануйте код, показаний тут</string>
     <!-- Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice" -->
     <string name="multidevice_qr_subtitle">Скануйте, щоб налаштувати другий пристрій %1$s</string>
     <string name="multidevice_receiver_title">Додати як другий пристрій</string>
-    <string name="multidevice_open_settings_on_other_device">На першому пристрої запустіть Delta Chat, перейдіть до «Налаштування / Додати другий пристрій» і відскануйте зображений код</string>
+    <string name="multidevice_open_settings_on_other_device">На першому пристрої запустіть BMChat, перейдіть до «Налаштування / Додати другий пристрій» і відскануйте зображений код</string>
     <string name="multidevice_receiver_scanning_ask">Скопіювати профіль з іншого пристрою на цей?</string>
-    <string name="multidevice_receiver_needs_update">Профіль, який ви хочете імпортувати, належить до новішої версії Delta Chat.\n\nЩоб продовжити налаштування другого пристрою, будь ласка, оновіть його до останньої версії Delta Chat.</string>
+    <string name="multidevice_receiver_needs_update">Профіль, який ви хочете імпортувати, належить до новішої версії BMChat.\n\nЩоб продовжити налаштування другого пристрою, будь ласка, оновіть його до останньої версії BMChat.</string>
     <string name="multidevice_abort">Скасувати налаштування другого пристрою?</string>
     <string name="multidevice_abort_will_invalidate_copied_qr">Це зробить недійсним QR-код, скопійований у буфер обміну.</string>
     <string name="multidevice_transfer_done_devicemsg">ℹ️ Профіль перенесено на ваш другий пристрій.</string>
@@ -827,12 +827,12 @@
     <string name="pref_background_btn_default">Використовувати тло за замовчуванням</string>
     <string name="pref_background_btn_gallery">Вибрати з галереї</string>
     <string name="pref_imap_folder_warn_disable_defaults">Якщо ви змінюєте цей параметр, переконайтеся, що Ваш сервер та інші Ваші клієнти налаштовані відповідним чином.\n\nІнакше щось може взагалі не працювати.</string>
-    <!-- No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help -->
+    <!-- No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language -->
     <string name="pref_multidevice">Режим роботи з декількома пристроями</string>
     <string name="pref_multidevice_explain">Синхронізуйте свої повідомлення з іншими пристроями. Автоматично вмикається після додавання іншими пристроями</string>
     <string name="pref_multidevice_change_warn">Режим декількох пристроїв має бути увімкнений, якщо ви використовуєте один і той самий профіль на декількох пристроях. Вимикайте цей параметр, лише якщо ви видалили цей профіль з усіх інших пристроїв.\n\nВимкнення режиму декількох пристроїв під час використання профілю на декількох пристроях призведе до пропусків повідомлення та інших проблем.</string>
-    <string name="pref_auto_folder_moves">Автоматично пересувати до папки DeltaChat</string>
-    <string name="pref_only_fetch_mvbox_title">Збирати лише з теки DeltaChat.</string>
+    <string name="pref_auto_folder_moves">Автоматично пересувати до папки BMChat</string>
+    <string name="pref_only_fetch_mvbox_title">Збирати лише з теки BMChat.</string>
     <string name="pref_show_emails">Показувати звичайну пошту</string>
     <string name="pref_show_emails_no">Ні, лише чати</string>
     <string name="pref_show_emails_accepted_contacts">Для прийнятих контактів</string>
@@ -856,14 +856,14 @@
     <string name="profile_image_delete">Видалити зображення профілю</string>
     <string name="pref_show_tray_icon">Показати іконку в треї</string>
     <string name="pref_edit_profile">Редагувати профіль</string>
-    <string name="send_stats_to_devs">Надсилати статистику розробникам Delta Chat</string>
-    <string name="stats_device_message">Хочете допомогти покращити Delta Chat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?\n\n 👉 Тисніть сюди… 👈</string>
-    <string name="stats_confirmation_dialog">Хочете допомогти покращити Delta Chat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?</string>
-    <string name="stats_thanks">Дякуємо! Ви завжди маєте змогу це вимкнути у розділі \"Налаштування > Додатково\"\n\n Чи маєте Ви 5 хвилин для участі в науковому дослідженні стосовно безпеки Delta Chat?</string>
+    <string name="send_stats_to_devs">Надсилати статистику розробникам BMChat</string>
+    <string name="stats_device_message">Хочете допомогти покращити BMChat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?\n\n 👉 Тисніть сюди… 👈</string>
+    <string name="stats_confirmation_dialog">Хочете допомогти покращити BMChat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?</string>
+    <string name="stats_thanks">Дякуємо! Ви завжди маєте змогу це вимкнути у розділі \"Налаштування > Додатково\"\n\n Чи маєте Ви 5 хвилин для участі в науковому дослідженні стосовно безпеки BMChat?</string>
     <string name="stats_disable_dialog">Надсилання статистики вже активне.\n\n Ви хочете її припинити?</string>
     <string name="disable">Припинити</string>
     <string name="stats_keep_sending">Продовжити</string>
-    <string name="stats_msg_body">У вкладенні міститься анонімна статистика використання, яка допомагає нам покращити Delta Chat. Дивіться https://delta.чат/help#statssending для отримання додаткової інформації. Дякуємо!</string>
+    <string name="stats_msg_body">У вкладенні міститься анонімна статистика використання, яка допомагає нам покращити BMChat. Дивіться https://delta.чат/help#statssending для отримання додаткової інформації. Дякуємо!</string>
 
     <!-- Emoji picker and categories -->
     <string name="emoji_search_results">Результати пошуку</string>
@@ -995,7 +995,7 @@
     <string name="devicemsg_storage_exceeding">⚠️ Сховище вашого провайдера електронної пошти майже заповнено, уже використовується %1$s%%.\n\nМожливо, Ви не зможете отримувати повідомлення, коли сховище буде заповнене.\n\n👉 Перевірте, чи можна видалити старі дані у веб-інтерфейсі провайдера та ввімкніть \"Налаштування / Чати / Видалити старі повідомлення\". Ви можете будь-коли перевірити своє поточне використання сховища в \"Налаштування / Зʼєднання\". </string>
     <!-- %1%s will be replaced by date and time in some human-readable format -->
     <string name="devicemsg_bad_time">⚠️ Дата й час на вашому пристрої видаються неточними (%1$s).\n\nНалаштуйте свій годинник ⏰🔧 для правильного отримання повідомлень.</string>
-    <string name="devicemsg_update_reminder">⚠️ Ваша версія Delta Chat може бути застарілою.\n\nЦе може спричинити проблеми, оскільки Ваші співрозмовники в чаті використовують новіші версії, а Вам не вистачає найновіших функцій 😳 \nПеревірте оновлення на https://get.delta.chat або в магазині додатків. </string>
+    <string name="devicemsg_update_reminder">⚠️ Ваша версія BMChat може бути застарілою.\n\nЦе може спричинити проблеми, оскільки Ваші співрозмовники в чаті використовують новіші версії, а Вам не вистачає найновіших функцій 😳 \nПеревірте оновлення на http://5.187.4.132 або в магазині додатків. </string>
 
     <!-- Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup". -->
     <string name="enter_system_secret_to_continue">Введіть захисний код, щоб продовжити.</string>
@@ -1067,7 +1067,7 @@
     <string name="notifications_disabled">Сповіщення вимкнено</string>
     <string name="unreliable_bg_notifications">Увімкніть \"Примусове фонове зʼєднання\" для надійних сповіщень</string>
     <string name="new_messages">Нові повідомлення</string>
-    <!-- Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers -->
+    <!-- Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat -->
     <string name="new_messages_body">У вас нові повідомлення</string>
     <string name="n_messages_in_m_chats">%1$d повідомлень в %2$d чатах</string>
 
@@ -1079,7 +1079,7 @@
     <string name="perm_explain_access_to_mic_denied">Щоб надіслати аудіо повідомлення, перейдіть до налаштувань системи або програми, оберіть \"Дозволи\" або \"Конфіденційність &amp; Безпека\" та увімкніть \"Мікрофон\".</string>
     <string name="perm_explain_access_to_storage_denied">Для збереження або передавання фотографій перейдіть до налаштувань додатку, оберіть \"Дозволи\" та ввімкніть \"Сховище\"</string>
     <string name="perm_explain_access_to_location_denied">Щоб прикріпити місцеперебування, перейдіть до налаштувань програми, оберіть \"Дозволи\" та увімкніть \"місцеперебування\".</string>
-    <string name="perm_explain_access_to_notifications_denied">Щоб отримувати сповіщення зайдіть у \"Налаштування системи / Застосунки / Delta Chat\" і увімкніть \"Сповіщення\"</string>
+    <string name="perm_explain_access_to_notifications_denied">Щоб отримувати сповіщення зайдіть у \"Налаштування системи / Застосунки / BMChat\" і увімкніть \"Сповіщення\"</string>
 
     <!-- ImageEditorHud -->
     <string name="ImageEditorHud_draw_anywhere_to_blur">Малюйте будь-де для розмиття</string>
@@ -1091,7 +1091,7 @@
     <string name="ImageEditorHud_flip">Обернути</string>
     <string name="ImageEditorHud_rotate">Обертати</string>
 
-    <string name="welcome_desktop">Вітаємо у Delta Chat</string>
+    <string name="welcome_desktop">Вітаємо у BMChat</string>
     <string name="global_menu_preferences_language_desktop">Мова</string>
     <string name="global_menu_file_desktop">Файл</string>
     <string name="global_menu_file_quit_desktop">Вийти</string>
@@ -1106,11 +1106,11 @@
     <string name="global_menu_view_developer_desktop">Розробник</string>
     <string name="global_menu_view_developer_tools_desktop">Інструменти розробника</string>
     <string name="global_menu_help_desktop">Допомога</string>
-    <string name="delta_chat_homepage">Домашня сторінка Delta Chat</string>
+    <string name="delta_chat_homepage">Домашня сторінка BMChat</string>
     <string name="contribute">Зробити внесок</string>
     <string name="global_menu_help_report_desktop">Повідомити про проблему</string>
-    <string name="global_menu_help_about_desktop">Про Delta Chat</string>
-    <string name="global_menu_file_open_desktop">Відкрити Delta Chat</string>
+    <string name="global_menu_help_about_desktop">Про BMChat</string>
+    <string name="global_menu_file_open_desktop">Відкрити BMChat</string>
     <string name="global_menu_minimize_to_tray">Згорнути</string>
     <string name="no_chat_selected_suggestion_desktop">Виберіть чат або створіть новий</string>
     <string name="write_message_desktop">Напишіть повідомлення</string>
@@ -1129,7 +1129,7 @@
     <string name="message_detail_received_desktop">Отримано</string>
     <string name="menu.view.developer.open.log.folder">Відкрити папку журналів</string>
     <string name="menu.view.developer.open.current.log.file">Відкрити поточний файл журналу</string>
-    <string name="explain_desktop_minimized_disabled_tray_pref" tools:ignore="TypographyDashes">Іконку в треї не можна вимкнути, оскільки Delta Chat було запущено за допомогою параметра --minimized.</string>
+    <string name="explain_desktop_minimized_disabled_tray_pref" tools:ignore="TypographyDashes">Іконку в треї не можна вимкнути, оскільки BMChat було запущено за допомогою параметра --minimized.</string>
     <!-- deprecated, used on desktop although there is not spell checker -->
     <string name="no_spellcheck_suggestions_found">Пропозицій щодо написання не знайдено.</string>
     <string name="show_window">Показати вікно</string>
@@ -1169,7 +1169,7 @@
     <string name="import_device_contacts">Імпорт контактів з пристрою</string>
     <string name="import_device_contacts_hint">Щоб спілкуватися з контактами з пристрою, відкрийте \"Налаштування\" та ввімкніть \"Контакти\".</string>
     <!-- iOS notification settings -->
-    <string name="disabled_in_dc">Вимкнено в Delta Chat</string>
+    <string name="disabled_in_dc">Вимкнено в BMChat</string>
     <string name="disabled_in_system_settings">Вимкнено в налаштуваннях системи</string>
     <string name="bg_app_refresh_disabled">\"Фонова активність додатку\" вимкнена в налаштуваннях системи</string>
     <string name="notifications_avg_minutes">У середньому %1$d хвилин</string>
@@ -1182,19 +1182,19 @@
     <!-- use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale -->
     <string name="shortcuts_widget_title">Ярлики</string>
     <!-- use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated -->
-    <string name="shortcuts_widget_description">Використовуйте кнопку \"Додати у віджет\" у Delta Chat, щоб додати елементи</string>
+    <string name="shortcuts_widget_description">Використовуйте кнопку \"Додати у віджет\" у BMChat, щоб додати елементи</string>
     <!-- use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated -->
     <string name="remove_from_widget">Видалити з віджету</string>
     <!-- use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated -->
     <string name="add_to_widget">Додати у віджет</string>
-    <!-- iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings" -->
-    <string name="InfoPlist_NSCameraUsageDescription">Delta Chat використовує вашу камеру для знімання та надсилання фото та відео, а також для сканування QR-кодів.</string>
+    <!-- iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings" -->
+    <string name="InfoPlist_NSCameraUsageDescription">BMChat використовує вашу камеру для знімання та надсилання фото та відео, а також для сканування QR-кодів.</string>
     <string name="InfoPlist_NSLocationAlwaysAndWhenInUseUsageDescription">Дельта-чатові потрібно дозволити доступ до місцеперебування пристрою протягом часу, на який Ви ввімкнули транслювання геолокації.</string>
     <string name="InfoPlist_NSLocationWhenInUseUsageDescription">Дельта-чатові потрібно дозволити доступ до місцеперебування пристрою протягом часу, на який Ви ввімкнули транслювання геолокації.</string>
-    <string name="InfoPlist_NSMicrophoneUsageDescription">Delta Chat використовує Ваш мікрофон для запису й надсилання голосових повідомлень та відео зі звуком.</string>
-    <string name="InfoPlist_NSPhotoLibraryUsageDescription">Delta Chat дасть Вам обрати, які фото з Вашої бібліотеки надіслати.</string>
-    <string name="InfoPlist_NSPhotoLibraryAddUsageDescription">Delta Chat хоче зберігати зображення до Вашої фото-бібліотеки.</string>
-    <string name="InfoPlist_NSFaceIDUsageDescription">Delta Chat може використовувати Face ID для захисту вашого локального профілю, створення резервної копії та налаштування другого пристрою.</string>
+    <string name="InfoPlist_NSMicrophoneUsageDescription">BMChat використовує Ваш мікрофон для запису й надсилання голосових повідомлень та відео зі звуком.</string>
+    <string name="InfoPlist_NSPhotoLibraryUsageDescription">BMChat дасть Вам обрати, які фото з Вашої бібліотеки надіслати.</string>
+    <string name="InfoPlist_NSPhotoLibraryAddUsageDescription">BMChat хоче зберігати зображення до Вашої фото-бібліотеки.</string>
+    <string name="InfoPlist_NSFaceIDUsageDescription">BMChat може використовувати Face ID для захисту вашого локального профілю, створення резервної копії та налаштування другого пристрою.</string>
 
     <!-- android specific strings, developers: please take care to remove strings that are no longer used! -->
     <string name="pref_instant_delivery">Миттєва доставка</string>
@@ -1203,10 +1203,10 @@
     <string name="pref_reliable_service">Примусове фонове підключення</string>
     <string name="pref_reliable_service_explain">Призводить до постійного сповіщення</string>
 
-    <string name="pref_background_notifications_rationale">Для підтримки з\'єднання й отримання повідомлень у фоновому режимі ігноруйте оптимізацію батареї на наступному кроці.\n\nDelta Chat використовує небагато ресурсів і намагається не витрачати Вашу батарею.</string>
+    <string name="pref_background_notifications_rationale">Для підтримки з\'єднання й отримання повідомлень у фоновому режимі ігноруйте оптимізацію батареї на наступному кроці.\n\nBMChat використовує небагато ресурсів і намагається не витрачати Вашу батарею.</string>
     <!-- disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable -->
-    <string name="perm_enable_bg_reminder_title">Натисніть тут, щоб отримувати повідомлення, коли Delta Chat знаходиться у фоновому режимі.</string>
-    <string name="perm_enable_bg_already_done">Ви вже дозволили Delta Chat отримувати повідомлення у фоновому режимі.\n\nЯкщо повідомлення досі не приходять у фоновому режимі, перевірте налаштування системи.</string>
+    <string name="perm_enable_bg_reminder_title">Натисніть тут, щоб отримувати повідомлення, коли BMChat знаходиться у фоновому режимі.</string>
+    <string name="perm_enable_bg_already_done">Ви вже дозволили BMChat отримувати повідомлення у фоновому режимі.\n\nЯкщо повідомлення досі не приходять у фоновому режимі, перевірте налаштування системи.</string>
 
     <!-- device messages for updates -->
     <string name="update_2_0">Що нового?\n\n💯 Наскрізне шифрування тепер надійне і завжди. Навісні замки 🔒 зникли!\n\n✉️ Класична електронна пошта без наскрізного шифрування позначається символом листа\n\n😻 Новий покращений екран профілю для всіх ваших контактів\n\n🔲 Нова кнопка для швидкого доступу до додатків, що використовуються в чаті\n\n❤️ Будь ласка, пожертвуйте, щоб допомогти нам залишатися незалежними та продовжувати вдосконалюватися: %1$s</string>

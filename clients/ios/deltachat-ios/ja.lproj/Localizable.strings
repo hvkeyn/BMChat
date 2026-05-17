@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "了承";
 "cancel" = "取消";
 "clear_search" = "検索履歴を消す";
@@ -35,7 +35,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "ミュート";
 "ephemeral_messages" = "消えるメッセージ";
-"ephemeral_messages_hint" = "この設定は、Delta Chatの利用する参加者に適用されます。ただし、参加者はメッセージをコピーしたり、保存したり、転送したり、他のアプリを利用したりすることができます。";
+"ephemeral_messages_hint" = "この設定は、BMChatの利用する参加者に適用されます。ただし、参加者はメッセージをコピーしたり、保存したり、転送したり、他のアプリを利用したりすることができます。";
 "save" = "保存";
 "chat" = "チャット";
 "media" = "メディア";
@@ -222,7 +222,7 @@
 "chat_please_enter_message" = "メッセージを入力してください。";
 "chat_camera_unavailable" = "カメラは利用できません。";
 "chat_unable_to_record_audio" = "録音できません。";
-"chat_new_group_hint" = "最初のメッセージを送ってから他人が返信できるようになります。\n\n･Delta Chatを使わなくても構いません\n\n･最初のメッセージの配信は時間がかかる場合もあります。";
+"chat_new_group_hint" = "最初のメッセージを送ってから他人が返信できるようになります。\n\n･BMChatを使わなくても構いません\n\n･最初のメッセージの配信は時間がかかる場合もあります。";
 "chat_record_slide_to_cancel" = "スライドしてキャンセル";
 "chat_record_explain" = "長押しして録音して、離すと送ります。";
 "chat_no_chats_yet_title" = "受信箱が空です。\n＋でチャットを開始します。";
@@ -379,7 +379,7 @@
 "pref_background" = "背景";
 "pref_background_btn_default" = "デフォルトの画像を使う";
 "pref_background_btn_gallery" = "ギャラリーから選ぶ";
-"pref_auto_folder_moves" = "DeltaChatフォルダに自動で移動する";
+"pref_auto_folder_moves" = "BMChatフォルダに自動で移動する";
 "pref_show_emails" = "一般的なメールを表示する";
 "pref_show_emails_no" = "いいえ、チャットのみ";
 "pref_show_emails_accepted_contacts" = "許可されたユーザーのみ";
@@ -514,7 +514,7 @@
 "ImageEditorHud_crop" = "切り抜き";
 "ImageEditorHud_flip" = "反転";
 "ImageEditorHud_rotate" = "回転";
-"welcome_desktop" = "Delta Chatにようこそ";
+"welcome_desktop" = "BMChatにようこそ";
 "global_menu_preferences_language_desktop" = "言語を選択して下さい";
 "global_menu_file_desktop" = "ファイル";
 "global_menu_file_quit_desktop" = "終了";
@@ -530,7 +530,7 @@
 "global_menu_view_developer_tools_desktop" = "開発者ツール";
 "global_menu_help_desktop" = "ヘルプ";
 "global_menu_help_report_desktop" = "問題を報告する";
-"global_menu_help_about_desktop" = "Delta Chatについて";
+"global_menu_help_about_desktop" = "BMChatについて";
 "write_message_desktop" = "メッセージを送信";
 "encryption_info_title_desktop" = "暗号化情報";
 "delete_message_desktop" = "メッセージを削除する";

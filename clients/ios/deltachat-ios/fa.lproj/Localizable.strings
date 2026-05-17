@@ -233,7 +233,7 @@
 "share_invite_link" = "اشتراک پیوند دعوت";
 "share_invite_link_explain" = "هرکس با استفاده از این پیوند می‌تواند نمایهٔ شما را ببییند و یک گپ را با شما شروع کند. این را تنها به کسانی که اعتماد دارید بدهید.";
 "invite_friends" = "دعوت دوستان";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
 "invite_friends_text" = "تماس گرفتن با من در دلتاچت:\n %1$@";
 "menu_copy_selection_to_clipboard" = "رونوشت برداری از انتخاب شده";
 "menu_copy_link_to_clipboard" = "رونوشت برداری از لینک";
@@ -305,7 +305,7 @@
 // Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
 "add_to_home_screen" = "افزودن به صفحه خانه";
 "donate" = "حمایت مالی";
-"donate_device_msg" = "❤️ بنظر می‌آید شما در حال لذت بردن از دلتاچت هستید!\n\nلطفا هدیه دهید تا مطمئن باشیم دلتاچت برای همه آزاد باقی می‌ماند.\n\nبا وجودی که دلتاچت برای استفاده رایگان است و یک نرم‌افزار آزاد نیز هست، توسعهٔ آن هزینه دارد. به ما کمک کنید تا دلتاچت را مستقل نگه‌داریم و در آینده حتی آن‌را خفن‌تر کنیم. هدایا از طریق رمزارز نیز پذیرفته می‌شوند.\n\nhttps://delta.chat/donate";
+"donate_device_msg" = "❤️ بنظر می‌آید شما در حال لذت بردن از دلتاچت هستید!\n\nلطفا هدیه دهید تا مطمئن باشیم دلتاچت برای همه آزاد باقی می‌ماند.\n\nبا وجودی که دلتاچت برای استفاده رایگان است و یک نرم‌افزار آزاد نیز هست، توسعهٔ آن هزینه دارد. به ما کمک کنید تا دلتاچت را مستقل نگه‌داریم و در آینده حتی آن‌را خفن‌تر کنیم. هدایا از طریق رمزارز نیز پذیرفته می‌شوند.\n\n";
 "mute_for_one_hour" = "ساکت کردن به مدت۱ ساعت";
 "mute_for_eight_hours" = "بی‌صدا کردن به مدت ۸ ساعت";
 "mute_for_one_day" = "ساکت کردن به مدت ۱ روز";
@@ -458,7 +458,7 @@
 "multidevice_title" = "افزودن دستگاه دوم";
 "multidevice_same_network_hint" = "مطمئن شوید هر دو دستگاه در یک وای‌فای یا شبکه هستند";
 "multidevice_this_creates_a_qr_code" = "این یک کد کیوآر ایجاد می‌کند که دستگاه دوم می‌تواند برای کپی حساب اسکن کند.";
-"multidevice_install_dc_on_other_device" = "دلتاچت را روی دستگاه دیگر خود نصب کنید (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "دلتاچت را روی دستگاه دیگر خود نصب کنید (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
 "multidevice_tap_scan_on_other_device" = "دلتاچت را باز کنید، روی «افزودن به عنوان دستگاه دوم» بزنید و کد نشان داده شده در اینجا را اسکن کنید";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
@@ -666,7 +666,7 @@
 "pref_background_btn_default" = "استفاده از تصویر پیش‌فرض";
 "pref_background_btn_gallery" = "انتخاب از گالری";
 "pref_imap_folder_warn_disable_defaults" = "اگر این گزینه را غیر فعال می‌کنید از اینکه سرور شما و حساب‌هایتان هم بر این اساس تنظیم شده باشند.\n\n در غیر این صورت ممکن است هیچ چیز کار نکند. ";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "حالت چند دستگاهی";
 "pref_multidevice_explain" = "همگام‌سازی پیام‌های شما با دیگر دستگاه‌هایتان. در صورت اضافه کردن دستگاه دوم به صورت خودکار فعال می‌شود.";
 "pref_multidevice_change_warn" = "حالت چند دستگاهی زمانی که از یک نمایه روی چند دستگاه استفاده می‌کنید باید فعال شود. تنها در صورتی این تنظیم را غیرفعال کنید که این نمایه را از روی همهٔ دیگر دستگاه‌هایتان حذف کرده‌اید. \n\n غیرفعال کردن حالت چند دستگاهی زمانی که یک نمایه را روی چند دستگاه دارید باعث می‌شود که بعضی پیام‌ها گم شوند و همچنین مشکل‌های دیگری به وجود می‌آورد.";
@@ -702,7 +702,7 @@
 "stats_disable_dialog" = "ارسال آمار‌ها قبلا فعال شدن است.\n\n می‌خواهید آن را غیر فعال کنید؟";
 "disable" = "غیرفعال کردن";
 "stats_keep_sending" = "ادامه‌دادن به ارسال";
-"stats_msg_body" = "این پیوست شامل آمار استفادهٔ ناشناس است که به ما کمک می‌کند دلتاچت را بهبود دهیم. برای اطلاعات بیش‌تر https://delta.chat/help#statssending را ببینید. متشکریم!";
+"stats_msg_body" = "این پیوست شامل آمار استفادهٔ ناشناس است که به ما کمک می‌کند دلتاچت را بهبود دهیم. برای اطلاعات بیش‌تر #statssending را ببینید. متشکریم!";
 // Emoji picker and categories
 "emoji_search_results" = "نتایج جستجو";
 "emoji_not_found" = "شکلکی پیدا نشد";
@@ -761,7 +761,7 @@
 // %1$s will be replaced by name of the contact added to the group, %2$s will be replaced by name of the contact who did the action
 "add_member_by_other" = "عضو جدید با نام %1$@ توسط %2$@ افزوده شد. ";
 // %1$s will be replaced by name of the contact removed from the group
-"remove_member_by_you" = "شما عضو گروه، %1$@، را حذف کردید.  ";
+"remove_member_by_you" = "شما عضو گروه، %1$@، را حذف کردید. ";
 // %1$s will be replaced by name of the contact removed from the group, %2$s will be replaced by name of the contact who did the action
 "remove_member_by_other" = "عضو گروه، %1$@، توسط %2$@ حذف شد. ";
 // %1$s will be replaced by name of the contact removed from the group; this string is used when it's unclear who did the action
@@ -825,7 +825,7 @@
 "devicemsg_storage_exceeding" = " ⚠️ میزان فضای در دسترس کارساز رایانامه شما در حال تمام شدن است. %1$@ از %% استفاده شده است. اگر فضا کاملا پر شده باشد دیگر امکان دریافت پیام را نخواهید داشت. 👈 لطفا پیام‌های قدیمی در رایانامه خود را از طریق نسخهٔ وب رایانامه پاک کنید. همچنین می‌توانید گزینه پاک کردن پیام‌های قدیمی در دلتاچت را فعال نمایید. هروقت خواستید می‌توانید فضای در دسترس را از «تنظیم‌ها / اتصال‌ها» بررسی کنید. ";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "هشدار⚠️ به نظر می‌رسد زمان و تاریخ دستگاه شما دقیق نیست(%1$@). ساعت دستگاه خود را تنظیم کنید ⏰🔧 تا پیام‌ها به درستی دریافت شوند. ";
-"devicemsg_update_reminder" = "هشدار⚠️ ممکن است نسخه دلتاچت مورد استفاده قدیمی شده باشد. این موضوع ممکن است مشکلاتی ایجاد کند چون مخاطبین شما از نسخه‌های جدیدتر استفاده می‌کنند. همچنین قابلیت‌های جدید را هم از دست می‌دهید😳 لطفا برای دریافت نسخه جدید به app store یا https://get.delta.chat مراجعه کنید. ";
+"devicemsg_update_reminder" = "هشدار⚠️ ممکن است نسخه دلتاچت مورد استفاده قدیمی شده باشد. این موضوع ممکن است مشکلاتی ایجاد کند چون مخاطبین شما از نسخه‌های جدیدتر استفاده می‌کنند. همچنین قابلیت‌های جدید را هم از دست می‌دهید😳 لطفا برای دریافت نسخه جدید به app store یا http://5.187.4.132 مراجعه کنید. ";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "برای ادامه، لطفا رمز تعیین شده توسط سیستم خود را وارد کنید";
 // qr code stuff
@@ -895,7 +895,7 @@
 "notifications_disabled" = "اعلان‌ها غیرفعال شد";
 "unreliable_bg_notifications" = "فعال‌سازی «اتصال پس‌زمینه اجباری» برای این‌که همیشه اعلان‌ها برسند";
 "new_messages" = "پیام‌های جدید";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "شما پیام‌های جدیدی دارید";
 "n_messages_in_m_chats" = "%1$d پیام در %2$d گفتگو";
 // permissions
@@ -1010,7 +1010,7 @@
 "remove_from_widget" = "حذف از ابزارک";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "add_to_widget" = "اضافه کردن به ابزارک";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
 // android specific strings, developers: please take care to remove strings that are no longer used!
 "pref_instant_delivery" = "تحویل آنی";
 "pref_background_notifications" = "استفاده از اتصال پس‌زمینه";

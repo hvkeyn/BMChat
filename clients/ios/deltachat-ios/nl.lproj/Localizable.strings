@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "Oké";
 "cancel" = "Annuleren";
 "clear_search" = "Zoekopdracht wissen";
@@ -249,8 +249,8 @@
 "share_invite_link" = "Uitnodigingslink versturen";
 "share_invite_link_explain" = "Iedereen die deze link ontvangt kan je profiel bekijken en een gesprek met je starten. Deel hem daarom alleen met mensen die je vertrouwt.";
 "invite_friends" = "Vrienden uitnodigen";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
-"invite_friends_text" = "Neem contact met me op via Delta Chat:\n%1$@";
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
+"invite_friends_text" = "Neem contact met me op via BMChat:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Selectie kopiëren";
 "menu_copy_link_to_clipboard" = "Link kopiëren";
 "menu_copy_text_to_clipboard" = "Tekst kopiëren";
@@ -321,7 +321,7 @@
 // Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
 "add_to_home_screen" = "Toevoegen aan startscherm";
 "donate" = "Doneren";
-"donate_device_msg" = "❤️ Het lijkt er op dat je blij bent met Delta Chat!\n\nAls dat zo is, zouden we je vriendelijk willen vragen om een donatie, zodat Delta Chat gratis beschikbaar kan blijven.\n\n Ook al is Delta Chat gratis en opensource, de ontwikkeling ervan kost wél geld. Jouw donatie kan het verschil maken!\n\nhttps://delta.chat/donate";
+"donate_device_msg" = "❤️ Het lijkt er op dat je blij bent met BMChat!\n\nAls dat zo is, zouden we je vriendelijk willen vragen om een donatie, zodat BMChat gratis beschikbaar kan blijven.\n\n Ook al is BMChat gratis en opensource, de ontwikkeling ervan kost wél geld. Jouw donatie kan het verschil maken!\n\n";
 "mute_for_one_hour" = "1 uur lang uitschakelen";
 "mute_for_eight_hours" = "8 uur lang uitschakelen";
 "mute_for_one_day" = "1 dag lang uitschakelen";
@@ -491,15 +491,15 @@
 "multidevice_title" = "Secundair apparaat toevoegen";
 "multidevice_same_network_hint" = "Zorg ervoor dat beide apparaten verbonden zijn met hetzelfde (wifi)netwerk";
 "multidevice_this_creates_a_qr_code" = "Hiermee wordt een QR-code samengesteld die door het tweede apparaat kan worden gescand om het account te kopiëren.\n\nZorg dat er geen vreemden meekijken, al dan niet door een camera.";
-"multidevice_install_dc_on_other_device" = "Installeer Delta Chat op je andere apparaat (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Installeer BMChat op je andere apparaat (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Start Delta Chat, druk op ‘Ik heb al een profiel → Toevoegen als secundair apparaat’ en scan de hier getoonde code";
+"multidevice_tap_scan_on_other_device" = "Start BMChat, druk op ‘Ik heb al een profiel → Toevoegen als secundair apparaat’ en scan de hier getoonde code";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "Scan om een secundair apparaat voor %1$@ in te stellen";
 "multidevice_receiver_title" = "Toevoegen als secundair apparaat";
 "multidevice_open_settings_on_other_device" = "Ga op het eerste apparaat naar ‘Instellingen → Secundair apparaat toevoegen’ en scan de hier getoonde code";
 "multidevice_receiver_scanning_ask" = "Wil je je account van het andere apparaat naar dit apparaat kopiëren?";
-"multidevice_receiver_needs_update" = "Het te importeren profiel is afkomstig uit een nieuwere Delta Chat-versie.\n\nAls je het tweede apparaat wilt instellen, installeer dan de nieuwste versie van Delta Chat.";
+"multidevice_receiver_needs_update" = "Het te importeren profiel is afkomstig uit een nieuwere BMChat-versie.\n\nAls je het tweede apparaat wilt instellen, installeer dan de nieuwste versie van BMChat.";
 "multidevice_abort" = "Wil je het instellen afbreken?";
 "multidevice_abort_will_invalidate_copied_qr" = "Hierdoor wordt de gekopieerde QR-code onbruikbaar gemaakt.";
 "multidevice_transfer_done_devicemsg" = "ℹ️ Het account is overgezet naar je tweede apparaat.";
@@ -714,12 +714,12 @@
 "pref_background_btn_default" = "Standaardafbeelding gebruiken";
 "pref_background_btn_gallery" = "Kiezen uit galerij";
 "pref_imap_folder_warn_disable_defaults" = "Als je deze optie uitschakelt, zorg er dan voor dat je server en overige clients goed ingesteld zijn.\n\nAls dat niet zo is, dan werkt het misschien helemaal niet.";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "Meerdere apparaten";
 "pref_multidevice_explain" = "Synchroniseer berichten met andere apparaten. Dit wordt automatisch ingeschakeld na het toevoegen van een secundair apparaat.";
 "pref_multidevice_change_warn" = "Let op: deze modus moet op alle apparaten worden ingeschakeld op hetzelfde profiel. Schakel deze instelling alleen uit als je je profiel van alle andere apparaten hebt verwijderd.\n\nDoor deze modus uit te schakelen terwijl het profiel nog gebruikt wordt, gaan er berichten verloren en kunnen er andere problemen ontstaan.";
-"pref_auto_folder_moves" = "Automatisch verplaatsen naar DeltaChat-map";
-"pref_only_fetch_mvbox_title" = "Alleen DeltaChat-map controleren";
+"pref_auto_folder_moves" = "Automatisch verplaatsen naar BMChat-map";
+"pref_only_fetch_mvbox_title" = "Alleen BMChat-map controleren";
 "pref_show_emails" = "Klassieke e-mails tonen";
 "pref_show_emails_no" = "Nee, alleen gesprekken";
 "pref_show_emails_accepted_contacts" = "Van goedgekeurde contactpersonen";
@@ -743,14 +743,14 @@
 "profile_image_delete" = "Profielfoto verwijderen";
 "pref_show_tray_icon" = "Systeemvakpictogram tonen";
 "pref_edit_profile" = "Profiel bewerken";
-"send_stats_to_devs" = "Statistieken delen met Delta Chat-ontwikkelaars";
-"stats_device_message" = "Wil je helpen Delta Chat te verbeteren en voor onderzoeksdoeleinden iedere week volledig anonieme, automatische gebruiksstatistieken in te sturen?\n\n👉 Druk dan hier… 👈";
-"stats_confirmation_dialog" = "Wil je helpen Delta Chat te verbeteren en voor onderzoeksdoeleinden iedere week volledig anonieme, automatische gebruiksstatistieken in te sturen?";
-"stats_thanks" = "Hartelijk dank! Je kunt deze instelling te allen tijde aanpassen via ‘Instellingen → Geavanceerd’.\n\nHeb je nog 5 minuutjes om deel te nemen aan een wetenschappelijk onderzoek aangaande beveiliging van Delta Chat?";
+"send_stats_to_devs" = "Statistieken delen met BMChat-ontwikkelaars";
+"stats_device_message" = "Wil je helpen BMChat te verbeteren en voor onderzoeksdoeleinden iedere week volledig anonieme, automatische gebruiksstatistieken in te sturen?\n\n👉 Druk dan hier… 👈";
+"stats_confirmation_dialog" = "Wil je helpen BMChat te verbeteren en voor onderzoeksdoeleinden iedere week volledig anonieme, automatische gebruiksstatistieken in te sturen?";
+"stats_thanks" = "Hartelijk dank! Je kunt deze instelling te allen tijde aanpassen via ‘Instellingen → Geavanceerd’.\n\nHeb je nog 5 minuutjes om deel te nemen aan een wetenschappelijk onderzoek aangaande beveiliging van BMChat?";
 "stats_disable_dialog" = "Het insturen van statistieken is al ingeschakeld.\n\nWil je dit uitschakelen?";
 "disable" = "Uitschakelen";
 "stats_keep_sending" = "Niet uitschakelen";
-"stats_msg_body" = "De bijlage bevat anonieme gebruiksstatistieken die ons helpen Delta Chat te verbeteren. Bij voorbaat dank!";
+"stats_msg_body" = "De bijlage bevat anonieme gebruiksstatistieken die ons helpen BMChat te verbeteren. Bij voorbaat dank!";
 // Emoji picker and categories
 "emoji_search_results" = "Zoekresultaten";
 "emoji_not_found" = "Geen emoji gevonden";
@@ -880,7 +880,7 @@
 "devicemsg_storage_exceeding" = "⚠️ De opslagruimte die je provider biedt is bijna overschreden. Momenteel heb je %1$@%% ervan in gebruik.\n\nAls je geen ruimte meer hebt, kun je mogelijk geen berichten meer ontvangen.\n\n👉 Kijk of je oude gegevens kunt verwijderen in de webclient van je provider. Overweeg ook ‘Instellingen → Oude berichten verwijderen’ in te schakelen. Je kunt je huidige gebruik te allen tijde bekijken via ‘Instellingen → Verbindingen’.";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ De datum en tijd van je apparaat lijken niet te kloppen (%1$@).\n\nVerzet je klok ⏰🔧 om er zeker van te zijn dat je berichten kunt ontvangen.";
-"devicemsg_update_reminder" = "⚠️ Je versie van Delta Chat is mogelijk verouderd.\n\nDit kan problemen veroorzaken aangezien je gesprekspartners nieuwe versies gebruiken. Bovendien mis je hierdoor enkele nieuwe functies. 😳\nGa naar https://get.delta.chat of de appwinkel van je apparaat om te controleren op updates.";
+"devicemsg_update_reminder" = "⚠️ Je versie van BMChat is mogelijk verouderd.\n\nDit kan problemen veroorzaken aangezien je gesprekspartners nieuwe versies gebruiken. Bovendien mis je hierdoor enkele nieuwe functies. 😳\nGa naar http://5.187.4.132 of de appwinkel van je apparaat om te controleren op updates.";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Ontgrendelen om verder te gaan";
 // qr code stuff
@@ -952,7 +952,7 @@
 "notifications_disabled" = "Meldingen zijn uitgeschakeld";
 "unreliable_bg_notifications" = "Schakel de gedwongen achtergrondverbinding in om meldingen betrouwbaarder te maken";
 "new_messages" = "Nieuwe berichten";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "Je hebt nieuwe berichten";
 "n_messages_in_m_chats" = "%1$d berichten in %2$d gesprekken";
 // location streaming
@@ -963,12 +963,12 @@
 // permissions
 "perm_required_title" = "Recht vereist";
 "perm_continue" = "Doorgaan";
-"perm_explain_access_to_camera_denied" = "Delta Chat wil foto\'s en video\'s kunnen maken. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Camera’ in.";
+"perm_explain_access_to_camera_denied" = "BMChat wil foto\'s en video\'s kunnen maken. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Camera’ in.";
 // give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
-"perm_explain_access_to_mic_denied" = "Delta Chat wil spraakberichten versturen. Ga naar de app-instellingen, kies ‘Rechten’ of ‘Privacy en beveiliging’ en schakel ‘Microfoon’ in.";
-"perm_explain_access_to_storage_denied" = "Delta Chat wil bestanden kunnen ontvangen en versturen. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Opslag’ in.";
-"perm_explain_access_to_location_denied" = "Delta Chat wil je locatie kunnen delen. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Locatie’ in.";
-"perm_explain_access_to_notifications_denied" = "Open Systeeminstellingen → Apps → Delta Chat en schakel meldingen in.";
+"perm_explain_access_to_mic_denied" = "BMChat wil spraakberichten versturen. Ga naar de app-instellingen, kies ‘Rechten’ of ‘Privacy en beveiliging’ en schakel ‘Microfoon’ in.";
+"perm_explain_access_to_storage_denied" = "BMChat wil bestanden kunnen ontvangen en versturen. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Opslag’ in.";
+"perm_explain_access_to_location_denied" = "BMChat wil je locatie kunnen delen. Ga naar de app-instellingen, kies ‘Rechten’ en schakel ‘Locatie’ in.";
+"perm_explain_access_to_notifications_denied" = "Open Systeeminstellingen → Apps → BMChat en schakel meldingen in.";
 // ImageEditorHud
 "ImageEditorHud_draw_anywhere_to_blur" = "Teken met je vinger om vervaging toe te passen";
 "ImageEditorHud_add_text" = "Tekst toevoegen";
@@ -978,7 +978,7 @@
 "ImageEditorHud_crop" = "Bijsnijden";
 "ImageEditorHud_flip" = "Spiegelen";
 "ImageEditorHud_rotate" = "Draaien";
-"welcome_desktop" = "Welkom bij Delta Chat";
+"welcome_desktop" = "Welkom bij BMChat";
 "global_menu_preferences_language_desktop" = "Taal";
 "global_menu_file_desktop" = "Bestand";
 "global_menu_file_quit_desktop" = "Afsluiten";
@@ -993,11 +993,11 @@
 "global_menu_view_developer_desktop" = "Ontwikkelaar";
 "global_menu_view_developer_tools_desktop" = "Ontwikkelaarshulpmiddelen";
 "global_menu_help_desktop" = "Hulp";
-"delta_chat_homepage" = "Delta Chat-website";
+"delta_chat_homepage" = "BMChat-website";
 "contribute" = "Bijdragen";
 "global_menu_help_report_desktop" = "Meld een probleem";
-"global_menu_help_about_desktop" = "Over Delta Chat";
-"global_menu_file_open_desktop" = "Delta Chat openen";
+"global_menu_help_about_desktop" = "Over BMChat";
+"global_menu_file_open_desktop" = "BMChat openen";
 "global_menu_minimize_to_tray" = "Minimaliseren";
 "no_account_selected" = "Kies een profiel of maak een nieuw profiel aan";
 "no_chat_selected_suggestion_desktop" = "Kies een gesprek of begin een gesprek";
@@ -1017,11 +1017,11 @@
 "message_detail_received_desktop" = "Ontvangen";
 "menu.view.developer.open.log.folder" = "Map met logbestanden openen";
 "menu.view.developer.open.current.log.file" = "Huidig logbestand openen";
-"explain_desktop_minimized_disabled_tray_pref" = "Het systeemvakpictogram is uitgeschakeld omdat Delta Chat is gestart met de optie --minimized";
+"explain_desktop_minimized_disabled_tray_pref" = "Het systeemvakpictogram is uitgeschakeld omdat BMChat is gestart met de optie --minimized";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Geen suggesties gevonden.";
 "show_window" = "Venster tonen";
-"data_found_other_installation_message" = "Profielen uit een andere Delta Chat-installatie zijn niet beschikbaar, daar ze allen gebruikmaken van eigen opslaglocaties.\n\nWil je tóch bestaande profielen gebruiken, volg dan deze stappen:\n1. Sluit de app af\n2. Open de andere Delta Chat-installatie en herinstalleer deze zonodig vanaf %1$@\n3. Maak een reservekopie van ieder profiel via ‘Instellingen → Gesprekken’\n4. Herstart deze versie\n5. Herstel de gesprekken door te kiezen voor ‘Ik heb al een profiel’\n\nWil je doorgaan zonder bestaande profielen?";
+"data_found_other_installation_message" = "Profielen uit een andere BMChat-installatie zijn niet beschikbaar, daar ze allen gebruikmaken van eigen opslaglocaties.\n\nWil je tóch bestaande profielen gebruiken, volg dan deze stappen:\n1. Sluit de app af\n2. Open de andere BMChat-installatie en herinstalleer deze zonodig vanaf %1$@\n3. Maak een reservekopie van ieder profiel via ‘Instellingen → Gesprekken’\n4. Herstart deze versie\n5. Herstel de gesprekken door te kiezen voor ‘Ik heb al een profiel’\n\nWil je doorgaan zonder bestaande profielen?";
 // title of the "keybindings" dialog (for the keybindings names as such, where possible the normal command strings are used)
 "keybindings" = "Sneltoetsen";
 // subtitle in the "keybindings" dialog
@@ -1062,7 +1062,7 @@
 "import_device_contacts" = "Importeer lokale contactpersonen";
 "import_device_contacts_hint" = "Voor het voeren van gesprekken met contactpersonen is toegang vereist. Open de systeeminstellingen en verleen deze toegang.";
 // iOS notification settings
-"disabled_in_dc" = "Uitgeschakeld in Delta Chat";
+"disabled_in_dc" = "Uitgeschakeld in BMChat";
 "disabled_in_system_settings" = "Uitgeschakeld in systeeminstellingen";
 "bg_app_refresh_disabled" = "App op de achtergrond vernieuwen is uitgeschakeld in de systeeminstellingen";
 "notifications_avg_minutes" = "Gemiddeld elke %1$d minuten";
@@ -1075,21 +1075,21 @@
 // use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
 "shortcuts_widget_title" = "Opdrachten";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
-"shortcuts_widget_description" = "Gebruik Delta Chats ‘Tonen op widget’ om items toe te voegen";
+"shortcuts_widget_description" = "Gebruik BMChats ‘Tonen op widget’ om items toe te voegen";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "remove_from_widget" = "Niet tonen op widget";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "add_to_widget" = "Tonen op widget";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
 // android specific strings, developers: please take care to remove strings that are no longer used!
 "pref_instant_delivery" = "Onmiddellijke bezorging";
 "pref_background_notifications" = "Achtergrondverbinding gebruiken";
 "pref_background_notifications_explain" = "Hiervoor is het verplicht dat accu-optimalisering wordt uitgeschakeld. Let op: gebruik alleen indien de push-afleverdienst niet beschikbaar is.";
 "pref_reliable_service" = "Achtergrondverbinding afdwingen";
 "pref_reliable_service_explain" = "Toont een permanente melding";
-"pref_background_notifications_rationale" = "Om een achtergrondverbinding naar je server op te zetten, dien je in de volgende stap alle accu-optimalisaties te negeren.\n\nDelta Chat gebruikt weinig systeembronnen en verhoogt je accuverbruik nauwelijks.";
+"pref_background_notifications_rationale" = "Om een achtergrondverbinding naar je server op te zetten, dien je in de volgende stap alle accu-optimalisaties te negeren.\n\nBMChat gebruikt weinig systeembronnen en verhoogt je accuverbruik nauwelijks.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Druk hier om berichten te ontvangen als Delta Chat niet geopend is.";
+"perm_enable_bg_reminder_title" = "Druk hier om berichten te ontvangen als BMChat niet geopend is.";
 "perm_enable_bg_already_done" = "Je hebt al toestemming gegeven voor het ophalen van berichten op de achtergrond.\n\nAls het nog steeds niet werkt, controleer dan de systeeminstellingen.";
 // device messages for updates
 "update_2_0" = "Wijzigingslog:\n\n💯 Eind-tot-eindversleuteling is voortaan betrouwbaarder én standaard. Slotjes 🔒 zijn verleden tijd!\n\n✉️ Klassieke e-mails zonder eind-tot-eindversleuteling worden voortaan gemarkeerd met een letter\n\n😻 Nieuwe, mooiere profielpagina\'s van al je contactpersonen\n\n🔲 Nieuwe knop voor snelle toegang tot apps in gesprekken\n\n❤️ Overweeg een donatie, zodat we onafhankelijk kunnen blijven en verbeteringen kunnen blijven aanbrengen: %1$@";

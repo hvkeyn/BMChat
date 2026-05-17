@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "OK";
 "cancel" = "Anulați";
 "clear_search" = "Stergere Căutare";
@@ -37,7 +37,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "Silențios";
 "ephemeral_messages" = "Mesaje dispărute";
-"ephemeral_messages_hint" = "Se aplică tuturor membrilor acestui chat dacă folosesc Delta Chat; aceștia pot în continuare să copieze, să salveze și să redirecționeze mesajele sau să utilizeze alți clienți de e-mail.";
+"ephemeral_messages_hint" = "Se aplică tuturor membrilor acestui chat dacă folosesc BMChat; aceștia pot în continuare să copieze, să salveze și să redirecționeze mesajele sau să utilizeze alți clienți de e-mail.";
 "save" = "Salvați";
 "chat" = "Chat";
 "media" = "Media";
@@ -327,9 +327,9 @@
 "multidevice_title" = "Adăugați un al doilea dispozitiv";
 "multidevice_same_network_hint" = "Asigurați-vă că ambele dispozitive se află în aceeași rețea Wi-Fi sau în aceeași rețea";
 "multidevice_this_creates_a_qr_code" = "Astfel se creează un cod QR pe care cel de-al doilea dispozitiv îl poate scana pentru a copia contul.";
-"multidevice_install_dc_on_other_device" = "Instalați Delta Chat pe celălalt dispozitiv (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Instalați BMChat pe celălalt dispozitiv (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Porniți Delta Chat, atingeți \" Adăugați ca al doilea dispozitiv\" și scanați codul afișat aici";
+"multidevice_tap_scan_on_other_device" = "Porniți BMChat, atingeți \" Adăugați ca al doilea dispozitiv\" și scanați codul afișat aici";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "Scanare pentru a configura un al doilea dispozitiv pentru %1$@";
 "multidevice_receiver_title" = "Adăugați ca Dispozitiv Secundar";

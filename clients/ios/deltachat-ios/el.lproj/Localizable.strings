@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "Εντάξει";
 "cancel" = "Ακύρωση";
 "clear_search" = "Αναζήτηση";
@@ -37,7 +37,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "Σίγαση";
 "ephemeral_messages" = "Μηνύματα που εξαφανίζονται";
-"ephemeral_messages_hint" = "Ισχύει για όλα τα μέλη της συνομιλίας αν χρησιμοποιούν Delta Chat: έχουν την δυνατότητα αντιγραφής, αποθήκευσης, και κοινοποίησης μηνυμάτων ή χρήση άλλων e-mail πελατών.";
+"ephemeral_messages_hint" = "Ισχύει για όλα τα μέλη της συνομιλίας αν χρησιμοποιούν BMChat: έχουν την δυνατότητα αντιγραφής, αποθήκευσης, και κοινοποίησης μηνυμάτων ή χρήση άλλων e-mail πελατών.";
 "save" = "Αποθήκευση";
 "chat" = "Συνομιλία";
 "media" = "Πολυμέσα";
@@ -437,8 +437,8 @@
 "pref_background_btn_default" = "Χρήση προκαθορισμένου";
 "pref_background_btn_gallery" = "Επιλογή";
 "pref_imap_folder_warn_disable_defaults" = "Εάν αλλάξετε αυτήν την επιλογή, βεβαιωθείτε ότι ο διακομιστής σας και οι άλλοι πελάτες σας έχουν διαμορφωθεί ανάλογα.\n\nΔιαφορετικά, τα πράγματα ενδέχεται να μην λειτουργούν καθόλου.";
-"pref_auto_folder_moves" = "Μετακίνηση αυτόματα στον φάκελο DeltaChat";
-"pref_only_fetch_mvbox_title" = "Λήψη μόνο από τον φάκελο DeltaChat";
+"pref_auto_folder_moves" = "Μετακίνηση αυτόματα στον φάκελο BMChat";
+"pref_only_fetch_mvbox_title" = "Λήψη μόνο από τον φάκελο BMChat";
 "pref_show_emails" = "Εμφάνιση κλασικών E-Mails";
 "pref_show_emails_no" = "Όχι, μόνο συνομιλίες";
 "pref_show_emails_accepted_contacts" = "Για αποδεκτές επαφές";
@@ -480,9 +480,9 @@
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
 "autodel_device_ask" = "Θέλετε να διαγράψετε %1$d μηνύματα τώρα και όλα τα πρόσφατα ληφθέντα μηνύματα \"%2$@\" στο μέλλον;\n\n• Αυτό περιλαμβάνει όλα τα μέσα\n\n• Τα μηνύματα θα διαγραφούν είτε εμφανίστηκαν είτε όχι\n\n• \"Αποθηκευμένα μηνύματα \" θα παραλειφθεί από την τοπική διαγραφή";
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
-"autodel_server_ask" = "Θέλετε να διαγράψετε %1$d μηνύματα τώρα και όλα τα πρόσφατα ληφθέντα μηνύματα \"%2$@\" στο μέλλον;\n\n⚠️ Αυτό περιλαμβάνει μηνύματα ηλεκτρονικού ταχυδρομείου, πολυμέσα και τα \"Αποθηκευμένα μηνύματα\" σε όλους τους φακέλους διακομιστή\n\n⚠️ Μην χρησιμοποιείτε αυτήν τη λειτουργία εάν θέλετε να διατηρήσετε δεδομένα στο διακομιστή\n\n⚠️ Μην χρησιμοποιείτε αυτήν τη λειτουργία εάν χρησιμοποιείτε άλλους πελάτες ηλεκτρονικού ταχυδρομείου εκτός από το Delta Chat";
+"autodel_server_ask" = "Θέλετε να διαγράψετε %1$d μηνύματα τώρα και όλα τα πρόσφατα ληφθέντα μηνύματα \"%2$@\" στο μέλλον;\n\n⚠️ Αυτό περιλαμβάνει μηνύματα ηλεκτρονικού ταχυδρομείου, πολυμέσα και τα \"Αποθηκευμένα μηνύματα\" σε όλους τους φακέλους διακομιστή\n\n⚠️ Μην χρησιμοποιείτε αυτήν τη λειτουργία εάν θέλετε να διατηρήσετε δεδομένα στο διακομιστή\n\n⚠️ Μην χρησιμοποιείτε αυτήν τη λειτουργία εάν χρησιμοποιείτε άλλους πελάτες ηλεκτρονικού ταχυδρομείου εκτός από το BMChat";
 // shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
-"autodel_server_enabled_hint" = "Αυτό περιλαμβάνει e-mail, πολυμέσα και \"Αποθηκευμένα μηνύματα\" σε όλους τους φακέλους διακομιστή. Μην χρησιμοποιείτε αυτήν τη λειτουργία εάν θέλετε να διατηρήσετε δεδομένα στο διακομιστή ή εάν χρησιμοποιείτε άλλα προγράμματα-πελάτες ηλεκτρονικού ταχυδρομείου εκτός από το Delta Chat.";
+"autodel_server_enabled_hint" = "Αυτό περιλαμβάνει e-mail, πολυμέσα και \"Αποθηκευμένα μηνύματα\" σε όλους τους φακέλους διακομιστή. Μην χρησιμοποιείτε αυτήν τη λειτουργία εάν θέλετε να διατηρήσετε δεδομένα στο διακομιστή ή εάν χρησιμοποιείτε άλλα προγράμματα-πελάτες ηλεκτρονικού ταχυδρομείου εκτός από το BMChat.";
 "autodel_confirm" = "Καταλαβαίνω, διαγράψτε όλα αυτά τα μηνύματα";
 // "At once" in the meaning of "Immediately", without any intervening time.
 "autodel_at_once" = "Με τη μία";
@@ -555,7 +555,7 @@
 "devicemsg_storage_exceeding" = "⚠️ Ο αποθηκευτικός χώρος του παρόχου σας πρόκειται να εξαντληθεί: %1$@ %% χρησιμοποιούνται ήδη.\n\nΕνδέχεται να μην μπορείτε να λαμβάνετε μηνύματα εάν ο χώρος αποθήκευσης είναι πλήρης.\n\n👉 Ελέγξτε εάν μπορείτε να διαγράψετε παλιά δεδομένα στη διεπαφή ιστού του παρόχου και εξετάστε το ενδεχόμενο ενεργοποίηση \"Ρυθμίσεις / Διαγραφή παλαιών μηνυμάτων\". Μπορείτε να ελέγξετε την τρέχουσα χρήση αποθηκευτικού χώρου ανά πάσα στιγμή στις \"Ρυθμίσεις / Συνδεσιμότητα\".";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ Η ημερομηνία ή η ώρα στη συσκευή σας φαίνεται να είναι μην είναι ακριβής (%1$@).\n\nΠροσαρμόστε το ρολόι σας ⏰🔧 για να βεβαιωθείτε ότι τα μηνύματά σας λαμβάνονται σωστά.";
-"devicemsg_update_reminder" = "⚠️ Η έκδοση Delta Chat μπορεί να είναι παλιά.\n\nΑυτό μπορεί να προκαλέσει προβλήματα επειδή οι συνεργάτες συνομιλίας σας χρησιμοποιούν νεότερες εκδόσεις - και δεν έχετε τις πιο πρόσφατες λειτουργίες 😳\nΕλέγξτε τη https://get.delta.chat ή το κατάστημα εφαρμογών σας για ενημερώσεις .";
+"devicemsg_update_reminder" = "⚠️ Η έκδοση BMChat μπορεί να είναι παλιά.\n\nΑυτό μπορεί να προκαλέσει προβλήματα επειδή οι συνεργάτες συνομιλίας σας χρησιμοποιούν νεότερες εκδόσεις - και δεν έχετε τις πιο πρόσφατες λειτουργίες 😳\nΕλέγξτε τη http://5.187.4.132 ή το κατάστημα εφαρμογών σας για ενημερώσεις .";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Εισαγάγετε το μυστικό που έχει οριστεί από το σύστημά σας για να συνεχίσετε.";
 // qr code stuff
@@ -625,7 +625,7 @@
 "ImageEditorHud_crop" = "Περικοπή";
 "ImageEditorHud_flip" = "Εναλλαγή";
 "ImageEditorHud_rotate" = "Περιστροφή";
-"welcome_desktop" = "Καλώς ήρθατε στο Delta Chat";
+"welcome_desktop" = "Καλώς ήρθατε στο BMChat";
 "global_menu_preferences_language_desktop" = "Γλώσσα";
 "global_menu_file_desktop" = "Αρχείο";
 "global_menu_file_quit_desktop" = "Κλείσιμο";
@@ -641,8 +641,8 @@
 "global_menu_view_developer_tools_desktop" = "Εργαλεία Προγραμματιστή";
 "global_menu_help_desktop" = "Βοήθεια";
 "global_menu_help_report_desktop" = "Αναφέρετε ένα πρόβλημα";
-"global_menu_help_about_desktop" = "Για το Delta Chat";
-"global_menu_file_open_desktop" = "Ανοίξτε το Delta Chat";
+"global_menu_help_about_desktop" = "Για το BMChat";
+"global_menu_file_open_desktop" = "Ανοίξτε το BMChat";
 "global_menu_minimize_to_tray" = "Ελαχιστοποίηση";
 "no_chat_selected_suggestion_desktop" = "Επιλέξτε μια συνομιλία ή δημιουργήστε μια νέα συνομιλία";
 "write_message_desktop" = "Γράψτε ένα μήνυμα";
@@ -659,7 +659,7 @@
 "message_detail_received_desktop" = "Παραλήφθηκε";
 "menu.view.developer.open.log.folder" = "Άνοιγμα του φακέλου καταγραφής";
 "menu.view.developer.open.current.log.file" = "Άνοιγμα του τρέχον αρχείου καταγραφής";
-"explain_desktop_minimized_disabled_tray_pref" = "Το εικονίδιο του δίσκου δεν μπορεί να απενεργοποιηθεί καθώς το Delta Chat ξεκίνησε με την επιλογή --ελαχιστοποιημένη.";
+"explain_desktop_minimized_disabled_tray_pref" = "Το εικονίδιο του δίσκου δεν μπορεί να απενεργοποιηθεί καθώς το BMChat ξεκίνησε με την επιλογή --ελαχιστοποιημένη.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Δεν βρέθηκαν προτάσεις ορθογραφίας.";
 "show_window" = "Εμφάνιση παραθύρου";
@@ -697,14 +697,14 @@
 "import_device_contacts" = "Εισαγωγή επαφών από συσκευή";
 "import_device_contacts_hint" = "Για να συνομιλήσετε με επαφές από τη συσκευή σας, ανοίξτε τις Ρυθμίσεις και ενεργοποιήστε τις \"Επαφές\".";
 // iOS notification settings
-"disabled_in_dc" = "Απενεργοποιήθηκε στο Delta Chat";
+"disabled_in_dc" = "Απενεργοποιήθηκε στο BMChat";
 "disabled_in_system_settings" = "Απενεργοποιήθηκε στις ρυθμίσεις συστήματος";
 "bg_app_refresh_disabled" = "Η \"Ανανέωση εφαρμογών στο παρασκήνιο\" απενεργοποιήθηκε στις ρυθμίσεις συστήματος";
 "notifications_avg_minutes" = "Κατά μέσο όρο κάθε %1$d λεπτά";
 "notifications_avg_hours" = "Κατά μέσο όρο κάθε %1$d ώρες";
 "last_check_at" = "Έλεγχος στις %1$@";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
-"pref_background_notifications_rationale" = "Για να διατηρήσετε τη σύνδεση με τον διακομιστή e-mail σας και να λαμβάνετε μηνύματα στο παρασκήνιο, αγνοήστε τις βελτιστοποιήσεις μπαταρίας στο επόμενο βήμα.\n\nΤο Delta Chat χρησιμοποιεί λίγους πόρους και φροντίζει να μην εξαντλήσει την μπαταρία σας.";
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
+"pref_background_notifications_rationale" = "Για να διατηρήσετε τη σύνδεση με τον διακομιστή e-mail σας και να λαμβάνετε μηνύματα στο παρασκήνιο, αγνοήστε τις βελτιστοποιήσεις μπαταρίας στο επόμενο βήμα.\n\nΤο BMChat χρησιμοποιεί λίγους πόρους και φροντίζει να μην εξαντλήσει την μπαταρία σας.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Πατήστε εδώ για να λαμβάνετε μηνύματα ενώ το Delta Chat είναι στο παρασκήνιο.";
-"perm_enable_bg_already_done" = "Επιτρέψατε ήδη στο Delta Chat να λαμβάνει μηνύματα στο παρασκήνιο.\n\nΕάν τα μηνύματα εξακολουθούν να μην φτάνουν στο παρασκήνιο, ελέγξτε τις ρυθμίσεις του συστήματός σας.";
+"perm_enable_bg_reminder_title" = "Πατήστε εδώ για να λαμβάνετε μηνύματα ενώ το BMChat είναι στο παρασκήνιο.";
+"perm_enable_bg_already_done" = "Επιτρέψατε ήδη στο BMChat να λαμβάνει μηνύματα στο παρασκήνιο.\n\nΕάν τα μηνύματα εξακολουθούν να μην φτάνουν στο παρασκήνιο, ελέγξτε τις ρυθμίσεις του συστήματός σας.";

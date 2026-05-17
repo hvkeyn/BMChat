@@ -701,12 +701,12 @@
 "pref_background_btn_default" = "Использовать изображение по умолчанию";
 "pref_background_btn_gallery" = "Выбрать из галереи";
 "pref_imap_folder_warn_disable_defaults" = "Если вы измените этот параметр, убедитесь, что ваш сервер и другие клиенты настроены соответствующим образом.\n\nВ противном случае, всё может перестать работать.";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "Режим нескольких устройств";
 "pref_multidevice_explain" = "Синхронизируйте свои сообщения с другими устройствами. Функция включается автоматически при добавлении второго устройства";
 "pref_multidevice_change_warn" = "Режим нескольких устройств должен быть включен, если вы используете один и тот же профиль на нескольких устройствах. Отключайте эту настройку, только если вы удалили этот профиль со всех остальных устройств.\n\nОтключение режима нескольких устройств при использовании профиля на нескольких устройствах приведет к потере сообщений и возникновению других проблем.";
-"pref_auto_folder_moves" = "Автоперемещение в папку DeltaChat";
-"pref_only_fetch_mvbox_title" = "Загружать только из папки DeltaChat";
+"pref_auto_folder_moves" = "Автоперемещение в папку BMChat";
+"pref_only_fetch_mvbox_title" = "Загружать только из папки BMChat";
 "pref_show_emails" = "Показывать обычную почту";
 "pref_show_emails_no" = "Нет, только чаты";
 "pref_show_emails_accepted_contacts" = "Для принятых контактов";
@@ -934,7 +934,7 @@
 "notifications_disabled" = "Уведомления отключены";
 "unreliable_bg_notifications" = "Включить \"Принудительное соединение в фоновом режиме\" для бесперебойной работы уведомлений";
 "new_messages" = "Новые сообщения";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "Есть новые сообщения";
 "n_messages_in_m_chats" = "%1$d сообщений в %2$d чатах";
 // permissions
@@ -1049,7 +1049,7 @@
 "remove_from_widget" = "Удалить из виджета";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "add_to_widget" = "Добавить в виджет";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
 // android specific strings, developers: please take care to remove strings that are no longer used!
 "pref_instant_delivery" = "Мгновенная доставка";
 "pref_background_notifications" = "Использовать соединение в фоновом режиме";
