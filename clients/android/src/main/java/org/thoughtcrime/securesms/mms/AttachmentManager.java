@@ -447,7 +447,12 @@ public class AttachmentManager {
   }
 
   public static void selectDocument(Activity activity, int requestCode) {
-    selectMediaType(activity, "*/*", null, requestCode);
+    // BMChat 2.49.56: documents and audio files are now picked with
+    // EXTRA_ALLOW_MULTIPLE so the user can select several files at once
+    // (Telegram-style multi-select). Each picked file is sent as its
+    // own message — see ConversationActivity.PICK_DOCUMENT for the
+    // ClipData branch that fans out one DcMsg per uri.
+    selectMediaType(activity, "*/*", null, requestCode, null, true);
   }
 
   public static void selectWebxdc(Activity activity, int requestCode) {

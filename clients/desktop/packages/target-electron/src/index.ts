@@ -78,6 +78,10 @@ protocol.registerSchemesAsPrivileged([
 const app = rawApp as ExtendedAppMainProcess
 app.rc = rc
 
+if (process.platform === 'win32') {
+  rawApp.setAppUserModelId('chat.bromore.bmchat.desktop')
+}
+
 // requestSingleInstanceLock always returns false on mas (mac app store) builds
 // due to electron issue https://github.com/electron/electron/issues/35540
 // dc-desktop issue: https://github.com/deltachat/deltachat-desktop/issues/3938

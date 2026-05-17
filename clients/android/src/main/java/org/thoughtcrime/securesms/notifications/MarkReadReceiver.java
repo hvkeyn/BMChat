@@ -15,21 +15,42 @@ public class MarkReadReceiver extends BroadcastReceiver {
   public static final String MARK_NOTICED_ACTION =
       "org.thoughtcrime.securesms.notifications.MARK_NOTICED";
   public static final String CANCEL_ACTION = "org.thoughtcrime.securesms.notifications.CANCEL";
+  // BMChat: fired by the system when the user swipes the bundled group
+  // summary away. Without it, dismissing the summary leaves the per-chat
+  // children alive and the next incoming message recreates a "ghost"
+  // summary from stale in-memory state.
+  public static final String SUMMARY_DISMISSED_ACTION =
+      "org.thoughtcrime.securesms.notifications.SUMMARY_DISMISSED";
   public static final String ACCOUNT_ID_EXTRA = "account_id";
   public static final String CHAT_ID_EXTRA = "chat_id";
   public static final String MSG_ID_EXTRA = "msg_id";
 
   @Override
   public void onReceive(final Context context, Intent intent) {
-    boolean markNoticed = MARK_NOTICED_ACTION.equals(intent.getAction());
-    if (!markNoticed && !CANCEL_ACTION.equals(intent.getAction())) {
+    String action = intent.getAction();
+    boolean markNoticed = MARK_NOTICED_ACTION.equals(action);
+    boolean summaryDismissed = SUMMARY_DISMISSED_ACTION.equals(action);
+    if (!markNoticed && !summaryDismissed && !CANCEL_ACTION.equals(action)) {
       return;
     }
 
     final int accountId = intent.getIntExtra(ACCOUNT_ID_EXTRA, 0);
+    if (accountId == 0) return;
+
+    if (summaryDismissed) {
+      // Summary swipes do not target a specific chat — just clear our
+      // local bookkeeping so the next event rebuilds the group cleanly.
+      Util.runOnAnyBackgroundThread(
+          () -> {
+            DcHelper.getNotificationCenter(context).onSummaryDismissed(accountId);
+            DcHelper.getNotificationCenter(context).reconcileAccount(accountId);
+          });
+      return;
+    }
+
     final int chatId = intent.getIntExtra(CHAT_ID_EXTRA, DC_CHAT_NO_CHAT);
     final int msgId = intent.getIntExtra(MSG_ID_EXTRA, 0);
-    if (accountId == 0 || chatId == DC_CHAT_NO_CHAT) {
+    if (chatId == DC_CHAT_NO_CHAT) {
       return;
     }
 
@@ -41,6 +62,7 @@ public class MarkReadReceiver extends BroadcastReceiver {
             dcContext.marknoticedChat(chatId);
             dcContext.markseenMsgs(new int[] {msgId});
           }
+          DcHelper.getNotificationCenter(context).reconcileAccount(accountId);
         });
   }
 }

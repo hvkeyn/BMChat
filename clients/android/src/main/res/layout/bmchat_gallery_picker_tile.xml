@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BMChat 2.49.63: a single tile in the Telegram-style picker grid. Square
+  aspect ratio, a thumbnail underneath, an optional ▶ play overlay for
+  videos, and a circular blue badge in the top-right that shows the tile's
+  1-based selection order. The frame's "selected" border is provided as a
+  foreground drawable that the activity toggles on/off.
+-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bmchat_gallery_tile_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:foregroundGravity="fill"
+    android:layout_margin="2dp">
+
+    <ImageView
+        android:id="@+id/bmchat_gallery_tile_thumb"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:contentDescription="@null"/>
+
+    <TextView
+        android:id="@+id/bmchat_gallery_tile_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="▶"
+        android:textColor="#FFFFFFFF"
+        android:textSize="28sp"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/bmchat_gallery_tile_number"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="6dp"
+        android:gravity="center"
+        android:textColor="#FFFFFFFF"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:background="@drawable/bmchat_gallery_tile_number_bg"
+        android:visibility="gone"/>
+
+</FrameLayout>

@@ -41,6 +41,7 @@ import org.thoughtcrime.securesms.contacts.avatars.ProfileContactPhoto;
 import org.thoughtcrime.securesms.contacts.avatars.SystemContactPhoto;
 import org.thoughtcrime.securesms.contacts.avatars.VcardContactPhoto;
 import org.thoughtcrime.securesms.database.Address;
+import org.thoughtcrime.securesms.util.BMChatNames;
 import org.thoughtcrime.securesms.util.Hash;
 import org.thoughtcrime.securesms.util.Prefs;
 import org.thoughtcrime.securesms.util.Util;
@@ -142,9 +143,16 @@ public class Recipient {
 
   public @Nullable String getName() {
     if (dcChat != null) {
-      return dcChat.getName();
+      // For 1:1 chats where neither the contact nor the user supplied a profile name yet,
+      // dcChat.getName() returns the bare e-mail address. Fall back to a humanised local-part
+      // so the chat list doesn't look like an inbox of e-mails.
+      String name = dcChat.getName();
+      if (!dcChat.isMultiUser() && dcContact != null) {
+        return BMChatNames.humanize(dcContact.getDisplayName(), dcContact.getAddr());
+      }
+      return name;
     } else if (dcContact != null) {
-      return dcContact.getDisplayName();
+      return BMChatNames.humanize(dcContact.getDisplayName(), dcContact.getAddr());
     } else if (vContact != null) {
       return vContact.displayName;
     }

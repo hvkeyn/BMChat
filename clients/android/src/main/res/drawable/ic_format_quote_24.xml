@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Material "format_quote" glyph rendered as a vector drawable.
+  Single source (24dp baseline) — the icon is tinted at use site
+  via app:tint so dark/light themes get a consistent look. Used
+  by the BMChat quick-actions popup to launch the
+  "select-fragment-to-quote" flow on a single tap.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?attr/colorControlNormal">
+
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M6,17h3l2,-4V7H5v6h3l-2,4zM14,17h3l2,-4V7h-6v6h3l-2,4z" />
+</vector>

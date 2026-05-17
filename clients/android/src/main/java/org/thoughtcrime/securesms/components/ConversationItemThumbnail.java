@@ -185,6 +185,14 @@ public class ConversationItemThumbnail extends FrameLayout {
     thumbnail.setThumbnailClickListener(listener);
   }
 
+  /** Forward to {@link ThumbnailView#setForcePlayOverlay(boolean)} so
+   *  ConversationItem can light up the ▶ play badge on a plain
+   *  image bubble that actually backs a streamable Telegram-bot
+   *  video poster. */
+  public void setForcePlayOverlay(boolean force) {
+    thumbnail.setForcePlayOverlay(force);
+  }
+
   @Override
   public boolean performClick() {
     return thumbnail.performClick();

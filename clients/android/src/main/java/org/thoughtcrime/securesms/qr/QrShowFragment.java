@@ -362,7 +362,10 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
   private void sendInviteByEmail(String email, String inviteURL) {
     final Activity activity = getActivity();
     try {
-      int contactId = dcContext.createContact(null, email);
+      int contactId = dcContext.lookupContactIdByAddr(email);
+      if (contactId == 0) {
+        contactId = dcContext.createContact(null, email);
+      }
       if (contactId == 0) {
         Toast.makeText(activity, R.string.bad_email_address, Toast.LENGTH_SHORT).show();
         return;

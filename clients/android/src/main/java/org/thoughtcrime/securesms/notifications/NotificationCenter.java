@@ -23,8 +23,10 @@ import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.app.Person;
 import androidx.core.app.RemoteInput;
 import androidx.core.app.TaskStackBuilder;
+import androidx.core.graphics.drawable.IconCompat;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
@@ -46,6 +48,7 @@ import org.thoughtcrime.securesms.contacts.avatars.ContactPhoto;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.preferences.widgets.NotificationPrivacyPreference;
 import org.thoughtcrime.securesms.recipients.Recipient;
+import org.thoughtcrime.securesms.util.BMChatNames;
 import org.thoughtcrime.securesms.util.BitmapUtil;
 import org.thoughtcrime.securesms.util.IntentUtils;
 import org.thoughtcrime.securesms.util.JsonUtils;
@@ -164,6 +167,68 @@ public class NotificationCenter {
         context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | IntentUtils.FLAG_MUTABLE());
   }
 
+  /**
+   * Build a {@link PendingIntent} that is fired by the system when the user
+   * swipes the group summary away. Without it, Android keeps the summary
+   * alive even after every child notification has been auto-cancelled,
+   * leaving a ghostly "BMChat" entry in the drawer (issue reported by the
+   * user as a persistent empty BMChat icon in the notification shade).
+   */
+  private PendingIntent getSummaryDeleteIntent(int accountId) {
+    Intent intent = new Intent(MarkReadReceiver.SUMMARY_DISMISSED_ACTION);
+    intent.setClass(context, MarkReadReceiver.class);
+    intent.setData(Uri.parse("custom-summary://" + accountId));
+    intent.putExtra(MarkReadReceiver.ACCOUNT_ID_EXTRA, accountId);
+    intent.setPackage(context.getPackageName());
+    return PendingIntent.getBroadcast(
+        context, accountId, intent, PendingIntent.FLAG_UPDATE_CURRENT | IntentUtils.FLAG_MUTABLE());
+  }
+
+  /**
+   * Total number of fresh messages across every non-muted account, used as
+   * the value of {@link NotificationCompat.Builder#setNumber(int)} on the
+   * group summary. Samsung One UI / MIUI / EMUI launchers ignore the
+   * legacy ShortcutBadger broadcast and instead read this number off the
+   * most recent notification with a non-zero count, so the summary is the
+   * single source of truth for the launcher badge.
+   */
+  private int totalFreshAcrossAccounts() {
+    int total = 0;
+    try {
+      int[] accountIds = ApplicationContext.getDcAccounts().getAll();
+      for (int accountId : accountIds) {
+        DcContext dcContext = ApplicationContext.getDcAccounts().getAccount(accountId);
+        if (dcContext == null) continue;
+        if (dcContext.isMuted()) continue;
+        int[] fresh = dcContext.getFreshMsgs();
+        if (fresh != null) total += fresh.length;
+      }
+    } catch (Throwable t) {
+      Log.w(TAG, "totalFreshAcrossAccounts failed", t);
+    }
+    return Math.max(total, 0);
+  }
+
+  /**
+   * Total number of fresh messages inside a single account; used to decide
+   * whether the group summary for that account is still meaningful.
+   */
+  private int totalFreshInAccount(int accountId) {
+    try {
+      DcContext dcContext = ApplicationContext.getDcAccounts().getAccount(accountId);
+      if (dcContext == null || dcContext.isMuted()) return 0;
+      int[] fresh = dcContext.getFreshMsgs();
+      return fresh != null ? fresh.length : 0;
+    } catch (Throwable t) {
+      Log.w(TAG, "totalFreshInAccount failed", t);
+      return 0;
+    }
+  }
+
+  private String visibleSummary(@NonNull DcMsg msg) {
+    return org.thoughtcrime.securesms.update.UpdateBroadcast.strip(msg.getSummarytext(2000));
+  }
+
   // Groups and Notification channel groups
   // --------------------------------------------------------------------------------------------
 
@@ -204,8 +269,24 @@ public class NotificationCenter {
   // channelIds: CH_MSG_* are used here, the other ones from outside (defined here to have some
   // overview)
   public static final String CH_MSG_PREFIX = "ch_msg";
-  public static final String CH_MSG_VERSION = "5";
-  public static final String CH_PERMANENT = "dc_fg_notification_ch";
+  // BMChat: bumped 5 -> 6 in 2.49.8 and 6 -> 7 in 2.49.9 to force a fresh channel with
+  // IMPORTANCE_HIGH / VISIBILITY_PUBLIC and an unconditional default sound. Devices that
+  // upgraded from older builds may still hold a legacy channel with reduced importance
+  // which Android refuses to upgrade in place.
+  // BMChat 2.49.54: bumped 7 -> 8 so the channel is recreated with an explicit
+  // vibration pattern. Samsung One UI / MIUI silently ignore enableVibration(true)
+  // unless a pattern is supplied, which was why users who turned vibration on did
+  // not feel anything when a new message arrived.
+  public static final String CH_MSG_VERSION = "8";
+
+  // BMChat: standard "tap-tap" vibration pattern used for incoming messages. The
+  // initial 0 means "vibrate immediately"; the rest is a wait/vibrate sequence in
+  // milliseconds (250 ms pause, 300 ms vibrate, 200 ms pause, 300 ms vibrate).
+  private static final long[] DEFAULT_VIBRATE_PATTERN = new long[] {0, 300, 200, 300};
+  // BMChat: bumped to _v3 so the channel is recreated as IMPORTANCE_MIN with no badge,
+  // collapsing the persistent "BMChat is running in background" drawer entry into a
+  // bare status-bar icon.
+  public static final String CH_PERMANENT = "bmchat_fg_notification_ch_v4";
   public static final String CH_GENERIC = "ch_generic";
   public static final String CH_CALLS_PREFIX = "call_chan";
 
@@ -290,6 +371,7 @@ public class NotificationCenter {
         // check if there is already a channel with the given name
         List<NotificationChannel> channels = notificationManager.getNotificationChannels();
         boolean channelExists = false;
+        String currentVersionPrefix = CH_MSG_PREFIX + CH_MSG_VERSION + "_";
         for (int i = 0; i < channels.size(); i++) {
           String currChannelId = channels.get(i).getId();
           if (currChannelId.startsWith(CH_MSG_PREFIX)) {
@@ -299,8 +381,14 @@ public class NotificationCenter {
               // update the name to reflect localize changes and chat renames
               channelExists = true;
               channels.get(i).setName(name);
+            } else if (!currChannelId.startsWith(currentVersionPrefix)) {
+              // BMChat: legacy channel from an older CH_MSG_VERSION; user installs that
+              // jumped through 2.49.<7 may have a stale channel with reduced importance
+              // (e.g. IMPORTANCE_DEFAULT/LOW) that Android refuses to upgrade in place.
+              // Drop it so the freshly created v6 channel can take over heads-up duties.
+              notificationManager.deleteNotificationChannel(currChannelId);
             } else {
-              // ... another message channel, delete if it is not in use.
+              // ... another v6 message channel, delete if it is not in use.
               ChatData currChat = parseNotificationChannelChat(currChannelId);
               if (!currChannelId.equals(
                   computeChannelId(
@@ -320,7 +408,17 @@ public class NotificationCenter {
           channel.setDescription("Informs about new messages.");
           channel.setGroup(getNotificationChannelGroup(notificationManager));
           channel.enableVibration(defaultVibrate);
+          if (defaultVibrate) {
+            // BMChat: Samsung One UI and MIUI quietly drop the vibration when only
+            // enableVibration(true) is set. Supplying an explicit pattern forces the
+            // OEM notification stack to actually trigger the haptic motor.
+            channel.setVibrationPattern(DEFAULT_VIBRATE_PATTERN);
+          }
           channel.setShowBadge(true);
+          // BMChat: heads-up notifications must be visible on the lock screen too,
+          // otherwise an incoming message during screen-off / lock looks like the
+          // app does not deliver anything.
+          channel.setLockscreenVisibility(Notification.VISIBILITY_PUBLIC);
 
           if (!ledColor.equals("none")) {
             channel.enableLights(true);
@@ -329,15 +427,25 @@ public class NotificationCenter {
             channel.enableLights(false);
           }
 
-          if (ringtone != null && !TextUtils.isEmpty(ringtone.toString())) {
+          // BMChat: heads-up reliably triggers only when the channel has a sound;
+          // Samsung/MIUI silently demote a high-importance "silent" channel to a
+          // drawer entry. So if the user has not picked a custom ringtone we
+          // unconditionally fall back to the platform default notification sound.
+          Uri effectiveRingtone = ringtone;
+          if (effectiveRingtone == null || TextUtils.isEmpty(effectiveRingtone.toString())) {
+            try {
+              effectiveRingtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            } catch (Throwable t) {
+              effectiveRingtone = null;
+            }
+          }
+          if (effectiveRingtone != null) {
             channel.setSound(
-                ringtone,
+                effectiveRingtone,
                 new AudioAttributes.Builder()
                     .setContentType(AudioAttributes.CONTENT_TYPE_UNKNOWN)
                     .setUsage(AudioAttributes.USAGE_NOTIFICATION_COMMUNICATION_INSTANT)
                     .build());
-          } else {
-            channel.setSound(null, null);
           }
 
           notificationManager.createNotificationChannel(channel);
@@ -402,6 +510,15 @@ public class NotificationCenter {
   // --------------------------------------------------------------------------------------------
 
   public void notifyMessage(int accountId, int chatId, int msgId) {
+    // BMChat 2.49.61: explicit entry/exit logs on every notify path. Users
+    // were reporting that incoming messages and reactions arrived in the
+    // chat but produced no system notification, and we had no easy way to
+    // tell *where* the silent skip happened. Tag every gate-keeper return
+    // with a Log.i so a single `adb logcat -s NotificationCenter` shows the
+    // exact reason.
+    android.util.Log.i(
+        TAG,
+        "notifyMessage entry account=" + accountId + " chat=" + chatId + " msg=" + msgId);
     Util.runOnAnyBackgroundThread(
         () -> {
           DcContext dcContext = context.getDcAccounts().getAccount(accountId);
@@ -410,18 +527,21 @@ public class NotificationCenter {
           DcMsg dcMsg = dcContext.getMsg(msgId);
           NotificationPrivacyPreference privacy = Prefs.getNotificationPrivacy(context);
 
+          DcContact senderContact = dcContext.getContact(dcMsg.getFromId());
+          String senderName =
+              BMChatNames.humanize(
+                  dcMsg.getSenderName(senderContact), senderContact.getAddr());
+
           String shortLine =
               privacy.isDisplayMessage()
-                  ? dcMsg.getSummarytext(2000)
+                  ? visibleSummary(dcMsg)
                   : context.getString(R.string.notify_new_message);
           if (dcChat.isMultiUser() && privacy.isDisplayContact()) {
-            shortLine =
-                dcMsg.getSenderName(dcContext.getContact(dcMsg.getFromId())) + ": " + shortLine;
+            shortLine = senderName + ": " + shortLine;
           }
           String tickerLine = shortLine;
           if (!dcChat.isMultiUser() && privacy.isDisplayContact()) {
-            tickerLine =
-                dcMsg.getSenderName(dcContext.getContact(dcMsg.getFromId())) + ": " + tickerLine;
+            tickerLine = senderName + ": " + tickerLine;
 
             if (dcMsg.getOverrideSenderName() != null) {
               // There is an "overridden" display name on the message, so, we need to prepend the
@@ -451,12 +571,14 @@ public class NotificationCenter {
           }
 
           DcContact sender = dcContext.getContact(contactId);
+          String senderName =
+              BMChatNames.humanize(sender.getDisplayName(), sender.getAddr());
           String shortLine =
               context.getString(
                   R.string.reaction_by_other,
-                  sender.getDisplayName(),
+                  senderName,
                   reaction,
-                  dcMsg.getSummarytext(2000));
+                  visibleSummary(dcMsg));
           DcChat dcChat = dcContext.getChat(dcMsg.getChatId());
           maybeAddNotification(
               accountId, dcChat, msgId, shortLine, shortLine, false, dcChat.isMultiUser());
@@ -508,27 +630,43 @@ public class NotificationCenter {
     isMention = isMention && dcContext.isMentionsEnabled();
 
     if (dcContext.isMuted() || (!isMention && dcChat.isMuted())) {
+      android.util.Log.i(
+          TAG,
+          "maybeAddNotification skip muted account=" + accountId + " chat=" + chatId
+              + " accMuted=" + dcContext.isMuted() + " chatMuted=" + dcChat.isMuted());
       return;
     }
 
-    // BMChat suppresses notifications for noise that is not part of a real chat:
-    // mailing lists and unencrypted contact requests (classic e-mail without Chat-Version).
-    if (dcChat.isMailingList() || (dcChat.isContactRequest() && !dcChat.isEncrypted())) {
+    // BMChat suppresses notifications for noise that is not part of a real
+    // chat: mailing lists. Unencrypted contact requests (classic email)
+    // *do* surface a notification — BMChat is also used as a plain email
+    // client, and users complained that bare emails arrived completely
+    // silently because they all land in the contact-request inbox at first.
+    if (dcChat.isMailingList()) {
+      android.util.Log.i(
+          TAG, "maybeAddNotification skip mailingList chat=" + chatId);
       return;
     }
 
     NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
         && !notificationManager.areNotificationsEnabled()) {
+      android.util.Log.w(
+          TAG,
+          "maybeAddNotification skip: app-level notifications disabled (POST_NOTIFICATIONS)");
       return;
     }
 
     if (Util.equals(visibleChat, chatData)) {
+      android.util.Log.i(
+          TAG, "maybeAddNotification skip: chat is currently visible chat=" + chatId);
       if (playInChatSound && Prefs.isInChatNotifications(context)) {
         InChatSounds.getInstance(context).playIncomingSound();
       }
       return;
     }
+    android.util.Log.i(
+        TAG, "maybeAddNotification proceeding chat=" + chatId + " msg=" + msgId);
 
     NotificationPrivacyPreference privacy = Prefs.getNotificationPrivacy(context);
     long now = System.currentTimeMillis();
@@ -597,20 +735,37 @@ public class NotificationCenter {
       NotificationPrivacyPreference privacy = Prefs.getNotificationPrivacy(context);
       ChatData chatData = new ChatData(accountId, chatId);
 
-      // Create basic notification
+      // BMChat: even on Android 8+ where importance is decided by the channel, keep the
+      // legacy priority high so old OEM ROMs (some Samsung One UI variants) actually pop a
+      // heads-up bubble for incoming messages instead of silently appending to the drawer.
+      int legacyPriority =
+          Math.max(Prefs.getNotificationPriority(context), NotificationCompat.PRIORITY_HIGH);
+
       NotificationCompat.Builder builder =
           new NotificationCompat.Builder(context, notificationChannel)
               .setSmallIcon(R.drawable.icon_notification)
               .setColor(context.getResources().getColor(R.color.delta_primary))
-              .setPriority(Prefs.getNotificationPriority(context))
+              .setPriority(legacyPriority)
               .setCategory(NotificationCompat.CATEGORY_MESSAGE)
+              // BMChat: heads-up + lock-screen visibility for incoming messages.
+              .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+              .setBadgeIconType(NotificationCompat.BADGE_ICON_LARGE)
               .setOnlyAlertOnce(!signal)
+              .setAutoCancel(true)
+              .setWhen(System.currentTimeMillis())
+              .setShowWhen(true)
               .setContentText(contentText)
               .setDeleteIntent(getMarkAsReadIntent(chatData, msgId, false))
               .setContentIntent(getOpenChatIntent(chatData));
 
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
         builder.setGroup(GRP_MSG + "." + accountId);
+        // BMChat: there is no longer a summary notification — every
+        // child is the one that rings, so each chat alerts the user
+        // exactly once when a fresh message lands. Android still
+        // clusters them into a stack when there are several, but
+        // without an empty "BMChat" header.
+        builder.setGroupAlertBehavior(NotificationCompat.GROUP_ALERT_CHILDREN);
       }
 
       String accountTag = dcContext.getConfig(CONFIG_PRIVATE_TAG);
@@ -619,7 +774,15 @@ public class NotificationCenter {
       }
 
       if (privacy.isDisplayContact()) {
-        builder.setContentTitle(dcChat.getName());
+        String chatTitle = dcChat.getName();
+        if (!dcChat.isMultiUser()) {
+          int[] memberIds = dcContext.getChatContacts(chatId);
+          if (memberIds.length >= 1) {
+            DcContact peer = dcContext.getContact(memberIds[0]);
+            chatTitle = BMChatNames.humanize(peer.getDisplayName(), peer.getAddr());
+          }
+        }
+        builder.setContentTitle(chatTitle);
         if (!TextUtils.isEmpty(accountTag)) {
           builder.setSubText(accountTag);
         }
@@ -633,21 +796,33 @@ public class NotificationCenter {
       if (!notificationChannelsSupported()) {
         if (signal) {
           Uri sound = effectiveSound(chatData);
-          if (sound != null && !TextUtils.isEmpty(sound.toString())) {
+          if (sound == null || TextUtils.isEmpty(sound.toString())) {
+            // BMChat: fall back to the platform default notification sound so a
+            // freshly installed device with no ringtone preference still beeps.
+            sound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+          }
+          if (sound != null) {
             builder.setSound(sound);
           }
           boolean vibrate = effectiveVibrate(chatData);
           if (vibrate) {
-            builder.setDefaults(Notification.DEFAULT_VIBRATE);
+            builder.setVibrate(DEFAULT_VIBRATE_PATTERN);
           }
         }
         String ledColor = Prefs.getNotificationLedColor(context);
         if (!ledColor.equals("none")) {
           builder.setLights(getLedArgb(ledColor), 500, 2000);
         }
+      } else if (signal && effectiveVibrate(chatData)) {
+        // BMChat: on Android 8+ the channel decides everything, but some OEM
+        // builds (Samsung One UI 6/7, MIUI 14) still consult the legacy
+        // notification fields. Setting an explicit pattern here is a harmless
+        // belt-and-braces guarantee that the device actually vibrates.
+        builder.setVibrate(DEFAULT_VIBRATE_PATTERN);
       }
 
-      // Set avatar
+      // Set avatar (chat avatar for collapsed view; MessagingStyle replaces it with the
+      // sender avatar in expanded view).
       if (privacy.isDisplayContact()) {
         Bitmap bitmap = getAvatar(dcChat);
         if (bitmap != null) {
@@ -700,22 +875,72 @@ public class NotificationCenter {
         }
       }
 
-      // Create inbox style (gets visible if the notification is expanded)
+      // BMChat: MessagingStyle gives a proper Telegram/Signal-like preview with sender
+      // name and avatar per line, both in heads-up and expanded drawer entries.
       if (privacy.isDisplayContact() && privacy.isDisplayMessage() && messagesForInbox != null) {
         try {
-          NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
-          for (String line : messagesForInbox.values()) {
-            inboxStyle.addLine(line);
+          String selfName = dcContext.getConfig("displayname");
+          if (TextUtils.isEmpty(selfName)) selfName = dcContext.getName();
+          if (TextUtils.isEmpty(selfName)) selfName = "Me";
+          Person selfPerson =
+              new Person.Builder().setName(selfName).setKey("self." + accountId).build();
+
+          NotificationCompat.MessagingStyle style =
+              new NotificationCompat.MessagingStyle(selfPerson);
+          if (dcChat.isMultiUser()) {
+            style.setConversationTitle(dcChat.getName());
+            style.setGroupConversation(true);
+          } else {
+            style.setGroupConversation(false);
           }
-          builder.setStyle(inboxStyle);
+
+          for (Map.Entry<Integer, String> entry : messagesForInbox.entrySet()) {
+            int mid = entry.getKey();
+            String fallback = entry.getValue();
+            try {
+              DcMsg m = dcContext.getMsg(mid);
+              if (m == null) {
+                style.addMessage(fallback, System.currentTimeMillis(), (Person) null);
+                continue;
+              }
+              DcContact senderContact = dcContext.getContact(m.getFromId());
+              String senderName =
+                  BMChatNames.humanize(
+                      senderContact.getDisplayName(), senderContact.getAddr());
+              Person.Builder pb =
+                  new Person.Builder()
+                      .setName(senderName)
+                      .setKey("sender." + senderContact.getId());
+              Bitmap senderAvatar = getAvatarForContact(senderContact);
+              if (senderAvatar != null) {
+                pb.setIcon(IconCompat.createWithBitmap(senderAvatar));
+              }
+              Person person = pb.build();
+
+              String text = visibleSummary(m);
+              if (TextUtils.isEmpty(text)) text = fallback;
+              long ts = m.getTimestamp() * 1000L;
+              if (ts <= 0) ts = System.currentTimeMillis();
+              style.addMessage(text, ts, person);
+            } catch (Throwable t) {
+              style.addMessage(fallback, System.currentTimeMillis(), (Person) null);
+            }
+          }
+          builder.setStyle(style);
         } catch (Exception e) {
           Log.w(TAG, e);
         }
       }
 
-      // Messages count
+      // BMChat: with the group summary gone (see below) every child row
+      // is also the badge driver. We put the total fresh-message count
+      // across every account in setNumber() so the launcher icon shows
+      // the same total the user sees in the chat list, regardless of
+      // which notification happens to be the "freshest" on Samsung
+      // One UI / MIUI / EMUI launchers.
+      int totalFresh = totalFreshAcrossAccounts();
       builder.setContentInfo(String.valueOf(messageCount));
-      builder.setNumber(messageCount);
+      builder.setNumber(totalFresh > 0 ? totalFresh : messageCount);
 
       // Show notification
       // try..catch potentially needed for very specific devices
@@ -726,26 +951,24 @@ public class NotificationCenter {
         Log.e(TAG, "cannot add notification", e);
       }
 
-      // Group notifications in a summary (Android 7+)
-      if (includeSummary && Build.VERSION.SDK_INT >= 24) {
-        try {
-          NotificationCompat.Builder summary =
-              new NotificationCompat.Builder(context, notificationChannel)
-                  .setGroup(GRP_MSG + "." + accountId)
-                  .setGroupSummary(true)
-                  .setSmallIcon(R.drawable.icon_notification)
-                  .setColor(context.getResources().getColor(R.color.delta_primary, null))
-                  .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                  .setContentTitle("Delta Chat")
-                  .setContentText("New messages")
-                  .setContentIntent(getOpenChatlistIntent(accountId));
-          if (privacy.isDisplayContact() && !TextUtils.isEmpty(accountTag)) {
-            summary.setSubText(accountTag);
-          }
-          notificationManager.notify(String.valueOf(accountId), ID_MSG_SUMMARY, summary.build());
-        } catch (Exception e) {
-          Log.e(TAG, "cannot add notification summary", e);
-        }
+      // BMChat: refresh the launcher icon unread badge for OEMs that don't
+      // pick up Notification.setNumber() on their own.
+      BMChatBadge.refreshSync(context);
+
+      // BMChat: deliberately *not* posting a group summary notification.
+      // The Telegram-style UX the user wants is one row per chat,
+      // automatically clustered by Android 7+ via setGroup(), and
+      // nothing else in the drawer. The previous "bare BMChat / BMChat"
+      // entry the user complained about was exactly this summary
+      // showing up empty whenever a child notification was dismissed
+      // before its sibling, or after a process restart that lost the
+      // in-memory inbox state. Removing the summary entirely makes the
+      // failure mode go away. Any legacy summary that may still be
+      // around from an older version is cleaned up by
+      // reconcileAccount() on app resume.
+      try {
+        notificationManager.cancel(String.valueOf(accountId), ID_MSG_SUMMARY);
+      } catch (Exception ignored) {
       }
     } catch (Exception e) {
       Log.e(TAG, "cannot show notification", e);
@@ -803,8 +1026,27 @@ public class NotificationCenter {
     }
   }
 
+  /**
+   * BMChat: avatar for a single sender, used for {@link NotificationCompat.MessagingStyle}
+   * Person icons in group chats so that each message row renders the actual sender photo.
+   */
+  public Bitmap getAvatarForContact(DcContact dcContact) {
+    if (dcContact == null) return null;
+    try {
+      Recipient recipient = new Recipient(context, dcContact);
+      return renderAvatarBitmap(recipient);
+    } catch (Throwable t) {
+      Log.w(TAG, t);
+      return null;
+    }
+  }
+
   public Bitmap getAvatar(DcChat dcChat) {
     Recipient recipient = new Recipient(context, dcChat);
+    return renderAvatarBitmap(recipient);
+  }
+
+  private Bitmap renderAvatarBitmap(Recipient recipient) {
     try {
       Drawable drawable;
       ContactPhoto contactPhoto = recipient.getContactPhoto(context);
@@ -842,7 +1084,6 @@ public class NotificationCenter {
 
   public void removeNotification(int accountId, int chatId, int msgId) {
     boolean shouldCancelNotification = false;
-    boolean removeSummary = false;
     LinkedHashMap<Integer, String> remainingMessages = null;
 
     synchronized (inboxes) {
@@ -851,56 +1092,68 @@ public class NotificationCenter {
         LinkedHashMap<Integer, String> messages = accountInbox.get(chatId);
         if (messages != null) {
           messages.remove(msgId);
-
           if (messages.isEmpty()) {
-            // No more messages for this chat
             accountInbox.remove(chatId);
             shouldCancelNotification = true;
-            removeSummary = accountInbox.isEmpty();
           } else {
-            // Keep a copy of remaining messages for rebuilding
             remainingMessages = new LinkedHashMap<>(messages);
           }
+        } else {
+          // The inbox does not know about this message — most likely the
+          // process was restarted after the notification was posted, so
+          // our in-memory cache is empty even though Android still holds
+          // the live notification. Cancel it anyway so swipe / mark-read
+          // actions on a stale entry don't leave a phantom in the drawer.
+          shouldCancelNotification = true;
         }
+      } else {
+        shouldCancelNotification = true;
       }
     }
 
     if (shouldCancelNotification) {
-      // Cancel the notification entirely
-      NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-      String tag = String.valueOf(accountId);
-      notificationManager.cancel(tag, ID_MSG_OFFSET + chatId);
-      if (removeSummary) {
-        notificationManager.cancel(tag, ID_MSG_SUMMARY);
+      try {
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+        String tag = String.valueOf(accountId);
+        notificationManager.cancel(tag, ID_MSG_OFFSET + chatId);
+        // The group summary stays alive as long as anything in this
+        // account is still unread, even if it lives in a different chat.
+        if (totalFreshInAccount(accountId) == 0) {
+          notificationManager.cancel(tag, ID_MSG_SUMMARY);
+        }
+      } catch (Exception e) {
+        Log.w(TAG, e);
       }
     } else if (remainingMessages != null && !remainingMessages.isEmpty()) {
       rebuildNotification(accountId, chatId, remainingMessages);
     }
+
+    BMChatBadge.refresh(context);
   }
 
   public void removeNotifications(int accountId, int chatId) {
-    boolean removeSummary;
     synchronized (inboxes) {
       HashMap<Integer, LinkedHashMap<Integer, String>> accountInbox = inboxes.get(accountId);
-      if (accountInbox == null) {
-        accountInbox = new HashMap<>();
+      if (accountInbox != null) {
+        accountInbox.remove(chatId);
       }
-      accountInbox.remove(chatId);
-      removeSummary = accountInbox.isEmpty();
     }
 
-    // cancel notification independently of inboxes array,
-    // due to restarts, the app may have notification even when inboxes is empty.
+    // Cancel notifications irrespective of the in-memory inboxes map:
+    // a restart may have left live notifications in the system tray
+    // without an entry here, and we still want to clear them out.
     try {
       NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
       String tag = String.valueOf(accountId);
       notificationManager.cancel(tag, ID_MSG_OFFSET + chatId);
-      if (removeSummary) {
+      if (totalFreshInAccount(accountId) == 0) {
         notificationManager.cancel(tag, ID_MSG_SUMMARY);
       }
     } catch (Exception e) {
       Log.w(TAG, e);
     }
+
+    BMChatBadge.refresh(context);
   }
 
   public void removeAllNotifications(int accountId) {
@@ -916,6 +1169,122 @@ public class NotificationCenter {
         accountInbox.clear();
       }
     }
+    // Also sweep anything still alive that the in-memory inbox didn't know
+    // about (process restart, race with core events, …).
+    cancelStrayNotifications(notificationManager, tag);
+    BMChatBadge.refresh(context);
+  }
+
+  /**
+   * BMChat: synchronise the system notification tray with the core's
+   * current fresh-message state for an account. Cancels any per-chat
+   * notification whose chat no longer has unread messages and drops the
+   * group summary when nothing is left.
+   *
+   * <p>Called from {@code ConversationListActivity.onResume()} and after
+   * {@code DC_EVENT_MSGS_NOTICED} so a "phantom BMChat" entry in the
+   * drawer cannot survive a restart, a remote read from another device,
+   * or any other path that races with our local bookkeeping.
+   */
+  public void reconcileAccount(int accountId) {
+    try {
+      NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
+      String tag = String.valueOf(accountId);
+      DcContext dcContext = ApplicationContext.getDcAccounts().getAccount(accountId);
+      if (dcContext == null) return;
+
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        android.service.notification.StatusBarNotification[] active = null;
+        try {
+          NotificationManager nm = (NotificationManager) context.getSystemService(
+              Context.NOTIFICATION_SERVICE);
+          if (nm != null) active = nm.getActiveNotifications();
+        } catch (Throwable ignored) {
+        }
+        if (active != null) {
+          for (android.service.notification.StatusBarNotification sbn : active) {
+            if (sbn == null) continue;
+            if (!tag.equals(sbn.getTag())) continue;
+            int nid = sbn.getId();
+            if (nid == ID_MSG_SUMMARY) continue;
+            if (nid <= ID_MSG_OFFSET) continue;
+            int chatId = nid - ID_MSG_OFFSET;
+            if (dcContext.getFreshMsgCount(chatId) <= 0) {
+              notificationManager.cancel(tag, nid);
+              synchronized (inboxes) {
+                HashMap<Integer, LinkedHashMap<Integer, String>> accountInbox =
+                    inboxes.get(accountId);
+                if (accountInbox != null) accountInbox.remove(chatId);
+              }
+            }
+          }
+        }
+      }
+
+      // BMChat: there is no longer a group summary in the new layout.
+      // Drop any legacy summary that survived an upgrade from <2.49.45
+      // unconditionally — keeping it would resurrect the "bare BMChat
+      // entry in the shade" complaint the user reported.
+      notificationManager.cancel(tag, ID_MSG_SUMMARY);
+    } catch (Throwable t) {
+      Log.w(TAG, "reconcileAccount failed", t);
+    }
+    BMChatBadge.refresh(context);
+  }
+
+  /** Reconcile every known account; safe to call from any thread. */
+  public void reconcileAllAccounts() {
+    Util.runOnAnyBackgroundThread(
+        () -> {
+          try {
+            int[] ids = ApplicationContext.getDcAccounts().getAll();
+            for (int id : ids) reconcileAccount(id);
+          } catch (Throwable t) {
+            Log.w(TAG, "reconcileAllAccounts failed", t);
+          }
+        });
+  }
+
+  /**
+   * Last-resort sweep: walk every active status-bar notification posted by
+   * this app with the given tag and cancel anything that looks like a
+   * per-chat row but is no longer represented in {@link #inboxes}. Keeps
+   * us correct when {@link #removeAllNotifications(int)} runs on a
+   * restarted process whose in-memory inbox is empty.
+   */
+  private void cancelStrayNotifications(NotificationManagerCompat notificationManager, String tag) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return;
+    try {
+      NotificationManager nm = (NotificationManager) context.getSystemService(
+          Context.NOTIFICATION_SERVICE);
+      if (nm == null) return;
+      for (android.service.notification.StatusBarNotification sbn : nm.getActiveNotifications()) {
+        if (sbn == null) continue;
+        if (!tag.equals(sbn.getTag())) continue;
+        int nid = sbn.getId();
+        if (nid == ID_PERMANENT) continue; // foreground service
+        if (nid == ID_FETCH) continue;     // fetch foreground service
+        if (nid == ID_GENERIC) continue;
+        notificationManager.cancel(tag, nid);
+      }
+    } catch (Throwable ignored) {
+    }
+  }
+
+  /**
+   * Called by {@link MarkReadReceiver} when the group summary is swiped
+   * away. The user explicitly said "I'm not interested in these right
+   * now", so we drop the in-memory inbox state for that account and let
+   * any future incoming message rebuild it from scratch. We deliberately
+   * do *not* call markseen on the core: the messages stay unread in the
+   * chat list, just like Telegram does.
+   */
+  public void onSummaryDismissed(int accountId) {
+    synchronized (inboxes) {
+      HashMap<Integer, LinkedHashMap<Integer, String>> accountInbox = inboxes.get(accountId);
+      if (accountInbox != null) accountInbox.clear();
+    }
+    BMChatBadge.refresh(context);
   }
 
   public void updateVisibleChat(int accountId, int chatId) {

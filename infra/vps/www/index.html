@@ -1,46 +1,652 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>BMChat</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#7B1226" />
+<title>BMChat — мессенджер по почте, без посредников</title>
+<meta name="description" content="BroMoreChat (BMChat) — мессенджер с шифрованием, который работает напрямую через ваш почтовый ящик. Никаких сторонних серверов, чатов в облаке и закрытых API." />
+<link rel="icon" href="/bmchat/static/favicon.svg" type="image/svg+xml" />
 <style>
-  :root { --bg: #2a0c14; --bg2: #4a121f; --fg: #f7f1ec; --acc: #c84a5e; --muted: #d3b9a8; }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; padding: 0; height: 100%; background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%); color: var(--fg); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
-  main { max-width: 720px; margin: 0 auto; padding: 56px 24px; }
-  h1 { font-size: 2.4rem; margin: 0 0 8px; letter-spacing: 0.5px; }
-  h1 span { color: var(--acc); }
-  p { line-height: 1.55; color: var(--muted); }
-  .b { display: inline-flex; align-items: center; justify-content: center; width: 96px; height: 96px; border-radius: 28px; background: var(--acc); color: #fff; font-weight: 700; font-size: 56px; margin-bottom: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
-  ul { padding-left: 1.2em; }
-  li { margin: 6px 0; }
-  .actions { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 12px; }
-  .btn { display: inline-block; padding: 12px 18px; border-radius: 12px; background: var(--acc); color: #fff; text-decoration: none; font-weight: 600; }
-  .btn.secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--fg); }
-  footer { margin-top: 48px; font-size: 0.85rem; color: rgba(255,255,255,0.4); }
-  code { background: rgba(255,255,255,0.07); padding: 2px 6px; border-radius: 6px; font-size: 0.9em; }
+/* DESIGN.md tokens (Burgundy Tech, alpha) — single source of truth */
+:root {
+  --c-primary:           #7B1226;
+  --c-primary-container: #F4D8DE;
+  --c-primary-dark:      #2A030D;
+  --c-accent:            #C62A48;
+  --c-accent-pressed:    #8F1830;
+  --c-on-primary:        #FFF7F8;
+  --c-canvas:            #FFF7F8;
+  --c-surface:           #FFFFFF;
+  --c-ink:               #1F050B;
+  --c-muted:             #6B4A52;
+  --c-border:            #E8C3CB;
+  --c-ok:                #1B6B3A;
+
+  --r-sm: 6px;  --r-md: 12px; --r-lg: 18px; --r-pill: 999px;
+  --s-xs: 4px;  --s-sm: 8px;  --s-md: 16px; --s-lg: 24px;
+  --s-xl: 40px; --s-xxl: 72px;
+
+  --font-ui: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-caps: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
+
+  --shadow-sm: 0 1px 2px rgba(31, 5, 11, 0.04), 0 0 0 1px var(--c-border);
+  --shadow-lg: 0 24px 48px -24px rgba(42, 3, 13, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-canvas:  #160208;
+    --c-surface: #24050D;
+    --c-ink:     #FFF7F8;
+    --c-muted:   #C8A6AC;
+    --c-border:  rgba(232, 195, 203, 0.18);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4), 0 0 0 1px var(--c-border);
+  }
+  .card { background: var(--c-surface); }
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-ui);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--c-ink);
+  background: var(--c-canvas);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+a { color: var(--c-primary); text-decoration: none; }
+a:hover { color: var(--c-accent-pressed); text-decoration: underline; text-decoration-thickness: 1px; }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(255, 247, 248, 0.85);
+  backdrop-filter: saturate(160%) blur(12px);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  border-bottom: 1px solid var(--c-border);
+}
+@media (prefers-color-scheme: dark) {
+  .bar { background: rgba(22, 2, 8, 0.85); }
+}
+.bar-inner {
+  max-width: 1080px; margin: 0 auto;
+  padding: 14px var(--s-lg);
+  display: flex; align-items: center; gap: var(--s-lg);
+}
+.brand { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; color: var(--c-ink); }
+.brand:hover { text-decoration: none; }
+.brand-mark {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--c-primary); color: var(--c-on-primary);
+  display: inline-grid; place-items: center;
+  font-weight: 800; font-size: 18px; letter-spacing: -0.02em;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.18);
+}
+.bar-nav { margin-left: auto; display: flex; gap: 4px; flex-wrap: wrap; }
+.bar-nav a {
+  font-family: var(--font-caps);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--c-muted);
+  padding: 8px 12px;
+  border-radius: var(--r-md);
+}
+.bar-nav a:hover { color: var(--c-primary); background: var(--c-primary-container); text-decoration: none; }
+
+/* ---------- hero ---------- */
+.hero {
+  max-width: 1080px; margin: 0 auto;
+  padding: var(--s-xxl) var(--s-lg) var(--s-xl);
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: var(--s-xxl);
+  align-items: center;
+}
+@media (max-width: 880px) { .hero { grid-template-columns: 1fr; gap: var(--s-xl); padding: var(--s-xl) var(--s-md); } }
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-caps);
+  font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--c-primary);
+  background: var(--c-primary-container);
+  padding: 6px 10px; border-radius: var(--r-pill);
+  margin-bottom: var(--s-md);
+}
+.eyebrow .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c-accent); box-shadow: 0 0 0 4px rgba(198, 42, 72, 0.18);
+}
+
+h1 {
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin: 0 0 var(--s-md);
+}
+h1 em { font-style: normal; color: var(--c-primary); }
+
+.lede {
+  font-size: 1.125rem;
+  color: var(--c-muted);
+  max-width: 560px;
+  margin: 0 0 var(--s-lg);
+}
+
+.cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s-md); }
+.btn {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 13px 20px;
+  border-radius: var(--r-md);
+  font-family: var(--font-caps);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.06s ease, background 0.15s ease, color 0.15s ease;
+}
+.btn:hover { text-decoration: none; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary { background: var(--c-primary); color: var(--c-on-primary); }
+.btn-primary:hover { background: var(--c-accent-pressed); color: var(--c-on-primary); }
+.btn-secondary { background: transparent; color: var(--c-ink); border-color: var(--c-border); }
+.btn-secondary:hover { color: var(--c-primary); border-color: var(--c-primary); }
+
+/* ---------- hero card (download promo) ---------- */
+.hero-card {
+  position: relative;
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(198,42,72,0.18), transparent 60%),
+    linear-gradient(160deg, var(--c-primary-dark) 0%, var(--c-primary) 70%);
+  color: var(--c-on-primary);
+  padding: var(--s-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+.hero-card::before {
+  content: "";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(circle at 90% 100%, rgba(255, 247, 248, 0.10), transparent 50%);
+  pointer-events: none;
+}
+.hero-card .row { display: flex; align-items: center; gap: var(--s-md); position: relative; }
+.hero-card .b {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: var(--c-on-primary); color: var(--c-primary);
+  display: grid; place-items: center;
+  font-size: 30px; font-weight: 800; letter-spacing: -0.04em;
+}
+.hero-card h3 { margin: 0; font-size: 1.1rem; font-weight: 600; }
+.hero-card .sub { margin-top: 4px; opacity: 0.7; font-size: 0.9rem; }
+.hero-card .links { margin-top: var(--s-md); display: flex; flex-direction: column; gap: 8px; position: relative; }
+.hero-card .link {
+  display: flex; justify-content: space-between; align-items: center; gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r-md);
+  background: rgba(255, 247, 248, 0.08);
+  color: var(--c-on-primary);
+  font-size: 14px;
+}
+.hero-card .link:hover { background: rgba(255, 247, 248, 0.16); text-decoration: none; }
+.hero-card .link .meta { font-family: var(--font-mono); font-size: 12px; opacity: 0.6; }
+.hero-card .link .arrow { font-family: var(--font-caps); font-size: 11px; letter-spacing: 0.18em; opacity: 0.7; }
+
+/* ---------- sections ---------- */
+section { max-width: 1080px; margin: 0 auto; padding: var(--s-xl) var(--s-lg); }
+.section-head { margin-bottom: var(--s-lg); max-width: 720px; }
+.section-head .eyebrow { margin-bottom: var(--s-sm); }
+.section-head h2 {
+  margin: 0 0 var(--s-sm);
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.section-head p { color: var(--c-muted); margin: 0; }
+
+.grid {
+  display: grid; gap: var(--s-md);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.card {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: var(--s-lg);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.card .icon {
+  width: 32px; height: 32px; border-radius: 9px;
+  display: grid; place-items: center;
+  background: var(--c-primary-container); color: var(--c-primary);
+  font-weight: 800;
+}
+.card h3 { margin: 4px 0 0; font-size: 1.05rem; font-weight: 600; }
+.card p { margin: 0; color: var(--c-muted); font-size: 0.95rem; }
+
+/* ---------- download grid ---------- */
+.dl {
+  display: grid;
+  gap: var(--s-md);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+.dl-card {
+  position: relative;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: var(--s-lg);
+  display: flex; flex-direction: column;
+}
+.dl-head { display: flex; align-items: center; gap: 12px; }
+.dl-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--c-primary-container); color: var(--c-primary);
+  font-size: 20px;
+}
+.dl-card h3 { margin: 0; font-size: 1.1rem; }
+.dl-card .sub { color: var(--c-muted); font-size: 0.85rem; margin-top: 2px; }
+.dl-status {
+  margin-left: auto;
+  font-family: var(--font-caps);
+  font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase; padding: 4px 10px;
+  border-radius: var(--r-pill);
+}
+.dl-status.stable { background: var(--c-primary-container); color: var(--c-primary-dark); }
+.dl-status.beta { background: rgba(176, 122, 26, 0.15); color: #885F1A; }
+.dl-status.soon { background: rgba(31, 5, 11, 0.08); color: var(--c-muted); }
+
+.dl-list { margin-top: var(--s-md); display: flex; flex-direction: column; gap: 6px; }
+.dl-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  font-size: 14px;
+  color: var(--c-ink);
+}
+.dl-row:hover { border-color: var(--c-primary); background: rgba(123, 18, 38, 0.04); text-decoration: none; }
+.dl-row .label { font-weight: 600; }
+.dl-row .meta { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--c-muted); }
+.dl-row.disabled { color: var(--c-muted); pointer-events: none; }
+.dl-row.disabled:hover { background: transparent; border-color: var(--c-border); }
+
+.dl-foot { margin-top: var(--s-md); font-size: 0.85rem; color: var(--c-muted); }
+.dl-foot code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--c-primary-container);
+  color: var(--c-primary-dark);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+@media (prefers-color-scheme: dark) {
+  .dl-foot code { background: rgba(244, 216, 222, 0.12); color: var(--c-primary-container); }
+}
+
+/* ---------- mirror banner ---------- */
+.mirrors {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: var(--s-lg);
+}
+.mirrors h3 { margin: 0 0 var(--s-sm); font-size: 1.05rem; }
+.mirrors p { margin: 0 0 var(--s-md); color: var(--c-muted); font-size: 0.95rem; }
+.mirror-list { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.mirror-tag {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  font-family: var(--font-mono); font-size: 13px;
+}
+.mirror-tag .lbl {
+  font-family: var(--font-caps); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--c-muted);
+}
+.mirror-tag .pri { color: var(--c-primary); }
+
+/* ---------- footer ---------- */
+footer {
+  border-top: 1px solid var(--c-border);
+  margin-top: var(--s-xl);
+  padding: var(--s-xl) var(--s-lg);
+}
+.foot-inner {
+  max-width: 1080px; margin: 0 auto;
+  display: flex; justify-content: space-between; gap: var(--s-md); flex-wrap: wrap;
+  font-size: 0.9rem; color: var(--c-muted);
+}
+.foot-inner code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: var(--c-primary-container);
+  color: var(--c-primary-dark);
+  padding: 2px 6px; border-radius: 4px;
+}
+@media (prefers-color-scheme: dark) {
+  .foot-inner code { background: rgba(244, 216, 222, 0.10); color: var(--c-primary-container); }
+}
 </style>
 </head>
 <body>
-<main>
-  <div class="b">B</div>
-  <h1>BMChat <span>•</span> бесплатный мессенджер по почте</h1>
-  <p>BMChat — это форк Delta Chat с фирменным интерфейсом BroMoreChat. Общение идёт прямо через ваш почтовый сервер по IMAP/SMTP, без посредников и закрытых API.</p>
-  <ul>
-    <li>Подключитесь к любому почтовому ящику.</li>
-    <li>Добавляйте контакты по e-mail или QR-инвайту.</li>
-    <li>Сообщения шифруются end-to-end через Autocrypt, если вторая сторона тоже на BMChat.</li>
-    <li>Если её нет — переписка просто идёт обычной почтой.</li>
-  </ul>
-  <div class="actions">
-    <a class="btn" href="/apk/BMChat-foss-debug-latest.apk">Скачать APK для Android</a>
-    <a class="btn secondary" href="/update.json">update.json</a>
-    <a class="btn secondary" href="https://github.com/hvkeyn/BMChat">GitHub</a>
+
+<div class="bar">
+  <div class="bar-inner">
+    <a class="brand" href="/">
+      <span class="brand-mark">B</span>
+      <span>BMChat<span style="color: var(--c-muted); font-weight: 400; margin-left: 6px;">// BroMoreChat</span></span>
+    </a>
+    <nav class="bar-nav">
+      <a href="#download">Скачать</a>
+      <a href="#features">Возможности</a>
+      <a href="#mirrors">Зеркала</a>
+      <a href="https://github.com/hvkeyn/BMChat" rel="noopener">GitHub</a>
+    </nav>
   </div>
-  <footer>
-    Хост: <code>5.187.4.132</code>. Раздаёт invite-страницы, манифест автообновлений и сборки APK для BMChat-клиента.
-  </footer>
-</main>
+</div>
+
+<header class="hero">
+  <div>
+    <span class="eyebrow"><span class="dot"></span>сборка <span id="hero-version">2.49.43</span> · stable</span>
+    <h1>Мессенджер, который работает <em>через вашу почту</em>.</h1>
+    <p class="lede">
+      BMChat — клиент чата, который не зависит от каких-то «наших серверов чата». Сообщения идут по обычному IMAP/SMTP, шифруются end-to-end, между пользователями и почтовыми ящиками, без посредников.
+      Если вторая сторона ещё не на BMChat — переписка просто остаётся обычным письмом.
+    </p>
+    <div class="cta">
+      <a class="btn btn-primary" href="#download">Скачать BMChat</a>
+      <a class="btn btn-secondary" href="#features">Что внутри</a>
+    </div>
+  </div>
+
+  <aside class="hero-card">
+    <div class="row">
+      <div class="b">B</div>
+      <div>
+        <h3>Последняя сборка для Android</h3>
+        <div class="sub">Готова к установке прямо сейчас</div>
+      </div>
+    </div>
+    <div class="links">
+      <a class="link" href="/apk/BMChat-foss-debug-latest.apk">
+        <span>Скачать APK</span>
+        <span class="arrow">→</span>
+      </a>
+      <a class="link" href="/update.json">
+        <span>update.json</span>
+        <span class="meta">json</span>
+      </a>
+    </div>
+  </aside>
+</header>
+
+<section id="download">
+  <div class="section-head">
+    <span class="eyebrow">// downloads</span>
+    <h2>Все платформы</h2>
+    <p>Каждая ссылка тянется напрямую с этого сервера и зеркала. Для серверов с фильтрацией клиент сам автоматически переключится на резервный — список ниже.</p>
+  </div>
+
+  <div class="dl">
+
+    <article class="dl-card">
+      <header class="dl-head">
+        <div class="dl-icon" aria-hidden="true">A</div>
+        <div>
+          <h3>Android</h3>
+          <div class="sub">APK для прямой установки, без Google Play</div>
+        </div>
+        <span class="dl-status stable">stable</span>
+      </header>
+      <div class="dl-list" id="android-builds">
+        <a class="dl-row" href="/apk/BMChat-foss-debug-latest.apk">
+          <span class="label">BMChat <span id="android-version">2.49.43</span></span>
+          <span class="meta" id="android-size">~73 MB</span>
+        </a>
+      </div>
+      <div class="dl-foot">
+        Уже установлено приложение? Откройте <code>Настройки → О BMChat → Проверить обновления</code> — оно само возьмёт свежий APK с зеркала.
+      </div>
+    </article>
+
+    <article class="dl-card">
+      <header class="dl-head">
+        <div class="dl-icon" aria-hidden="true">W</div>
+        <div>
+          <h3>Windows</h3>
+          <div class="sub">Установщик и portable</div>
+        </div>
+        <span class="dl-status stable" id="win-badge">stable</span>
+      </header>
+      <div class="dl-list" id="windows-builds">
+        <a class="dl-row" href="/desktop/BMChat-Setup-x64.exe">
+          <span class="label">Setup x64 (.exe)</span>
+          <span class="meta" data-platform="win-x64-installer">~127 MB</span>
+        </a>
+        <a class="dl-row" href="/desktop/BMChat-portable-x64.exe">
+          <span class="label">Portable x64 (.exe)</span>
+          <span class="meta" data-platform="win-x64-portable">~127 MB</span>
+        </a>
+      </div>
+      <div class="dl-foot">
+        Подписи кода пока нет, SmartScreen на первом запуске может попросить подтверждение «Запустить всё равно». Хеши и точная версия — в <a href="/desktop-update.json">desktop-update.json</a>.
+      </div>
+    </article>
+
+    <article class="dl-card">
+      <header class="dl-head">
+        <div class="dl-icon" aria-hidden="true">L</div>
+        <div>
+          <h3>Linux</h3>
+          <div class="sub">AppImage и .deb (amd64)</div>
+        </div>
+        <span class="dl-status stable" id="linux-badge">stable</span>
+      </header>
+      <div class="dl-list" id="linux-builds">
+        <a class="dl-row" href="/desktop/BMChat-x86_64.AppImage">
+          <span class="label">AppImage x86_64</span>
+          <span class="meta" data-platform="linux-x64-appimage">~154 MB</span>
+        </a>
+        <a class="dl-row" href="/desktop/bmchat-amd64.deb">
+          <span class="label">.deb (amd64)</span>
+          <span class="meta" data-platform="linux-x64-deb">~122 MB</span>
+        </a>
+      </div>
+      <div class="dl-foot">
+        Запустится без установки:&nbsp; <code>chmod +x BMChat-x86_64.AppImage &amp;&amp; ./BMChat-x86_64.AppImage</code>
+      </div>
+    </article>
+
+    <article class="dl-card">
+      <header class="dl-head">
+        <div class="dl-icon" aria-hidden="true">⌘</div>
+        <div>
+          <h3>macOS</h3>
+          <div class="sub">DMG для Apple Silicon и Intel</div>
+        </div>
+        <span class="dl-status soon">скоро</span>
+      </header>
+      <div class="dl-list">
+        <span class="dl-row disabled">
+          <span class="label">BMChat-arm64.dmg</span>
+          <span class="meta">требует подпись</span>
+        </span>
+        <span class="dl-row disabled">
+          <span class="label">BMChat-x64.dmg</span>
+          <span class="meta">требует подпись</span>
+        </span>
+      </div>
+      <div class="dl-foot">
+        macOS-сборка ждёт сертификата и нотариазации. До тех пор используйте Linux- или Windows-клиент в виртуалке, либо мобильный.
+      </div>
+    </article>
+
+    <article class="dl-card">
+      <header class="dl-head">
+        <div class="dl-icon" aria-hidden="true">⌗</div>
+        <div>
+          <h3>Исходный код</h3>
+          <div class="sub">GPL-3.0+, форк Delta Chat</div>
+        </div>
+        <span class="dl-status stable">git</span>
+      </header>
+      <div class="dl-list">
+        <a class="dl-row" href="https://github.com/hvkeyn/BMChat" rel="noopener">
+          <span class="label">github.com/hvkeyn/BMChat</span>
+          <span class="meta">git</span>
+        </a>
+      </div>
+      <div class="dl-foot">
+        BMChat собирается из <a href="https://github.com/hvkeyn/BMChat/tree/main/clients/android" rel="noopener"><code>clients/android</code></a> (Android), <a href="https://github.com/hvkeyn/BMChat/tree/main/clients/desktop" rel="noopener"><code>clients/desktop</code></a> (Electron) и <code>clients/ios</code>. Лицензия как у апстрима Delta Chat.
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<section id="features">
+  <div class="section-head">
+    <span class="eyebrow">// что это вообще такое</span>
+    <h2>Чат поверх вашей собственной почты</h2>
+    <p>BMChat — форк Delta Chat, переименованный, локализованный и доточенный под привычные сценарии: контакты, чаты, каналы и Telegram-боты как «виртуальные участники». Никакого централизованного сервера сообщений нет — есть только ваш почтовый ящик.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <span class="icon">@</span>
+      <h3>Любая почта</h3>
+      <p>IMAP+SMTP. Подключите Gmail, Mail.ru, Яндекс, корпоративный сервер, или поднимите свой mail-relay — клиент сам разберётся.</p>
+    </div>
+    <div class="card">
+      <span class="icon">⚿</span>
+      <h3>Шифрование Autocrypt</h3>
+      <p>Если на той стороне тоже BMChat — переписка идёт end-to-end. Если нет — это просто обычные письма.</p>
+    </div>
+    <div class="card">
+      <span class="icon">⤳</span>
+      <h3>Обновления через несколько каналов</h3>
+      <p>Если основной сервер недоступен, клиент автоматически пробует резервные зеркала, а затем берёт информацию у других ваших контактов в чатах — обновление найдёт вас даже без интернета до основного хоста.</p>
+    </div>
+    <div class="card">
+      <span class="icon">⌬</span>
+      <h3>Telegram-боты как виртуальные пользователи</h3>
+      <p>Подключите бота своим API-токеном и читайте посты из каналов прямо в чатах BMChat — с альбомами, форматированием, видео и встроенным плеером без 20 МБ-лимита Bot API.</p>
+    </div>
+    <div class="card">
+      <span class="icon">⎈</span>
+      <h3>Email-боты и публичный API</h3>
+      <p>Telegram BotFather, но транспорт — обычная почта. Каждое сообщение пользователя приезжает разработчику в виде Update-письма, ответ возвращается тем же каналом. /start gate, inline-кнопки, callback_query. <a href="/email-bot-api.html">Документация API</a>.</p>
+    </div>
+    <div class="card">
+      <span class="icon">⊕</span>
+      <h3>QR-инвайты и приглашения по контактам</h3>
+      <p>Группа или канал делятся ссылкой <code>http://5.187.4.132/i#…</code>; на стороне получателя BMChat сам распознаёт её и подключается.</p>
+    </div>
+    <div class="card">
+      <span class="icon">★</span>
+      <h3>Только ваше железо</h3>
+      <p>Никаких бесплатных аккаунтов «на нашем сервере». Если вам нужен публичный домен и SMTP — поднимаете свой; BMChat — это клиент, который умеет играть по правилам почты.</p>
+    </div>
+  </div>
+</section>
+
+<section id="mirrors">
+  <div class="section-head">
+    <span class="eyebrow">// инфраструктура</span>
+    <h2>Зеркала и устойчивость</h2>
+    <p>BMChat-клиент берёт <code>update.json</code> и APK сразу с нескольких хостов. Если один заблокирован, фильтруется или не отвечает — пробуется следующий. Если все недоступны — клиент использует манифест, который другие пользователи передали ему в зашифрованных сообщениях (P2P-fallback).</p>
+  </div>
+
+  <div class="mirrors">
+    <h3>Активные зеркала автообновлений</h3>
+    <p>Все три источника содержат идентичный набор APK и одинаковый <code>update.json</code>. Список синхронизируется автоматически.</p>
+    <div class="mirror-list">
+      <div class="mirror-tag">
+        <span>http://5.187.4.132<span class="lbl pri">  · primary</span></span>
+        <span class="pri">EU</span>
+      </div>
+      <div class="mirror-tag">
+        <span>http://158.160.104.107:8080<span class="lbl">  · mirror</span></span>
+        <span>RU</span>
+      </div>
+      <div class="mirror-tag">
+        <span>peer-to-peer<span class="lbl">  · через ваши чаты</span></span>
+        <span>P2P</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-inner">
+    <div>
+      <strong>BroMoreChat (BMChat)</strong> — мессенджер по почте.<br/>
+      Форк <a href="https://delta.chat/" rel="noopener">Delta Chat</a>, GPL-3.0+. Никакого централизованного сервера сообщений.
+    </div>
+    <div style="text-align: right;">
+      Раздаётся с <code>5.187.4.132</code> и зеркала <code>158.160.104.107:8080</code>.<br/>
+      Манифест: <a href="/update.json">/update.json</a> ·  <a href="/desktop-update.json">/desktop-update.json</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Hydrate the version pills from the live update.json so the landing
+// always reflects the actual build that's being served. This is the
+// only client-side request the page makes; if it fails the static
+// numbers above stay correct enough.
+(function () {
+  function fmt(bytes) {
+    if (!bytes || bytes < 1024) return bytes + " B";
+    var u = ["KB", "MB", "GB"], i = -1;
+    do { bytes /= 1024; i++; } while (bytes >= 1024 && i < 2);
+    return bytes.toFixed(bytes < 10 ? 1 : 0) + " " + u[i];
+  }
+  fetch("/update.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (m) {
+      if (!m) return;
+      var v = document.getElementById("android-version");
+      var s = document.getElementById("android-size");
+      var hv = document.getElementById("hero-version");
+      if (v && m.versionName) v.textContent = m.versionName;
+      if (hv && m.versionName) hv.textContent = m.versionName;
+      if (s && m.size) s.textContent = fmt(m.size);
+    })
+    .catch(function () {});
+
+  // Hydrate desktop sizes from /desktop-update.json so each platform
+  // row carries the real, current download size — and so the cards
+  // self-heal once a fresh build replaces the placeholders.
+  fetch("/desktop-update.json", { cache: "no-store" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d || !d.platforms) return;
+      var rows = document.querySelectorAll("[data-platform]");
+      rows.forEach(function (el) {
+        var key = el.getAttribute("data-platform");
+        var info = d.platforms[key];
+        if (info && info.size) el.textContent = fmt(info.size);
+      });
+    })
+    .catch(function () {});
+})();
+</script>
+
 </body>
 </html>

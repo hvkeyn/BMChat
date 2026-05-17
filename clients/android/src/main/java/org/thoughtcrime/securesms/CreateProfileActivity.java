@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import org.thoughtcrime.securesms.components.AvatarSelector;
 import org.thoughtcrime.securesms.components.InputAwareLayout;
+import org.thoughtcrime.securesms.connect.BMChatProfilePublisher;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.contacts.avatars.ResourceContactPhoto;
 import org.thoughtcrime.securesms.mms.AttachmentManager;
@@ -224,6 +225,9 @@ public class CreateProfileActivity extends BaseActionBarActivity {
       return;
     }
     final String name = this.name.getText().toString();
+    final String previousName = DcHelper.get(this, DcHelper.CONFIG_DISPLAY_NAME, "");
+    final boolean nameChangedAtSave = !name.equals(previousName);
+    final boolean avatarChangedAtSave = avatarChanged;
 
     new AsyncTask<Void, Void, Boolean>() {
       @Override
@@ -249,11 +253,29 @@ public class CreateProfileActivity extends BaseActionBarActivity {
       public void onPostExecute(Boolean result) {
         super.onPostExecute(result);
 
-        if (result) {
-          attachmentManager.cleanup();
-          finish();
-        } else {
+        if (!result) {
           Toast.makeText(CreateProfileActivity.this, R.string.error, Toast.LENGTH_LONG).show();
+          return;
+        }
+        attachmentManager.cleanup();
+
+        if (nameChangedAtSave || avatarChangedAtSave) {
+          // BMChat: peers only see the new card when we actually write to
+          // them, so offer to broadcast a short "profile updated" line to
+          // every personal chat right now.
+          new androidx.appcompat.app.AlertDialog.Builder(CreateProfileActivity.this)
+              .setTitle(R.string.bmchat_profile_publish_title)
+              .setMessage(R.string.bmchat_profile_publish_explain)
+              .setPositiveButton(R.string.bmchat_profile_publish_now, (d, w) -> {
+                BMChatProfilePublisher.publishToActiveContacts(
+                    CreateProfileActivity.this, true);
+                finish();
+              })
+              .setNegativeButton(R.string.bmchat_profile_publish_skip, (d, w) -> finish())
+              .setOnCancelListener(d -> finish())
+              .show();
+        } else {
+          finish();
         }
       }
     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

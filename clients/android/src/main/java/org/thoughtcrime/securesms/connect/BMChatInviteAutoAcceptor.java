@@ -13,6 +13,8 @@ import com.b44t.messenger.DcMsg;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.util.Util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
@@ -92,6 +94,17 @@ public final class BMChatInviteAutoAcceptor {
 
   private static void processLink(Context appContext, DcContext dcContext, String link) {
     try {
+      // Pre-seed the contact name from the invite link so the chat list shows
+      // a friendly label immediately, even before the first message arrives.
+      try {
+        String[] addrAndName = extractAddrAndName(link);
+        if (addrAndName != null && addrAndName[0] != null && addrAndName[1] != null) {
+          dcContext.createContact(addrAndName[1], addrAndName[0]);
+        }
+      } catch (Throwable t) {
+        Log.w(TAG, "pre-seed contact name failed", t);
+      }
+
       DcLot qr = dcContext.checkQr(link);
       if (qr == null) return;
       int state = qr.getState();
@@ -101,6 +114,10 @@ public final class BMChatInviteAutoAcceptor {
         case DcContext.DC_QR_ASK_JOIN_BROADCAST:
           int chatId = dcContext.joinSecurejoin(link);
           if (chatId > 0) {
+            // Right after SecureJoin core may have created a brand-new
+            // key-contact for an e-mail we already had a chat with -> collapse
+            // such mirror entries before the chat list refresh hits the UI.
+            BMChatChatDedupe.runNow(dcContext);
             postToast(appContext, R.string.bmchat_invite_email_auto_accepted);
           } else {
             Log.w(TAG, "joinSecurejoin returned 0 for link " + link);
@@ -118,5 +135,43 @@ public final class BMChatInviteAutoAcceptor {
   private static void postToast(Context appContext, int resId) {
     new Handler(Looper.getMainLooper()).post(
         () -> Toast.makeText(appContext, resId, Toast.LENGTH_LONG).show());
+  }
+
+  /**
+   * Extract address and name from a BMChat/Delta-Chat invite link. Both fragment
+   * and query-string layouts are supported because BMChat 2.49.5+ uses
+   * {@code ?bmchat_invite=}-style URLs while older clients still emit fragments.
+   *
+   * @return {@code null} or {@code {addr, name}} where either may be {@code null}.
+   */
+  private static String[] extractAddrAndName(String link) {
+    if (link == null) return null;
+    String params = null;
+    int hash = link.indexOf('#');
+    if (hash >= 0 && hash + 1 < link.length()) {
+      params = link.substring(hash + 1);
+    } else {
+      int q = link.indexOf('?');
+      if (q >= 0 && q + 1 < link.length()) {
+        params = link.substring(q + 1);
+      }
+    }
+    if (params == null || params.isEmpty()) return null;
+
+    String addr = null, name = null;
+    for (String p : params.split("&")) {
+      int eq = p.indexOf('=');
+      if (eq <= 0) continue;
+      String key = p.substring(0, eq).toLowerCase();
+      String val = p.substring(eq + 1);
+      try {
+        val = URLDecoder.decode(val, "UTF-8");
+      } catch (UnsupportedEncodingException ignored) {
+      }
+      if ("a".equals(key)) addr = val;
+      else if ("n".equals(key)) name = val;
+    }
+    if (addr == null && name == null) return null;
+    return new String[] {addr, name};
   }
 }

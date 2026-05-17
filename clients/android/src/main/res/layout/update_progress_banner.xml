@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Sticky banner shown above the chat list while
+  UpdateDownloadService is running. Three states share the same
+  layout (only the labels + button visibility differ).
+
+  Why hard-coded @android:color/white and not ?attr/colorOnPrimary
+  for the text + ProgressBar tints? Because ConversationListActivity
+  inherits Theme.AppCompat.Light.DarkActionBar, which historically
+  does NOT define colorOnPrimary — that attribute is from Material
+  components. Referencing it from an AppCompat-only theme made the
+  layout inflate throw `Caused by: …InflateException: Binary XML
+  file line #N: Error inflating class android.widget.TextView`
+  ("Couldn't resolve attribute reference") and the activity died on
+  startup. The banner background is always colorPrimary (dark in
+  both light and dark themes), so plain white is a safe contrast
+  choice.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/update_banner_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="?attr/colorPrimary"
+    android:paddingStart="14dp"
+    android:paddingLeft="14dp"
+    android:paddingEnd="6dp"
+    android:paddingRight="6dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/update_banner_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:singleLine="true"
+                android:ellipsize="end"
+                tools:text="Загружаем BMChat 2.49.39" />
+
+            <TextView
+                android:id="@+id/update_banner_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:alpha="0.85"
+                android:singleLine="true"
+                android:ellipsize="end"
+                tools:text="42.1 MB / 76.6 MB · 55%" />
+        </LinearLayout>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/update_banner_primary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginLeft="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:minWidth="64dp"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            tools:text="Установить" />
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/update_banner_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"
+        android:layout_marginTop="6dp"
+        android:max="100" />
+</LinearLayout>

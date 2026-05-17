@@ -24,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.b44t.messenger.DcLot;
 import org.thoughtcrime.securesms.recipients.Recipient;
+import org.thoughtcrime.securesms.update.UpdateBroadcast;
 
 /**
  * The message record model which represents thread heading messages.
@@ -88,7 +89,7 @@ public class ThreadRecord {
       String draftText = dcSummary.getText1() + ":";
       return emphasisAdded(draftText + " " + dcSummary.getText2(), 0, draftText.length());
     } else {
-      return new SpannableString(getBody());
+      return new SpannableString(UpdateBroadcast.strip(getBody()));
     }
   }
 

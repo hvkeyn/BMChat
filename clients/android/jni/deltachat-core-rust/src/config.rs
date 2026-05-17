@@ -167,6 +167,17 @@ pub enum Config {
     #[strum(props(default = "0"))]
     OnlyFetchMvbox,
 
+    /// BMChat: also watch the provider's Spam/Junk folder and move
+    /// eligible chat messages back to Inbox/Mvbox before download.
+    ///
+    /// This lets users recover BMChat messages that the mail provider
+    /// misclassified as spam and teaches the provider "not spam" via MOVE.
+    /// BMChat enables this by default at the Java layer migration in
+    /// ApplicationContext (see CONFIG_FETCH_SPAM bootstrap) so we do not
+    /// need to rebuild libnative-utils.so just to flip the default.
+    #[strum(props(default = "0"))]
+    FetchSpam,
+
     /// Whether to show classic emails or only chat messages.
     #[strum(props(default = "0"))] // also change ShowEmails.default() on changes
     ShowEmails,
@@ -270,6 +281,10 @@ pub enum Config {
 
     /// Configured folder for chat messages.
     ConfiguredMvboxFolder,
+
+    /// Configured Spam/Junk folder, discovered from IMAP XLIST/SPECIAL-USE
+    /// attributes or localized folder names.
+    ConfiguredSpamFolder,
 
     /// Unix timestamp of the last successful configuration.
     ConfiguredTimestamp,
@@ -478,7 +493,7 @@ impl Config {
     pub(crate) fn needs_io_restart(&self) -> bool {
         matches!(
             self,
-            Config::MvboxMove | Config::OnlyFetchMvbox | Config::ConfiguredAddr
+            Config::MvboxMove | Config::OnlyFetchMvbox | Config::FetchSpam | Config::ConfiguredAddr
         )
     }
 }

@@ -203,7 +203,7 @@ public class ConversationAdapter<V extends View & BindableConversationItem>
   }
 
   interface ItemClickListener extends BindableConversationItem.EventListener {
-    void onItemClick(DcMsg item);
+    void onItemClick(DcMsg item, View view);
 
     void onItemLongClick(DcMsg item, View view);
   }
@@ -267,7 +267,7 @@ public class ConversationAdapter<V extends View & BindableConversationItem>
     itemView.setOnClickListener(
         view -> {
           if (clickListener != null) {
-            clickListener.onItemClick(itemView.getMessageRecord());
+            clickListener.onItemClick(itemView.getMessageRecord(), view);
           }
         });
     itemView.setOnLongClickListener(
@@ -399,6 +399,12 @@ public class ConversationAdapter<V extends View & BindableConversationItem>
   private void reloadData() {
     // should be called when some items in a message are changed, eg. seen-state
     recordCache.clear();
+    // BMChat 2.49.60: any chat-level mutation (incoming message, deletion,
+    // edit, …) can change the live "1/N" album numbering, so wipe the
+    // AlbumMarker snapshot cache too. Without this the cache TTL of 1.5s
+    // would briefly show stale album positions after a delete; clearing
+    // here makes the next bind cycle recompute from a fresh DB read.
+    org.thoughtcrime.securesms.album.AlbumMarker.invalidateLiveCache();
     updateLastSeenPosition();
     notifyDataSetChanged();
   }

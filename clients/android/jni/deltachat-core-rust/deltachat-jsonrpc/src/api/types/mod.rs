@@ -12,6 +12,7 @@ pub mod notify_state;
 pub mod provider_info;
 pub mod qr;
 pub mod reactions;
+pub mod storage;
 pub mod webxdc;
 
 pub fn color_int_to_hex_string(color: u32) -> String {

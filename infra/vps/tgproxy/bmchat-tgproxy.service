@@ -1,0 +1,31 @@
+[Unit]
+Description=BMChat Telegram media proxy
+After=network.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 /opt/bmchat/bmchat_tgproxy.py
+Restart=on-failure
+RestartSec=2s
+# Listen only on loopback; nginx fronts /tgmedia/.
+Environment=BMCHAT_TGPROXY_HOST=127.0.0.1
+Environment=BMCHAT_TGPROXY_PORT=8090
+# Optional override — point at a local Bot API server once we have
+# api_id/api_hash provisioned. Example:
+#   Environment=BMCHAT_TGPROXY_API_BASE=http://127.0.0.1:8081
+StandardOutput=journal
+StandardError=journal
+# Hardening: the service only needs outbound HTTPS to Telegram.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ReadWritePaths=
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+
+[Install]
+WantedBy=multi-user.target

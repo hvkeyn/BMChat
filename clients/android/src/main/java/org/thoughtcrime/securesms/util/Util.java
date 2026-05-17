@@ -79,7 +79,10 @@ public class Util {
   }
 
   public static boolean isInviteURL(Uri uri) {
-    if (uri == null || uri.getEncodedFragment() == null) return false;
+    if (uri == null) return false;
+    String invitePayload = uri.getQueryParameter("bmchat_invite");
+    if ((uri.getEncodedFragment() == null || uri.getEncodedFragment().isEmpty())
+        && (invitePayload == null || invitePayload.isEmpty())) return false;
     String host = uri.getHost();
     if (host == null) return false;
     if (INVITE_HOST.equals(host)) {
@@ -90,6 +93,15 @@ public class Util {
       if (legacy.equals(host)) return true;
     }
     return false;
+  }
+
+  public static String getInviteLinkFromUri(Uri uri) {
+    if (uri == null) return null;
+    String invitePayload = uri.getQueryParameter("bmchat_invite");
+    if (invitePayload != null && !invitePayload.isEmpty()) {
+      return INVITE_LINK_PREFIX + "#" + invitePayload;
+    }
+    return rewriteInviteLink(uri.toString());
   }
 
   public static boolean isInviteURL(String url) {

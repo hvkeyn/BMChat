@@ -49,6 +49,21 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
                 })
             .start();
       }
+      // BMChat 2.49.53: call into KeepAliveService.onUiForeground so
+      // it can re-attach FGS if the OS happened to drop it (e.g.
+      // exiting power-save mode). NEVER call startForegroundService
+      // again here — on Android 12+ the second call must complete
+      // startForeground() within 5 s, which an already-running
+      // service can't satisfy from onStartCommand alone, and the
+      // resulting ForegroundServiceDidNotStartInTimeException crashes
+      // the whole process. The bug surfaced as random crashes when
+      // returning to the app from the recents screen or after long
+      // background periods.
+      try {
+        KeepAliveService.onUiForeground();
+      } catch (Throwable t) {
+        Log.w("DeltaChat", "onUiForeground failed", t);
+      }
     }
 
     refs++;
@@ -67,6 +82,14 @@ public class ForegroundDetector implements Application.ActivityLifecycleCallback
       Log.i(
           "DeltaChat",
           "++++++++++++++++++ last ForegroundDetector.onActivityStopped() ++++++++++++++++++");
+      // BMChat: the user just put BMChat into the background. Re-attach
+      // the foreground-service notification so the OS keeps the IDLE
+      // socket alive even if Doze tries to evict the process.
+      try {
+        KeepAliveService.onUiBackground(application);
+      } catch (Throwable t) {
+        Log.w("DeltaChat", "onUiBackground failed", t);
+      }
     }
   }
 

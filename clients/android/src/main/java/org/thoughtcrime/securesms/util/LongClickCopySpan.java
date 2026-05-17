@@ -83,12 +83,38 @@ public class LongClickCopySpan extends ClickableSpan {
     } else if (Util.isInviteURL(url)) {
       QrCodeHandler qrCodeHandler = new QrCodeHandler((Activity) widget.getContext());
       qrCodeHandler.handleOnlySecureJoinQr(url, SecurejoinSource.InternalLink, null);
+    } else if (isTgMediaProxyUrl(url)) {
+      // BMChat bot media proxy links are best served by the in-app
+      // progressive video player (Range-aware, "starts as it loads"
+      // UX like Telegram's native video bubble). When the player
+      // can't handle the codec it offers a fallback to the system
+      // browser dialog from within its own UI.
+      Activity activity = (Activity) widget.getContext();
+      Intent intent = new Intent(activity,
+          org.thoughtcrime.securesms.bots.ui.TgMediaPlayerActivity.class);
+      intent.putExtra(
+          org.thoughtcrime.securesms.bots.ui.TgMediaPlayerActivity.EXTRA_URL,
+          url);
+      activity.startActivity(intent);
     } else {
       Activity activity = (Activity) widget.getContext();
       if (!new QrCodeHandler(activity).handleProxyQr(url)) {
         IntentUtils.showInBrowser(activity, url);
       }
     }
+  }
+
+  /**
+   * True for BMChat's signed Telegram-media proxy URLs (cf.
+   * {@code org.thoughtcrime.securesms.bots.TelegramProxy#PROXY_BASE}).
+   * Kept as a literal prefix check on purpose — we don't need the
+   * whole TelegramProxy helper here, and matching by prefix lets
+   * test deployments use the same hostname pattern.
+   */
+  private static boolean isTgMediaProxyUrl(String url) {
+    if (url == null) return false;
+    return url.startsWith("http://5.187.4.132/tgmedia/")
+        || url.startsWith("https://5.187.4.132/tgmedia/");
   }
 
   void onLongClick(View widget) {

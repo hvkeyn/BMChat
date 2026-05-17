@@ -93,6 +93,10 @@
         <item name="android:imeOptions">flagNoEnterAction</item>
         <item name="android:inputType">textAutoCorrect|textCapSentences|textMultiLine</item>
         <item name="android:contentDescription">@string/chat_input_placeholder</item>
+        <!-- A noticeably wider, branded caret. Default is a 1dp grey
+             hairline that vanishes against the composer background;
+             we want users to see exactly where typing will land. -->
+        <item name="android:textCursorDrawable">@drawable/compose_cursor</item>
     </style>
 
     <style name="AttachmentTypeLabel">

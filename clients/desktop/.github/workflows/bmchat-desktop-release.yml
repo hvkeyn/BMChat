@@ -1,0 +1,191 @@
+# BMChat desktop release pipeline.
+#
+# Builds Linux (AppImage + deb) and Windows (NSIS installer +
+# portable) artifacts, recomputes desktop-update.json with the
+# fresh sha256/size for each, and pushes everything to both
+# distribution hosts (primary 5.187.4.132 + WhiteBlade mirror
+# 158.160.104.107:8080).
+#
+# Triggered manually (workflow_dispatch) or by pushing a tag named
+# `desktop-vX.Y.Z`. The version inside the tag is used as the
+# release channel marker; if missing, the version is derived from
+# packages/target-electron/package.json.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#
+#   BMCHAT_PRIM_SSH_PASS  — sshpass password for root@5.187.4.132.
+#   BMCHAT_MIRROR_SSH_KEY — full private OpenSSH key for
+#                           dante@158.160.104.107 (the YC mirror).
+#
+# Both hosts are accessed strictly from the deploy job, after the
+# matrix build is finished, so the keys never sit on a build
+# runner.
+name: BMChat desktop release
+
+on:
+  workflow_dispatch: {}
+  push:
+    tags:
+      - 'desktop-v*'
+
+permissions: {}
+
+defaults:
+  run:
+    working-directory: clients/desktop
+
+jobs:
+  # -----------------------------------------------------------------
+  # Per-OS build matrix
+  # -----------------------------------------------------------------
+  build:
+    name: Build (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          show-progress: false
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Use Node.js 22.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+
+      - name: Install pnpm
+        run: npm i -g pnpm@9
+
+      # --- Linux only deps that electron-builder shells out to ---
+      - name: Install Linux build deps
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fakeroot dpkg fuse libfuse2 libnotify-bin
+
+      - name: pnpm install
+        run: pnpm install --frozen-lockfile
+        working-directory: clients/desktop
+
+      - name: Build target-electron (JS)
+        env:
+          VERSION_INFO_GIT_REF: ${{ github.ref_name }}
+        run: |
+          cd packages/target-electron
+          pnpm build
+
+      - name: Generate electron-builder config
+        run: |
+          cd packages/target-electron
+          pnpm pack:generate_config
+          pnpm pack:patch-node-modules
+
+      # ---- LINUX ------------------------------------------------------
+      - name: electron-builder (Linux AppImage + deb)
+        if: runner.os == 'Linux'
+        run: |
+          cd packages/target-electron
+          pnpm electron-builder --config ./electron-builder.json5 \
+            --linux AppImage deb --publish never
+
+      # ---- WINDOWS ----------------------------------------------------
+      - name: electron-builder (Windows NSIS + portable)
+        if: runner.os == 'Windows'
+        run: |
+          cd packages/target-electron
+          pnpm electron-builder --config ./electron-builder.json5 `
+            --win nsis portable --publish never
+
+      - name: Collect artifacts
+        shell: bash
+        run: |
+          mkdir -p ../../_bmchat_dist
+          cd packages/target-electron/dist
+          shopt -s nullglob
+          # Take only the shippable pieces; skip blockmaps, latest.yml,
+          # unpacked dirs, etc.
+          for f in \
+              BMChat-*-x86_64.AppImage \
+              bmchat-desktop_*_amd64.deb \
+              BMChat-*-Setup.x64.exe \
+              BMChat-*-Portable.x64.exe ; do
+            [ -e "$f" ] && cp -- "$f" ../../../_bmchat_dist/ || true
+          done
+          ls -lh ../../../_bmchat_dist/
+        working-directory: clients/desktop
+
+      - name: Upload artifacts (${{ matrix.os }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: bmchat-desktop-${{ matrix.os }}
+          path: clients/desktop/_bmchat_dist/
+          if-no-files-found: warn
+          retention-days: 14
+
+  # -----------------------------------------------------------------
+  # One-shot deploy job. Pulls every matrix artifact, recomputes
+  # desktop-update.json, scp's the lot to primary + mirror, and
+  # rebuilds the stable filename aliases.
+  # -----------------------------------------------------------------
+  deploy:
+    name: Deploy to primary + mirror
+    needs: build
+    runs-on: ubuntu-latest
+    # We never want to push to live hosts from a forked PR.
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/desktop-v')
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          show-progress: false
+          persist-credentials: false
+
+      - name: Pull build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: _artifacts/
+
+      - name: Stage release tree
+        id: stage
+        shell: bash
+        run: |
+          set -e
+          mkdir -p infra/vps/desktop
+          # Both matrix outputs land in their own subdir; flatten.
+          find _artifacts -type f \
+            \( -name 'BMChat-*-x86_64.AppImage' \
+            -o -name 'bmchat-desktop_*_amd64.deb' \
+            -o -name 'BMChat-*-Setup.x64.exe' \
+            -o -name 'BMChat-*-Portable.x64.exe' \) \
+            -exec cp -t infra/vps/desktop/ {} +
+          ls -lh infra/vps/desktop/
+
+          # Compute sha256 + size for each and emit the manifest.
+          python3 infra/vps/build-desktop-manifest.py \
+            infra/vps/desktop \
+            > infra/vps/www/desktop-update.json
+          echo "--- desktop-update.json ---"
+          cat infra/vps/www/desktop-update.json
+        working-directory: ${{ github.workspace }}
+
+      - name: Install deploy deps
+        run: sudo apt-get install -y -qq sshpass rsync
+
+      - name: Set up SSH key for mirror
+        env:
+          MIRROR_KEY: ${{ secrets.BMCHAT_MIRROR_SSH_KEY }}
+        run: |
+          mkdir -p ~/.ssh && chmod 700 ~/.ssh
+          printf '%s\n' "$MIRROR_KEY" > ~/.ssh/yc_whiteblade
+          chmod 600 ~/.ssh/yc_whiteblade
+
+      - name: Rollout to primary + mirror
+        env:
+          BMCHAT_PRIM_SSH_PASS: ${{ secrets.BMCHAT_PRIM_SSH_PASS }}
+        run: |
+          export PRIM_PASS="$BMCHAT_PRIM_SSH_PASS"
+          bash infra/vps/deploy-site-and-mirror.sh
+        working-directory: ${{ github.workspace }}

@@ -1,0 +1,45 @@
+[Unit]
+Description=BMChat local Telegram Bot API server (tdlib-based, lifts the 20 MB cloud cap)
+Documentation=https://github.com/tdlib/telegram-bot-api
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# api_id / api_hash were registered at my.telegram.org on behalf of
+# the BMChat install. Keep these out of git: a separate
+# /etc/bmchat/tgbotapi.env file is rendered by deploy.sh from secrets.
+EnvironmentFile=/etc/bmchat/tgbotapi.env
+ExecStart=/opt/bmchat/tgbotapi/bin/telegram-bot-api \
+    --local \
+    --http-ip-address=127.0.0.1 \
+    --http-port=8083 \
+    --api-id=${TELEGRAM_API_ID} \
+    --api-hash=${TELEGRAM_API_HASH} \
+    --dir=/var/lib/telegram-bot-api \
+    --temp-dir=/var/lib/telegram-bot-api/_tmp \
+    --log=/var/log/telegram-bot-api.log \
+    --verbosity=2
+
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=20
+
+# Hardening — telegram-bot-api needs to write to its data dir, that's it.
+ProtectSystem=full
+PrivateTmp=true
+NoNewPrivileges=true
+ReadWritePaths=/var/lib/telegram-bot-api /var/log
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+
+# tdlib uses a *lot* of small RAM allocations during MTProto sessions
+# — a generous-but-bounded LimitNOFILE keeps us from running out of
+# descriptors when many concurrent downloads are happening.
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

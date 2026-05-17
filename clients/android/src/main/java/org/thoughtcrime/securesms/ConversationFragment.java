@@ -34,9 +34,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.view.ActionMode;
@@ -46,6 +49,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 import chat.delta.rpc.Rpc;
 import chat.delta.rpc.RpcException;
+import chat.delta.rpc.types.MessageReadReceipt;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
@@ -60,6 +64,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import org.thoughtcrime.securesms.ConversationAdapter.ItemClickListener;
+import org.thoughtcrime.securesms.components.AvatarImageView;
 import org.thoughtcrime.securesms.components.audioplay.AudioPlaybackViewModel;
 import org.thoughtcrime.securesms.components.reminder.DozeReminder;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
@@ -71,6 +76,7 @@ import org.thoughtcrime.securesms.reactions.ReactionsDetailsFragment;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.relay.EditRelayActivity;
 import org.thoughtcrime.securesms.util.AccessibilityUtil;
+import org.thoughtcrime.securesms.util.DateUtils;
 import org.thoughtcrime.securesms.util.Debouncer;
 import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
 import org.thoughtcrime.securesms.util.Util;
@@ -143,6 +149,30 @@ public class ConversationFragment extends MessageSelectorFragment {
     scrollToBottomButton = ViewUtil.findById(view, R.id.scroll_to_bottom_button);
     floatingLocationButton = ViewUtil.findById(view, R.id.floating_location_button);
     addReactionView = ViewUtil.findById(view, R.id.add_reaction_view);
+    // Wire the Telegram-style one-tap action icons that now sit
+    // under the reactions row. Each icon piggy-backs on the
+    // existing handle* methods that the action-mode toolbar uses,
+    // so behaviour stays identical no matter how the user
+    // triggered it.
+    addReactionView.setQuickActionListener((action, message) -> {
+      if (actionMode != null) actionMode.finish();
+      java.util.Set<DcMsg> one = java.util.Collections.singleton(message);
+      switch (action) {
+        case REPLY:          handleReplyMessage(message); break;
+        case QUOTE_FRAGMENT: handleQuoteSelection(message); break;
+        case EDIT:           handleEditMessage(message); break;
+        case COPY:           handleCopyMessage(one); break;
+        case FORWARD:        handleForwardMessage(one); break;
+        case READ_RECEIPTS:   showReadReceiptsDialog(message); break;
+        case DELETE: {
+          AudioPlaybackViewModel pvm =
+              new ViewModelProvider(requireActivity()).get(AudioPlaybackViewModel.class);
+          handleDeleteMessages(
+              (int) chatId, one, pvm::stopByIds, pvm::stopByIds);
+          break;
+        }
+      }
+    });
     noMessageTextView = ViewUtil.findById(view, R.id.no_messages_text_view);
     bottomDivider = ViewUtil.findById(view, R.id.bottom_divider);
 
@@ -187,6 +217,11 @@ public class ConversationFragment extends MessageSelectorFragment {
 
     initializeResources();
     initializeListAdapter();
+
+    if (savedInstanceState != null) {
+      pendingQuoteSourceMsgId =
+          savedInstanceState.getInt(STATE_PENDING_QUOTE_SRC, 0);
+    }
   }
 
   private void setNoMessageText() {
@@ -394,6 +429,7 @@ public class ConversationFragment extends MessageSelectorFragment {
       menu.findItem(R.id.menu_context_reply).setVisible(false);
       menu.findItem(R.id.menu_context_edit).setVisible(false);
       menu.findItem(R.id.menu_context_reply_privately).setVisible(false);
+      menu.findItem(R.id.menu_context_quote_selection).setVisible(false);
       menu.findItem(R.id.menu_add_to_home_screen).setVisible(false);
       menu.findItem(R.id.menu_toggle_save).setVisible(false);
     } else {
@@ -403,6 +439,13 @@ public class ConversationFragment extends MessageSelectorFragment {
       menu.findItem(R.id.menu_context_share).setVisible(messageRecord.hasFile());
       boolean canReply = canReplyToMsg(messageRecord);
       menu.findItem(R.id.menu_context_reply).setVisible(chat.canSend() && canReply);
+      // Quote-fragment is only meaningful when the source message has
+      // text to quote *and* the chat accepts a reply at all.
+      boolean canQuoteFragment = chat.canSend()
+          && canReply
+          && messageRecord.getText() != null
+          && !messageRecord.getText().trim().isEmpty();
+      menu.findItem(R.id.menu_context_quote_selection).setVisible(canQuoteFragment);
       menu.findItem(R.id.menu_context_edit)
           .setVisible(chat.isEncrypted() && chat.canSend() && canEditMsg(messageRecord));
       boolean showReplyPrivately = chat.isMultiUser() && !messageRecord.isOutgoing() && canReply;
@@ -623,6 +666,74 @@ public class ConversationFragment extends MessageSelectorFragment {
     listener.handleEditMessage(message);
   }
 
+  /**
+   * Launch the Telegram-style {@code QuoteSelectorActivity} so the
+   * user can highlight a fragment of the source message with the
+   * standard Android selection handles. The chosen substring is
+   * returned via {@code onActivityResult} and forwarded to
+   * {@link ConversationFragmentListener#handleQuoteFragment}, which
+   * inserts it into the composer as a Markdown blockquote.
+   *
+   * <p>Replaced the older AlertDialog-with-EditText approach in
+   * 2.49.37 — selection handles inside a dialog were unreliable on
+   * Samsung One UI and Xiaomi MIUI, and the new full-screen surface
+   * matches the layout the user requested from screenshots 4–5 of
+   * the May 13 feedback.
+   */
+  private void handleQuoteSelection(final DcMsg msg) {
+    if (getContext() == null) return;
+    final String fullText = msg.getText() == null ? "" : msg.getText();
+    if (fullText.trim().isEmpty()) return;
+    pendingQuoteSourceMsgId = msg.getId();
+    String author = "";
+    try {
+      com.b44t.messenger.DcContact c =
+          DcHelper.getContext(getContext()).getContact(msg.getFromId());
+      if (c != null) author = c.getDisplayName();
+    } catch (Throwable ignored) {}
+    Intent i = org.thoughtcrime.securesms.quote.QuoteSelectorActivity
+        .newIntent(getContext(), author, fullText);
+    startActivityForResult(i, REQUEST_QUOTE_SELECTOR);
+  }
+
+  /** Tracks the DcMsg id being quoted while {@link QuoteSelectorActivity}
+   *  is on screen — the fragment can be destroyed/re-created across the
+   *  trip, so we keep the id in {@link #onSaveInstanceState}. */
+  private static final String STATE_PENDING_QUOTE_SRC = "bmchat-pending-quote-src";
+  private static final int REQUEST_QUOTE_SELECTOR = 0xBCA1;
+  private int pendingQuoteSourceMsgId = 0;
+
+  @Override
+  public void onSaveInstanceState(@NonNull Bundle outState) {
+    super.onSaveInstanceState(outState);
+    outState.putInt(STATE_PENDING_QUOTE_SRC, pendingQuoteSourceMsgId);
+  }
+
+  @Override
+  public void onActivityResult(int requestCode, int resultCode,
+                               @Nullable Intent data) {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode != REQUEST_QUOTE_SELECTOR
+        || resultCode != android.app.Activity.RESULT_OK
+        || data == null) {
+      pendingQuoteSourceMsgId = 0;
+      return;
+    }
+    String fragment = data.getStringExtra(
+        org.thoughtcrime.securesms.quote.QuoteSelectorActivity.RESULT_FRAGMENT);
+    if (fragment == null || fragment.trim().isEmpty()) {
+      pendingQuoteSourceMsgId = 0;
+      return;
+    }
+    int srcId = pendingQuoteSourceMsgId;
+    pendingQuoteSourceMsgId = 0;
+    if (srcId <= 0) return;
+    DcMsg msg = DcHelper.getContext(getContext()).getMsg(srcId);
+    if (msg != null && msg.getId() != 0) {
+      listener.handleQuoteFragment(msg, fragment);
+    }
+  }
+
   private void handleReplyMessagePrivately(final DcMsg msg) {
 
     if (getActivity() != null) {
@@ -695,6 +806,14 @@ public class ConversationFragment extends MessageSelectorFragment {
     long startMs = System.currentTimeMillis();
     int[] msgs = dcContext.getChatMsgs((int) chatId, 0, 0);
     Log.i(TAG, "⏰ getChatMsgs(" + chatId + "): " + (System.currentTimeMillis() - startMs) + "ms");
+
+    // Hide consecutive "Member X added/removed" duplicates that the
+    // core occasionally records when SecureJoin emits both a local
+    // join receipt and the encrypted vc-contact-confirm reply for the
+    // same contact (screenshot 1 from May 10). We only filter the
+    // display list — the raw rows stay in the DB so other clients
+    // see the same timeline they always did.
+    msgs = org.thoughtcrime.securesms.connect.BMChatInfoMsgDedupe.dedupe(dcContext, msgs);
 
     adapter.changeData(msgs);
 
@@ -784,6 +903,14 @@ public class ConversationFragment extends MessageSelectorFragment {
     void handleReplyMessage(DcMsg messageRecord);
 
     void handleEditMessage(DcMsg messageRecord);
+
+    /**
+     * Insert {@code fragment} into the composer as a Markdown
+     * blockquote so the next sent message visibly cites the
+     * substring the user picked. Implementations should leave the
+     * composer focused with the caret positioned after the quote.
+     */
+    void handleQuoteFragment(@NonNull DcMsg sourceMessage, @NonNull String fragment);
   }
 
   private class ConversationScrollListener extends OnScrollListener {
@@ -831,11 +958,20 @@ public class ConversationFragment extends MessageSelectorFragment {
 
     @Override
     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-      //      if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-      //        conversationDateHeader.show();
-      //      } else if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-      //        conversationDateHeader.hide();
-      //      }
+      // Telegram-parity (2.49.38): the reactions + quick-actions
+      // popup must vanish the moment the user starts dragging the
+      // conversation. Without this, the popup hovers detached from
+      // its source bubble while messages slide past — confusing the
+      // user and visually broken on long-scroll chats. SCROLL_STATE_DRAGGING
+      // fires on the very first finger move, before any momentum
+      // takes over, which is exactly when we want to dismiss.
+      if (newState == RecyclerView.SCROLL_STATE_DRAGGING
+          && actionMode == null) {
+        // Skip when actionMode is up — there the popup is paired
+        // with the multi-select toolbar and dismissing it via
+        // scroll would create an ambiguous half-state.
+        hideAddReactionView();
+      }
     }
 
     private boolean isAtBottom() {
@@ -898,7 +1034,7 @@ public class ConversationFragment extends MessageSelectorFragment {
   private class ConversationFragmentItemClickListener implements ItemClickListener {
 
     @Override
-    public void onItemClick(DcMsg messageRecord) {
+    public void onItemClick(DcMsg messageRecord, View view) {
       if (actionMode != null) {
         ((ConversationAdapter) list.getAdapter()).toggleSelection(messageRecord);
         list.getAdapter().notifyDataSetChanged();
@@ -948,6 +1084,14 @@ public class ConversationFragment extends MessageSelectorFragment {
             Intent intent = new Intent(getActivity(), EditRelayActivity.class);
             intent.putExtra(EditRelayActivity.EXTRA_ADDR, self_mail);
             startActivity(intent);
+          } else if (canQuickPopupFor(messageRecord)) {
+            // Telegram-parity: a single tap on a regular chat bubble
+            // opens the reactions + quick-actions popup directly,
+            // no need to long-press first. Skips bubbles that have
+            // their own dedicated handling (info, webxdc info,
+            // call cards, etc.) — they already return earlier in
+            // this method.
+            showQuickActionsPopup(messageRecord, view);
           }
         }
       }
@@ -955,20 +1099,69 @@ public class ConversationFragment extends MessageSelectorFragment {
 
     @Override
     public void onItemLongClick(DcMsg messageRecord, View view) {
+      // 2.49.38 split: short tap = Telegram-style popup, long-press
+      // = enter multi-select. Long-press now NEVER opens the
+      // reactions popup; it instead toggles the message into the
+      // selection set and brings up the top action-mode toolbar
+      // (delete / forward / star / etc.) — same UX as Telegram's
+      // "Forward 2" mode in the user's screenshot #2. If the popup
+      // was floating from a previous short tap we hide it so the
+      // user does not get both UIs at once.
+      hideAddReactionView();
       if (actionMode == null) {
         ((ConversationAdapter) list.getAdapter()).toggleSelection(messageRecord);
         list.getAdapter().notifyDataSetChanged();
-
         actionMode = ((AppCompatActivity) getActivity()).startSupportActionMode(actionModeCallback);
-        addReactionView.show(
-            messageRecord,
-            view,
-            () -> {
-              if (actionMode != null) {
-                actionMode.finish();
-              }
-            });
+      } else {
+        ((ConversationAdapter) list.getAdapter()).toggleSelection(messageRecord);
+        list.getAdapter().notifyDataSetChanged();
+        if (getListAdapter().getSelectedItems().isEmpty()) {
+          actionMode.finish();
+        } else {
+          Menu menu = actionMode.getMenu();
+          setCorrectMenuVisibility(menu);
+          ConversationAdaptiveActionsToolbar.adjustMenuActions(
+              menu, 10, requireActivity().getWindow().getDecorView().getMeasuredWidth());
+          actionMode.setTitle(String.valueOf(getListAdapter().getSelectedItems().size()));
+          actionMode.setTitleOptionalHint(false);
+        }
       }
+    }
+
+    /**
+     * True iff a single short tap on this bubble should open the
+     * Telegram-style reactions + quick-actions popup instead of
+     * doing nothing. We exclude bubbles whose tap is already used
+     * for navigating to another screen (info-message variants,
+     * webxdc info, device-talk reminders), so users never lose the
+     * existing click affordances.
+     */
+    private boolean canQuickPopupFor(DcMsg m) {
+      if (m == null || m.isInfo()) return false;
+      int t = m.getType();
+      return t == DcMsg.DC_MSG_TEXT
+          || t == DcMsg.DC_MSG_IMAGE
+          || t == DcMsg.DC_MSG_GIF
+          || t == DcMsg.DC_MSG_STICKER
+          || t == DcMsg.DC_MSG_AUDIO
+          || t == DcMsg.DC_MSG_VOICE
+          || t == DcMsg.DC_MSG_VIDEO
+          || t == DcMsg.DC_MSG_FILE
+          || t == DcMsg.DC_MSG_VCARD;
+    }
+
+    /**
+     * Show the reactions + quick-actions popup WITHOUT entering the
+     * multi-select action mode. Used by the one-tap entry-point so
+     * the user can react / reply / edit / forward / delete in a
+     * single gesture, exactly like the long-press flow but lighter.
+     */
+    private void showQuickActionsPopup(DcMsg messageRecord, View view) {
+      hideAddReactionView();
+      addReactionView.show(
+          messageRecord,
+          view,
+          () -> hideAddReactionView());
     }
 
     private void jumpToOriginal(DcMsg original) {
@@ -1034,6 +1227,11 @@ public class ConversationFragment extends MessageSelectorFragment {
     }
 
     @Override
+    public void onReadReceiptsClicked(DcMsg messageRecord) {
+      showReadReceiptsDialog(messageRecord);
+    }
+
+    @Override
     public void onStickerClicked(DcMsg messageRecord) {
       new AlertDialog.Builder(getContext())
           .setMessage(R.string.ask_add_sticker_to_collection)
@@ -1045,6 +1243,112 @@ public class ConversationFragment extends MessageSelectorFragment {
           .setNegativeButton(R.string.cancel, null)
           .show();
     }
+
+  }
+
+  private void showReadReceiptsDialog(@NonNull DcMsg messageRecord) {
+    try {
+      List<MessageReadReceipt> receipts =
+          rpc.getMessageReadReceipts(
+              DcHelper.getContext(getContext()).getAccountId(), messageRecord.getId());
+      View content = buildReadReceiptsView(receipts);
+      new AlertDialog.Builder(requireContext())
+          .setTitle(R.string.bmchat_read_receipts_title)
+          .setView(content)
+          .setPositiveButton(android.R.string.ok, null)
+          .show();
+    } catch (RpcException e) {
+      Toast.makeText(getContext(), R.string.bmchat_read_receipts_error, Toast.LENGTH_SHORT).show();
+    }
+  }
+
+  private View buildReadReceiptsView(@NonNull List<MessageReadReceipt> receipts) {
+    Context context = requireContext();
+    int pad = ViewUtil.dpToPx(context, 20);
+    int rowGap = ViewUtil.dpToPx(context, 12);
+    LinearLayout list = new LinearLayout(context);
+    list.setOrientation(LinearLayout.VERTICAL);
+    list.setPadding(pad, ViewUtil.dpToPx(context, 8), pad, ViewUtil.dpToPx(context, 4));
+
+    if (receipts.isEmpty()) {
+      TextView empty = new TextView(context);
+      empty.setText(R.string.bmchat_read_receipts_empty);
+      empty.setTextSize(15);
+      list.addView(empty);
+    } else {
+      for (MessageReadReceipt receipt : receipts) {
+        list.addView(
+            buildReadReceiptRow(context, receipt),
+            list.getChildCount() == 0
+                ? new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
+                : withTopMargin(rowGap));
+      }
+    }
+
+    ScrollView scroll = new ScrollView(context);
+    scroll.addView(list);
+    return scroll;
+  }
+
+  private View buildReadReceiptRow(@NonNull Context context, @NonNull MessageReadReceipt receipt) {
+    DcContact contact = DcHelper.getContext(context).getContact(receipt.contactId);
+    Recipient recipient = new Recipient(context, contact);
+    LinearLayout row = new LinearLayout(context);
+    row.setOrientation(LinearLayout.HORIZONTAL);
+    row.setGravity(android.view.Gravity.CENTER_VERTICAL);
+
+    int avatarSize = ViewUtil.dpToPx(context, 44);
+    AvatarImageView avatar = new AvatarImageView(context);
+    row.addView(avatar, new LinearLayout.LayoutParams(avatarSize, avatarSize));
+    avatar.setAvatar(GlideApp.with(context), recipient, false);
+
+    LinearLayout texts = new LinearLayout(context);
+    texts.setOrientation(LinearLayout.VERTICAL);
+    LinearLayout.LayoutParams textLp =
+        new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+    textLp.setMarginStart(ViewUtil.dpToPx(context, 12));
+    row.addView(texts, textLp);
+
+    TextView nameView = new TextView(context);
+    nameView.setText(displayName(contact));
+    nameView.setTextSize(16);
+    nameView.setTypeface(null, android.graphics.Typeface.BOLD);
+    texts.addView(nameView);
+
+    TextView detailsView = new TextView(context);
+    detailsView.setText(buildReadReceiptDetails(receipt));
+    detailsView.setTextSize(14);
+    texts.addView(detailsView);
+
+    return row;
+  }
+
+  private LinearLayout.LayoutParams withTopMargin(int margin) {
+    LinearLayout.LayoutParams lp =
+        new LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+    lp.topMargin = margin;
+    return lp;
+  }
+
+  private String buildReadReceiptDetails(@NonNull MessageReadReceipt receipt) {
+    long timestampMillis = receipt.timestamp == null ? 0 : receipt.timestamp * 1000L;
+    String when =
+        timestampMillis > 0
+            ? DateUtils.getExtendedRelativeTimeSpanString(requireContext(), timestampMillis)
+            : "";
+    return when.isEmpty()
+        ? getString(R.string.bmchat_read_receipts_action)
+        : getString(R.string.bmchat_read_receipts_action) + " · " + when;
+  }
+
+  private String displayName(@NonNull DcContact contact) {
+    String name = contact.getDisplayName();
+    if (name == null || name.trim().isEmpty()) {
+      name = contact.getAddr();
+    }
+    return name;
   }
 
   private class ActionModeCallback implements ActionMode.Callback {
@@ -1127,6 +1431,10 @@ public class ConversationFragment extends MessageSelectorFragment {
         return true;
       } else if (itemId == R.id.menu_context_reply_privately) {
         handleReplyMessagePrivately(getSelectedMessageRecord(getListAdapter().getSelectedItems()));
+        return true;
+      } else if (itemId == R.id.menu_context_quote_selection) {
+        handleQuoteSelection(getSelectedMessageRecord(getListAdapter().getSelectedItems()));
+        actionMode.finish();
         return true;
       } else if (itemId == R.id.menu_resend) {
         handleResendMessage(getListAdapter().getSelectedItems());

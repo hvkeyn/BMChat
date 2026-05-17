@@ -16,14 +16,17 @@ cp -f "$PAYLOAD/www/index.html"           "$WEBROOT/index.html"
 cp -f "$PAYLOAD/www/i.html"               "$WEBROOT/i.html"
 cp -f "$PAYLOAD/www/update.json"          "$WEBROOT/update.json"
 cp -f "$PAYLOAD/www/desktop-update.json"  "$WEBROOT/desktop-update.json"
-if [ -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.0.apk" ]; then
-    cp -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.0.apk" "$WEBROOT/apk/"
-fi
-if [ -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.1.apk" ]; then
-    cp -f "$PAYLOAD/apk/BMChat-foss-debug-2.49.1.apk" "$WEBROOT/apk/"
-    ln -sfn "BMChat-foss-debug-2.49.1.apk" "$WEBROOT/apk/BMChat-foss-debug-latest.apk"
-elif [ -f "$WEBROOT/apk/BMChat-foss-debug-2.49.0.apk" ]; then
-    ln -sfn "BMChat-foss-debug-2.49.0.apk" "$WEBROOT/apk/BMChat-foss-debug-latest.apk"
+if [ -d "$PAYLOAD/apk" ]; then
+    cp -f "$PAYLOAD"/apk/BMChat-foss-debug-*.apk "$WEBROOT/apk/" 2>/dev/null || true
+    latest_apk="$(
+        ls -1 "$WEBROOT"/apk/BMChat-foss-debug-[0-9]*.apk 2>/dev/null \
+            | sed 's#^.*/##' \
+            | sort -V \
+            | tail -n 1
+    )"
+    if [ -n "$latest_apk" ]; then
+        ln -sfn "$latest_apk" "$WEBROOT/apk/BMChat-foss-debug-latest.apk"
+    fi
 fi
 # Copy any prebuilt desktop installers (electron-builder outputs) into per-arch
 # subfolders if the deploying side staged them under $PAYLOAD/desktop/.
@@ -33,6 +36,33 @@ fi
 chown -R www-data:www-data "$WEBROOT"
 find "$WEBROOT" -type d -exec chmod 0755 {} +
 find "$WEBROOT" -type f -exec chmod 0644 {} +
+
+# Install/refresh the Telegram media proxy. Idempotent: copies the
+# script + systemd unit, ensures python3-cryptography is present, and
+# (re)starts the service so a code-only change in tgproxy/ is picked
+# up on the next deploy without a manual VPS step.
+if [ -f "$PAYLOAD/tgproxy/bmchat_tgproxy.py" ]; then
+    echo "[bmchat-deploy] installing bmchat-tgproxy"
+    mkdir -p /opt/bmchat
+    cp -f "$PAYLOAD/tgproxy/bmchat_tgproxy.py" /opt/bmchat/bmchat_tgproxy.py
+    chmod 0755 /opt/bmchat/bmchat_tgproxy.py
+    cp -f "$PAYLOAD/tgproxy/bmchat-tgproxy.service" /etc/systemd/system/bmchat-tgproxy.service
+    if ! dpkg -l python3-cryptography 2>/dev/null | grep -q '^ii'; then
+        echo "[bmchat-deploy] installing python3-cryptography"
+        DEBIAN_FRONTEND=noninteractive apt-get update -qq
+        DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3-cryptography
+    fi
+    systemctl daemon-reload
+    systemctl enable --now bmchat-tgproxy.service
+    systemctl restart bmchat-tgproxy.service
+    sleep 1
+    if ! curl -sSf http://127.0.0.1:8090/healthz >/dev/null; then
+        echo "[bmchat-deploy] WARNING: bmchat-tgproxy health check failed"
+        systemctl status --no-pager bmchat-tgproxy.service | tail -15 || true
+    else
+        echo "[bmchat-deploy] bmchat-tgproxy healthy on 127.0.0.1:8090"
+    fi
+fi
 
 echo "[bmchat-deploy] patching $NGINX_SITE"
 mkdir -p /etc/nginx/backups
@@ -174,6 +204,7 @@ curl -sS -H "$H" -o /dev/null -w "  GET /i                    -> %{http_code}\n"
 curl -sS -H "$H" -o /dev/null -w "  GET /update.json          -> %{http_code}\n" http://127.0.0.1/update.json
 curl -sS -H "$H" -o /dev/null -w "  GET /desktop-update.json  -> %{http_code}\n" http://127.0.0.1/desktop-update.json
 curl -sS -H "$H" -I -o /dev/null -w "  HEAD /apk/...             -> %{http_code}\n" "http://127.0.0.1/apk/BMChat-foss-debug-latest.apk"
+curl -sS -H "$H" -o /dev/null -w "  GET /tgmedia/healthz      -> %{http_code}\n" http://127.0.0.1/tgmedia/healthz || true
 curl -sS -H "$H" http://127.0.0.1/update.json | head -20
 
 echo "[bmchat-deploy] done."
