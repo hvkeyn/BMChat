@@ -1061,6 +1061,9 @@
     <string name="pref_only_fetch_mvbox_summary">Загружать сообщения только из служебной папки</string>
     <string name="bmchat_pref_fetch_spam_title">Проверять папку «Спам»</string>
     <string name="bmchat_pref_fetch_spam_summary">Следить за Spam/Junk и переносить сообщения BMChat обратно как «не спам»</string>
+    <string name="bmchat_pref_scan_all_folders_title">Сканировать все папки сервера</string>
+    <string name="bmchat_pref_scan_all_folders_summary">Получать новые сообщения и из остальных IMAP-папок (Custom labels, Promotions, Updates и т.д.). На каждом цикле синхронизации добавляется дополнительный IMAP-трафик.</string>
+    <string name="bmchat_pref_scan_all_folders_warn">BMChat будет проверять все папки на вашем почтовом сервере при каждой синхронизации. Это увеличит расход батареи и трафика, а также может вернуть в чат рассылки и промо-письма, которые сервер ранее отфильтровал. Включить?</string>
     <string name="pref_show_emails">Показывать обычную почту</string>
     <string name="pref_show_emails_no">Нет, только чаты</string>
     <string name="pref_show_emails_accepted_contacts">Для принятых контактов</string>

@@ -17,7 +17,7 @@ use crate::context::Context;
 use crate::download::{download_known_post_messages_without_pre_message, download_msgs};
 use crate::ephemeral::{self, delete_expired_imap_messages};
 use crate::events::EventType;
-use crate::imap::{FolderMeaning, Imap, session::Session};
+use crate::imap::{self, FolderMeaning, Imap, session::Session};
 use crate::location;
 use crate::log::{LogExt, warn};
 use crate::smtp::{Smtp, send_smtp_messages};
@@ -494,8 +494,59 @@ async fn inbox_fetch_idle(ctx: &Context, imap: &mut Imap, mut session: Session) 
         .await
         .context("Failed to register push token")?;
 
+    // BMChat: opt-in sweep over every other IMAP folder on the server
+    // for users with server-side filters routing mail to custom labels.
+    // Runs before the Inbox idle so each push / idle-timeout also picks
+    // up changes outside the watched folders.
+    if ctx.get_config_bool(Config::ScanAllFolders).await? {
+        if let Err(err) = sweep_extra_folders(ctx, imap, &mut session).await {
+            warn!(
+                ctx,
+                "Transport {transport_id}: ScanAllFolders sweep failed: {err:#}."
+            );
+        }
+    }
+
     let session = fetch_idle(ctx, imap, session, FolderMeaning::Inbox).await?;
     Ok(session)
+}
+
+/// BMChat: when `Config::ScanAllFolders` is enabled, fetch new
+/// messages from every IMAP folder on the server that the regular
+/// watch loops would otherwise skip (anything that is not Inbox,
+/// Mvbox, Spam, Trash or a virtual all-mail folder).
+async fn sweep_extra_folders(
+    ctx: &Context,
+    imap: &mut Imap,
+    session: &mut Session,
+) -> Result<()> {
+    let folders = session
+        .list_folders()
+        .await
+        .context("list_folders for ScanAllFolders sweep")?;
+
+    let watched = imap::get_watched_folders(ctx)
+        .await
+        .context("get_watched_folders for ScanAllFolders sweep")?;
+
+    for folder in folders {
+        let name = folder.name().to_string();
+        if watched.iter().any(|w| w == &name) {
+            continue;
+        }
+        let meaning = imap::get_folder_meaning(&folder);
+        match meaning {
+            FolderMeaning::Trash | FolderMeaning::Virtual => continue,
+            _ => {}
+        }
+        if let Err(err) = imap
+            .fetch_new_messages(ctx, session, &name, meaning)
+            .await
+        {
+            warn!(ctx, "ScanAllFolders: failed to fetch {name:?}: {err:#}");
+        }
+    }
+    Ok(())
 }
 
 /// Implement a single iteration of IMAP loop.

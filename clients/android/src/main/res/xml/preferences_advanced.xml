@@ -100,6 +100,12 @@
             android:title="@string/bmchat_pref_fetch_spam_title"
             android:summary="@string/bmchat_pref_fetch_spam_summary" />
 
+        <org.thoughtcrime.securesms.components.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="pref_scan_all_folders"
+            android:title="@string/bmchat_pref_scan_all_folders_title"
+            android:summary="@string/bmchat_pref_scan_all_folders_summary" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

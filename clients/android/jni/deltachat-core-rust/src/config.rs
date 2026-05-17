@@ -178,6 +178,15 @@ pub enum Config {
     #[strum(props(default = "0"))]
     FetchSpam,
 
+    /// BMChat: opt-in switch that makes the Inbox loop also fetch new
+    /// messages from every other IMAP folder on the server (skipping
+    /// Trash and Virtual). Useful when the user configured server-side
+    /// filters that route mail into custom folders/labels that Delta
+    /// Chat would otherwise ignore. Off by default — enabling this adds
+    /// extra IMAP traffic on every idle cycle.
+    #[strum(props(default = "0"))]
+    ScanAllFolders,
+
     /// Whether to show classic emails or only chat messages.
     #[strum(props(default = "0"))] // also change ShowEmails.default() on changes
     ShowEmails,
@@ -493,7 +502,11 @@ impl Config {
     pub(crate) fn needs_io_restart(&self) -> bool {
         matches!(
             self,
-            Config::MvboxMove | Config::OnlyFetchMvbox | Config::FetchSpam | Config::ConfiguredAddr
+            Config::MvboxMove
+                | Config::OnlyFetchMvbox
+                | Config::FetchSpam
+                | Config::ScanAllFolders
+                | Config::ConfiguredAddr
         )
     }
 }

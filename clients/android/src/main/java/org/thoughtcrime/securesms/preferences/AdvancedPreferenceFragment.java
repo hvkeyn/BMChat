@@ -4,6 +4,7 @@ import static android.app.Activity.RESULT_OK;
 import static android.text.InputType.TYPE_TEXT_VARIATION_URI;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_BCC_SELF;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_FETCH_SPAM;
+import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_SCAN_ALL_FOLDERS;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_MVBOX_MOVE;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_ONLY_FETCH_MVBOX;
 import static org.thoughtcrime.securesms.connect.DcHelper.CONFIG_SHOW_EMAILS;
@@ -56,6 +57,7 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
   CheckBoxPreference mvboxMoveCheckbox;
   CheckBoxPreference onlyFetchMvboxCheckbox;
   CheckBoxPreference fetchSpamCheckbox;
+  CheckBoxPreference scanAllFoldersCheckbox;
   private ActivityResultLauncher<Intent> screenLockLauncher;
 
   @Override
@@ -145,6 +147,29 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
           (preference, newValue) -> {
             boolean enabled = (Boolean) newValue;
             dcContext.setConfigInt(CONFIG_FETCH_SPAM, enabled ? 1 : 0);
+            return true;
+          });
+    }
+
+    scanAllFoldersCheckbox = this.findPreference("pref_scan_all_folders");
+    if (scanAllFoldersCheckbox != null) {
+      scanAllFoldersCheckbox.setOnPreferenceChangeListener(
+          (preference, newValue) -> {
+            boolean enabled = (Boolean) newValue;
+            if (enabled) {
+              new AlertDialog.Builder(requireContext())
+                  .setMessage(R.string.bmchat_pref_scan_all_folders_warn)
+                  .setPositiveButton(
+                      R.string.ok,
+                      (dialogInterface, i) -> {
+                        dcContext.setConfigInt(CONFIG_SCAN_ALL_FOLDERS, 1);
+                        ((CheckBoxPreference) preference).setChecked(true);
+                      })
+                  .setNegativeButton(R.string.cancel, null)
+                  .show();
+              return false;
+            }
+            dcContext.setConfigInt(CONFIG_SCAN_ALL_FOLDERS, 0);
             return true;
           });
     }
@@ -314,6 +339,9 @@ public class AdvancedPreferenceFragment extends ListSummaryPreferenceFragment
     }
     if (fetchSpamCheckbox != null) {
       fetchSpamCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_FETCH_SPAM));
+    }
+    if (scanAllFoldersCheckbox != null) {
+      scanAllFoldersCheckbox.setChecked(0 != dcContext.getConfigInt(CONFIG_SCAN_ALL_FOLDERS));
     }
   }
 

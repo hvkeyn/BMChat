@@ -6,6 +6,7 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Completed
 
+- 2.49.75: Removed the upstream Delta Chat `checkNdkArchitecture()` developer dialog from `ConversationListActivity` and deleted the stale `clients/android/ndkArch` file. The "Apparently you used `ndk-make.sh x86_64`, but this device is arm64-v8a … github.com/deltachat/deltachat-android/issues" alert no longer fires for end users, and the Delta Chat brand link is no longer present in the active runtime UI. APK `BMChat-foss-debug-2.49.75.apk` (`versionCode 823`, 77,696,052 bytes, SHA-256 `b71275004b8b6dc9930d0ee04cb5cbe17a5f2662bb3df24eacbbf3d67e066034`) deployed to primary and mirror VPS; `update.json` repointed.
 - Confirmed the workspace started empty.
 - Created Memory Bank documentation structure.
 - Defined initial product, architecture, licensing, and technical context.
@@ -95,6 +96,16 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Latest Completed
 
+- Built and deployed Android `2.49.74` (`versionCode 822`) — Storage Management lower placement hotfix:
+  - increased `StorageManagementActivity` root top padding from `48dp` to `96dp`, creating a visible gap under the toolbar and showing the white card's rounded top corners;
+  - verified on the connected device that the donut and centre value are fully inside the card and the form is easier to read;
+  - deployed `BMChat-foss-debug-2.49.74.apk` (77,697,070 bytes, SHA-256 `db67fca56280b1c86c6d769afa53f789e033cf988dcb0479c32bc08767f6a6a8`) to primary and mirror VPS and repointed `/update.json` + latest symlink;
+  - not committed yet; previous local branch state is still ahead of origin because GitHub HTTPS push needs credentials.
+- Built and deployed Android `2.49.73` (`versionCode 821`) — Storage Management top-offset hotfix:
+  - `StorageManagementActivity` now uses a larger top padding above the first card so the Telegram-style donut cannot slide under the action bar on Samsung/One UI;
+  - verified on the connected device that the donut and centre value (`1,4 MB`) are fully visible below the `Память и данные` toolbar;
+  - deployed `BMChat-foss-debug-2.49.73.apk` (77,697,081 bytes, SHA-256 `8dd17621e3104f37208e3a6c576cfdfaa52aa96edfc166c20848a64740bb96ec`) to primary and mirror VPS and repointed `/update.json` + latest symlink;
+  - committed locally as `865e0ef`; branch is ahead of origin because push failed without GitHub HTTPS credentials in the non-interactive terminal.
 - Implemented Android storage management and safe local cache cleanup:
   - core `storage_usage` now exposes structured total/db/blobdir usage, category breakdowns, per-chat breakdowns, and `evictable_bytes` based on whether a message can be downloaded again from IMAP;
   - new JSON-RPC methods `get_storage_usage` and `clear_local_storage` support Android now and provide a cross-client API for Desktop/iOS later;

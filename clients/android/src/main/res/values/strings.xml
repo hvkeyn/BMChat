@@ -1049,6 +1049,9 @@
     <string name="pref_only_fetch_mvbox_summary">Fetch messages only from the dedicated folder</string>
     <string name="bmchat_pref_fetch_spam_title">Check Spam folder</string>
     <string name="bmchat_pref_fetch_spam_summary">Watch Spam/Junk too and move BMChat messages out as not spam</string>
+    <string name="bmchat_pref_scan_all_folders_title">Scan all server folders</string>
+    <string name="bmchat_pref_scan_all_folders_summary">Also fetch new messages from every other IMAP folder (custom labels, Promotions, Updates…). Adds extra IMAP traffic on every sync.</string>
+    <string name="bmchat_pref_scan_all_folders_warn">BMChat will keep checking every folder on your mail server on each sync. This uses more battery and traffic and may surface newsletters or promotional mail you previously filtered out. Enable anyway?</string>
     <!-- deprecated -->
     <string name="pref_show_emails">Show Classic Emails</string>
     <!-- deprecated -->
