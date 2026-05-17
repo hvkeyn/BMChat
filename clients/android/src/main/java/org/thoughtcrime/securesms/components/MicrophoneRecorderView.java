@@ -3,9 +3,12 @@ package org.thoughtcrime.securesms.components;
 import android.Manifest;
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
 import android.view.animation.AnticipateOvershootInterpolator;
@@ -15,6 +18,7 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,12 +34,36 @@ public final class MicrophoneRecorderView extends FrameLayout implements View.On
     RUNNING_LOCKED
   }
 
+  /**
+   * BMChat 2.49.83 — Telegram-style recording mode toggle. A single tap on the recorder button
+   * switches between {@link #VOICE} (microphone) and {@link #VIDEO_NOTE} (round video). A
+   * long-press starts recording in the currently selected mode.
+   */
+  public enum Mode {
+    VOICE,
+    VIDEO_NOTE
+  }
+
   public static final int ANIMATION_DURATION = 200;
+
+  /** BMChat 2.49.83 — Max time we wait for ACTION_UP before promoting to hold-to-record. */
+  private static final long TAP_TIMEOUT_MS = 180L;
 
   private FloatingRecordButton floatingRecordButton;
   private LockDropTarget lockDropTarget;
+  private ImageButton toggleButton;
   private @Nullable Listener listener;
   private @NonNull State state = State.NOT_RUNNING;
+
+  private @NonNull Mode mode = Mode.VOICE;
+  private final Handler mainHandler = new Handler(Looper.getMainLooper());
+  private final Runnable holdPromoter = this::tryStartHoldRecording;
+  private int touchSlopPx;
+  private long pressDownTime;
+  private float pressDownX;
+  private float pressDownY;
+  private boolean holdTriggered;
+  private boolean tapDisarmed;
 
   public MicrophoneRecorderView(Context context) {
     super(context);
@@ -53,8 +81,44 @@ public final class MicrophoneRecorderView extends FrameLayout implements View.On
         new FloatingRecordButton(getContext(), findViewById(R.id.quick_audio_fab));
     lockDropTarget = new LockDropTarget(getContext(), findViewById(R.id.lock_drop_target));
 
-    View recordButton = findViewById(R.id.quick_audio_toggle);
-    recordButton.setOnTouchListener(this);
+    toggleButton = findViewById(R.id.quick_audio_toggle);
+    toggleButton.setOnTouchListener(this);
+    touchSlopPx = ViewConfiguration.get(getContext()).getScaledTouchSlop();
+    applyToggleIcon();
+  }
+
+  public @NonNull Mode getMode() {
+    return mode;
+  }
+
+  /**
+   * BMChat 2.49.83 — Switches the input panel between voice and round-video recording without
+   * actually starting a recording. The icon on {@code quick_audio_toggle} updates accordingly.
+   */
+  public void setMode(@NonNull Mode newMode) {
+    if (this.mode == newMode) return;
+    this.mode = newMode;
+    applyToggleIcon();
+  }
+
+  private void toggleMode() {
+    setMode(mode == Mode.VOICE ? Mode.VIDEO_NOTE : Mode.VOICE);
+  }
+
+  private void applyToggleIcon() {
+    if (toggleButton == null) return;
+    if (mode == Mode.VIDEO_NOTE) {
+      toggleButton.setImageResource(R.drawable.ic_videocam_on);
+      toggleButton.setContentDescription(getResources().getString(R.string.bmchat_video_note_record));
+    } else {
+      toggleButton.setImageResource(0);
+      // The XML uses ?quick_mic_icon — restore that themed reference.
+      android.util.TypedValue typed = new android.util.TypedValue();
+      if (getContext().getTheme().resolveAttribute(R.attr.quick_mic_icon, typed, true)) {
+        toggleButton.setImageResource(typed.resourceId);
+      }
+      toggleButton.setContentDescription(getResources().getString(R.string.audio));
+    }
   }
 
   public void cancelAction() {
@@ -97,24 +161,25 @@ public final class MicrophoneRecorderView extends FrameLayout implements View.On
   public boolean onTouch(View v, final MotionEvent event) {
     switch (event.getAction()) {
       case MotionEvent.ACTION_DOWN:
-        if (!Permissions.hasAll(getContext(), Manifest.permission.RECORD_AUDIO)) {
-          if (listener != null) listener.onRecordPermissionRequired();
-        } else {
-          state = State.RUNNING_HELD;
-          floatingRecordButton.display(event.getX(), event.getY());
-          lockDropTarget.display();
-          if (listener != null) listener.onRecordPressed();
-        }
-        break;
-      case MotionEvent.ACTION_CANCEL:
-      case MotionEvent.ACTION_UP:
-        if (this.state == State.RUNNING_HELD) {
-          state = State.NOT_RUNNING;
-          hideUi();
-          if (listener != null) listener.onRecordReleased();
-        }
-        break;
+        pressDownTime = System.currentTimeMillis();
+        pressDownX = event.getX();
+        pressDownY = event.getY();
+        holdTriggered = false;
+        tapDisarmed = false;
+        mainHandler.postDelayed(holdPromoter, TAP_TIMEOUT_MS);
+        return true;
+
       case MotionEvent.ACTION_MOVE:
+        float dx = event.getX() - pressDownX;
+        float dy = event.getY() - pressDownY;
+        if (!holdTriggered && (dx * dx + dy * dy) > touchSlopPx * touchSlopPx) {
+          // Movement before TAP_TIMEOUT — promote to hold immediately if permissions allow.
+          tapDisarmed = true;
+          mainHandler.removeCallbacks(holdPromoter);
+          if (state == State.NOT_RUNNING) {
+            tryStartHoldRecording();
+          }
+        }
         if (this.state == State.RUNNING_HELD) {
           this.floatingRecordButton.moveTo(event.getX(), event.getY());
           if (listener != null)
@@ -127,9 +192,53 @@ public final class MicrophoneRecorderView extends FrameLayout implements View.On
           }
         }
         break;
+
+      case MotionEvent.ACTION_CANCEL:
+        mainHandler.removeCallbacks(holdPromoter);
+        if (this.state == State.RUNNING_HELD) {
+          state = State.NOT_RUNNING;
+          hideUi();
+          if (listener != null) listener.onRecordReleased();
+        }
+        break;
+
+      case MotionEvent.ACTION_UP:
+        mainHandler.removeCallbacks(holdPromoter);
+        if (this.state == State.RUNNING_HELD) {
+          state = State.NOT_RUNNING;
+          hideUi();
+          if (listener != null) listener.onRecordReleased();
+        } else if (!holdTriggered && !tapDisarmed
+            && (System.currentTimeMillis() - pressDownTime) <= TAP_TIMEOUT_MS) {
+          // Genuine tap — toggle the recorder mode.
+          v.performClick();
+          toggleMode();
+          if (listener != null) listener.onModeToggled(mode);
+        }
+        break;
     }
 
-    return false;
+    return true;
+  }
+
+  private void tryStartHoldRecording() {
+    if (state != State.NOT_RUNNING) return;
+    if (mode == Mode.VIDEO_NOTE) {
+      if (!Permissions.hasAll(getContext(),
+          Manifest.permission.RECORD_AUDIO,
+          Manifest.permission.CAMERA)) {
+        if (listener != null) listener.onRecordPermissionRequired();
+        return;
+      }
+    } else if (!Permissions.hasAll(getContext(), Manifest.permission.RECORD_AUDIO)) {
+      if (listener != null) listener.onRecordPermissionRequired();
+      return;
+    }
+    holdTriggered = true;
+    state = State.RUNNING_HELD;
+    floatingRecordButton.display(pressDownX, pressDownY);
+    lockDropTarget.display();
+    if (listener != null) listener.onRecordPressed();
   }
 
   public void setListener(@Nullable Listener listener) {
@@ -148,6 +257,12 @@ public final class MicrophoneRecorderView extends FrameLayout implements View.On
     void onRecordMoved(float offsetX, float absoluteX);
 
     void onRecordPermissionRequired();
+
+    /**
+     * BMChat 2.49.83 — Fired on a short tap (no hold), so the UI can repaint the toggle and the
+     * input panel can prepare the new recording mode.
+     */
+    default void onModeToggled(@NonNull Mode newMode) {}
   }
 
   private static class FloatingRecordButton {

@@ -204,12 +204,22 @@ public class InputPanel extends ConstraintLayout
 
   @Override
   public void onRecordPermissionRequired() {
-    if (listener != null) listener.onRecorderPermissionRequired();
+    if (listener != null) {
+      if (microphoneRecorderView.getMode() == MicrophoneRecorderView.Mode.VIDEO_NOTE) {
+        listener.onRecorderVideoNotePermissionRequired();
+      } else {
+        listener.onRecorderPermissionRequired();
+      }
+    }
   }
 
   @Override
   public void onRecordPressed() {
-    if (listener != null) listener.onRecorderStarted();
+    boolean videoNote = microphoneRecorderView.getMode() == MicrophoneRecorderView.Mode.VIDEO_NOTE;
+    if (listener != null) {
+      if (videoNote) listener.onRecorderVideoNoteStarted();
+      else listener.onRecorderStarted();
+    }
     recordTime.display();
     slideToCancel.display();
 
@@ -222,17 +232,33 @@ public class InputPanel extends ConstraintLayout
 
   @Override
   public void onRecordReleased() {
+    boolean videoNote = microphoneRecorderView.getMode() == MicrophoneRecorderView.Mode.VIDEO_NOTE;
     long elapsedTime = onRecordHideEvent();
 
     if (listener != null) {
       Log.d(TAG, "Elapsed time: " + elapsedTime);
-      if (elapsedTime > 1000) {
+      if (videoNote) {
+        if (elapsedTime > 500) {
+          listener.onRecorderVideoNoteFinished();
+        } else {
+          listener.onRecorderVideoNoteCanceled();
+        }
+      } else if (elapsedTime > 1000) {
         listener.onRecorderFinished();
       } else {
         Toast.makeText(getContext(), R.string.chat_record_explain, Toast.LENGTH_LONG).show();
         listener.onRecorderCanceled();
       }
     }
+  }
+
+  @Override
+  public void onModeToggled(@NonNull MicrophoneRecorderView.Mode newMode) {
+    if (listener != null) listener.onRecorderModeChanged(newMode);
+  }
+
+  public @NonNull MicrophoneRecorderView.Mode getRecorderMode() {
+    return microphoneRecorderView.getMode();
   }
 
   @Override
@@ -248,8 +274,12 @@ public class InputPanel extends ConstraintLayout
 
   @Override
   public void onRecordCanceled() {
+    boolean videoNote = microphoneRecorderView.getMode() == MicrophoneRecorderView.Mode.VIDEO_NOTE;
     onRecordHideEvent();
-    if (listener != null) listener.onRecorderCanceled();
+    if (listener != null) {
+      if (videoNote) listener.onRecorderVideoNoteCanceled();
+      else listener.onRecorderCanceled();
+    }
   }
 
   @Override
@@ -348,6 +378,24 @@ public class InputPanel extends ConstraintLayout
     void onQuoteDismissed();
 
     void onStickerPicked(Uri stickerUri);
+
+    /**
+     * BMChat 2.49.83 — Recorder mode (voice/video) changed via a single tap. Implementations
+     * usually do nothing; this exists so subclasses can refresh UI hints.
+     */
+    default void onRecorderModeChanged(@NonNull MicrophoneRecorderView.Mode newMode) {}
+
+    /** BMChat 2.49.83 — User started holding the recorder button in video note mode. */
+    default void onRecorderVideoNoteStarted() {}
+
+    /** BMChat 2.49.83 — User released the recorder button; finalise the video note and send it. */
+    default void onRecorderVideoNoteFinished() {}
+
+    /** BMChat 2.49.83 — Video note recording cancelled (swipe to cancel or tap too short). */
+    default void onRecorderVideoNoteCanceled() {}
+
+    /** BMChat 2.49.83 — Camera/audio permissions are missing for round video notes. */
+    default void onRecorderVideoNotePermissionRequired() {}
   }
 
   private static class SlideToCancel {

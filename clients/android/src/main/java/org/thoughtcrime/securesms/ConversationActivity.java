@@ -165,7 +165,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private static final int TAKE_PHOTO = 7;
   private static final int RECORD_VIDEO = 8;
   // BMChat 2.49.82 (Phase 5): Telegram-style round video notes.
-  private static final int BMCHAT_VIDEO_NOTE = 22;
+  // BMChat 2.49.82 reserved request code 22 for the stand-alone video note activity. The activity
+  // is no longer launched (Phase 5C records inline), so the constant has been retired.
   private static final int PICK_WEBXDC = 9;
 
   private GlideRequests glideRequests;
@@ -188,6 +189,12 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private MediaKeyboard emojiPicker;
   protected HidingLinearLayout quickAttachmentToggle;
   private InputPanel inputPanel;
+
+  // BMChat 2.49.83 (Phase 5C): Telegram-style round video notes recorded directly from the
+  // input panel. Long-press on the recorder button starts the capture and release sends it.
+  private android.view.View bmchatVideoNoteOverlay;
+  private android.widget.TextView bmchatVideoNoteOverlayTimer;
+  @Nullable private org.thoughtcrime.securesms.videonote.BMChatVideoNoteRecorder bmchatVideoNoteRecorder;
   private @Nullable MediaController mediaController;
   private com.google.common.util.concurrent.ListenableFuture<MediaController> mediaControllerFuture;
   private AudioPlaybackViewModel playbackViewModel;
@@ -438,6 +445,10 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       playbackViewModel.setMediaController(null);
     }
     playbackViewModel.setQueueProvider(null);
+    if (bmchatVideoNoteRecorder != null) {
+      bmchatVideoNoteRecorder.unbind();
+      bmchatVideoNoteRecorder = null;
+    }
     super.onDestroy();
   }
 
@@ -572,20 +583,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         setMedia(data.getData(), MediaType.IMAGE);
         break;
 
-      case BMCHAT_VIDEO_NOTE:
-        // BMChat 2.49.82 (Phase 5): Telegram-style round video note. The
-        // recorder activity returns a cached MP4 whose filename carries
-        // a ".vn." infix; the bubble renderer reads that infix later to
-        // pick a circular outline for the playback view.
-        Uri vnUri =
-            data.getParcelableExtra(
-                org.thoughtcrime.securesms.videonote.BMChatVideoNoteActivity.EXTRA_RESULT_URI);
-        if (vnUri != null) {
-          setMedia(vnUri, MediaType.VIDEO);
-        } else {
-          Toast.makeText(this, R.string.bmchat_video_note_camera_error, Toast.LENGTH_LONG).show();
-        }
-        break;
+      // BMChat 2.49.83 (Phase 5C): legacy stand-alone video note activity was retired in
+      // favour of the hold-to-record overlay; the case is intentionally left out.
     }
   }
 
@@ -751,9 +750,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     } else if (itemId == R.id.bmchat_menu_jump_to_date) {
       handleJumpToDate();
       return true;
-    } else if (itemId == R.id.bmchat_menu_video_note) {
-      handleRecordVideoNote();
-      return true;
     } else if (itemId == R.id.menu_start_audio_call) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         CallUtil.startAudioCall(context, chatId);
@@ -840,19 +836,6 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
     }
     dialog.show();
-  }
-
-  /**
-   * BMChat 2.49.82 (Phase 5): launch the Telegram-style round video note
-   * recorder. On a successful capture the activity returns to
-   * {@link #onActivityResult} where the resulting MP4 is staged into the
-   * attachment manager as a normal video — the {@code .vn.} infix in the
-   * filename later switches the bubble renderer into circular mode.
-   */
-  private void handleRecordVideoNote() {
-    Intent intent =
-        new Intent(this, org.thoughtcrime.securesms.videonote.BMChatVideoNoteActivity.class);
-    startActivityForResult(intent, BMCHAT_VIDEO_NOTE);
   }
 
   private void handleEphemeralMessages() {
@@ -1257,6 +1240,12 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     attachmentTypeSelector = null;
     attachmentManager = new AttachmentManager(this, this);
     audioRecorder = new AudioRecorder(this);
+
+    // BMChat 2.49.83 — Look up the round video note overlay that lives in conversation_activity.xml
+    // and lazily instantiate the recorder on first use to avoid CameraX overhead for users who
+    // never record a video note.
+    bmchatVideoNoteOverlay = findViewById(R.id.bmchat_video_note_overlay);
+    bmchatVideoNoteOverlayTimer = findViewById(R.id.bmchat_video_note_overlay_timer);
 
     SendButtonListener sendButtonListener = new SendButtonListener();
     ComposeKeyPressedListener composeKeyPressedListener = new ComposeKeyPressedListener();
@@ -1785,6 +1774,105 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           @Override
           public void onFailure(ExecutionException e) {}
         });
+  }
+
+  // BMChat 2.49.83 — Telegram-style round video note: hold-to-record directly in the input panel.
+  @Override
+  public void onRecorderVideoNotePermissionRequired() {
+    Permissions.with(this)
+        .request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+        .ifNecessary()
+        .withPermanentDenialDialog(getString(R.string.perm_explain_access_to_mic_denied))
+        .execute();
+  }
+
+  @Override
+  public void onRecorderVideoNoteStarted() {
+    fragment.hideAddReactionView();
+    Vibrator vibrator = ServiceUtil.getVibrator(this);
+    vibrator.vibrate(20);
+    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+    ensureVideoNoteRecorder();
+    if (bmchatVideoNoteOverlay != null) bmchatVideoNoteOverlay.setVisibility(View.VISIBLE);
+    if (bmchatVideoNoteOverlayTimer != null) bmchatVideoNoteOverlayTimer.setText("0:00");
+
+    if (bmchatVideoNoteRecorder != null) bmchatVideoNoteRecorder.startRecording();
+  }
+
+  @Override
+  public void onRecorderVideoNoteFinished() {
+    Vibrator vibrator = ServiceUtil.getVibrator(this);
+    vibrator.vibrate(20);
+    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+    if (bmchatVideoNoteRecorder != null) bmchatVideoNoteRecorder.stopRecording(false);
+    hideVideoNoteOverlay();
+  }
+
+  @Override
+  public void onRecorderVideoNoteCanceled() {
+    Vibrator vibrator = ServiceUtil.getVibrator(this);
+    vibrator.vibrate(50);
+    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+    if (bmchatVideoNoteRecorder != null) bmchatVideoNoteRecorder.stopRecording(true);
+    hideVideoNoteOverlay();
+  }
+
+  @Override
+  public void onRecorderModeChanged(@NonNull org.thoughtcrime.securesms.components.MicrophoneRecorderView.Mode newMode) {
+    Vibrator vibrator = ServiceUtil.getVibrator(this);
+    vibrator.vibrate(15);
+    int toastRes = newMode == org.thoughtcrime.securesms.components.MicrophoneRecorderView.Mode.VIDEO_NOTE
+        ? R.string.bmchat_video_note_record
+        : R.string.audio;
+    Toast.makeText(this, toastRes, Toast.LENGTH_SHORT).show();
+  }
+
+  private void ensureVideoNoteRecorder() {
+    if (bmchatVideoNoteRecorder != null) return;
+    androidx.camera.view.PreviewView previewView =
+        findViewById(R.id.bmchat_video_note_overlay_preview);
+    if (previewView == null) return;
+    bmchatVideoNoteRecorder =
+        new org.thoughtcrime.securesms.videonote.BMChatVideoNoteRecorder(this, previewView, this);
+    bmchatVideoNoteRecorder.setListener(
+        new org.thoughtcrime.securesms.videonote.BMChatVideoNoteRecorder.Listener() {
+          @Override
+          public void onRecordingStarted() {}
+
+          @Override
+          public void onRecordingProgress(long elapsedMs) {
+            if (bmchatVideoNoteOverlayTimer != null) {
+              int seconds = (int) (elapsedMs / 1000L);
+              bmchatVideoNoteOverlayTimer.setText(
+                  String.format(java.util.Locale.US, "%d:%02d", seconds / 60, seconds % 60));
+            }
+          }
+
+          @Override
+          public void onRecordingFinished(@NonNull Uri resultUri) {
+            hideVideoNoteOverlay();
+            setMedia(resultUri, MediaType.VIDEO);
+          }
+
+          @Override
+          public void onRecordingFailed(@Nullable Throwable error) {
+            hideVideoNoteOverlay();
+            Toast.makeText(
+                    ConversationActivity.this,
+                    R.string.bmchat_video_note_camera_error,
+                    Toast.LENGTH_LONG)
+                .show();
+          }
+        });
+    bmchatVideoNoteRecorder.bind();
+  }
+
+  private void hideVideoNoteOverlay() {
+    if (bmchatVideoNoteOverlay != null) bmchatVideoNoteOverlay.setVisibility(View.GONE);
+    if (bmchatVideoNoteOverlayTimer != null) bmchatVideoNoteOverlayTimer.setText("0:00");
   }
 
   private void reloadEmojiPicker() {

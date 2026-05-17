@@ -74,11 +74,8 @@
         android:title="@string/bmchat_jump_to_date"
         app:showAsAction="never" />
 
-    <!-- BMChat 2.49.82 (Phase 5): Telegram-style round video notes. -->
-    <item
-        android:id="@+id/bmchat_menu_video_note"
-        android:title="@string/bmchat_video_note_menu"
-        app:showAsAction="never" />
+    <!-- BMChat 2.49.83 (Phase 5C): round video notes are recorded directly from the input panel
+         (long-press the mic/video toggle), so this stand-alone menu entry was removed. -->
 
     <item
         android:title="@string/menu_archive_chat"

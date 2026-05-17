@@ -381,13 +381,8 @@
              custom Toolbar can serve as the action bar (otherwise the
              system action-bar collides with setSupportActionBar at create
              time and the activity crashes — see 2.49.64 crash logs). -->
-        <!-- BMChat 2.49.82 (Phase 5): Telegram-style round video notes. -->
-        <activity
-            android:name=".videonote.BMChatVideoNoteActivity"
-            android:label="@string/bmchat_video_note_title"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:screenOrientation="portrait"
-            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <!-- BMChat 2.49.83 (Phase 5C): round video notes are now recorded inline via an overlay
+             above the input panel; no stand-alone activity entry is required anymore. -->
 
         <activity
             android:name=".album.BMChatGalleryPickerActivity"

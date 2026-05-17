@@ -70,4 +70,47 @@
 
         </LinearLayout>
     </org.thoughtcrime.securesms.components.InputAwareLayout>
+
+    <!-- BMChat 2.49.83 (Phase 5C): Telegram-style round video note bubble that appears above the
+         input panel while the user holds the recorder button in video mode. -->
+    <FrameLayout
+        android:id="@+id/bmchat_video_note_overlay"
+        android:layout_width="172dp"
+        android:layout_height="172dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginEnd="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginBottom="64dp"
+        android:visibility="gone"
+        android:elevation="6dp"
+        android:background="@drawable/bmchat_video_note_ring"
+        android:clipChildren="true"
+        android:clipToPadding="false">
+
+        <androidx.camera.view.PreviewView
+            android:id="@+id/bmchat_video_note_overlay_preview"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:layout_gravity="center" />
+
+        <TextView
+            android:id="@+id/bmchat_video_note_overlay_timer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="6dp"
+            android:background="#88000000"
+            android:paddingStart="8dp"
+            android:paddingLeft="8dp"
+            android:paddingEnd="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:text="0:08" />
+    </FrameLayout>
 </RelativeLayout>
