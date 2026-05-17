@@ -1,15 +1,15 @@
 {
-  "versionCode": 829,
-  "versionName": "2.49.81",
+  "versionCode": 830,
+  "versionName": "2.49.82",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.81.apk",
-  "sha256": "f2b0295c2db97c1ee3729222abfddff85498eebb68592c99bb495086a5dcdc9e",
-  "size": 77297170,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.82.apk",
+  "sha256": "82d454d834f43e74959310cc3045f3d3ef8d5bd33cc8210ef8a2727f75469155",
+  "size": 77445971,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-17T21:30:00Z",
+  "publishedAt": "2026-05-17T22:30:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.49.81 — Chat UX в стиле Telegram (Phase 4).\n\nИЗМЕНЕНИЯ:\n• Picture-in-Picture для видео в `MediaPreviewActivity`. Если во время просмотра видео сделать swipe-home или открыть другое приложение — окно с видео автоматически сжимается в плавающий PiP-блок, как в YouTube/Telegram. Управление видимостью toolbar обрабатывается автоматически. Активити пометит supportsPictureInPicture + resizeableActivity в манифесте.\n• Telegram-style **Jump to date** в меню чата. Тап → DatePickerDialog, выбираешь дату — `ConversationFragment.jumpToDate()` находит ближайшее сообщение к этой дате через linear scan getChatMsgs (ранний выход при пересечении timestamp) и скроллит к нему с подсветкой через scrollAndHighlight.\n• Swipe-to-reply уже работает из коробки через upstream `ConversationItemSwipeCallback` — отдельной фазы не потребовалось.\n\nПЛАНЫ:\n• Phase 5 — круглые видео-сообщения (video notes).\n• Phase 6/7 — порт Phase 1–5 на Desktop и iOS."
+  "notes": "BMChat 2.49.82 — круглые видеосообщения в стиле Telegram (Phase 5).\n\nИЗМЕНЕНИЯ:\n• Новый пункт меню в открытом чате — «Кружочек». Тап открывает полноэкранный рекордер: круглый видоискатель в центре (через ViewOutlineProvider), переключатель фронтальной / задней камеры, кнопка запись/стоп с пульсирующим красным кольцом, таймер с лимитом 60 секунд (как в Telegram), кнопка отмены.\n• Запись идёт через CameraX VideoCapture (Recorder/SD quality) с включённым звуком. Результирующий MP4 кэшируется как `bmchat-vn-<ts>.vn.mp4` — инфикс `.vn.` это маркер, по которому пузырь чата позже распознаёт video note и рисует его в круглой обрезке.\n• В `ConversationItem` появилась проверка `BMChatVideoNoteUtil.isVideoNote(DcMsg)`. Когда тип `DC_MSG_VIDEO` и filename содержит `.vn.`, миниатюра приводится к квадратной форме и `setOutlineCorners(huge, huge, huge, huge)` превращает её в идеальный круг, независимо от исходного aspect ratio видео.\n• Зависимость `androidx.camera:camera-video:1.4.2` добавлена (та же версия что и остальные camerax-модули, совместимая с minSdk 21).\n\nПЛАНЫ:\n• Phase 4B (отдельно) — отложенные сообщения (scheduled messages) через WorkManager.\n• Phase 6 — порт всех фишек Phase 1–5 на Desktop.\n• Phase 7 — порт всех фишек Phase 1–5 на iOS."
 }

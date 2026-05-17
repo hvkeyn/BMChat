@@ -4,10 +4,7 @@
 
 BMChat — самостоятельный мессенджер на базе движка Delta Chat (Rust core + Autocrypt). Цель — взять надёжное end-to-end шифрование Delta Chat, добавить Telegram-уровневый UX (альбомы, мини-плеер, Shared Media, реакции, прочтения, кружочки) и собственную инфраструктуру обновлений, не зависящую от сторонних сервисов.
 
-Весь чат-трафик идёт через почтовый сервер пользователя; сторонние серверы (`5.187.4.132` и зеркало `158.160.104.107:8080`) используются только для:
-- `/i` — лендинг приглашений (SecureJoin через Autocrypt);
-- `/update.json` + `/apk/` — Android auto-update манифест и APK;
-- `/desktop-update.json` — Desktop auto-update манифест.
+Весь чат-трафик идёт через почтовый сервер пользователя — никаких сторонних мессенджер-серверов и идентификаторов BMChat не использует. End-to-end шифрование Autocrypt применяется ко всем сообщениям между BMChat-клиентами; обычная почта от не-BMChat отправителей принимается как простой email-чат.
 
 ## Клиенты
 
@@ -39,9 +36,9 @@ BMChat — самостоятельный мессенджер на базе д�
 - Android UI «Память и данные» с Telegram-style donut chart, авто-очисткой (`WorkManager`) и опасным разделом удаления почты с сервера через `delete_server_after`.
 
 ### Авто-обновления
-- Android: `BMChatUpdater` (foreground/manual/background через `WorkManager`) тянет `update.json`, проверяет SHA-256 и ставит через `PackageInstaller`.
-- Desktop: `bmchat-updater.ts` в Electron main делает то же через `desktop-update.json`.
-- Релизы заливаются на primary (`5.187.4.132`) и mirror (`158.160.104.107:8080`) через `infra/vps/deploy-*.sh`.
+- Android: `BMChatUpdater` (foreground/manual/background через `WorkManager`) тянет манифест обновлений, проверяет SHA-256 APK и ставит через `PackageInstaller`.
+- Desktop: `bmchat-updater.ts` в Electron main делает то же для десктоп-сборок.
+- Релизы публикуются BMChat-командой; конечные эндпоинты конфигурируются на этапе сборки и в публичный код не попадают.
 
 ### Брендинг
 - `app_name`, цвета, иконки, темы, локализации (RU + EN), help-страницы и Fastlane-метаданные — везде **BMChat**. Все упоминания Delta Chat в пользовательском UI вычищены (`scripts/rebrand_strings.ps1`, `scripts/rebrand_java_logtags.ps1`).
@@ -62,13 +59,12 @@ BMChat — самостоятельный мессенджер на базе д�
 │         │                                                │
 │         └── deltachat-core-rust ────────────────────────┤
 │                                                          ▼
-│                            ┌──────────────────────────────┐
-└───── update + invites ──→  │ VPS: nginx /update.json /i   │
-                             │      /apk/ /desktop-update   │
-                             └──────────────────────────────┘
+│                              ┌──────────────────────────┐
+└───── auto-update manifests ─→│  BMChat release channel  │
+                               └──────────────────────────┘
                                               ▲
                               user's own IMAP/SMTP server
-                              (всё чат-сообщения, fully E2E)
+                              (все чат-сообщения, fully E2E)
 ```
 
 ## Сборка
@@ -105,14 +101,6 @@ pod install
 open deltachat-ios.xcworkspace
 ```
 
-## Деплой
-
-Все скрипты в `infra/vps/`. После сборки APK копируется в `infra/vps/apk/`, манифест обновляется в `infra/vps/www/update.json`, потом:
-```sh
-bash infra/vps/deploy-<version>.sh          # primary
-bash infra/vps/deploy-<version>-mirror.sh   # mirror
-```
-
 ## Документация
 
 - `memory-bank/projectbrief.md` — постановка задачи.
@@ -136,7 +124,7 @@ bash infra/vps/deploy-<version>-mirror.sh   # mirror
 | Phase 1 | 2.49.78 | Telegram-style download UX (круговой прогресс, save-as) | завершено |
 | Phase 2 | 2.49.79 | Mini-player + playback speed | завершено |
 | Phase 3 | 2.49.80 | Shared Media browser (Photos/Videos/Audio/Files/Links) | завершено |
-| Phase 4 | 2.49.81 | Chat UX: PiP-video, swipe-to-reply, scheduled, jump-to-date | в работе |
-| Phase 5 | 2.49.82 | Круглые видео-сообщения (video notes) | планируется |
+| Phase 4 | 2.49.81 | Chat UX: PiP-video, swipe-to-reply, jump-to-date | завершено |
+| Phase 5 | 2.49.82 | Круглые видео-сообщения (video notes) | в работе |
 | Phase 6 | — | Desktop порт фишек Phase 1–5 | планируется |
 | Phase 7 | — | iOS порт фишек Phase 1–5 | планируется |

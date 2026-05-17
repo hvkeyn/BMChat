@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000000">
+
+    <!--
+        BMChat 2.49.82 (Phase 5): Telegram-style round video note recorder.
+        The preview view is itself rectangular; the round shape is enforced
+        by a ViewOutlineProvider in BMChatVideoNoteActivity so we don't
+        depend on MaterialCardView corner radius which only goes up to ~50%.
+    -->
+    <androidx.camera.view.PreviewView
+        android:id="@+id/bmchat_video_note_preview"
+        android:layout_width="320dp"
+        android:layout_height="320dp"
+        android:layout_gravity="center" />
+
+    <!-- Pulsing red ring drawn while recording is in progress. -->
+    <View
+        android:id="@+id/bmchat_video_note_progress_ring"
+        android:layout_width="336dp"
+        android:layout_height="336dp"
+        android:layout_gravity="center"
+        android:background="@drawable/bmchat_video_note_ring"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/bmchat_video_note_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|top"
+        android:layout_marginTop="24dp"
+        android:textColor="#ffffff"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:shadowColor="#80000000"
+        android:shadowDx="0"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:text="0:00" />
+
+    <ImageButton
+        android:id="@+id/bmchat_video_note_cancel"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|start"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/cancel"
+        android:scaleType="center"
+        android:src="@drawable/ic_close_white_24dp"
+        android:tint="#ffffff" />
+
+    <ImageButton
+        android:id="@+id/bmchat_video_note_switch_camera"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/bmchat_video_note_switch_camera"
+        android:scaleType="center"
+        android:src="@drawable/ic_videocam_white_24dp"
+        android:tint="#ffffff" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="48dp">
+
+        <ImageButton
+            android:id="@+id/bmchat_video_note_record"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bmchat_video_note_record_btn"
+            android:contentDescription="@string/bmchat_video_note_record"
+            android:scaleType="center"
+            android:tint="#ffffff" />
+
+    </FrameLayout>
+
+</FrameLayout>

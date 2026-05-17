@@ -1015,6 +1015,16 @@ public class ConversationItem extends BaseConversationItem {
           org.thoughtcrime.securesms.bots.BotMediaMarker.parse(messageRecord.getText());
       mediaThumbnailStub.get().setForcePlayOverlay(bmInline != null);
 
+      // BMChat 2.49.82 (Phase 5): force square aspect for round video
+      // notes so the circular outline doesn't degenerate into an oval
+      // when the source MP4 was captured at 16:9.
+      if (org.thoughtcrime.securesms.videonote.BMChatVideoNoteUtil.isVideoNote(messageRecord)) {
+        int square = Math.min(thumbnailSize.width, thumbnailSize.height);
+        if (square <= 0) square = 220;
+        thumbnailSize.width = square;
+        thumbnailSize.height = square;
+      }
+
       mediaThumbnailStub
           .get()
           .setImageResource(glideRequests, slide, thumbnailSize.width, thumbnailSize.height);
@@ -1096,6 +1106,15 @@ public class ConversationItem extends BaseConversationItem {
   }
 
   private void setThumbnailOutlineCorners(@NonNull DcMsg current, boolean showSender) {
+    // BMChat 2.49.82 (Phase 5): Telegram-style round video notes — clip
+    // the thumbnail with all four corners set to a very large radius so
+    // the bubble renders as a perfect circle regardless of bubble size.
+    if (org.thoughtcrime.securesms.videonote.BMChatVideoNoteUtil.isVideoNote(current)) {
+      int huge = readDimen(R.dimen.media_bubble_max_width);
+      mediaThumbnailStub.get().setOutlineCorners(huge, huge, huge, huge);
+      return;
+    }
+
     int defaultRadius = readDimen(R.dimen.message_corner_radius);
 
     int topLeft = defaultRadius;

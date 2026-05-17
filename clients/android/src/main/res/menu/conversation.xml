@@ -74,6 +74,12 @@
         android:title="@string/bmchat_jump_to_date"
         app:showAsAction="never" />
 
+    <!-- BMChat 2.49.82 (Phase 5): Telegram-style round video notes. -->
+    <item
+        android:id="@+id/bmchat_menu_video_note"
+        android:title="@string/bmchat_video_note_menu"
+        app:showAsAction="never" />
+
     <item
         android:title="@string/menu_archive_chat"
         android:id="@+id/menu_archive_chat" />
