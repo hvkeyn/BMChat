@@ -193,6 +193,8 @@
     <!-- a noun, used for "Music" and other "Audio" files -->
     <string name="audio">Audio</string>
     <string name="voice_message">Voice Message</string>
+    <!-- BMChat 2.49.79: Telegram-style playback speed badge in audio bubbles and mini-player. -->
+    <string name="bmchat_playback_speed">Playback speed</string>
     <string name="forwarded">Forwarded</string>
     <string name="forwarded_message">Forwarded Message</string>
     <!-- %1$s will be replaced by the name of the person who forwarded the message -->

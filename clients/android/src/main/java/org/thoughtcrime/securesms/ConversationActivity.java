@@ -227,6 +227,27 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     playbackViewModel.setQueueProvider(new ChatAudioQueueProvider(this, chatId, accountId));
     initializeMediaController();
 
+    // BMChat 2.49.79 (Phase 2): Telegram-style mini-player above the
+    // input panel. While the user is already in the conversation that
+    // owns the current track we keep them here; tapping for a track in
+    // another chat opens that chat at the right message.
+    org.thoughtcrime.securesms.components.audioplay.BMChatMiniPlayerView miniPlayer =
+        findViewById(R.id.bmchat_miniplayer);
+    if (miniPlayer != null) {
+      miniPlayer.setOnNavigateListener(
+          (accId, targetChatId, msgId) -> {
+            if (targetChatId == chatId) {
+              return;
+            }
+            Intent intent = new Intent(this, ConversationActivity.class);
+            intent.putExtra(ConversationActivity.ACCOUNT_ID_EXTRA, accId);
+            intent.putExtra(ConversationActivity.CHAT_ID_EXTRA, targetChatId);
+            intent.putExtra(ConversationActivity.STARTING_POSITION_EXTRA, msgId);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
+          });
+    }
+
     initializeSecurity(false, isDefaultSms)
         .addListener(
             new AssertedSuccessListener<Boolean>() {

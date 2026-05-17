@@ -36,6 +36,7 @@ public class AudioView extends FrameLayout {
   private final @NonNull SeekBar seekBar;
   private final @NonNull TextView timestamp;
   private final @NonNull TextView title;
+  private final @NonNull TextView playbackSpeedBadge;
   private final @NonNull View mask;
   private final @NonNull BMChatDownloadOverlay downloadOverlay;
   private OnActionListener listener;
@@ -66,6 +67,7 @@ public class AudioView extends FrameLayout {
     this.seekBar = findViewById(R.id.seek);
     this.timestamp = findViewById(R.id.timestamp);
     this.title = findViewById(R.id.title);
+    this.playbackSpeedBadge = findViewById(R.id.playback_speed);
     this.mask = findViewById(R.id.interception_mask);
     this.downloadOverlay = findViewById(R.id.audio_download_overlay);
     this.downloadOverlay.setOnClickListener(
@@ -165,6 +167,20 @@ public class AudioView extends FrameLayout {
     }
     if (pauseToPlayDrawable != null) {
       pauseToPlayDrawable.registerAnimationCallback(animationCallback);
+    }
+
+    // BMChat 2.49.79 (Phase 2): playback speed badge.
+    playbackSpeedBadge.setText(BMChatPlaybackPrefs.formatSpeed(BMChatPlaybackPrefs.getSpeed(getContext())));
+    playbackSpeedBadge.setOnClickListener(
+        v -> {
+          float next = BMChatPlaybackPrefs.cycleSpeed(getContext());
+          playbackSpeedBadge.setText(BMChatPlaybackPrefs.formatSpeed(next));
+          if (viewModel != null) {
+            viewModel.setPlaybackSpeed(getContext(), next);
+          }
+        });
+    if (viewModel != null) {
+      viewModel.refreshPlaybackSpeed(getContext());
     }
   }
 
@@ -340,8 +356,20 @@ public class AudioView extends FrameLayout {
 
     if (isThisMessage) {
       updateUIForPlaybackState(state);
+      // Show the speed badge only while this audio is actively
+      // playing or paused — IDLE / ERROR / LOADING should keep it
+      // hidden so the bubble stays compact.
+      boolean showBadge =
+          state.getStatus() == AudioPlaybackState.PlaybackStatus.PLAYING
+              || state.getStatus() == AudioPlaybackState.PlaybackStatus.PAUSED;
+      playbackSpeedBadge.setVisibility(showBadge ? View.VISIBLE : View.GONE);
+      if (showBadge) {
+        playbackSpeedBadge.setText(
+            BMChatPlaybackPrefs.formatSpeed(BMChatPlaybackPrefs.getSpeed(getContext())));
+      }
     } else {
       togglePlayPause(false);
+      playbackSpeedBadge.setVisibility(View.GONE);
 
       // Also clear progress to avoid confusion
       this.progress = 0;

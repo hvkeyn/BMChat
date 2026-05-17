@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+        Telegram-style mini-player. Shown whenever AudioPlaybackService
+        owns a non-idle MediaItem; tapping the body jumps back to the
+        chat where the track lives.
+    -->
+
+    <FrameLayout
+        android:id="@+id/bmchat_miniplayer_root"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground">
+
+        <ProgressBar
+            android:id="@+id/bmchat_miniplayer_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_gravity="top"
+            android:progressBackgroundTint="@color/core_white_alpha_20"
+            android:progressTint="@color/core_white"
+            android:max="1000"
+            android:progress="0" />
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="2dp"
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/bmchat_miniplayer_play_pause"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:padding="6dp"
+                android:src="@drawable/play_icon"
+                android:scaleType="center"
+                android:contentDescription="@string/menu_play"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:id="@+id/bmchat_miniplayer_title"
+                    style="@style/Signal.Text.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="@color/core_white"
+                    tools:text="Voice message" />
+
+                <TextView
+                    android:id="@+id/bmchat_miniplayer_subtitle"
+                    style="@style/Signal.Text.Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="@color/core_white"
+                    android:alpha="0.7"
+                    tools:text="Alice — Project chat" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/bmchat_miniplayer_close"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="4dp"
+                android:padding="10dp"
+                android:src="@drawable/ic_close_white_24dp"
+                android:scaleType="center"
+                android:contentDescription="@string/close"
+                android:background="?attr/selectableItemBackgroundBorderless" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</merge>

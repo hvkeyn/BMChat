@@ -112,8 +112,15 @@
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_below="@id/update_banner"
+        android:layout_above="@+id/bmchat_miniplayer"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <org.thoughtcrime.securesms.components.audioplay.BMChatMiniPlayerView
+        android:id="@+id/bmchat_miniplayer"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
     <org.thoughtcrime.securesms.components.SearchToolbar
         android:id="@+id/search_toolbar"
