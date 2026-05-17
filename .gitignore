@@ -79,7 +79,8 @@ artifacts/
 infra/vps/apk/
 infra/vps/desktop/
 
-# Ad-hoc Delta Chat / BMChat capture logs (verbatim adb logcat dumps).
+# Ad-hoc BMChat capture logs (verbatim adb logcat dumps).
+bmchat-log-*.txt
 deltachat-log-*.txt
 
 # Build-time arch hint written by clients/android/scripts/ndk-make.sh.

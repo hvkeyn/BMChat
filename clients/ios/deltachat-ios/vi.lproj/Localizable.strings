@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "OK";
 "cancel" = "Hủy";
 "clear_search" = "Dọn dẹp tìm kiếm";
@@ -40,7 +40,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "Tắt tiếng";
 "ephemeral_messages" = "Tin nhắn biến mất";
-"ephemeral_messages_hint" = "Áp dụng cho tất cả thành viên của cuộc trò chuyện này nếu họ sử dụng Delta Chat; họ vẫn có thể sao chép, lưu và chuyển tiếp thư hoặc sử dụng các ứng dụng e-mail khác.";
+"ephemeral_messages_hint" = "Áp dụng cho tất cả thành viên của cuộc trò chuyện này nếu họ sử dụng BMChat; họ vẫn có thể sao chép, lưu và chuyển tiếp thư hoặc sử dụng các ứng dụng e-mail khác.";
 "save" = "Lưu";
 "chat" = "Trò chuyện";
 "media" = "Phương tiện";
@@ -356,9 +356,9 @@
 "multidevice_title" = "Thêm thiết bị thứ hai";
 "multidevice_same_network_hint" = "Đảm bảo cả hai thiết bị đều sử dụng cùng một Wi-Fi hoặc mạng";
 "multidevice_this_creates_a_qr_code" = "Thao tác này sẽ tạo mã QR mà thiết bị thứ hai có thể quét để sao chép tài khoản.";
-"multidevice_install_dc_on_other_device" = "Cài đặt Delta Chat trên thiết bị khác của bạn (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Cài đặt BMChat trên thiết bị khác của bạn (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Bắt đầu Delta Chat, nhấn vào “Thêm làm thiết bị thứ hai” và quét mã được hiển thị ở đây";
+"multidevice_tap_scan_on_other_device" = "Bắt đầu BMChat, nhấn vào “Thêm làm thiết bị thứ hai” và quét mã được hiển thị ở đây";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "Quét để thiết lập thiết bị thứ hai cho %1$@";
 "multidevice_receiver_title" = "Thêm làm thiết bị thứ hai";
@@ -497,8 +497,8 @@
 "pref_background_btn_default" = "Sử dụng hình ảnh mặc định";
 "pref_background_btn_gallery" = "Chọn từ thư viện";
 "pref_imap_folder_warn_disable_defaults" = "Nếu bạn thay đổi tùy chọn này, hãy đảm bảo rằng máy chủ và các máy khách khác của bạn được cấu hình tương ứng.\n\nNếu không, mọi thứ có thể không hoạt động.";
-"pref_auto_folder_moves" = "Tự động di chuyển đến Thư mục DeltaChat";
-"pref_only_fetch_mvbox_title" = "Chỉ tìm nạp từ thư mục DeltaChat";
+"pref_auto_folder_moves" = "Tự động di chuyển đến Thư mục BMChat";
+"pref_only_fetch_mvbox_title" = "Chỉ tìm nạp từ thư mục BMChat";
 "pref_show_emails" = "Hiển thị E-mail cổ điển";
 "pref_show_emails_no" = "Không, chỉ trò chuyện";
 "pref_show_emails_accepted_contacts" = "Đối với các liên hệ được chấp nhận";
@@ -542,9 +542,9 @@
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
 "autodel_device_ask" = "Bạn có muốn xóa %1$d tin nhắn ngay bây giờ và tất cả các tin nhắn mới được tìm nạp \"%2$@\" trong tương lai không?\n\n• Điều này bao gồm tất cả phương tiện\n\n• Tin nhắn sẽ bị xóa dù chúng có được nhìn thấy hay không\n\n• \"Tin nhắn đã lưu\" sẽ bị bỏ qua khỏi quá trình xóa cục bộ";
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
-"autodel_server_ask" = "Bạn có muốn xóa %1$d tin nhắn ngay bây giờ và tất cả các tin nhắn mới được tìm nạp \"%2$@\" trong tương lai không?\n\n⚠️ Điều này bao gồm e-mail, phương tiện và \"Tin nhắn đã lưu\" trong tất cả máy chủ thư mục\n\n⚠️ Không sử dụng chức năng này nếu bạn muốn giữ dữ liệu trên máy chủ\n\n⚠️ Không sử dụng chức năng này nếu bạn đang sử dụng các ứng dụng e-mail khác ngoài Delta Chat";
+"autodel_server_ask" = "Bạn có muốn xóa %1$d tin nhắn ngay bây giờ và tất cả các tin nhắn mới được tìm nạp \"%2$@\" trong tương lai không?\n\n⚠️ Điều này bao gồm e-mail, phương tiện và \"Tin nhắn đã lưu\" trong tất cả máy chủ thư mục\n\n⚠️ Không sử dụng chức năng này nếu bạn muốn giữ dữ liệu trên máy chủ\n\n⚠️ Không sử dụng chức năng này nếu bạn đang sử dụng các ứng dụng e-mail khác ngoài BMChat";
 // shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
-"autodel_server_enabled_hint" = "Điều này bao gồm e-mail, phương tiện và \"Tin nhắn đã lưu\" trong tất cả các thư mục máy chủ. Không sử dụng chức năng này nếu bạn muốn giữ dữ liệu trên máy chủ hoặc nếu bạn đang sử dụng các ứng dụng e-mail khác ngoài Delta Chat.";
+"autodel_server_enabled_hint" = "Điều này bao gồm e-mail, phương tiện và \"Tin nhắn đã lưu\" trong tất cả các thư mục máy chủ. Không sử dụng chức năng này nếu bạn muốn giữ dữ liệu trên máy chủ hoặc nếu bạn đang sử dụng các ứng dụng e-mail khác ngoài BMChat.";
 "autodel_confirm" = "Tôi hiểu, hãy xóa tất cả những tin nhắn này";
 // "At once" in the meaning of "Immediately", without any intervening time.
 "autodel_at_once" = "Ngay lập tức";
@@ -622,7 +622,7 @@
 "devicemsg_storage_exceeding" = "⚠️ Bộ nhớ nhà cung cấp của bạn sắp hết: %1$@%% đã được sử dụng.\n\nBạn có thể không nhận được tin nhắn nếu bộ nhớ đầy.\n\n 👉 Vui lòng kiểm tra xem bạn có thể xóa không dữ liệu cũ trong giao diện web của nhà cung cấp và cân nhắc bật \"Cài đặt / Xóa tin nhắn cũ\". Bạn có thể kiểm tra mức sử dụng bộ nhớ hiện tại của mình bất kỳ lúc nào tại \"Cài đặt / Kết nối\".";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ Ngày hoặc giờ trên thiết bị của bạn có vẻ không chính xác (%1$@).\n\nĐiều chỉnh đồng hồ của bạn ⏰🔧 để đảm bảo tin nhắn của bạn được nhận chính xác.";
-"devicemsg_update_reminder" = "⚠️ Phiên bản Delta Chat của bạn có thể đã lỗi thời.\n\nĐiều này có thể gây ra sự cố vì đối tác trò chuyện của bạn sử dụng các phiên bản mới hơn - và bạn đang thiếu các tính năng mới nhất 😳\nVui lòng kiểm tra https://get.delta.chat hoặc cửa hàng ứng dụng của bạn để biết thông tin cập nhật .";
+"devicemsg_update_reminder" = "⚠️ Phiên bản BMChat của bạn có thể đã lỗi thời.\n\nĐiều này có thể gây ra sự cố vì đối tác trò chuyện của bạn sử dụng các phiên bản mới hơn - và bạn đang thiếu các tính năng mới nhất 😳\nVui lòng kiểm tra http://5.187.4.132 hoặc cửa hàng ứng dụng của bạn để biết thông tin cập nhật .";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Mở khóa để tiếp tục";
 // qr code stuff
@@ -689,7 +689,7 @@
 "perm_explain_access_to_mic_denied" = "Để gửi tin nhắn âm thanh, hãy chuyển tới cài đặt ứng dụng, chọn \"Quyền\" và bật \"Micrô\".";
 "perm_explain_access_to_storage_denied" = "Để nhận hoặc gửi tệp, hãy đi tới cài đặt ứng dụng, chọn \"Quyền\" và bật \"Bộ nhớ\".";
 "perm_explain_access_to_location_denied" = "Để đính kèm một vị trí, hãy đi tới cài đặt ứng dụng, chọn \"Quyền\" và bật \"Vị trí\".";
-"perm_explain_access_to_notifications_denied" = "Để nhận thông báo, hãy đi tới \"Cài đặt hệ thống / Ứng dụng / Delta Chat\" và bật \"Thông báo\".";
+"perm_explain_access_to_notifications_denied" = "Để nhận thông báo, hãy đi tới \"Cài đặt hệ thống / Ứng dụng / BMChat\" và bật \"Thông báo\".";
 // ImageEditorHud
 "ImageEditorHud_draw_anywhere_to_blur" = "Vẽ bất cứ nơi nào để làm mờ";
 "ImageEditorHud_add_text" = "Thêm văn bản";
@@ -699,7 +699,7 @@
 "ImageEditorHud_crop" = "Cắt";
 "ImageEditorHud_flip" = "Lật";
 "ImageEditorHud_rotate" = "Xoay";
-"welcome_desktop" = "Chào mừng đến với Delta Chat";
+"welcome_desktop" = "Chào mừng đến với BMChat";
 "global_menu_preferences_language_desktop" = "Ngôn ngữ";
 "global_menu_file_desktop" = "Tập tin";
 "global_menu_file_quit_desktop" = "Thoát";
@@ -715,8 +715,8 @@
 "global_menu_view_developer_tools_desktop" = "Công cụ dành cho nhà phát triển";
 "global_menu_help_desktop" = "Trợ giúp";
 "global_menu_help_report_desktop" = "Báo cáo sự cố";
-"global_menu_help_about_desktop" = "Giới thiệu về Delta Chat";
-"global_menu_file_open_desktop" = "Mở Delta Chat";
+"global_menu_help_about_desktop" = "Giới thiệu về BMChat";
+"global_menu_file_open_desktop" = "Mở BMChat";
 "global_menu_minimize_to_tray" = "Giảm thiểu";
 "no_chat_selected_suggestion_desktop" = "Chọn một cuộc trò chuyện hoặc tạo một cuộc trò chuyện mới";
 "write_message_desktop" = "Viết tin nhắn";
@@ -733,7 +733,7 @@
 "message_detail_received_desktop" = "đã nhận được";
 "menu.view.developer.open.log.folder" = "Mở thư mục nhật ký";
 "menu.view.developer.open.current.log.file" = "Mở tệp nhật ký hiện tại";
-"explain_desktop_minimized_disabled_tray_pref" = "Không thể tắt biểu tượng khay vì Delta Chat đã được bắt đầu bằng tùy chọn --giảm-thiểu.";
+"explain_desktop_minimized_disabled_tray_pref" = "Không thể tắt biểu tượng khay vì BMChat đã được bắt đầu bằng tùy chọn --giảm-thiểu.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Không tìm thấy gợi ý chính tả.";
 "show_window" = "Hiển thị cửa sổ";
@@ -771,14 +771,14 @@
 "import_device_contacts" = "Nhập danh bạ thiết bị";
 "import_device_contacts_hint" = "Để trò chuyện với các liên hệ từ thiết bị của bạn, hãy mở Cài đặt và bật \"Danh bạ\".";
 // iOS notification settings
-"disabled_in_dc" = "Đã tắt trong Delta Chat";
+"disabled_in_dc" = "Đã tắt trong BMChat";
 "disabled_in_system_settings" = "Đã tắt trong cài đặt hệ thống";
 "bg_app_refresh_disabled" = "\"Làm mới ứng dụng nền\" bị tắt trong cài đặt hệ thống";
 "notifications_avg_minutes" = "Trung bình cứ sau %1$d phút";
 "notifications_avg_hours" = "Trung bình cứ sau %1$d giờ";
 "last_check_at" = "Đã kiểm tra lúc %1$@";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
-"pref_background_notifications_rationale" = "Để duy trì kết nối với máy chủ e-mail của bạn và nhận tin nhắn ở chế độ nền, hãy bỏ qua tối ưu hóa pin trong bước tiếp theo.\n\nDelta Chat sử dụng ít tài nguyên và chú ý không làm tiêu hao pin của bạn.";
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
+"pref_background_notifications_rationale" = "Để duy trì kết nối với máy chủ e-mail của bạn và nhận tin nhắn ở chế độ nền, hãy bỏ qua tối ưu hóa pin trong bước tiếp theo.\n\nBMChat sử dụng ít tài nguyên và chú ý không làm tiêu hao pin của bạn.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Nhấn vào đây để nhận tin nhắn khi Delta Chat ở chế độ nền.";
-"perm_enable_bg_already_done" = "Bạn đã cho phép Delta Chat nhận tin nhắn trong nền.\n\nNếu tin nhắn vẫn không đến trong nền, vui lòng kiểm tra cài đặt hệ thống của bạn.";
+"perm_enable_bg_reminder_title" = "Nhấn vào đây để nhận tin nhắn khi BMChat ở chế độ nền.";
+"perm_enable_bg_already_done" = "Bạn đã cho phép BMChat nhận tin nhắn trong nền.\n\nNếu tin nhắn vẫn không đến trong nền, vui lòng kiểm tra cài đặt hệ thống của bạn.";

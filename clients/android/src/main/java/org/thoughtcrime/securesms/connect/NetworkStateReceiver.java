@@ -22,7 +22,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
       NetworkInfo ni = manager.getActiveNetworkInfo();
 
       if (ni != null && ni.getState() == NetworkInfo.State.CONNECTED) {
-        Log.i("DeltaChat", "++++++++++++++++++ Connected #" + debugConnectedCount++);
+        Log.i("BMChat", "++++++++++++++++++ Connected #" + debugConnectedCount++);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
           new Thread(
                   () -> {
@@ -31,9 +31,9 @@ public class NetworkStateReceiver extends BroadcastReceiver {
                     // returns at once,
                     // however, in reality, it does currently halt things for some seconds.
                     // this is a workaround that make things usable for now.
-                    Log.i("DeltaChat", "calling maybeNetwork()");
+                    Log.i("BMChat", "calling maybeNetwork()");
                     DcHelper.getAccounts(context).maybeNetwork();
-                    Log.i("DeltaChat", "maybeNetwork() returned");
+                    Log.i("BMChat", "maybeNetwork() returned");
                   })
               .start();
         }

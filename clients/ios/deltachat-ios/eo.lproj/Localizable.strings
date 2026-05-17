@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "Bone";
 "cancel" = "Nuligi";
 "clear_search" = "Forviŝi Serĉon";
@@ -46,7 +46,7 @@
 // Adjective "smth is muted". used to describe a muted or silenced chat, that e.g. does not make noise or cause notifications
 "muted" = "Silentigita";
 "ephemeral_messages" = "Memviŝontaj mesaĝoj";
-"ephemeral_messages_hint" = "Aplikebla al ĉiuj anoj de tiu ĉi babilejo kiuj uzas Delta Chat; ili ankoraŭ povas kopii, konservi kaj plusendi mesaĝojn, kaj uzi aliajn retpoŝtajn klientojn.";
+"ephemeral_messages_hint" = "Aplikebla al ĉiuj anoj de tiu ĉi babilejo kiuj uzas BMChat; ili ankoraŭ povas kopii, konservi kaj plusendi mesaĝojn, kaj uzi aliajn retpoŝtajn klientojn.";
 "save" = "Konservi";
 "chat" = "Babilo";
 "media" = "Aŭdovidaĵoj";
@@ -226,7 +226,7 @@
 "title_share_location" = "Konigi lokon al ĉiuj grupanoj";
 "device_talk" = "Aparataj mesaĝoj";
 "device_talk_subtitle" = "Loke generitaj mesaĝoj";
-"device_talk_explain" = "Mesaĝoj en tiu ĉi babilo estas surloke generataj de via Delta Chat apo. Ĝiaj kreintoj uzas ilin por informi pri apaj ĝisdatigoj kaj problemoj dum uzado.";
+"device_talk_explain" = "Mesaĝoj en tiu ĉi babilo estas surloke generataj de via BMChat apo. Ĝiaj kreintoj uzas ilin por informi pri apaj ĝisdatigoj kaj problemoj dum uzado.";
 "edit_contact" = "Redakti kontakton";
 // Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
 "pin_chat" = "Alpingli babilon";
@@ -376,7 +376,7 @@
 // permissions
 "perm_required_title" = "Permeso bezonata";
 "perm_continue" = "Daŭrigi";
-"welcome_desktop" = "Bonvenon al Delta Chat";
+"welcome_desktop" = "Bonvenon al BMChat";
 "global_menu_preferences_language_desktop" = "Lingvo";
 "global_menu_file_desktop" = "Dosiero";
 "global_menu_edit_desktop" = "Modifi";

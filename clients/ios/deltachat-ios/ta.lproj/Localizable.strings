@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "சரி";
 "cancel" = "ரத்து செய்";
 "yes" = "ஆம்";
@@ -195,13 +195,13 @@
 // permissions
 "perm_required_title" = "அனுமதி தேவை";
 "perm_continue" = "தொடர்";
-"welcome_desktop" = "Delta Chat க்கு வரவேற்கிறது.";
+"welcome_desktop" = "BMChat க்கு வரவேற்கிறது.";
 "global_menu_preferences_language_desktop" = "நிறவடிவமைப்பு";
 "global_menu_file_desktop" = "கோப்பு";
 "global_menu_edit_desktop" = "திருத்து";
 "global_menu_view_desktop" = "பார்வை";
 "global_menu_help_desktop" = "உதவி";
-"global_menu_help_about_desktop" = "Delta Chat பற்றி";
+"global_menu_help_about_desktop" = "BMChat பற்றி";
 "more_info_desktop" = "மேலும் தகவல்";
 "remove_desktop" = "நீக்கு";
 "save_desktop" = "சேமி";

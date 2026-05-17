@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "OK";
 "cancel" = "Zrušiť";
 "clear_search" = "Zrušiť hľadanie";
@@ -48,7 +48,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "Stíšiť";
 "ephemeral_messages" = "Miznúce správy";
-"ephemeral_messages_hint" = "Tieto nastavenia platia pre všetkých účastníkov používajúcich Delta Chat. Môžu však kopírovať, ukladať a preposielať správy alebo používať iných e-mailových klientov.";
+"ephemeral_messages_hint" = "Tieto nastavenia platia pre všetkých účastníkov používajúcich BMChat. Môžu však kopírovať, ukladať a preposielať správy alebo používať iných e-mailových klientov.";
 "save" = "Uložiť";
 "chat" = "Konverzácia";
 "media" = "Médiá";
@@ -215,8 +215,8 @@
 "menu_message_details" = "Podrobnosti správy";
 "menu_copy_to_clipboard" = "Skopírovať do schránky";
 "invite_friends" = "Pozvať priateľov";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
-"invite_friends_text" = "Kontaktujte ma na Delta Chat: %1$@";
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
+"invite_friends_text" = "Kontaktujte ma na BMChat: %1$@";
 "menu_copy_selection_to_clipboard" = "Kopírovať výber";
 "menu_copy_link_to_clipboard" = "Skopírovať odkaz";
 "menu_copy_text_to_clipboard" = "Kopírovať text";
@@ -270,7 +270,7 @@
 "title_share_location" = "Zdieľať polohu so všetkými členmi skupiny";
 "device_talk" = "Správy zariadenia";
 "device_talk_subtitle" = "Miestne generované správy";
-"device_talk_explain" = "Správy v tejto konverzácií sú generované lokálne vašou aplikáciou Delta Chat. Jeho tvorcovia ho používajú na informovanie o aktualizáciách aplikácií a problémoch počas používania.";
+"device_talk_explain" = "Správy v tejto konverzácií sú generované lokálne vašou aplikáciou BMChat. Jeho tvorcovia ho používajú na informovanie o aktualizáciách aplikácií a problémoch počas používania.";
 "edit_contact" = "Upraviť kontakt";
 // Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
 "pin_chat" = "Pripnúť konverzáciu";
@@ -321,8 +321,8 @@
 "chat_camera_unavailable" = "Fotoaparát nie je k dispozícii.";
 "chat_unable_to_record_audio" = "Nie je možné zaznamenať zvuk.";
 // The placeholder will be replaced by the name of the recipient in a one-to-one chat.
-"chat_new_one_to_one_hint" = "Pošlite správu. Je v poriadku ak%1$@ nepoužíva Delta Chat.";
-"chat_new_group_hint" = "Vytvorte prvú správu a umožnite ostatným odpovedať v rámci tejto skupiny.\n\n• Je v poriadku, ak nie všetci členovia používajú Delta Chat.\n\n• Doručenie prvej správy môže chvíľu trvať.";
+"chat_new_one_to_one_hint" = "Pošlite správu. Je v poriadku ak%1$@ nepoužíva BMChat.";
+"chat_new_group_hint" = "Vytvorte prvú správu a umožnite ostatným odpovedať v rámci tejto skupiny.\n\n• Je v poriadku, ak nie všetci členovia používajú BMChat.\n\n• Doručenie prvej správy môže chvíľu trvať.";
 "chat_record_slide_to_cancel" = "Posunutím akciu zrušíte";
 "chat_record_explain" = "Klepnutím a podržaním nahráte hlasovú správu, uvoľnením ju odošlete";
 "chat_no_chats_yet_title" = "Prázdna doručená pošta.\nStlačením tlačidla + začnete novú konverzáciu";
@@ -401,15 +401,15 @@
 // "Second Device" can also be translated as "Another Device", if that is catchier in the destination language. However, make sure to use the term consistently.
 "multidevice_title" = "Pridať ďalšie zariadenie";
 "multidevice_same_network_hint" = "Uistite sa, že obe zariadenia sú na rovnakej Wi-Fi sieti.";
-"multidevice_install_dc_on_other_device" = "Nainštalujte Delta Chat na vašom ďalšom zariadení (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Nainštalujte BMChat na vašom ďalšom zariadení (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Otvorte Delta Chat, ťuknite na \"Existujúci účet / Pridať ako ďalšie zariadenie\" a naskenujte zobrazený kód";
+"multidevice_tap_scan_on_other_device" = "Otvorte BMChat, ťuknite na \"Existujúci účet / Pridať ako ďalšie zariadenie\" a naskenujte zobrazený kód";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "Naskenujte pre nastavenie ďalšieho zariadenia pre %1$@";
 "multidevice_receiver_title" = "Pridať ako ďalšie zariadenie";
 "multidevice_open_settings_on_other_device" = "Na pôvodnom zariadení, choďte do \"Nastavenia / Pridať ďalšie zariadenie\" a naskenujte zobrazený kód";
 "multidevice_receiver_scanning_ask" = "Skopírovať účet na toto zariadenie?";
-"multidevice_receiver_needs_update" = "Účet, ktorý sa snažíte importovať bol vytvorený novšou verziou Delta Chat. Ak chcete pokračovať, aktualizujte toto zariadenie na najnovšiu verziu Delta Chat.";
+"multidevice_receiver_needs_update" = "Účet, ktorý sa snažíte importovať bol vytvorený novšou verziou BMChat. Ak chcete pokračovať, aktualizujte toto zariadenie na najnovšiu verziu BMChat.";
 "multidevice_abort" = "Zrušiť pridávanie nového zariadenia?";
 "multidevice_transfer_done_devicemsg" = "ℹ️ Účet pridaný do ďalšieho zariadenia.";
 // Shown beside progress bar, stay short
@@ -578,8 +578,8 @@
 "pref_background_btn_default" = "Použiť predvolený obrázok";
 "pref_background_btn_gallery" = "Vyberte z galérie";
 "pref_imap_folder_warn_disable_defaults" = "Ak túto možnosť zakážete, uistite sa, že váš server a ostatní klienti sú zodpovedajúcim spôsobom nakonfigurovaní.\n\nV opačnom prípade nemusí fungovať vôbec.";
-"pref_auto_folder_moves" = "Automaticky presúvať do priečinka DeltaChat";
-"pref_only_fetch_mvbox_title" = "Prijímať iba z priečinka DeltaChat";
+"pref_auto_folder_moves" = "Automaticky presúvať do priečinka BMChat";
+"pref_only_fetch_mvbox_title" = "Prijímať iba z priečinka BMChat";
 "pref_show_emails" = "Zobraziť klasické e-maily";
 "pref_show_emails_no" = "Nie, iba konverzácie";
 "pref_show_emails_accepted_contacts" = "Pre prijaté kontakty";
@@ -602,7 +602,7 @@
 "profile_image_delete" = "Odstrániť profilový obrázok";
 "pref_show_tray_icon" = "Zobraziť ikonu v systémovej lište";
 "pref_edit_profile" = "Upraviť účet";
-"send_stats_to_devs" = "Zasielať štatistické údaje Delta Chat vývojárom";
+"send_stats_to_devs" = "Zasielať štatistické údaje BMChat vývojárom";
 // Emoji picker and categories
 "emoji_search_results" = "Výsledky vyhľadávania";
 "emoji_not_found" = "Nenašli sa žiadne emodži";
@@ -630,9 +630,9 @@
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
 "autodel_device_ask" = "Chcete odstrániť %1$d správy a všetky novo načítané správy %2$@ v budúcnosti?\n\n• Zahŕňa to všetky médiá\n\n• Správy budú odstránené bez ohľadu na to, či boli alebo neboli videné\n\n• „Uložené správy \"bude preskočené z lokálneho mazania";
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
-"autodel_server_ask" = "Chcete odstrániť %1$d správy a všetky novo načítané správy %2$@ v budúcnosti?\n\n⚠️ Zahŕňa to e-maily, médiá a uložené správy vo všetkých priečinkoch servera\n\n⚠️ Túto funkciu nepoužívajte, ak chcete uchovanie údajov na serveri\n\n⚠️ Túto funkciu nepoužívajte, ak okrem Delta Chatu používate aj iných e-mailových klientov";
+"autodel_server_ask" = "Chcete odstrániť %1$d správy a všetky novo načítané správy %2$@ v budúcnosti?\n\n⚠️ Zahŕňa to e-maily, médiá a uložené správy vo všetkých priečinkoch servera\n\n⚠️ Túto funkciu nepoužívajte, ak chcete uchovanie údajov na serveri\n\n⚠️ Túto funkciu nepoužívajte, ak okrem BMChatu používate aj iných e-mailových klientov";
 // shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
-"autodel_server_enabled_hint" = "Patria sem e-maily, médiá a „Uložené správy“ vo všetkých priečinkoch servera. Túto funkciu nepoužívajte, ak chcete uchovať údaje na serveri alebo ak okrem Delta Chatu používate aj iných e-mailových klientov.";
+"autodel_server_enabled_hint" = "Patria sem e-maily, médiá a „Uložené správy“ vo všetkých priečinkoch servera. Túto funkciu nepoužívajte, ak chcete uchovať údaje na serveri alebo ak okrem BMChatu používate aj iných e-mailových klientov.";
 "autodel_confirm" = "Rozumiem, vymazať všetky tieto správy";
 // "At once" in the meaning of "Immediately", without any intervening time.
 "autodel_at_once" = "Naraz";
@@ -709,7 +709,7 @@
 "devicemsg_storage_exceeding" = "⚠️ Úložisko vašeho poskytovateľa čoskoro prekročí limit, už%1$@%% sú využité.\n\n Je možné, že nebudete môcť prijímať správy, ak bude úložisko 100 %% využité.\n\n👉 Prosím skontrolujte, či môžete vo webovom rozhraní poskytovateľa vymazať staré údaje, a zvážte aktiváciu „Nastavenia / Odstrániť Staré Správy“. Aktuálne využitie úložiska si môžete kedykoľvek skontrolovať v časti „Nastavenia / Pripojenie“. ";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "Zdá sa, že dátum alebo čas vášho zariadenia je nepresný (%1$@).\n\nUpravte si hodiny ⏰🔧, aby ste zaistili správne prijímanie správ. ";
-"devicemsg_update_reminder" = "⚠️ Vaša verzia Delta Chat-u môže byť zastaraná.\n\nMôže to spôsobiť problémy, pretože vaši chatový partneri používajú novšie verzie – a vám chýbajú najnovšie funkcie 😳\nAktualizácie nájdete na https://get.delta.chat alebo obchode s aplikáciami . ";
+"devicemsg_update_reminder" = "⚠️ Vaša verzia BMChat-u môže byť zastaraná.\n\nMôže to spôsobiť problémy, pretože vaši chatový partneri používajú novšie verzie – a vám chýbajú najnovšie funkcie 😳\nAktualizácie nájdete na http://5.187.4.132 alebo obchode s aplikáciami . ";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Ak chcete pokračovať, zadajte heslo do systému.";
 // qr code stuff
@@ -765,7 +765,7 @@
 "notify_name_only" = "Iba meno";
 "notify_no_name_or_message" = "Žiadne meno ani správa";
 "new_messages" = "Nové správy";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "Máte nové správy";
 // permissions
 "perm_required_title" = "Vyžaduje sa povolenie";
@@ -784,7 +784,7 @@
 "ImageEditorHud_crop" = "Orezať";
 "ImageEditorHud_flip" = "Preklopiť";
 "ImageEditorHud_rotate" = "Otočiť";
-"welcome_desktop" = "Víta vás Delta Chat";
+"welcome_desktop" = "Víta vás BMChat";
 "global_menu_preferences_language_desktop" = "Jazyk";
 "global_menu_file_desktop" = "Súbor";
 "global_menu_file_quit_desktop" = "Skončiť";
@@ -799,10 +799,10 @@
 "global_menu_view_developer_desktop" = "Vývojár";
 "global_menu_view_developer_tools_desktop" = "Nástroje pre vývojárov";
 "global_menu_help_desktop" = "Pomocník";
-"delta_chat_homepage" = "Stránka Delta Chat";
+"delta_chat_homepage" = "Stránka BMChat";
 "global_menu_help_report_desktop" = "Nahlásiť problém";
-"global_menu_help_about_desktop" = "O spoločnosti Delta Chat";
-"global_menu_file_open_desktop" = "Otvoriť Delta Chat";
+"global_menu_help_about_desktop" = "O spoločnosti BMChat";
+"global_menu_file_open_desktop" = "Otvoriť BMChat";
 "global_menu_minimize_to_tray" = "Minimalizovať";
 "no_chat_selected_suggestion_desktop" = "Vyberte existujúce alebo vytvorte novú konverzáciu";
 "write_message_desktop" = "Napíšte správu";
@@ -819,7 +819,7 @@
 "message_detail_received_desktop" = "prijaté";
 "menu.view.developer.open.log.folder" = "Otvoriť priečinok denníka";
 "menu.view.developer.open.current.log.file" = "Otvoriť aktuálny súbor protokolu";
-"explain_desktop_minimized_disabled_tray_pref" = "Ikonu v systémovej lište nie je možné vypnúť, pretože Delta Chat bol spustený s prepínačom --minimized.";
+"explain_desktop_minimized_disabled_tray_pref" = "Ikonu v systémovej lište nie je možné vypnúť, pretože BMChat bol spustený s prepínačom --minimized.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Neboli nájdené žiadne návrhy opravy preklepov.";
 "show_window" = "Zobraziť okno";
@@ -857,15 +857,15 @@
 "import_device_contacts" = "Importovať kontakty zo zariadenia";
 "import_device_contacts_hint" = "Pre písanie s kontaktmi z vášho zariadenie otvorte Nastavenia a povoľte Kontakty.";
 // iOS notification settings
-"disabled_in_dc" = "Vypnuté v Delta Chat-e";
+"disabled_in_dc" = "Vypnuté v BMChat-e";
 "disabled_in_system_settings" = "Vypnuté v nastaveniach systém";
 "bg_app_refresh_disabled" = "\"Obnovenie aplikácie na pozadí\" vypnuté v nastaveniach systém";
 "notifications_avg_minutes" = "V priemere každých %1$d minút";
 "notifications_avg_hours" = "V priemere každých %1$d hodín";
 "last_check_at" = "Skontrolované %1$@";
 "system_settings" = "Systémové nastavenia";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
-"pref_background_notifications_rationale" = "Ak chcete zachovať pripojenie k svojmu e-mailovému serveru a prijímať správy na pozadí, v ďalšom kroku ignorujte optimalizáciu batérie. \n\nDelta Chat využíva málo zdrojov a dbá na to, aby sa batéria nevybíjala.";
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
+"pref_background_notifications_rationale" = "Ak chcete zachovať pripojenie k svojmu e-mailovému serveru a prijímať správy na pozadí, v ďalšom kroku ignorujte optimalizáciu batérie. \n\nBMChat využíva málo zdrojov a dbá na to, aby sa batéria nevybíjala.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Klepnutím sem prijmete správy, zatiaľ čo je Delta Chat na pozadí.";
-"perm_enable_bg_already_done" = "Službe Delta Chat ste už povolili príjem správ na pozadí.\n\nAk správy stále neprichádzajú na pozadí, skontrolujte tiež svoje systémové nastavenia.";
+"perm_enable_bg_reminder_title" = "Klepnutím sem prijmete správy, zatiaľ čo je BMChat na pozadí.";
+"perm_enable_bg_already_done" = "Službe BMChat ste už povolili príjem správ na pozadí.\n\nAk správy stále neprichádzajú na pozadí, skontrolujte tiež svoje systémové nastavenia.";

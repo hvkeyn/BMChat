@@ -142,14 +142,14 @@ public class KeepAliveService extends Service {
 
   @Override
   public void onCreate() {
-    Log.i("DeltaChat", "*** KeepAliveService.onCreate()");
+    Log.i("BMChat", "*** KeepAliveService.onCreate()");
     s_this = this;
     ensureForeground();
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    Log.i("DeltaChat", "*** KeepAliveService.onStartCommand()");
+    Log.i("BMChat", "*** KeepAliveService.onStartCommand()");
     // CRITICAL: Android 12+ requires startForeground() within ~5 s of
     // every startForegroundService() call, even when the service was
     // already running. Without this branch any subsequent invocation
@@ -165,7 +165,7 @@ public class KeepAliveService extends Service {
 
   @Override
   public void onDestroy() {
-    Log.i("DeltaChat", "*** KeepAliveService.onDestroy()");
+    Log.i("BMChat", "*** KeepAliveService.onDestroy()");
     isInForeground = false;
     if (s_this == this) s_this = null;
   }

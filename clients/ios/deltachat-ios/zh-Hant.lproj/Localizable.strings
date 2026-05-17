@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "確定";
 "cancel" = "取消";
 "clear_search" = "清除搜尋";
@@ -51,7 +51,7 @@
 // Adjective "smth is muted". used to describe a muted or silenced chat, that e.g. does not make noise or cause notifications
 "muted" = "勿擾";
 "ephemeral_messages" = "自動銷毀訊息";
-"ephemeral_messages_hint" = "這些設定將會套用在所有使用 Delta Chat 的聊天成員上。但他們依然可以複製、儲存和轉發訊息，或使用其他的電子郵件客戶端。";
+"ephemeral_messages_hint" = "這些設定將會套用在所有使用 BMChat 的聊天成員上。但他們依然可以複製、儲存和轉發訊息，或使用其他的電子郵件客戶端。";
 "save" = "儲存";
 "chat" = "聊天";
 "media" = "多媒體";
@@ -242,8 +242,8 @@
 "share_invite_link" = "分享邀請連結";
 "share_invite_link_explain" = "任何擁有此連結的人都可以查看您的個人資料並與您開始聊天。僅與您信任的人分享。";
 "invite_friends" = "邀請朋友";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
-"invite_friends_text" = "在 Delta Chat 上與我聯繫：\n%1$@";
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
+"invite_friends_text" = "在 BMChat 上與我聯繫：\n%1$@";
 "menu_copy_selection_to_clipboard" = "複製選取範圍";
 "menu_copy_link_to_clipboard" = "複製連結";
 "menu_copy_text_to_clipboard" = "複製文字";
@@ -297,7 +297,7 @@
 "title_share_location" = "分享所在地給所有群組成員";
 "device_talk" = "裝置訊息";
 "device_talk_subtitle" = "本機產生的訊息";
-"device_talk_explain" = "這個聊天室內的訊息是由 Delta Chat 軟體在本地產生的。開發者會在這裡發送軟體更新和使用幫助。";
+"device_talk_explain" = "這個聊天室內的訊息是由 BMChat 軟體在本地產生的。開發者會在這裡發送軟體更新和使用幫助。";
 "device_talk_welcome_message2" = "聯繫我們！\n\n🙌 點擊兩台裝置主螢幕上的「QR碼」。在一台裝置上選擇「掃描二維碼」，然後將其指向另一台裝置\n\n🌍如果不在同一個房間，通過視訊通話掃描或從「掃描QR碼」中分享邀請連結\n\n，然後通過有史以來最大的去中心化網络享受您的信使體驗：電子郵件。與其他流行的應用程式相比，它沒有中央控制或跟蹤，也沒有將您、朋友、同事或家人出售給大型組織。";
 "edit_contact" = "編輯聯絡人";
 // Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
@@ -314,7 +314,7 @@
 // Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
 "add_to_home_screen" = "新增至主畫面";
 "donate" = "捐贈";
-"donate_device_msg" = "❤️ 您似乎很喜歡 Delta Chat！\n\n請考慮捐款以幫助Delta Chat確保對每個人保持免費。/n/n雖然 Delta Chat 可以免費使用並且是開源的，但開發需要資金。幫助我們保持 Delta Chat 的獨立性，並在未來讓它更棒。\n\nhttps://delta.chat/donate";
+"donate_device_msg" = "❤️ 您似乎很喜歡 BMChat！\n\n請考慮捐款以幫助BMChat確保對每個人保持免費。/n/n雖然 BMChat 可以免費使用並且是開源的，但開發需要資金。幫助我們保持 BMChat 的獨立性，並在未來讓它更棒。\n\n";
 "mute_for_one_hour" = "靜音1小時";
 "mute_for_eight_hours" = "靜音8小時";
 "mute_for_one_day" = "靜音1天";
@@ -477,15 +477,15 @@
 "multidevice_title" = "新增另一個裝置";
 "multidevice_same_network_hint" = "確保兩台裝置都連接到同一Wi-Fi或網路";
 "multidevice_this_creates_a_qr_code" = "這將創建一個 QR 碼，第二台裝置可以掃描該 QR 碼以複製該賬戶。";
-"multidevice_install_dc_on_other_device" = "在您的其他裝置上安裝 Delta Chat (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "在您的其他裝置上安裝 BMChat (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "啟動 Delta Chat，點擊「我已經有一個賬戶/添加為第二台裝置」並掃描此處顯示的QR碼";
+"multidevice_tap_scan_on_other_device" = "啟動 BMChat，點擊「我已經有一個賬戶/添加為第二台裝置」並掃描此處顯示的QR碼";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "掃描以設置第二個裝置%1$@";
 "multidevice_receiver_title" = "新增為第二個裝置";
 "multidevice_open_settings_on_other_device" = "在第一台裝置上，轉到「設定/新增第二台裝置」並掃描那裡顯示的QR碼";
 "multidevice_receiver_scanning_ask" = "將賬戶檔從其他裝置複製到此裝置？";
-"multidevice_receiver_needs_update" = "您要導入的配置檔來自較新的 Delta Chat 版本。\n\n要繼續設定第二台裝置，請將此裝置更新到最新版本的 Delta Chat。";
+"multidevice_receiver_needs_update" = "您要導入的配置檔來自較新的 BMChat 版本。\n\n要繼續設定第二台裝置，請將此裝置更新到最新版本的 BMChat。";
 "multidevice_abort" = "中止設定第二個裝置？";
 "multidevice_abort_will_invalidate_copied_qr" = "這將使複製到剪貼板的 QR 碼失效。";
 "multidevice_transfer_done_devicemsg" = "ℹ️已將賬戶傳輸到您的第二台裝置。";
@@ -696,12 +696,12 @@
 "pref_background_btn_default" = "使用預設圖案";
 "pref_background_btn_gallery" = "從相簿中挑選";
 "pref_imap_folder_warn_disable_defaults" = "如果關閉本選項的話，請務必確定你的伺服器和其它客戶端應用程式都使用相同的設定，否則很可能不能運作。";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "多裝置模式";
 "pref_multidevice_explain" = "將您的訊息與其他裝置同步。新增第二個裝置時自動啟用";
 "pref_multidevice_change_warn" = "在多個裝置上使用同一的帳戶時，必須啟用多裝置模式。只有在您已從所有其他設備移除此帳戶後，才可以禁用此設定。\n\n在多個裝置上使用該帳戶時禁用多裝置模式將導致漏接訊息及其他問題。";
-"pref_auto_folder_moves" = "自動搬移到 DeltaChat 資料夾";
-"pref_only_fetch_mvbox_title" = "僅從 DeltaChat 資料夾中獲取";
+"pref_auto_folder_moves" = "自動搬移到 BMChat 資料夾";
+"pref_only_fetch_mvbox_title" = "僅從 BMChat 資料夾中獲取";
 "pref_show_emails" = "顯示傳統email";
 "pref_show_emails_no" = "只顯示對話";
 "pref_show_emails_accepted_contacts" = "顯示已接受的聯絡人";
@@ -725,14 +725,14 @@
 "profile_image_delete" = "刪除大頭貼";
 "pref_show_tray_icon" = "顯示托盤圖示";
 "pref_edit_profile" = "編輯個人檔案";
-"send_stats_to_devs" = "將統計數據發送給 Delta Chat 的開發人員";
-"stats_device_message" = "你想透過每週傳送匿名使用統計數據來幫助改進 Delta Chat 並支持研究嗎？\n\n👉 點擊這裡… 👈";
-"stats_confirmation_dialog" = "你想透過每週寄送匿名使用統計資料來幫助改善 Delta Chat 並支持研究嗎？";
-"stats_thanks" = "謝謝你！你可以隨時在「設定 -> 進階」中關閉傳送。\n\n是否愿意用 5 分鐘的時間參加Delta Chat 的安全性科學研究嗎？";
+"send_stats_to_devs" = "將統計數據發送給 BMChat 的開發人員";
+"stats_device_message" = "你想透過每週傳送匿名使用統計數據來幫助改進 BMChat 並支持研究嗎？\n\n👉 點擊這裡… 👈";
+"stats_confirmation_dialog" = "你想透過每週寄送匿名使用統計資料來幫助改善 BMChat 並支持研究嗎？";
+"stats_thanks" = "謝謝你！你可以隨時在「設定 -> 進階」中關閉傳送。\n\n是否愿意用 5 分鐘的時間參加BMChat 的安全性科學研究嗎？";
 "stats_disable_dialog" = "統計數據的傳送已啟用。\n\n你想要停用它嗎？";
 "disable" = "禁用";
 "stats_keep_sending" = "繼續傳送";
-"stats_msg_body" = "附件包含匿名使用統計數據，這有助於我們改進 Delta Chat。更多資訊請參見 https://delta.chat/help#statssending 。謝謝！";
+"stats_msg_body" = "附件包含匿名使用統計數據，這有助於我們改進 BMChat。更多資訊請參見 #statssending 。謝謝！";
 // Emoji picker and categories
 "emoji_search_results" = "搜尋結果";
 "emoji_not_found" = "找不到表情符號";
@@ -760,9 +760,9 @@
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
 "autodel_device_ask" = "您是否要立即刪除%1$d條消息，之後在收到消息「%2$@」后刪除它們？ \n\n⚠️ 這包括伺服器所有媒體\n\n•這包括所有媒體\n\n• 無論消息是否被看到都將被刪除\n\n• “已保存的郵件”將不會被本地刪除";
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
-"autodel_server_ask" = "您是否要立即刪除%1$d條訊息，之後在訊息收到「%2$@」后刪除它們？ \n\n⚠️ 這包括伺服器所有資料夾中的電子郵件、媒體和“保存的消息”\n\n⚠️ 如果您想在伺服器上保留數據，請不要使用此功能\n\n⚠️ 如果您正在使用 Delta Chat 之外的電子郵件用戶端，請不要使用此功能";
+"autodel_server_ask" = "您是否要立即刪除%1$d條訊息，之後在訊息收到「%2$@」后刪除它們？ \n\n⚠️ 這包括伺服器所有資料夾中的電子郵件、媒體和“保存的消息”\n\n⚠️ 如果您想在伺服器上保留數據，請不要使用此功能\n\n⚠️ 如果您正在使用 BMChat 之外的電子郵件用戶端，請不要使用此功能";
 // shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
-"autodel_server_enabled_hint" = "這包括所有伺服器資料夾中的電子郵件、媒體和「保存的訊息」。如果您想將數據保留在伺服器上，或者您正在使用 Delta Chat 以外的其他電子郵件用戶端，請不要使用此功能。";
+"autodel_server_enabled_hint" = "這包括所有伺服器資料夾中的電子郵件、媒體和「保存的訊息」。如果您想將數據保留在伺服器上，或者您正在使用 BMChat 以外的其他電子郵件用戶端，請不要使用此功能。";
 "autodel_server_warn_multi_device_title" = "啟用一次性刪除";
 "autodel_server_warn_multi_device" = "如果啟用一次性刪除，則您無法使用多個裝置登入該賬戶。";
 "autodel_confirm" = "我已知曉，刪除所有這些消息";
@@ -858,7 +858,7 @@
 "devicemsg_storage_exceeding" = "⚠️ 您的供應商的存儲空間即將用完：已使用%1$@%%。\n\n如果存儲空間已滿，您可能無法接收訊息。\n\n👉請檢查您是否可以在提供商的網頁介面中刪除舊數據，並考慮啟用「設定/聊天和媒體/刪除舊訊息」。您可以隨時在「設定/連接」 中檢查您目前的儲存使用方式。";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ 您裝置上的日期或時間似乎不準確 （%1$@）。\n\n調整您的時鐘⏰🔧以確保您的訊息被正確接收。";
-"devicemsg_update_reminder" = "⚠️ 您的 Delta Chat 版本可能已過時。\n\n這可能會導致問題，因為您的聊天夥伴使用的是較新的版本 - 而您缺少最新的功能😳\n請訪問 https://get.delta.chat 或您的應用商店以獲取更新。";
+"devicemsg_update_reminder" = "⚠️ 您的 BMChat 版本可能已過時。\n\n這可能會導致問題，因為您的聊天夥伴使用的是較新的版本 - 而您缺少最新的功能😳\n請訪問 http://5.187.4.132 或您的應用商店以獲取更新。";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "解鎖以繼續";
 // qr code stuff
@@ -928,7 +928,7 @@
 "notifications_disabled" = "通知已停用";
 "unreliable_bg_notifications" = "啟用「強制背景連線」以確保完成通知。";
 "new_messages" = "新訊息";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "你有新訊息";
 "n_messages_in_m_chats" = "%1$d條消息，位於%2$d個聊天內";
 // permissions
@@ -939,7 +939,7 @@
 "perm_explain_access_to_mic_denied" = "要傳送音訊消息，請轉到應用程式設定，選擇「存取權」，然後啟用「麥克風」。";
 "perm_explain_access_to_storage_denied" = "要接收或發送文件，請轉到應用程式設定，選擇「存取權」，然後啟用「存儲」。";
 "perm_explain_access_to_location_denied" = "要附加位置，請轉到應用程式設定，選擇「存取權」，然後啟用「位置」。";
-"perm_explain_access_to_notifications_denied" = "要接收通知，請轉到「系統設定/應用程式/Delta Chat」並啟用「通知」。";
+"perm_explain_access_to_notifications_denied" = "要接收通知，請轉到「系統設定/應用程式/BMChat」並啟用「通知」。";
 // ImageEditorHud
 "ImageEditorHud_draw_anywhere_to_blur" = "在任意位置繪製以進行模糊處理";
 "ImageEditorHud_add_text" = "新增文字";
@@ -949,7 +949,7 @@
 "ImageEditorHud_crop" = "裁切";
 "ImageEditorHud_flip" = "翻轉";
 "ImageEditorHud_rotate" = "旋轉";
-"welcome_desktop" = "歡迎來到 Delta Chat";
+"welcome_desktop" = "歡迎來到 BMChat";
 "global_menu_preferences_language_desktop" = "語言";
 "global_menu_file_desktop" = "檔案";
 "global_menu_file_quit_desktop" = "退出";
@@ -964,11 +964,11 @@
 "global_menu_view_developer_desktop" = "開發者";
 "global_menu_view_developer_tools_desktop" = "開發者工具";
 "global_menu_help_desktop" = "幫助";
-"delta_chat_homepage" = "Delta Chat 主頁";
+"delta_chat_homepage" = "BMChat 主頁";
 "contribute" = "貢獻";
 "global_menu_help_report_desktop" = "報告問題";
-"global_menu_help_about_desktop" = "關於 Delta Chat";
-"global_menu_file_open_desktop" = "開啟 Delta Chat";
+"global_menu_help_about_desktop" = "關於 BMChat";
+"global_menu_file_open_desktop" = "開啟 BMChat";
 "global_menu_minimize_to_tray" = "最小化";
 "no_chat_selected_suggestion_desktop" = "選擇聊天或建立新聊天";
 "write_message_desktop" = "撰寫訊息";
@@ -987,7 +987,7 @@
 "message_detail_received_desktop" = "已收到";
 "menu.view.developer.open.log.folder" = "打開日誌資料夾";
 "menu.view.developer.open.current.log.file" = "打開當前日誌文件";
-"explain_desktop_minimized_disabled_tray_pref" = "無法禁用托盤圖示，因為 Delta Chat 是使用 --minimized 選項啟動的。";
+"explain_desktop_minimized_disabled_tray_pref" = "無法禁用托盤圖示，因為 BMChat 是使用 --minimized 選項啟動的。";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "未找到拼寫建議。";
 "show_window" = "顯示視窗";
@@ -1025,7 +1025,7 @@
 "import_device_contacts" = "匯入裝置聯繫人";
 "import_device_contacts_hint" = "要從您的裝置與聯絡人聊天，請打開「設定」並啟用「聯絡人」。";
 // iOS notification settings
-"disabled_in_dc" = "在 Delta Chat 中已禁用";
+"disabled_in_dc" = "在 BMChat 中已禁用";
 "disabled_in_system_settings" = "在系統設定中禁用";
 "bg_app_refresh_disabled" = "在系統設定中已禁用 「後台應用程式刷新」";
 "notifications_avg_minutes" = "平均每%1$d分鐘一次";
@@ -1038,21 +1038,21 @@
 // use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
 "shortcuts_widget_title" = "捷徑";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
-"shortcuts_widget_description" = "使用 Delta Chat 的“新增到小工具”添加項目";
+"shortcuts_widget_description" = "使用 BMChat 的“新增到小工具”添加項目";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "remove_from_widget" = "從小工具中移除";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "add_to_widget" = "新增到小工具";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
 // android specific strings, developers: please take care to remove strings that are no longer used!
 "pref_instant_delivery" = "即時傳送";
 "pref_background_notifications" = "使用背景連接";
 "pref_background_notifications_explain" = "需要忽略的電池優化，如果通知未按時到達，請使用";
 "pref_reliable_service" = "強制後台連接";
 "pref_reliable_service_explain" = "導致永久通知";
-"pref_background_notifications_rationale" = "要保持與電子郵件伺服器的連接並在後台接收訊息，請在下一步中忽略電池優化。\n\nDelta Chat 使用的資源很少，並且注意不要耗盡電池。";
+"pref_background_notifications_rationale" = "要保持與電子郵件伺服器的連接並在後台接收訊息，請在下一步中忽略電池優化。\n\nBMChat 使用的資源很少，並且注意不要耗盡電池。";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "點擊此處可在 Delta Chat 處於後台時接收訊息。";
-"perm_enable_bg_already_done" = "您已經允許 Delta Chat 在後台接收訊息。\n\n如果消息仍未在後台到達，請同時檢查您的系統設定。";
+"perm_enable_bg_reminder_title" = "點擊此處可在 BMChat 處於後台時接收訊息。";
+"perm_enable_bg_already_done" = "您已經允許 BMChat 在後台接收訊息。\n\n如果消息仍未在後台到達，請同時檢查您的系統設定。";
 // device messages for updates
 "update_2_0" = "新版變化？ 💯 端對端加密現在可靠且永久有效。鎖頭圖標🔒已經消失！\n\n✉️ 沒有端對端加密的傳統電子郵件會以信件符號✉️標示\n\n😻 為你的所有聯絡人提供全新增強的個人資料頁面\n\n🔲 新按鈕可快速存取聊天中使用的應用程式\n\n❤️ 請捐款以幫助我們保持獨立並持續提供改進：%1$@";

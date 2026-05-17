@@ -217,7 +217,7 @@ public class VideoRecoder {
 
               int colorFormat;
               colorFormat = MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface;
-              // Log.i("DeltaChat", "colorFormat = " + colorFormat);
+              // Log.i("BMChat", "colorFormat = " + colorFormat);
 
               extractor.selectTrack(videoIndex);
               if (startTime > 0) {
@@ -362,7 +362,7 @@ public class VideoRecoder {
 
                     } else if (decoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                       MediaFormat newFormat = decoder.getOutputFormat();
-                      // Log.i("DeltaChat", "newFormat = " + newFormat);
+                      // Log.i("BMChat", "newFormat = " + newFormat);
                     } else if (decoderStatus < 0) {
                       throw new RuntimeException(
                           "unexpected result from decoder.dequeueOutputBuffer: " + decoderStatus);
@@ -378,7 +378,7 @@ public class VideoRecoder {
                       if (startTime > 0 && videoTime == -1) {
                         if (info.presentationTimeUs < startTime) {
                           doRender = false;
-                          // Log.i("DeltaChat", "drop frame startTime = " + startTime + " present
+                          // Log.i("BMChat", "drop frame startTime = " + startTime + " present
                           // time = " + info.presentationTimeUs);
                         } else {
                           videoTime = info.presentationTimeUs;
@@ -401,7 +401,7 @@ public class VideoRecoder {
                       }
                       if ((info.flags & MediaCodec.BUFFER_FLAG_END_OF_STREAM) != 0) {
                         decoderOutputAvailable = false;
-                        // Log.i("DeltaChat", "decoder stream end");
+                        // Log.i("BMChat", "decoder stream end");
                         encoder.signalEndOfInputStream();
                       }
                     }
@@ -459,7 +459,7 @@ public class VideoRecoder {
             Log.w(TAG, "Flushing video failed unexpectedly", e);
           }
         }
-        // Log.i("DeltaChat", "time = " + (System.currentTimeMillis() - time));
+        // Log.i("BMChat", "time = " + (System.currentTimeMillis() - time));
       }
     } else {
       // didWriteData(messageObject, cacheFile, true, true);

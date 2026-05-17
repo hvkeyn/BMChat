@@ -153,7 +153,7 @@ public class ApplicationContext extends MultiDexApplication {
     // }
     // LeakCanary.install(this);
 
-    Log.i("DeltaChat", "++++++++++++++++++ ApplicationContext.onCreate() ++++++++++++++++++");
+    Log.i("BMChat", "++++++++++++++++++ ApplicationContext.onCreate() ++++++++++++++++++");
 
     // BMChat: bind the auto-updater to the whole application lifecycle so a
     // pending update is detected on every foreground transition, not only on
@@ -214,7 +214,7 @@ public class ApplicationContext extends MultiDexApplication {
                             eventCenter.handleLogging(event);
                           }
                         }
-                        Log.i("DeltaChat", "shutting down event handler");
+                        Log.i("BMChat", "shutting down event handler");
                       },
                       "eventThread")
                   .start();
@@ -327,7 +327,7 @@ public class ApplicationContext extends MultiDexApplication {
             @Override
             public void onAvailable(@NonNull android.net.Network network) {
               Log.i(
-                  "DeltaChat",
+                  "BMChat",
                   "++++++++++++++++++ NetworkCallback.onAvailable() #" + debugOnAvailableCount++);
               getDcAccounts().maybeNetwork();
             }
@@ -336,7 +336,7 @@ public class ApplicationContext extends MultiDexApplication {
             public void onBlockedStatusChanged(
                 @NonNull android.net.Network network, boolean blocked) {
               Log.i(
-                  "DeltaChat",
+                  "BMChat",
                   "++++++++++++++++++ NetworkCallback.onBlockedStatusChanged() #"
                       + debugOnBlockedStatusChangedCount++);
             }
@@ -346,7 +346,7 @@ public class ApplicationContext extends MultiDexApplication {
                 @NonNull android.net.Network network, NetworkCapabilities networkCapabilities) {
               // usually called after onAvailable(), so a maybeNetwork seems contraproductive
               Log.i(
-                  "DeltaChat",
+                  "BMChat",
                   "++++++++++++++++++ NetworkCallback.onCapabilitiesChanged() #"
                       + debugOnCapabilitiesChangedCount++);
             }
@@ -355,7 +355,7 @@ public class ApplicationContext extends MultiDexApplication {
             public void onLinkPropertiesChanged(
                 @NonNull android.net.Network network, LinkProperties linkProperties) {
               Log.i(
-                  "DeltaChat",
+                  "BMChat",
                   "++++++++++++++++++ NetworkCallback.onLinkPropertiesChanged() #"
                       + debugOnLinkPropertiesChangedCount++);
             }
@@ -461,7 +461,7 @@ public class ApplicationContext extends MultiDexApplication {
             ExistingPeriodicWorkPolicy.KEEP,
             webxdcGarbageCollectionRequest);
 
-    Log.i("DeltaChat", "+++++++++++ ApplicationContext.onCreate() finished ++++++++++");
+    Log.i("BMChat", "+++++++++++ ApplicationContext.onCreate() finished ++++++++++");
   }
 
   @Override

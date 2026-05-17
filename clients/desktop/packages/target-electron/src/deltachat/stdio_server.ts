@@ -38,8 +38,8 @@ export class StdioServer {
       if (err.message.endsWith('ENOENT')) {
         dialog.showErrorBox(
           'Fatal Error: Core Library Missing',
-          `The DeltaChat Module is missing! This could be due to your antivirus program. Please check the quarantine to restore it and notify the developers about this issue.
-You can reach us on delta@merlinux.eu or on github.com/deltachat/deltachat-desktop/issues.
+          `The BMChat core module is missing! This could be due to your antivirus program. Please check the quarantine to restore it and notify the developers about this issue.
+You can reach us on github.com/hvkeyn/BMChat/issues.
 
 The missing module should be located at "${this.cmd_path}".
 
@@ -51,7 +51,7 @@ Error: ${err.message}
       } else {
         dialog.showErrorBox(
           'Fatal Error',
-          `Error with core has been detected, please contact developers: You can reach us on delta@merlinux.eu or on github.com/deltachat/deltachat-desktop/issues .
+          `Error with core has been detected, please contact developers: You can reach us on github.com/hvkeyn/BMChat/issues .
 
           ${err.name}: ${err.message}
 
@@ -95,12 +95,12 @@ Error: ${err.message}
       if (code !== null) {
         log.info(`child process exited with code ${code}`)
         if (code !== 0) {
-          log.critical('Fatal: The Delta Chat Core exited unexpectedly', code)
+          log.critical('Fatal: The BMChat core exited unexpectedly', code)
           dialog.showErrorBox(
             'Fatal Error',
             `[Version: ${
               BuildInfo.VERSION
-            } | ${platform()} | ${arch()}]\nThe Delta Chat Core exited unexpectedly with code ${code}\n${errorLog}`
+            } | ${platform()} | ${arch()}]\nThe BMChat core exited unexpectedly with code ${code}\n${errorLog}`
           )
           app.exit(1)
         }

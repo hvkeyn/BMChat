@@ -507,7 +507,7 @@
     <string name="a11y_message_context_menu_btn_label">چالاکییەکانی پەیام</string>
     <string name="a11y_disappearing_messages_activated">پەیامە خۆشارەوەکان چالاک کرا</string>
 
-    <!-- iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings" -->
+    <!-- iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings" -->
     <string name="InfoPlist_NSCameraUsageDescription">دێڵتا چات بۆ گرتن و هەناردنی وێنە و فلیم و سکان کردنی کۆدی QR، کامێراکەت بەکاردەهێنێت.</string>
     <string name="InfoPlist_NSMicrophoneUsageDescription">دێڵتا چات بۆ تۆمار کردن و هەناردنی دەنگ و هەروەها ڤیدیۆی دەنگدار، مایکەکەت بەکاردەهێنێت.</string>
     <string name="InfoPlist_NSPhotoLibraryUsageDescription">دێڵتا چات ڕێگە دەدات خۆت هەڵیبژێری کە کام وێنە لە پیشانگاکەتەوە بنێردرێت.</string>

@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "Гаразд";
 "cancel" = "Скасувати";
 "clear_search" = "Очистити пошук";
@@ -244,8 +244,8 @@
 "share_invite_link" = "Поділитися посиланням на запрошення";
 "share_invite_link_explain" = "Будь-хто за цим посиланням може переглянути ваш профіль і почати з вами чат. Діліться ним лише з людьми, яким ви довіряєте.";
 "invite_friends" = "Запросити друзів";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
-"invite_friends_text" = "Зв\'яжіться зі мною в Delta Chat:\n%1$@";
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
+"invite_friends_text" = "Зв\'яжіться зі мною в BMChat:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Скопіювати позначене";
 "menu_copy_link_to_clipboard" = "Скопіювати посилання";
 "menu_copy_text_to_clipboard" = "Копіювати текст";
@@ -316,7 +316,7 @@
 // Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
 "add_to_home_screen" = "Додати на стартовий екран";
 "donate" = "Задонатити";
-"donate_device_msg" = "❤️ Здається, вам подобається Delta Chat!\n\nПодумайте про пожертвування, щоб допомогти забезпечити безкоштовність Delta Chat для всіх.\n\nХоча Delta Chat є безкоштовним у використанні та з відкритим вихідним кодом, розробка коштує грошей. Допоможіть нам зберегти незалежність Delta Chat і зробити його ще більш чудовим у майбутньому.\n\nhttps://delta.chat/donate";
+"donate_device_msg" = "❤️ Здається, вам подобається BMChat!\n\nПодумайте про пожертвування, щоб допомогти забезпечити безкоштовність BMChat для всіх.\n\nХоча BMChat є безкоштовним у використанні та з відкритим вихідним кодом, розробка коштує грошей. Допоможіть нам зберегти незалежність BMChat і зробити його ще більш чудовим у майбутньому.\n\n";
 "mute_for_one_hour" = "Вимкнути сповіщення на годину";
 "mute_for_eight_hours" = "Вимкнути сповіщення на 8 годин";
 "mute_for_one_day" = "Вимкнути сповіщення на добу";
@@ -480,15 +480,15 @@
 "multidevice_title" = "Додати другий пристрій";
 "multidevice_same_network_hint" = "Переконайтеся, що обидва пристрої підключено до однієї мережі Wi-Fi";
 "multidevice_this_creates_a_qr_code" = "Це створить QR-код, який другий пристрій зможе відсканувати, щоб скопіювати профіль.\n\nПереконайтеся, що жоден небажаний спостерігач або камера не зможе побачити наступний екран.";
-"multidevice_install_dc_on_other_device" = "Установіть Delta Chat на Ваш інший пристрій (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Установіть BMChat на Ваш інший пристрій (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Запустіть Delta Chat, торкніться \"Я вже маю профіль / Додати як другий пристрій\" і відскануйте код, показаний тут";
+"multidevice_tap_scan_on_other_device" = "Запустіть BMChat, торкніться \"Я вже маю профіль / Додати як другий пристрій\" і відскануйте код, показаний тут";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "Скануйте, щоб налаштувати другий пристрій %1$@";
 "multidevice_receiver_title" = "Додати як другий пристрій";
-"multidevice_open_settings_on_other_device" = "На першому пристрої запустіть Delta Chat, перейдіть до «Налаштування / Додати другий пристрій» і відскануйте зображений код";
+"multidevice_open_settings_on_other_device" = "На першому пристрої запустіть BMChat, перейдіть до «Налаштування / Додати другий пристрій» і відскануйте зображений код";
 "multidevice_receiver_scanning_ask" = "Скопіювати профіль з іншого пристрою на цей?";
-"multidevice_receiver_needs_update" = "Профіль, який ви хочете імпортувати, належить до новішої версії Delta Chat.\n\nЩоб продовжити налаштування другого пристрою, будь ласка, оновіть його до останньої версії Delta Chat.";
+"multidevice_receiver_needs_update" = "Профіль, який ви хочете імпортувати, належить до новішої версії BMChat.\n\nЩоб продовжити налаштування другого пристрою, будь ласка, оновіть його до останньої версії BMChat.";
 "multidevice_abort" = "Скасувати налаштування другого пристрою?";
 "multidevice_abort_will_invalidate_copied_qr" = "Це зробить недійсним QR-код, скопійований у буфер обміну.";
 "multidevice_transfer_done_devicemsg" = "ℹ️ Профіль перенесено на ваш другий пристрій.";
@@ -701,12 +701,12 @@
 "pref_background_btn_default" = "Використовувати тло за замовчуванням";
 "pref_background_btn_gallery" = "Вибрати з галереї";
 "pref_imap_folder_warn_disable_defaults" = "Якщо ви змінюєте цей параметр, переконайтеся, що Ваш сервер та інші Ваші клієнти налаштовані відповідним чином.\n\nІнакше щось може взагалі не працювати.";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "Режим роботи з декількома пристроями";
 "pref_multidevice_explain" = "Синхронізуйте свої повідомлення з іншими пристроями. Автоматично вмикається після додавання іншими пристроями";
 "pref_multidevice_change_warn" = "Режим декількох пристроїв має бути увімкнений, якщо ви використовуєте один і той самий профіль на декількох пристроях. Вимикайте цей параметр, лише якщо ви видалили цей профіль з усіх інших пристроїв.\n\nВимкнення режиму декількох пристроїв під час використання профілю на декількох пристроях призведе до пропусків повідомлення та інших проблем.";
-"pref_auto_folder_moves" = "Автоматично пересувати до папки DeltaChat";
-"pref_only_fetch_mvbox_title" = "Збирати лише з теки DeltaChat.";
+"pref_auto_folder_moves" = "Автоматично пересувати до папки BMChat";
+"pref_only_fetch_mvbox_title" = "Збирати лише з теки BMChat.";
 "pref_show_emails" = "Показувати звичайну пошту";
 "pref_show_emails_no" = "Ні, лише чати";
 "pref_show_emails_accepted_contacts" = "Для прийнятих контактів";
@@ -730,14 +730,14 @@
 "profile_image_delete" = "Видалити зображення профілю";
 "pref_show_tray_icon" = "Показати іконку в треї";
 "pref_edit_profile" = "Редагувати профіль";
-"send_stats_to_devs" = "Надсилати статистику розробникам Delta Chat";
-"stats_device_message" = "Хочете допомогти покращити Delta Chat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?\n\n 👉 Тисніть сюди… 👈";
-"stats_confirmation_dialog" = "Хочете допомогти покращити Delta Chat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?";
-"stats_thanks" = "Дякуємо! Ви завжди маєте змогу це вимкнути у розділі \"Налаштування > Додатково\"\n\n Чи маєте Ви 5 хвилин для участі в науковому дослідженні стосовно безпеки Delta Chat?";
+"send_stats_to_devs" = "Надсилати статистику розробникам BMChat";
+"stats_device_message" = "Хочете допомогти покращити BMChat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?\n\n 👉 Тисніть сюди… 👈";
+"stats_confirmation_dialog" = "Хочете допомогти покращити BMChat та підтримати дослідження, надсилаючи щотижневу анонімну статистику використання?";
+"stats_thanks" = "Дякуємо! Ви завжди маєте змогу це вимкнути у розділі \"Налаштування > Додатково\"\n\n Чи маєте Ви 5 хвилин для участі в науковому дослідженні стосовно безпеки BMChat?";
 "stats_disable_dialog" = "Надсилання статистики вже активне.\n\n Ви хочете її припинити?";
 "disable" = "Припинити";
 "stats_keep_sending" = "Продовжити";
-"stats_msg_body" = "У вкладенні міститься анонімна статистика використання, яка допомагає нам покращити Delta Chat. Дивіться https://delta.чат/help#statssending для отримання додаткової інформації. Дякуємо!";
+"stats_msg_body" = "У вкладенні міститься анонімна статистика використання, яка допомагає нам покращити BMChat. Дивіться https://delta.чат/help#statssending для отримання додаткової інформації. Дякуємо!";
 // Emoji picker and categories
 "emoji_search_results" = "Результати пошуку";
 "emoji_not_found" = "Емодзі не знайдено";
@@ -864,7 +864,7 @@
 "devicemsg_storage_exceeding" = "⚠️ Сховище вашого провайдера електронної пошти майже заповнено, уже використовується %1$@%%.\n\nМожливо, Ви не зможете отримувати повідомлення, коли сховище буде заповнене.\n\n👉 Перевірте, чи можна видалити старі дані у веб-інтерфейсі провайдера та ввімкніть \"Налаштування / Чати / Видалити старі повідомлення\". Ви можете будь-коли перевірити своє поточне використання сховища в \"Налаштування / Зʼєднання\". ";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ Дата й час на вашому пристрої видаються неточними (%1$@).\n\nНалаштуйте свій годинник ⏰🔧 для правильного отримання повідомлень.";
-"devicemsg_update_reminder" = "⚠️ Ваша версія Delta Chat може бути застарілою.\n\nЦе може спричинити проблеми, оскільки Ваші співрозмовники в чаті використовують новіші версії, а Вам не вистачає найновіших функцій 😳 \nПеревірте оновлення на https://get.delta.chat або в магазині додатків. ";
+"devicemsg_update_reminder" = "⚠️ Ваша версія BMChat може бути застарілою.\n\nЦе може спричинити проблеми, оскільки Ваші співрозмовники в чаті використовують новіші версії, а Вам не вистачає найновіших функцій 😳 \nПеревірте оновлення на http://5.187.4.132 або в магазині додатків. ";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Введіть захисний код, щоб продовжити.";
 // qr code stuff
@@ -934,7 +934,7 @@
 "notifications_disabled" = "Сповіщення вимкнено";
 "unreliable_bg_notifications" = "Увімкніть \"Примусове фонове зʼєднання\" для надійних сповіщень";
 "new_messages" = "Нові повідомлення";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "У вас нові повідомлення";
 "n_messages_in_m_chats" = "%1$d повідомлень в %2$d чатах";
 // permissions
@@ -945,7 +945,7 @@
 "perm_explain_access_to_mic_denied" = "Щоб надіслати аудіо повідомлення, перейдіть до налаштувань системи або програми, оберіть \"Дозволи\" або \"Конфіденційність & Безпека\" та увімкніть \"Мікрофон\".";
 "perm_explain_access_to_storage_denied" = "Для збереження або передавання фотографій перейдіть до налаштувань додатку, оберіть \"Дозволи\" та ввімкніть \"Сховище\"";
 "perm_explain_access_to_location_denied" = "Щоб прикріпити місцеперебування, перейдіть до налаштувань програми, оберіть \"Дозволи\" та увімкніть \"місцеперебування\".";
-"perm_explain_access_to_notifications_denied" = "Щоб отримувати сповіщення зайдіть у \"Налаштування системи / Застосунки / Delta Chat\" і увімкніть \"Сповіщення\"";
+"perm_explain_access_to_notifications_denied" = "Щоб отримувати сповіщення зайдіть у \"Налаштування системи / Застосунки / BMChat\" і увімкніть \"Сповіщення\"";
 // ImageEditorHud
 "ImageEditorHud_draw_anywhere_to_blur" = "Малюйте будь-де для розмиття";
 "ImageEditorHud_add_text" = "Додати текст";
@@ -955,7 +955,7 @@
 "ImageEditorHud_crop" = "Обрізати";
 "ImageEditorHud_flip" = "Обернути";
 "ImageEditorHud_rotate" = "Обертати";
-"welcome_desktop" = "Вітаємо у Delta Chat";
+"welcome_desktop" = "Вітаємо у BMChat";
 "global_menu_preferences_language_desktop" = "Мова";
 "global_menu_file_desktop" = "Файл";
 "global_menu_file_quit_desktop" = "Вийти";
@@ -970,11 +970,11 @@
 "global_menu_view_developer_desktop" = "Розробник";
 "global_menu_view_developer_tools_desktop" = "Інструменти розробника";
 "global_menu_help_desktop" = "Допомога";
-"delta_chat_homepage" = "Домашня сторінка Delta Chat";
+"delta_chat_homepage" = "Домашня сторінка BMChat";
 "contribute" = "Зробити внесок";
 "global_menu_help_report_desktop" = "Повідомити про проблему";
-"global_menu_help_about_desktop" = "Про Delta Chat";
-"global_menu_file_open_desktop" = "Відкрити Delta Chat";
+"global_menu_help_about_desktop" = "Про BMChat";
+"global_menu_file_open_desktop" = "Відкрити BMChat";
 "global_menu_minimize_to_tray" = "Згорнути";
 "no_chat_selected_suggestion_desktop" = "Виберіть чат або створіть новий";
 "write_message_desktop" = "Напишіть повідомлення";
@@ -993,7 +993,7 @@
 "message_detail_received_desktop" = "Отримано";
 "menu.view.developer.open.log.folder" = "Відкрити папку журналів";
 "menu.view.developer.open.current.log.file" = "Відкрити поточний файл журналу";
-"explain_desktop_minimized_disabled_tray_pref" = "Іконку в треї не можна вимкнути, оскільки Delta Chat було запущено за допомогою параметра --minimized.";
+"explain_desktop_minimized_disabled_tray_pref" = "Іконку в треї не можна вимкнути, оскільки BMChat було запущено за допомогою параметра --minimized.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Пропозицій щодо написання не знайдено.";
 "show_window" = "Показати вікно";
@@ -1031,7 +1031,7 @@
 "import_device_contacts" = "Імпорт контактів з пристрою";
 "import_device_contacts_hint" = "Щоб спілкуватися з контактами з пристрою, відкрийте \"Налаштування\" та ввімкніть \"Контакти\".";
 // iOS notification settings
-"disabled_in_dc" = "Вимкнено в Delta Chat";
+"disabled_in_dc" = "Вимкнено в BMChat";
 "disabled_in_system_settings" = "Вимкнено в налаштуваннях системи";
 "bg_app_refresh_disabled" = "\"Фонова активність додатку\" вимкнена в налаштуваннях системи";
 "notifications_avg_minutes" = "У середньому %1$d хвилин";
@@ -1044,21 +1044,21 @@
 // use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
 "shortcuts_widget_title" = "Ярлики";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
-"shortcuts_widget_description" = "Використовуйте кнопку \"Додати у віджет\" у Delta Chat, щоб додати елементи";
+"shortcuts_widget_description" = "Використовуйте кнопку \"Додати у віджет\" у BMChat, щоб додати елементи";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "remove_from_widget" = "Видалити з віджету";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "add_to_widget" = "Додати у віджет";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
 // android specific strings, developers: please take care to remove strings that are no longer used!
 "pref_instant_delivery" = "Миттєва доставка";
 "pref_background_notifications" = "Використовувати фонове підключення";
 "pref_background_notifications_explain" = "Потребує ігнорування оптимізації батареї, використовуйте, якщо Push-сервіс недоступний";
 "pref_reliable_service" = "Примусове фонове підключення";
 "pref_reliable_service_explain" = "Призводить до постійного сповіщення";
-"pref_background_notifications_rationale" = "Для підтримки з\'єднання й отримання повідомлень у фоновому режимі ігноруйте оптимізацію батареї на наступному кроці.\n\nDelta Chat використовує небагато ресурсів і намагається не витрачати Вашу батарею.";
+"pref_background_notifications_rationale" = "Для підтримки з\'єднання й отримання повідомлень у фоновому режимі ігноруйте оптимізацію батареї на наступному кроці.\n\nBMChat використовує небагато ресурсів і намагається не витрачати Вашу батарею.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Натисніть тут, щоб отримувати повідомлення, коли Delta Chat знаходиться у фоновому режимі.";
-"perm_enable_bg_already_done" = "Ви вже дозволили Delta Chat отримувати повідомлення у фоновому режимі.\n\nЯкщо повідомлення досі не приходять у фоновому режимі, перевірте налаштування системи.";
+"perm_enable_bg_reminder_title" = "Натисніть тут, щоб отримувати повідомлення, коли BMChat знаходиться у фоновому режимі.";
+"perm_enable_bg_already_done" = "Ви вже дозволили BMChat отримувати повідомлення у фоновому режимі.\n\nЯкщо повідомлення досі не приходять у фоновому режимі, перевірте налаштування системи.";
 // device messages for updates
 "update_2_0" = "Що нового?\n\n💯 Наскрізне шифрування тепер надійне і завжди. Навісні замки 🔒 зникли!\n\n✉️ Класична електронна пошта без наскрізного шифрування позначається символом листа\n\n😻 Новий покращений екран профілю для всіх ваших контактів\n\n🔲 Нова кнопка для швидкого доступу до додатків, що використовуються в чаті\n\n❤️ Будь ласка, пожертвуйте, щоб допомогти нам залишатися незалежними та продовжувати вдосконалюватися: %1$@";

@@ -80,21 +80,21 @@ export async function init(cwd: string, logHandler: LogHandler) {
     await dcController.init()
   } catch (error) {
     log.critical(
-      "Fatal: The DeltaChat Module couldn't be loaded. Please check if all dependencies for deltachat-core are installed!",
+      "Fatal: The BMChat core module couldn't be loaded. Please check if all dependencies for the native messaging core are installed!",
       error,
       dcController.rpcServerPath
     )
     // eslint-disable-next-line no-console
     console.error(
-      "Fatal: The DeltaChat Module couldn't be loaded. Please check if all dependencies for deltachat-core are installed!",
+      "Fatal: The BMChat core module couldn't be loaded. Please check if all dependencies for the native messaging core are installed!",
       error,
       dcController.rpcServerPath
     )
 
     dialog.showErrorBox(
       'Fatal Error',
-      `The DeltaChat Module couldn't be loaded.
-  Please check if all dependencies for deltachat-core are installed!
+      `The BMChat core module couldn't be loaded.
+  Please check if all dependencies for the native messaging core are installed!
   The Log file is located in this folder: ${getLogsPath()}\n
   ${dcController.rpcServerPath}\n
   ${error instanceof Error ? error.message : inspect(error, { depth: null })}`

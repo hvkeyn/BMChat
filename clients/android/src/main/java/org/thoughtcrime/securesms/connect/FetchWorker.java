@@ -21,7 +21,7 @@ public class FetchWorker extends Worker {
   // therefore we do not stopIo() here.
   @Override
   public @NonNull Result doWork() {
-    Log.i("DeltaChat", "++++++++++++++++++ FetchWorker.doWork() started ++++++++++++++++++");
+    Log.i("BMChat", "++++++++++++++++++ FetchWorker.doWork() started ++++++++++++++++++");
     DcHelper.getAccounts(context).startIo();
 
     // as we do not know when startIo() has done it's work or if is even doable in one step,
@@ -31,7 +31,7 @@ public class FetchWorker extends Worker {
     // however, we should not wait too long here to avoid getting bad battery ratings.
     Util.sleep(60 * 1000);
 
-    Log.i("DeltaChat", "++++++++++++++++++ FetchWorker.doWork() will return ++++++++++++++++++");
+    Log.i("BMChat", "++++++++++++++++++ FetchWorker.doWork() will return ++++++++++++++++++");
     return Result.success();
   }
 }

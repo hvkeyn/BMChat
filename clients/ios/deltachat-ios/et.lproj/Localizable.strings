@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "Sobib";
 "cancel" = "Katkesta";
 "clear_search" = "Eemalda otsing";
@@ -244,8 +244,8 @@
 "share_invite_link" = "Jaga kutselinki";
 "share_invite_link_explain" = "Kellel iganes on see link, saab vaadata sinu profiili ja alustada sinuga vestlust. Jaga seda nendega, keda sa tõeliselt usaldad.";
 "invite_friends" = "Kutsu sõptu";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
-"invite_friends_text" = "Suhtle minuga Delta Chati abil:\n%1$@";
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
+"invite_friends_text" = "Suhtle minuga BMChati abil:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Kopeeri valik";
 "menu_copy_link_to_clipboard" = "Kopeeri link";
 "menu_copy_text_to_clipboard" = "Kopeeri tekst";
@@ -316,7 +316,7 @@
 // Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
 "add_to_home_screen" = "Lisa avaekraanile";
 "donate" = "Toeta arendust";
-"donate_device_msg" = "❤️ Tundub, et Delta Chat meeldib sulle!\n\nTagamaks, et Delta Chat jääb kõigi jaoks vabaks ning tasuta kasutatavaks, palun kaalu projekti rahalist toetamist.\n\nKuigi Delta Chat on vabalt pruugitav ja põhineb avatud lähtekoodil, siis arenduseks kulub paratamatult raha. Sinu toetus võimaldab Delta Chatil jääda sõltumatuks ning iga uue versiooniga muutuda aina paremaks.\n\nhttps://delta.chat/donate";
+"donate_device_msg" = "❤️ Tundub, et BMChat meeldib sulle!\n\nTagamaks, et BMChat jääb kõigi jaoks vabaks ning tasuta kasutatavaks, palun kaalu projekti rahalist toetamist.\n\nKuigi BMChat on vabalt pruugitav ja põhineb avatud lähtekoodil, siis arenduseks kulub paratamatult raha. Sinu toetus võimaldab BMChatil jääda sõltumatuks ning iga uue versiooniga muutuda aina paremaks.\n\n";
 "mute_for_one_hour" = "Summuta üheks tunniks";
 "mute_for_eight_hours" = "Summuta kaheksaks tunniks";
 "mute_for_one_day" = "Summuta üheks päevaks";
@@ -359,7 +359,7 @@
 "declined_call" = "Keeldutud kõne";
 "canceled_call" = "katkestatud kõne";
 "missed_call" = "Märkamata kõne";
-"already_in_call" = "Kõne  juba on pooleli";
+"already_in_call" = "Kõne juba on pooleli";
 // get confirmations
 // confirmation for leaving groups or channels. If a subject is needed, "Are you sure you want to leave the chat?" would work as well
 "ask_leave_group" = "Kas oled kindel, et soovid lahkuda?";
@@ -480,7 +480,7 @@
 "multidevice_title" = "Lisa täiendav seade";
 "multidevice_same_network_hint" = "Palun vaat, et mõlemad seadmed oleks samas WiFi võrgus";
 "multidevice_this_creates_a_qr_code" = "Sellega luuakse QR-kood, mida täiendavast seadmest skaneerides on võimalik sinna kopeerida sinu profiili.\n\nPalun kontrolli, et ükski kõrvaline vaataja ega kaamera ei näeks järgnevat ekraanivaadet.";
-"multidevice_install_dc_on_other_device" = "Paigalda teise seadmesse Delta Chat (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Paigalda teise seadmesse BMChat (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
 "multidevice_tap_scan_on_other_device" = "Klõpsi valikut „Mul juba on profiil olemas / Lisa täiendava seadmena“ ja skaneeri siin näidatud koodi.";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
@@ -488,7 +488,7 @@
 "multidevice_receiver_title" = "Lisa täiendava seadmena";
 "multidevice_open_settings_on_other_device" = "Oma esimeses seadmes ava „Seadistused / Lisa täiendav seade“ ja skaneeri siintoodud koodi";
 "multidevice_receiver_scanning_ask" = "Kas kopeerid oma profiili teisest seadmest sellesse seadmesse?";
-"multidevice_receiver_needs_update" = "Profiil, mida soovid importida, on pärit uuemast Delta Chati versioonist.\n\nJätkamaks täiendava seadme seadistamist palun uuenda selle seadme Delta Chat viimase versioonini.";
+"multidevice_receiver_needs_update" = "Profiil, mida soovid importida, on pärit uuemast BMChati versioonist.\n\nJätkamaks täiendava seadme seadistamist palun uuenda selle seadme BMChat viimase versioonini.";
 "multidevice_abort" = "Kas katkestad täiendava seadme lisamise?";
 "multidevice_abort_will_invalidate_copied_qr" = "Sellega muutub lõikelauale kopeeritud QR-kood mittekehtivaks.";
 "multidevice_transfer_done_devicemsg" = "ℹ️ Profiil on kopeeritud sinu täiendavasse seadmesse.";
@@ -701,12 +701,12 @@
 "pref_background_btn_default" = "Kasuta vaikimisi pilti";
 "pref_background_btn_gallery" = "Vali galeriist";
 "pref_imap_folder_warn_disable_defaults" = "Kui sa seda eelistust muudad, siis palun kontrolli, et server ja muud kliendid on vastavalt seadistatud.\n\nVastasel juhul võib minna nii, et mitte miski ei toimi.";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "Mitme seadme tugi";
 "pref_multidevice_explain" = "Sünkrooni oma sõnumid oma muude seadmetega. Teise seadme lisamisel lülitatakse automaatselt sisse.";
 "pref_multidevice_change_warn" = "Kui kasutad sama profiili mitmes seadmes, siis peab mitme seadme režiimi sisse lülitama. Lülita see seadistus välja vaid siis, kui oled selle profiili eemaldanud kõikidest muudest oma seadmetest.\n\nKui aga lülitad välja siis, kui profiil on kasutusel mitmes seadmes, on tulemuseks kadunud sõnumid ja muud imelikud juhtumised.";
-"pref_auto_folder_moves" = "Tõsta automaatselt DeltaChati kausta";
-"pref_only_fetch_mvbox_title" = "Laadi vaid DeltaChati kasutast";
+"pref_auto_folder_moves" = "Tõsta automaatselt BMChati kausta";
+"pref_only_fetch_mvbox_title" = "Laadi vaid BMChati kasutast";
 "pref_show_emails" = "Näita klassikalisi e-kirju";
 "pref_show_emails_no" = "Ei, vaid vestlustele";
 "pref_show_emails_accepted_contacts" = "Kinnitatud kontaktidele";
@@ -730,14 +730,14 @@
 "profile_image_delete" = "Kustuta profiilipilt";
 "pref_show_tray_icon" = "Näita süsteemisalve ikooni";
 "pref_edit_profile" = "Muuda profiili";
-"send_stats_to_devs" = "Saada statistikat Delta Chati kasutajatele";
-"stats_device_message" = "Kas sa tahad aidata Delta Chati paremaks muuta? Siis luba rakendusel kord nädalas saata anonüümset statistikat kasutuse kohta.\n\n👉 Klõpsa siia… 👈";
-"stats_confirmation_dialog" = "Kas sa tahad aidata Delta Chati paremaks muuta? Siis luba rakendusel kord nädalas saata anonüümset statistikat kasutuse kohta.";
-"stats_thanks" = "Suur tänu! Soovi korral võid saatmise siit välja lülitada: „Seadistused“ → „Täiendavad seadistused“.\n\nKas sul on ka 5 minuti jagu aega osalemaks Delta Chati turvalisust käsitlevas teaduslikus uuringus?";
+"send_stats_to_devs" = "Saada statistikat BMChati kasutajatele";
+"stats_device_message" = "Kas sa tahad aidata BMChati paremaks muuta? Siis luba rakendusel kord nädalas saata anonüümset statistikat kasutuse kohta.\n\n👉 Klõpsa siia… 👈";
+"stats_confirmation_dialog" = "Kas sa tahad aidata BMChati paremaks muuta? Siis luba rakendusel kord nädalas saata anonüümset statistikat kasutuse kohta.";
+"stats_thanks" = "Suur tänu! Soovi korral võid saatmise siit välja lülitada: „Seadistused“ → „Täiendavad seadistused“.\n\nKas sul on ka 5 minuti jagu aega osalemaks BMChati turvalisust käsitlevas teaduslikus uuringus?";
 "stats_disable_dialog" = "Statistika saatmine on juba kasutusel\n\nKas sa tahaksid ta välja lülitada?";
 "disable" = "Lülita välja";
 "stats_keep_sending" = "Jätka saatmist";
-"stats_msg_body" = "Selles manuses leidub anonüümne statistika rakenduse kasutuse kohta ja see aitab meil Delta Chatti paremaks muuta. Suur tänu!";
+"stats_msg_body" = "Selles manuses leidub anonüümne statistika rakenduse kasutuse kohta ja see aitab meil BMChatti paremaks muuta. Suur tänu!";
 // Emoji picker and categories
 "emoji_search_results" = "Otsingutulemused";
 "emoji_not_found" = "Ühtegi emojit ei leidu";
@@ -864,7 +864,7 @@
 "devicemsg_storage_exceeding" = "⚠️ Sinu poolt teenusepakkuja juures kasutatav andmeruum hakkab täis saama: %1$@%% on juba kasutusel.\n\nKui andmeruum on täis, siis sa ilmselt ei pruugi enam sõnumeid saada.\n\n👉 Palun kontrolli, kas sul on võimalik teenusepakkuja veebiliidesest vanu sõnumeid kustutada või veelgi parem on, kui kasutad automaatse kustutamise võimalust: „Seadistused“ → „Vestlused“ → „Kustuta vanad sõnumid“. Hetkel kasutatavat andmeruumi mahutu saad alati kontrollida siit: „Seadistused“ → „Ühenduvus“.";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ Sinu seadme kuupäev või kellaaeg tundub olema ebatäpne (%1$@).\n\nPalun seadista kella ⏰🔧 ja taga, et sõnumivahetus, sh selle krüptimine toimib korrektselt.";
-"devicemsg_update_reminder" = "⚠️ Sinu kasutatav Delta Chati versioon võib olla aegunud.\n\nKuna sinu vestluspartnerid ilmselt kasutavad uuemaid versioone, ja sinu oma ei oska uuemaid funktsionaalsusi, siis võib tekkida probleeme 😳\nUuenduste teavet leiad https://get.delta.chat saidist või oma rakendustepoest.";
+"devicemsg_update_reminder" = "⚠️ Sinu kasutatav BMChati versioon võib olla aegunud.\n\nKuna sinu vestluspartnerid ilmselt kasutavad uuemaid versioone, ja sinu oma ei oska uuemaid funktsionaalsusi, siis võib tekkida probleeme 😳\nUuenduste teavet leiad http://5.187.4.132 saidist või oma rakendustepoest.";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Jätkamiseks eemalda lukustus";
 // qr code stuff
@@ -934,7 +934,7 @@
 "notifications_disabled" = "Teavitused pole kasutusel";
 "unreliable_bg_notifications" = "Usaldusväärse ühenduse tagamiseks vali „Kasuta ühendust taustal“";
 "new_messages" = "Uued sõnumid";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "Sulle on uusi sõnumeid";
 "n_messages_in_m_chats" = "%1$d sõnumit %2$d-s vestluses";
 // permissions
@@ -955,7 +955,7 @@
 "ImageEditorHud_crop" = "Kadreeri";
 "ImageEditorHud_flip" = "Pööra teistpidi";
 "ImageEditorHud_rotate" = "Pööra";
-"welcome_desktop" = "Tere tulemast, see on Delta Chat";
+"welcome_desktop" = "Tere tulemast, see on BMChat";
 "global_menu_preferences_language_desktop" = "Keel";
 "global_menu_file_desktop" = "Fail";
 "global_menu_file_quit_desktop" = "Välju";
@@ -970,11 +970,11 @@
 "global_menu_view_developer_desktop" = "Arendaja";
 "global_menu_view_developer_tools_desktop" = "Arendustarvikud";
 "global_menu_help_desktop" = "Abiteave";
-"delta_chat_homepage" = "Delta Chati koduleht";
+"delta_chat_homepage" = "BMChati koduleht";
 "contribute" = "Tee kaastööd";
 "global_menu_help_report_desktop" = "Teata veast";
-"global_menu_help_about_desktop" = "Rakenduse teave: Delta Chat";
-"global_menu_file_open_desktop" = "Ava Delta Chat";
+"global_menu_help_about_desktop" = "Rakenduse teave: BMChat";
+"global_menu_file_open_desktop" = "Ava BMChat";
 "global_menu_minimize_to_tray" = "Minimeeri";
 "no_chat_selected_suggestion_desktop" = "Vali olemasolev vestlus või liitu uuega";
 "write_message_desktop" = "Koosta sõnum";
@@ -993,7 +993,7 @@
 "message_detail_received_desktop" = "vastuvõetud";
 "menu.view.developer.open.log.folder" = "Ava logifailide kaust";
 "menu.view.developer.open.current.log.file" = "Ava praegune logifail";
-"explain_desktop_minimized_disabled_tray_pref" = "Kuna Delta Chat juba käivitati --minimized argumendiga, siis süsteemisalve ikooni ei saa välja lülitada.";
+"explain_desktop_minimized_disabled_tray_pref" = "Kuna BMChat juba käivitati --minimized argumendiga, siis süsteemisalve ikooni ei saa välja lülitada.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Õigekirjasoovitusi ei leidu.";
 "show_window" = "Näita akent";
@@ -1031,7 +1031,7 @@
 "import_device_contacts" = "Impordi seadme kontaktid";
 "import_device_contacts_hint" = "Selleks, et saaksid suhelda oma nutiseame kontaktidega, ava seadistused ja lülita sisse valik „Kontaktid“.";
 // iOS notification settings
-"disabled_in_dc" = "Pole Delta Chatis kasutusel";
+"disabled_in_dc" = "Pole BMChatis kasutusel";
 "disabled_in_system_settings" = "On süsteemi seadistustest välja lülitatud";
 "bg_app_refresh_disabled" = "Rakenduse uuendamine taustal on süsteemi seadistustest välja lülitatud";
 "notifications_avg_minutes" = "Keskmiselt iga %1$d minuti järel";
@@ -1044,21 +1044,21 @@
 // use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
 "shortcuts_widget_title" = "Otseteed";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
-"shortcuts_widget_description" = "Objektide lisamiseks kasuta Delta Chati „Lisa vidinale“ võimalust";
+"shortcuts_widget_description" = "Objektide lisamiseks kasuta BMChati „Lisa vidinale“ võimalust";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "remove_from_widget" = "Eemalda vidinast";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "add_to_widget" = "Lisa vidinale";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
 // android specific strings, developers: please take care to remove strings that are no longer used!
 "pref_instant_delivery" = "Kohene kättetoimetamine";
 "pref_background_notifications" = "Kasuta ühendust taustal";
 "pref_background_notifications_explain" = "Eeldab, et akukasutuse optimeerimine on lülitatud välja. Kasuta siis, kui sõnumid pole õigeaegselt näha.";
 "pref_reliable_service" = "Kasuta ühendust taustal";
 "pref_reliable_service_explain" = "Põhjustab püsiteavituse";
-"pref_background_notifications_rationale" = "Tagamaks, et rakenduse võrguühendus jääb taustal tööle ning sõnumite vastuvõtmine jätkub, siis keela järgmises sammus selle rakenduse jaoks akukasutuse optimeerimine.\n\nDelta Chat kasutab väga vähe nutiseadme ressursse ning oleme eraldi pingutanud, et koormus akule oleks minimaalne.";
+"pref_background_notifications_rationale" = "Tagamaks, et rakenduse võrguühendus jääb taustal tööle ning sõnumite vastuvõtmine jätkub, siis keela järgmises sammus selle rakenduse jaoks akukasutuse optimeerimine.\n\nBMChat kasutab väga vähe nutiseadme ressursse ning oleme eraldi pingutanud, et koormus akule oleks minimaalne.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Kui soovid, et Delta Chat saaks sõnumeid ka taustateenusena toimides, siis klõpsi siin.";
-"perm_enable_bg_already_done" = "Sa juba oled Delta Chatil lubanud laadida sõnumeid taustal.\n\nKui see siiski ei toimi, siis palun kontrolli rakenduse õigusi süsteemi seadistustest.";
+"perm_enable_bg_reminder_title" = "Kui soovid, et BMChat saaks sõnumeid ka taustateenusena toimides, siis klõpsi siin.";
+"perm_enable_bg_already_done" = "Sa juba oled BMChatil lubanud laadida sõnumeid taustal.\n\nKui see siiski ei toimi, siis palun kontrolli rakenduse õigusi süsteemi seadistustest.";
 // device messages for updates
 "update_2_0" = "Mida on meil uut?\n\n💯 Läbiv krüptimine on töökindel ja seda nüüd igaveseks. Tabalukud 🔒 on läinud!\n\n✉️ Klassikalised e-kirjad, kus läbiv krüptimine on puudu, on märgitud ümbriku ikooniga\n\n😻 Uus ja tõhusam profiilivaade kõikide sinu kontaktide jaoks\n\n🔲 Uus nupp kiireks ligipääsuks vestluses kasutatavate rakendusteni\n\n❤️ Palun toeta meie arendust rahaliselt - nii saame jääda sõltumatuteks ja jätkata selle rakenduse täiustamist: %1$@";

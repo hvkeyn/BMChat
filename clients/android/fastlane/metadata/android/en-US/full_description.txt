@@ -8,7 +8,7 @@ First-pass capabilities:
 * Private chats and shared chats with members
 * QR invites and second-device setup
 * Attachments, media, and voice messages
-* End-to-end encryption and contact verification inherited from Delta Chat
+* End-to-end encryption and contact verification inherited from BMChat
 * Open source code and compatibility with internet standards
 
-BMChat is a fork of Delta Chat and preserves required upstream attribution.
+BMChat is a fork of BMChat and preserves required upstream attribution.

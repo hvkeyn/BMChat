@@ -1,4 +1,4 @@
-NSCameraUsageDescription = "Delta Chat bruger dit kamera til at sende billeder, videoer og skanne QR-koder";
-NSMicrophoneUsageDescription = "Delta Chat bruger din mikrofon til at optage og sende talebeskeder og videoer med lyd.";
-NSPhotoLibraryUsageDescription = "Delta Chat vil lade dig vælge hvilke billeder fra dit bibliotek du vil sende.";
-NSPhotoLibraryAddUsageDescription = "Delta Chat vil gerne gemme billeder til dig billede-bibliotek";
+NSCameraUsageDescription = "BMChat bruger dit kamera til at sende billeder, videoer og skanne QR-koder";
+NSMicrophoneUsageDescription = "BMChat bruger din mikrofon til at optage og sende talebeskeder og videoer med lyd.";
+NSPhotoLibraryUsageDescription = "BMChat vil lade dig vælge hvilke billeder fra dit bibliotek du vil sende.";
+NSPhotoLibraryAddUsageDescription = "BMChat vil gerne gemme billeder til dig billede-bibliotek";

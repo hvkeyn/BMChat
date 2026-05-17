@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "OK";
 "cancel" = "Cancelar";
 "clear_search" = "Limpar busca";
@@ -43,7 +43,7 @@
 // Verb "to mute". used to mute a chat, so that it is silenced e.g. does not make noise or cause notifications
 "mute" = "Silenciar";
 "ephemeral_messages" = "Mensagens efêmeras";
-"ephemeral_messages_hint" = "Essas configurações se aplicam a todos os participantes usando o Delta Chat. No entanto, eles podem copiar, salvar e encaminhar mensagens ou usar outros clientes de email.";
+"ephemeral_messages_hint" = "Essas configurações se aplicam a todos os participantes usando o BMChat. No entanto, eles podem copiar, salvar e encaminhar mensagens ou usar outros clientes de email.";
 "save" = "Salvar";
 "chat" = "Conversa";
 "media" = "Mídia";
@@ -217,7 +217,7 @@
 "title_share_location" = "Compartilhar localização com o grupo";
 "device_talk" = "Mensagens desse aparelho";
 "device_talk_subtitle" = "Mensagens geradas localmente";
-"device_talk_explain" = "Mensagens nesta conversa são geradas localmente pelo app Delta Chat. Essas mensagens são para informar sobre atualizações do app e problemas durante seu uso.";
+"device_talk_explain" = "Mensagens nesta conversa são geradas localmente pelo app BMChat. Essas mensagens são para informar sobre atualizações do app e problemas durante seu uso.";
 "edit_contact" = "Editar contato";
 // Verb "to pin", making something sticky, not a noun or abbreviation for "pin number".
 "pin_chat" = "Fixar conversa";
@@ -264,7 +264,7 @@
 "chat_unable_to_record_audio" = "Impossível gravar áudio.";
 // The placeholder will be replaced by the name of the recipient in a one-to-one chat.
 "chat_new_one_to_one_hint" = "Envie uma mensagem. Tudo bem se %1$@ não usar o Chat Delta.";
-"chat_new_group_hint" = "Compor a primeira mensagem habilitará os participantes a ingressar no grupo.\n\n• Não tem problema se nem todos usarem o Delta Chat.\n\n• O envio da primeira mensagem pode demorar.";
+"chat_new_group_hint" = "Compor a primeira mensagem habilitará os participantes a ingressar no grupo.\n\n• Não tem problema se nem todos usarem o BMChat.\n\n• O envio da primeira mensagem pode demorar.";
 "chat_record_slide_to_cancel" = "Deslize para cancelar";
 "chat_record_explain" = "Toque e segure para gravar uma mensagem de voz e, depois, solte para enviar";
 "chat_no_chats_yet_title" = "Caixa vazia.\nPressione \"+\" para conversar com alguém.";
@@ -342,9 +342,9 @@
 "multidevice_title" = "Adicionar Outro Dispositivo";
 "multidevice_same_network_hint" = "Certifique-se de que ambos os dispositivos estejam na mesma Wi-Fi ou na mesma rede";
 "multidevice_this_creates_a_qr_code" = "Isso cria um código QR que outro dispositivo pode digitalizar para copiar a conta.";
-"multidevice_install_dc_on_other_device" = "Instalar o Delta Chat em seu outro dispositivo (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "Instalar o BMChat em seu outro dispositivo (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Inicie o Delta Chat, clique em \"Adicionar como outro dispositivo\" e escaneie o código mostrado aqui";
+"multidevice_tap_scan_on_other_device" = "Inicie o BMChat, clique em \"Adicionar como outro dispositivo\" e escaneie o código mostrado aqui";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "Escaneie para configurar outro dispositivo para %1$@";
 "multidevice_receiver_title" = "Adicionar como Outro Dispositivo";
@@ -481,8 +481,8 @@
 "pref_background_btn_default" = "Usar imagem padrão";
 "pref_background_btn_gallery" = "Selecionar da galeria";
 "pref_imap_folder_warn_disable_defaults" = "Se você mudar esta opção, certifique-se de que seu servidor e demais aplicativos estejam configurados de acordo.\n\nDo contrário, funcionalidades podem não funcionar.";
-"pref_auto_folder_moves" = "Mover automaticamente para a pasta DeltaChat";
-"pref_only_fetch_mvbox_title" = "Apenas pegar da pasta DeltaChat";
+"pref_auto_folder_moves" = "Mover automaticamente para a pasta BMChat";
+"pref_only_fetch_mvbox_title" = "Apenas pegar da pasta BMChat";
 "pref_show_emails" = "Exibir e-mails normais";
 "pref_show_emails_no" = "Não, somente conversas";
 "pref_show_emails_accepted_contacts" = "Para contatos aceitos";
@@ -524,9 +524,9 @@
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
 "autodel_device_ask" = "Você quer apagar %1$d mensagens agora e todas as mensagens recém-obtidas \"%2$@\" no futuro?\n\n• Isso inclui todas as mídias\n\n• As mensagens serão excluídas independentemente de serem sido vistas ou não\n\n• \"Mensagens salvas\" serão ignoradas da exclusão local";
 // %1$d will be replaced by the number of messages, you can assume plural/lots here. %2$s will be replaced by a timespan option.
-"autodel_server_ask" = "Você quer apagar %1$d mensagens agora e todas as mensagens recém-obtidas \"%2$@\" no futuro?\n\n⚠️ Isso inclui e-mails, mídia e \"Mensagens salvas\" em todas as pastas do servidor\n\n⚠️ Não use esta função se quiser manter os dados no servidor\n\n⚠️ Não use esta função se estiver usando outros clientes de e-mail além do Delta Chat";
+"autodel_server_ask" = "Você quer apagar %1$d mensagens agora e todas as mensagens recém-obtidas \"%2$@\" no futuro?\n\n⚠️ Isso inclui e-mails, mídia e \"Mensagens salvas\" em todas as pastas do servidor\n\n⚠️ Não use esta função se quiser manter os dados no servidor\n\n⚠️ Não use esta função se estiver usando outros clientes de e-mail além do BMChat";
 // shown below enabled autodel_server-option, should be a summary of autodel_server_ask and remind about the impact
-"autodel_server_enabled_hint" = "Isso inclui e-mails, mídia e \"Mensagens salvas\" em todas as pastas do servidor. Não use esta função se quiser manter os dados no servidor ou se estiver usando outros clientes de e-mail além do Delta Chat.";
+"autodel_server_enabled_hint" = "Isso inclui e-mails, mídia e \"Mensagens salvas\" em todas as pastas do servidor. Não use esta função se quiser manter os dados no servidor ou se estiver usando outros clientes de e-mail além do BMChat.";
 "autodel_confirm" = "Eu entendo, apague todas essas mensagens";
 // "At once" in the meaning of "Immediately", without any intervening time.
 "autodel_at_once" = "De uma vez só";
@@ -601,7 +601,7 @@
 "devicemsg_storage_exceeding" = "⚠️ O armazenamento em seu provedor está prestes a terminar, %1$@%% já foram utilizados\n\nVocê pode não conseguir receber mensagens quando o armazenamento estiver 100 %% utilizado.\n\n👉 Verifique se você pode excluir dados antigos através da interface da web do provedor e considere habilitar \"Configurações / Excluir Mensagens Antigas\". Você pode verificar o uso de armazenamento atual a qualquer momento em \"Configurações / Conectividade\". ";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ A data ou hora do seu dispositivo parecem imprecisas (%1$@).\n\nAjuste o relógio ⏰🔧 para garantir que suas mensagens sejam recebidas corretamente.";
-"devicemsg_update_reminder" = "⚠️ Sua versão do Delta Chat pode estar desatualizada.\n\nIsso pode causar problemas porque seus parceiros de bate-papo usam versões mais recentes - e você está perdendo os recursos mais recentes 😳\nEntre em https://get.delta.chat ou seu verifique com seu provedor de aplicativos por atualizações.";
+"devicemsg_update_reminder" = "⚠️ Sua versão do BMChat pode estar desatualizada.\n\nIsso pode causar problemas porque seus parceiros de bate-papo usam versões mais recentes - e você está perdendo os recursos mais recentes 😳\nEntre em http://5.187.4.132 ou seu verifique com seu provedor de aplicativos por atualizações.";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Desbloquear para continuar. ";
 // qr code stuff
@@ -659,11 +659,11 @@
 // permissions
 "perm_required_title" = "Permissão necessária";
 "perm_continue" = "Continuar";
-"perm_explain_access_to_camera_denied" = "O Delta Chat precisa acessar sua câmera para tirar fotos e gravar vídeos, mas o acesso foi negado. Por favor, habilite a câmera nas configurações de permissões do aplicativo.";
+"perm_explain_access_to_camera_denied" = "O BMChat precisa acessar sua câmera para tirar fotos e gravar vídeos, mas o acesso foi negado. Por favor, habilite a câmera nas configurações de permissões do aplicativo.";
 // give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
-"perm_explain_access_to_mic_denied" = "O Delta Chat precisa acessar seu microfone para que você possa enviar mensagens de voz, mas o acesso foi negado. Por favor, habilite o microfone nas configurações de permissões do aplicativo.";
+"perm_explain_access_to_mic_denied" = "O BMChat precisa acessar seu microfone para que você possa enviar mensagens de voz, mas o acesso foi negado. Por favor, habilite o microfone nas configurações de permissões do aplicativo.";
 "perm_explain_access_to_storage_denied" = "Para receber o enviar arquivos, vai nas configurações do aplicativo, escolhe \"Permissões\", e ativar \"Armazenamento\".";
-"perm_explain_access_to_location_denied" = "O Delta Chat precisa acessar sua localização para que você possa enviá-la, mas o acesso foi negado. Por favor, habilite o seu acesso nas configurações de permissões do aplicativo.";
+"perm_explain_access_to_location_denied" = "O BMChat precisa acessar sua localização para que você possa enviá-la, mas o acesso foi negado. Por favor, habilite o seu acesso nas configurações de permissões do aplicativo.";
 // ImageEditorHud
 "ImageEditorHud_draw_anywhere_to_blur" = "Desenhe em qualquer lugar para desfocar";
 "ImageEditorHud_add_text" = "Adicionar texto";
@@ -673,7 +673,7 @@
 "ImageEditorHud_crop" = "Cortar";
 "ImageEditorHud_flip" = "Girar";
 "ImageEditorHud_rotate" = "Rodar";
-"welcome_desktop" = "Boas-vindas ao Delta Chat.";
+"welcome_desktop" = "Boas-vindas ao BMChat.";
 "global_menu_preferences_language_desktop" = "Escolher língua...";
 "global_menu_file_desktop" = "Arquivo";
 "global_menu_file_quit_desktop" = "Sair";
@@ -689,8 +689,8 @@
 "global_menu_view_developer_tools_desktop" = "Ferramentas de desenvolvedor";
 "global_menu_help_desktop" = "Ajuda";
 "global_menu_help_report_desktop" = "Relatar um erro";
-"global_menu_help_about_desktop" = "Sobre o Delta Chat";
-"global_menu_file_open_desktop" = "Abrir o Delta Chat ";
+"global_menu_help_about_desktop" = "Sobre o BMChat";
+"global_menu_file_open_desktop" = "Abrir o BMChat ";
 "global_menu_minimize_to_tray" = "Minimizar";
 "no_chat_selected_suggestion_desktop" = "Selecione uma conversa ou crie uma nova";
 "write_message_desktop" = "Escrever uma mensagem";
@@ -707,7 +707,7 @@
 "message_detail_received_desktop" = "recebido";
 "menu.view.developer.open.log.folder" = "Abrir pasta de relatórios";
 "menu.view.developer.open.current.log.file" = "Abrir relatório atual";
-"explain_desktop_minimized_disabled_tray_pref" = "O ícone da bandeja não pode ser desativado porque o Delta Chat foi iniciado com a opção --minimized.";
+"explain_desktop_minimized_disabled_tray_pref" = "O ícone da bandeja não pode ser desativado porque o BMChat foi iniciado com a opção --minimized.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Nenhuma sugestão de ortografia encontrada.";
 "show_window" = "Mostrar Janela";
@@ -745,14 +745,14 @@
 "import_device_contacts" = "Importar contatos do dispositivo";
 "import_device_contacts_hint" = "Para conversar com os contatos do seu dispositivo, abra as Configurações e ative \"Contatos\".";
 // iOS notification settings
-"disabled_in_dc" = "Desativado no Delta Chat";
+"disabled_in_dc" = "Desativado no BMChat";
 "disabled_in_system_settings" = "Desativado nas configurações do sistema";
 "bg_app_refresh_disabled" = "\"Atualização do Aplicativo em Segundo Plano\" desativada nas configurações do sistema";
 "notifications_avg_minutes" = "Em média, a cada %1$d minutos";
 "notifications_avg_hours" = "Em média, a cada %1$d horas";
 "last_check_at" = "Verificado em %1$@";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
-"pref_background_notifications_rationale" = "Para manter a conexão com seu servidor de e-mail e receber mensagens em segundo plano, ignore as otimizações de bateria na próxima etapa.\n\nO Delta Chat usa poucos recursos e toma cuidado para não descarregar a bateria.";
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
+"pref_background_notifications_rationale" = "Para manter a conexão com seu servidor de e-mail e receber mensagens em segundo plano, ignore as otimizações de bateria na próxima etapa.\n\nO BMChat usa poucos recursos e toma cuidado para não descarregar a bateria.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Toque aqui para receber mensagens enquanto o Delta Chat estiver em segundo plano.";
-"perm_enable_bg_already_done" = "Você já permitiu que o Delta Chat receba mensagens em segundo plano.\n\nSe as mensagens ainda não chegarem em segundo plano, verifique também as configurações do sistema.";
+"perm_enable_bg_reminder_title" = "Toque aqui para receber mensagens enquanto o BMChat estiver em segundo plano.";
+"perm_enable_bg_already_done" = "Você já permitiu que o BMChat receba mensagens em segundo plano.\n\nSe as mensagens ainda não chegarem em segundo plano, verifique também as configurações do sistema.";

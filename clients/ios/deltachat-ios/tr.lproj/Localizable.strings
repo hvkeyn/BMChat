@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "Tamam";
 "cancel" = "İptal";
 "clear_search" = "Aramayı Temizle";
@@ -244,8 +244,8 @@
 "share_invite_link" = "Çağırma Bağlantısı Paylaş";
 "share_invite_link_explain" = "Herhangi birisi bu bağlantıyla profilinizi görüntüleyebilir ve sizinle bir sohbet başlatabilir. Onu yalnızca güvendiğiniz insanlarla paylaşın.";
 "invite_friends" = "Arkadaşları Çağır";
-// %1$s is replaced by the user's invitation link ("https://i.delta.chat/...")
-"invite_friends_text" = "Delta Chat üzerinden bana ulaşın:\n%1$@";
+// %1$s is replaced by the user's invitation link ("http://5.187.4.132/i/...")
+"invite_friends_text" = "BMChat üzerinden bana ulaşın:\n%1$@";
 "menu_copy_selection_to_clipboard" = "Seçimi Kopyala";
 "menu_copy_link_to_clipboard" = "Bağlantıyı Kopyala";
 "menu_copy_text_to_clipboard" = "Metni Kopyala";
@@ -316,7 +316,7 @@
 // Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly.
 "add_to_home_screen" = "Ana Ekrana Ekle";
 "donate" = "Bağış";
-"donate_device_msg" = "❤️ Delta Chat\'in tadını çıkarıyor gibisiniz!\n\nDelta Chat\'in herkes için ücretsiz kalmasını sağlamak için lütfen bağış yapmayı düşünün.\n\nDelta Chat, kullanımı ücretsiz ve açık kaynaklıdır, geliştirme paraya mâl olur. Delta Chat\'in bağımsızlığını korumak ve onu gelecekte daha da harika yapmak için bize yardımcı olun.\n\nhttps://delta.chat/donate";
+"donate_device_msg" = "❤️ BMChat\'in tadını çıkarıyor gibisiniz!\n\nBMChat\'in herkes için ücretsiz kalmasını sağlamak için lütfen bağış yapmayı düşünün.\n\nBMChat, kullanımı ücretsiz ve açık kaynaklıdır, geliştirme paraya mâl olur. BMChat\'in bağımsızlığını korumak ve onu gelecekte daha da harika yapmak için bize yardımcı olun.\n\n";
 "mute_for_one_hour" = "1 saatliğine sessize al";
 "mute_for_eight_hours" = "8 saatliğine sessize al";
 "mute_for_one_day" = "1 günlüğüne sessize al";
@@ -480,15 +480,15 @@
 "multidevice_title" = "İkinci Aygıt Ekle";
 "multidevice_same_network_hint" = "Her iki aygıtın da aynı Wi-Fi\'da ya da ağda olduğundan emin olun";
 "multidevice_this_creates_a_qr_code" = "Bu, ikinci aygıtın profili kopyalamak için tarayabileceği bir QR kodu oluşturur.\n\nİstenmeyen gözlemcinin ya da kameranın aşağıdaki ekranı göremediğinden emin olun.";
-"multidevice_install_dc_on_other_device" = "Delta Chat\'i diğer aygıtınıza kurun (https://get.delta.chat)";
+"multidevice_install_dc_on_other_device" = "BMChat\'i diğer aygıtınıza kurun (http://5.187.4.132)";
 // "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title
-"multidevice_tap_scan_on_other_device" = "Delta Chat\'i başlatın, “Zaten Bir Profilim Var / İkinci Aygıt Olarak Ekle”ye dokunun ve burada gösterilen kodu tarayın";
+"multidevice_tap_scan_on_other_device" = "BMChat\'i başlatın, “Zaten Bir Profilim Var / İkinci Aygıt Olarak Ekle”ye dokunun ve burada gösterilen kodu tarayın";
 // Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice"
 "multidevice_qr_subtitle" = "%1$@ için ikinci aygıtı ayarlamak üzere tarayın";
 "multidevice_receiver_title" = "İkinci Aygıt Olarak Ayarla";
 "multidevice_open_settings_on_other_device" = "Birinci aygıtta “Ayarlar / İkinci Aygıt Ekle”ye gidin ve orada gösterilen kodu tarayın";
 "multidevice_receiver_scanning_ask" = "Diğer aygıttan gelen profil bu aygıta kopyalansın mı?";
-"multidevice_receiver_needs_update" = "İçe aktarmak istediğiniz profil daha yeni bir Delta Chat sürümünden geliyor.\n\nİkinci aygıtı ayarlamayı sürdürmek için lütfen bu aygıtı Delta Chat\'in en son sürümüne güncelleştirin.";
+"multidevice_receiver_needs_update" = "İçe aktarmak istediğiniz profil daha yeni bir BMChat sürümünden geliyor.\n\nİkinci aygıtı ayarlamayı sürdürmek için lütfen bu aygıtı BMChat\'in en son sürümüne güncelleştirin.";
 "multidevice_abort" = "İkinci aygıtı ayarlamadan vazgeçilsin mi?";
 "multidevice_abort_will_invalidate_copied_qr" = "Bu, panoya kopyalanan QR kodunu geçersizleştirecek.";
 "multidevice_transfer_done_devicemsg" = "ℹ️ Profil, ikinci aygıtınıza aktarıldı.";
@@ -701,12 +701,12 @@
 "pref_background_btn_default" = "Varsayılan Görseli Kullan";
 "pref_background_btn_gallery" = "Galeriden Seç";
 "pref_imap_folder_warn_disable_defaults" = "Bu seçeneği değiştirirseniz, sunucunuzun ve diğer istemcilerinizin uygun olarak yapılandırıldığından emin olun.\n\nDeğilse özellikler hiç çalışmayabilir.";
-// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at https://delta.chat/help
+// No need to be literal here, you can also use "Use Multiple Devices", "Support Multiple Devices" or other fitting terms. However, it should fit to the wording or your language at 
 "pref_multidevice" = "Çoklu Aygıt Modu";
 "pref_multidevice_explain" = "İletilerinizi diğer aygıtlarınızla eşzamanlayın. İkinci bir aygıt eklendiğinde otomatik olarak etkinleştirilir";
 "pref_multidevice_change_warn" = "Aynı profili birden fazla aygıtta kullanırken Çoklu Aygıt Modu etkinleştirilmelidir. Bu ayarı yalnızca bu profili diğer tüm aygıtlarınızdan kaldırdıysanız etkisizleştirin.\n\nProfili birden fazla aygıtta kullanırken Çoklu Aygıt Modu\'nu etkisizleştirmek, iletilerin kaçırılmasına ve diğer sorunlara neden olur.";
-"pref_auto_folder_moves" = "DeltaChat Klasörüne Otomatik Olarak Taşı";
-"pref_only_fetch_mvbox_title" = "Yalnızca DeltaChat Klasöründen Getir";
+"pref_auto_folder_moves" = "BMChat Klasörüne Otomatik Olarak Taşı";
+"pref_only_fetch_mvbox_title" = "Yalnızca BMChat Klasöründen Getir";
 "pref_show_emails" = "Klasik E-Postaları Göster";
 "pref_show_emails_no" = "Hayır, yalnızca sohbetler";
 "pref_show_emails_accepted_contacts" = "Kabul edilen kişiler için";
@@ -730,14 +730,14 @@
 "profile_image_delete" = "Profil Görselini Sil";
 "pref_show_tray_icon" = "Tepsi Simgesi Göster";
 "pref_edit_profile" = "Profili Düzenle";
-"send_stats_to_devs" = "Delta Chat\'in geliştiricilerine istatistikleri gönder";
-"stats_device_message" = "Haftalık belirsiz kullanım istatistiklerini göndererek Delta Chat\'i geliştirmeye yardımcı olmak ve araştırmaları desteklemek istiyor musunuz?\n\n👉 Buraya dokunun… 👈";
-"stats_confirmation_dialog" = "Haftalık belirsiz kullanım istatistiklerini göndererek Delta Chat\'i geliştirmeye yardımcı olmak ve araştırmaları desteklemek istiyor musunuz?";
-"stats_thanks" = "Teşekkür ederiz! Gönderimi “Ayarlar -> Gelişmiş”ten her zaman etkisizleştirebilirsiniz.\n\nEk olarak Delta Chat\'in güvenliği üzerine yapılacak bilimsel bir araştırmaya katılmak için 5 dakikanız var mı?";
+"send_stats_to_devs" = "BMChat\'in geliştiricilerine istatistikleri gönder";
+"stats_device_message" = "Haftalık belirsiz kullanım istatistiklerini göndererek BMChat\'i geliştirmeye yardımcı olmak ve araştırmaları desteklemek istiyor musunuz?\n\n👉 Buraya dokunun… 👈";
+"stats_confirmation_dialog" = "Haftalık belirsiz kullanım istatistiklerini göndererek BMChat\'i geliştirmeye yardımcı olmak ve araştırmaları desteklemek istiyor musunuz?";
+"stats_thanks" = "Teşekkür ederiz! Gönderimi “Ayarlar -> Gelişmiş”ten her zaman etkisizleştirebilirsiniz.\n\nEk olarak BMChat\'in güvenliği üzerine yapılacak bilimsel bir araştırmaya katılmak için 5 dakikanız var mı?";
 "stats_disable_dialog" = "İstatistiklerin gönderimi zaten etkinleştirildi.\n\nOnu etkisizleştirmek istiyor musunuz?";
 "disable" = "Etkisizleştir";
 "stats_keep_sending" = "Gönderimde tut";
-"stats_msg_body" = "İlişik, Delta Chat\'i geliştirmemize yardımcı olan belirsiz kullanım istatistikleri içerir. Daha fazla bilgi için https://delta.chat/help#statssending adresine bakın. Teşekkür ederiz!";
+"stats_msg_body" = "İlişik, BMChat\'i geliştirmemize yardımcı olan belirsiz kullanım istatistikleri içerir. Daha fazla bilgi için #statssending adresine bakın. Teşekkür ederiz!";
 // Emoji picker and categories
 "emoji_search_results" = "Arama Sonuçları";
 "emoji_not_found" = "Emoji bulunamadı";
@@ -864,7 +864,7 @@
 "devicemsg_storage_exceeding" = "⚠️ Sağlayıcınızın depolaması dolmak üzere: %1$@%% zaten kullanımda.\n\nDepolama tam dolduğunda iletileri alamayabilirsiniz.\n\n👉 Lütfen sağlayıcınızın web arabiriminden eski verileri silip silemeyeceğinizi denetleyin ve “Ayarlar / Sohbetler / Eski İletileri Sil”i etkinleştirmeyi düşünün. Herhangi bir zamanda şu anki depolama kullanımınızı “Ayarlar / Bağlanabilirlik”ten denetleyebilirsiniz.";
 // %1%s will be replaced by date and time in some human-readable format
 "devicemsg_bad_time" = "⚠️ Aygıtınızdaki tarih ya da saat yanlış görünüyor (%1$@).\n\nİletilerinizin doğru şekilde alınmasını sağlamak için saatinizi ⏰🔧 ayarlayın.";
-"devicemsg_update_reminder" = "⚠️ Delta Chat sürümünüz eski olabilir.\n\nBu, sorunlara neden olabilir; çünkü sohbet ortaklarınız daha yeni sürümleri kullanıyor - ve en yeni özellikleri kaybediyorsunuz 😳\nGüncelleştirmeler için lütfen https://get.delta.chat ya da uygulama mağazanızı denetleyin.";
+"devicemsg_update_reminder" = "⚠️ BMChat sürümünüz eski olabilir.\n\nBu, sorunlara neden olabilir; çünkü sohbet ortaklarınız daha yeni sürümleri kullanıyor - ve en yeni özellikleri kaybediyorsunuz 😳\nGüncelleştirmeler için lütfen http://5.187.4.132 ya da uygulama mağazanızı denetleyin.";
 // Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup".
 "enter_system_secret_to_continue" = "Sürdürmek için kilidi açın";
 // qr code stuff
@@ -934,7 +934,7 @@
 "notifications_disabled" = "Bildirimler etkisizleştirildi";
 "unreliable_bg_notifications" = "Güvenilir bildirimler için “Arka Plan Bağlantısını Zorla”yı etkinleştirin";
 "new_messages" = "Yeni iletiler";
-// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/deltachat/notifiers
+// Body text for a generic "New messages" notification. Shown if we do not have more information about a new messages. Note, that the string is also referenced at https://github.com/hvkeyn/BMChat
 "new_messages_body" = "Yeni iletileriniz var";
 "n_messages_in_m_chats" = "%2$d sohbette %1$d ileti";
 // permissions
@@ -945,7 +945,7 @@
 "perm_explain_access_to_mic_denied" = "Sesli iletiler göndermek için sistem ya da uygulama ayarlarına gidin, “İzinler”i ya da “Gizlilik ve Güvenlik”i seçin ve “Mikrofon”u etkinleştirin.";
 "perm_explain_access_to_storage_denied" = "Dosyalar almak ya da göndermek için uygulama ayarlarına gidin, “İzinler”i seçin ve “Depolama”yı etkinleştirin.";
 "perm_explain_access_to_location_denied" = "Bir konum iliştirmek için uygulama ayarlarına gidin, “İzinler”i seçin ve “Konum”u etkinleştirin.";
-"perm_explain_access_to_notifications_denied" = "Bildirimler almak için “Sistem Ayarları / Uygulamalar / Delta Chat”e gidin ve “Bildirimler”i etkinleştirin.";
+"perm_explain_access_to_notifications_denied" = "Bildirimler almak için “Sistem Ayarları / Uygulamalar / BMChat”e gidin ve “Bildirimler”i etkinleştirin.";
 // ImageEditorHud
 "ImageEditorHud_draw_anywhere_to_blur" = "Bulanıklaştırmak için herhangi bir yere çizin";
 "ImageEditorHud_add_text" = "Metin Ekle";
@@ -955,7 +955,7 @@
 "ImageEditorHud_crop" = "Kırp";
 "ImageEditorHud_flip" = "Çevir";
 "ImageEditorHud_rotate" = "Döndür";
-"welcome_desktop" = "Delta Chat\'e hoş geldiniz";
+"welcome_desktop" = "BMChat\'e hoş geldiniz";
 "global_menu_preferences_language_desktop" = "Dil";
 "global_menu_file_desktop" = "Dosya";
 "global_menu_file_quit_desktop" = "Çık";
@@ -970,11 +970,11 @@
 "global_menu_view_developer_desktop" = "Geliştirici";
 "global_menu_view_developer_tools_desktop" = "Geliştirici Araçları";
 "global_menu_help_desktop" = "Yardım";
-"delta_chat_homepage" = "Delta Chat Ana Sayfası";
+"delta_chat_homepage" = "BMChat Ana Sayfası";
 "contribute" = "Katkıda Bulunun";
 "global_menu_help_report_desktop" = "Bir Sorun Raporla";
-"global_menu_help_about_desktop" = "Delta Chat hakkında";
-"global_menu_file_open_desktop" = "Delta Chat\'i Aç";
+"global_menu_help_about_desktop" = "BMChat hakkında";
+"global_menu_file_open_desktop" = "BMChat\'i Aç";
 "global_menu_minimize_to_tray" = "Küçült";
 "no_chat_selected_suggestion_desktop" = "Bir sohbet seçin ya da yeni bir sohbet oluşturun";
 "write_message_desktop" = "Bir ileti yazın";
@@ -993,7 +993,7 @@
 "message_detail_received_desktop" = "Alınma";
 "menu.view.developer.open.log.folder" = "Günlük Klasörünü Aç";
 "menu.view.developer.open.current.log.file" = "Şu Anki Günlük Dosyasını Aç";
-"explain_desktop_minimized_disabled_tray_pref" = "Delta Chat --minimized seçeneğiyle başlatıldığından tepsi simgesi etkisizleştirilemez.";
+"explain_desktop_minimized_disabled_tray_pref" = "BMChat --minimized seçeneğiyle başlatıldığından tepsi simgesi etkisizleştirilemez.";
 // deprecated, used on desktop although there is not spell checker
 "no_spellcheck_suggestions_found" = "Yazım önerileri bulunamadı.";
 "show_window" = "Pencereyi Göster";
@@ -1031,7 +1031,7 @@
 "import_device_contacts" = "Aygıt kişilerini içe aktar";
 "import_device_contacts_hint" = "Aygıtınızdan gelen kişilerle sohbet etmek için Ayarlar\'ı açın ve “Kişiler”i etkinleştirin.";
 // iOS notification settings
-"disabled_in_dc" = "Delta Chat\'ten etkisizleştirildi";
+"disabled_in_dc" = "BMChat\'ten etkisizleştirildi";
 "disabled_in_system_settings" = "Sistem ayarlarından etkisizleştirildi";
 "bg_app_refresh_disabled" = "“Arka Planda Uygulama Yenileme” sistem ayarlarından etkisizleştirildi";
 "notifications_avg_minutes" = "Ortalama olarak her %1$d dakikada bir";
@@ -1044,21 +1044,21 @@
 // use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale
 "shortcuts_widget_title" = "Kısayollar";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
-"shortcuts_widget_description" = "Öğeleri eklemek için Delta Chat\'in “Widget\'a Ekle” öğesini kullanın";
+"shortcuts_widget_description" = "Öğeleri eklemek için BMChat\'in “Widget\'a Ekle” öğesini kullanın";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "remove_from_widget" = "Widget\'tan Kaldır";
 // use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated
 "add_to_widget" = "Widget\'a Ekle";
-// iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings"
+// iOS permissions, copy from "BMChat-ios/Info.plist", which is used on missing translations in "BMChat-ios/LANG.lproj/InfoPlist.strings"
 // android specific strings, developers: please take care to remove strings that are no longer used!
 "pref_instant_delivery" = "Anında Teslimat";
 "pref_background_notifications" = "Arka Plan Bağlantısı Kullan";
 "pref_background_notifications_explain" = "Pil iyileştirmelerinin yoksayılmasını gerektirir, bildirimler zamanında gelmezse kullanın";
 "pref_reliable_service" = "Arka Plan Bağlantısını Zorla";
 "pref_reliable_service_explain" = "Kalıcı bir bildirime neden olur";
-"pref_background_notifications_rationale" = "Bağlantıyı sürdürmek ve arka planda iletileri almak için sonraki adımda pil iyileştirmelerini yoksayın.\n\nDelta Chat, az kaynak kullanır ve pilinizi boşaltmamaya özen gösterir.";
+"pref_background_notifications_rationale" = "Bağlantıyı sürdürmek ve arka planda iletileri almak için sonraki adımda pil iyileştirmelerini yoksayın.\n\nBMChat, az kaynak kullanır ve pilinizi boşaltmamaya özen gösterir.";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Delta Chat arka plandayken iletileri almak için buraya dokunun.";
-"perm_enable_bg_already_done" = "Delta Chat\'in arka planda iletileri almasına zaten izin verdiniz.\n\nİletiler arka planda hâlâ gelmiyorsa, lütfen sistem ayarlarınızı da denetleyin.";
+"perm_enable_bg_reminder_title" = "BMChat arka plandayken iletileri almak için buraya dokunun.";
+"perm_enable_bg_already_done" = "BMChat\'in arka planda iletileri almasına zaten izin verdiniz.\n\nİletiler arka planda hâlâ gelmiyorsa, lütfen sistem ayarlarınızı da denetleyin.";
 // device messages for updates
 "update_2_0" = "Ne yeni?\n\n💯 Uçtan uca şifreleme artık güvenilir ve sonsuza kadar geçerli. Asma kilitlerle 🔒 anlaşılabilir!\n\n✉️ Uçtan uca şifrelemeli olmayan klasik e-posta bir mektup sembolü olarak işaretlenir\n\n😻 Tüm kişileriniz için yeni geliştirilen profil ekranı\n\n🔲 Bir sohbette kullanılan uygulamalara hızlı erişim için yeni düğme\n\n❤️ Bağımsız kalmamız ve yeni geliştirmeler getirmemiz için lütfen bize yardım edin: %1$@";

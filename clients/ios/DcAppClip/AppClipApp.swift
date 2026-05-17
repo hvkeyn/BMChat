@@ -2,7 +2,10 @@ import SwiftUI
 
 
 let appDeeplinkUrl = URL(string: "chat.delta.deeplink://")!
-let appstoreUrl = URL(string: "https://apps.apple.com/app/delta-chat/id1459523234")!
+// BMChat is not yet on the App Store; the Get-button below is hidden when no
+// App Store URL is configured. Set this to your published BMChat App Store
+// link once the app ships and the button will reappear automatically.
+let appstoreUrl: URL? = nil
 
 @main
 struct AppClipApp: App {
@@ -22,36 +25,38 @@ struct AppClipApp: App {
                     .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     .shadow(radius: 30, y: 20)
 
-                Text("Delta Chat")
+                Text("BMChat")
                     .font(.largeTitle)
                     .bold()
 
                 Spacer()
 
                 if mainAppInstalled == true {
-                    Text("You have Delta Chat installed, you can remove this App Clip")
+                    Text("You have BMChat installed, you can remove this App Clip")
                         .multilineTextAlignment(.center)
                         .foregroundColor(.secondary)
                         .padding(.horizontal)
                 } else if mainAppInstalled == false {
                     if inviteLink != nil {
-                        Text("Install Delta Chat to accept this invite link")
+                        Text("Install BMChat to accept this invite link")
                             .multilineTextAlignment(.center)
                             .foregroundColor(.secondary)
                             .padding(.horizontal)
                     }
 
-                    Button(action: {
-                        openURL(appstoreUrl)
-                    }, label: {
-                        Label("Get Delta Chat", systemImage: "arrow.down.circle.fill")
-                            .font(.headline)
-                            .padding()
-                            .frame(maxWidth: .infinity)
-                            .background(Color.accentColor)
-                            .foregroundColor(.white)
-                            .cornerRadius(14)
-                    })
+                    if let appstoreUrl = appstoreUrl {
+                        Button(action: {
+                            openURL(appstoreUrl)
+                        }, label: {
+                            Label("Get BMChat", systemImage: "arrow.down.circle.fill")
+                                .font(.headline)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.accentColor)
+                                .foregroundColor(.white)
+                                .cornerRadius(14)
+                        })
+                    }
                 }
             }
             .padding(.horizontal)

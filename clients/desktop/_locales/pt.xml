@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- common strings without special context -->
-    <string name="app_name">Delta Chat</string>
+    <string name="app_name">BMChat</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancelar</string>
     <string name="clear_search">Limpar Pesquisa</string>
@@ -273,7 +273,7 @@
     <string name="chat_unable_to_record_audio">Não é possível gravar áudio.</string>
     <!-- consider keeping the term "channel" as in WhatsApp or Telegram -->
     <string name="chat_new_channel_hint">Canais são uma ferramenta de-um-para-muitos para difundir as tuas mensagens.</string>
-    <string name="chat_new_group_hint">Componha a primeira mensagem, permitindo que outras pessoas respondam dentro deste grupo.\n\n• Tudo bem se nem todos os membros usarem o Delta Chat.\n\n• A entrega da primeira mensagem pode demorar um pouco.</string>
+    <string name="chat_new_group_hint">Componha a primeira mensagem, permitindo que outras pessoas respondam dentro deste grupo.\n\n• Tudo bem se nem todos os membros usarem o BMChat.\n\n• A entrega da primeira mensagem pode demorar um pouco.</string>
     <string name="chat_record_slide_to_cancel">Deslize para cancelar</string>
     <string name="chat_record_explain">Toque e segure para gravar uma mensagem de voz, solte para enviar</string>
     <string name="chat_share_with_title">Partilhar com</string>
@@ -390,7 +390,7 @@
     <!-- No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color. -->
     <string name="pref_background">Fundo</string>
     <string name="pref_imap_folder_warn_disable_defaults">Se desabilitar esta opção, verifique se seu servidor e seus outros clientes estão configurados adequadamente. \n\ncaso contrário, as coisas podem não funcionar.</string>
-    <string name="pref_auto_folder_moves">Mover pasta automaticamente para o Delta Chat</string>
+    <string name="pref_auto_folder_moves">Mover pasta automaticamente para o BMChat</string>
     <string name="pref_show_emails">Exibir e-mails comuns</string>
     <string name="pref_show_emails_no">Não, apenas conversas</string>
     <string name="pref_show_emails_all">Tudo</string>
@@ -446,11 +446,11 @@
     <!-- permissions -->
     <string name="perm_required_title">Permissão necessária</string>
     <string name="perm_continue">Continuar</string>
-    <string name="perm_explain_access_to_camera_denied">O Delta Chat necessita de permissão de acesso à Câmera para tirar fotos ou vídeos, mas o acesso foi negado permanentemente. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões\" e active \"Câmera\".</string>
+    <string name="perm_explain_access_to_camera_denied">O BMChat necessita de permissão de acesso à Câmera para tirar fotos ou vídeos, mas o acesso foi negado permanentemente. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões\" e active \"Câmera\".</string>
     <!-- give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path -->
-    <string name="perm_explain_access_to_mic_denied">O Delta Chat necessita de permissão de acesso ao microfone para enviar mensagens de áudio, mas foi negado. Por favor, continue com as configurações do aplicativo, selecione \"Permissões\" e active \"Microfone\".</string>
-    <string name="perm_explain_access_to_storage_denied">O Delta Chat necessita da permissão de armazenamento para anexar ou exportar fotos, vídeos ou áudio, mas foi negado. Por favor, continue no menu de configurações do aplicativo, seleccione \"Permissões\" e active \"Armazenamento\".</string>
-    <string name="perm_explain_access_to_location_denied">O Delta Chat necessita permissão de acesso à localização para anexar um local, mas ele negado. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões \"e ative \"Localização\".</string>
+    <string name="perm_explain_access_to_mic_denied">O BMChat necessita de permissão de acesso ao microfone para enviar mensagens de áudio, mas foi negado. Por favor, continue com as configurações do aplicativo, selecione \"Permissões\" e active \"Microfone\".</string>
+    <string name="perm_explain_access_to_storage_denied">O BMChat necessita da permissão de armazenamento para anexar ou exportar fotos, vídeos ou áudio, mas foi negado. Por favor, continue no menu de configurações do aplicativo, seleccione \"Permissões\" e active \"Armazenamento\".</string>
+    <string name="perm_explain_access_to_location_denied">O BMChat necessita permissão de acesso à localização para anexar um local, mas ele negado. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões \"e ative \"Localização\".</string>
     <string name="ImageEditorHud_rotate">Rodar</string>
 
     <string name="global_menu_preferences_language_desktop">Escolha o seu idioma...</string>
@@ -485,5 +485,5 @@
     <string name="menu.view.developer.open.log.folder">Abrir pasta de Log</string>
     <string name="menu.view.developer.open.current.log.file">Abrir o aqrquio do log actual</string>
     <!-- disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable -->
-    <string name="perm_enable_bg_reminder_title">Toque aqui para receber mensagens mesmo que o Delta Chat esteja em segundo plano.</string>
+    <string name="perm_enable_bg_reminder_title">Toque aqui para receber mensagens mesmo que o BMChat esteja em segundo plano.</string>
     </resources>

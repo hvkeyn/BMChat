@@ -1,5 +1,5 @@
 // common strings without special context
-"app_name" = "Delta Chat";
+"app_name" = "BMChat";
 "ok" = "OK";
 "cancel" = "Cancelar";
 "clear_search" = "Limpar Pesquisa";
@@ -218,7 +218,7 @@
 "chat_unable_to_record_audio" = "Não é possível gravar áudio.";
 // consider keeping the term "channel" as in WhatsApp or Telegram
 "chat_new_channel_hint" = "Canais são uma ferramenta de-um-para-muitos para difundir as tuas mensagens.";
-"chat_new_group_hint" = "Componha a primeira mensagem, permitindo que outras pessoas respondam dentro deste grupo.\n\n• Tudo bem se nem todos os membros usarem o Delta Chat.\n\n• A entrega da primeira mensagem pode demorar um pouco.";
+"chat_new_group_hint" = "Componha a primeira mensagem, permitindo que outras pessoas respondam dentro deste grupo.\n\n• Tudo bem se nem todos os membros usarem o BMChat.\n\n• A entrega da primeira mensagem pode demorar um pouco.";
 "chat_record_slide_to_cancel" = "Deslize para cancelar";
 "chat_record_explain" = "Toque e segure para gravar uma mensagem de voz, solte para enviar";
 "chat_share_with_title" = "Partilhar com";
@@ -334,7 +334,7 @@
 // No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color.
 "pref_background" = "Fundo";
 "pref_imap_folder_warn_disable_defaults" = "Se desabilitar esta opção, verifique se seu servidor e seus outros clientes estão configurados adequadamente. \n\ncaso contrário, as coisas podem não funcionar.";
-"pref_auto_folder_moves" = "Mover pasta automaticamente para o Delta Chat";
+"pref_auto_folder_moves" = "Mover pasta automaticamente para o BMChat";
 "pref_show_emails" = "Exibir e-mails comuns";
 "pref_show_emails_no" = "Não, apenas conversas";
 "pref_show_emails_all" = "Tudo";
@@ -390,11 +390,11 @@
 // permissions
 "perm_required_title" = "Permissão necessária";
 "perm_continue" = "Continuar";
-"perm_explain_access_to_camera_denied" = "O Delta Chat necessita de permissão de acesso à Câmera para tirar fotos ou vídeos, mas o acesso foi negado permanentemente. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões\" e active \"Câmera\".";
+"perm_explain_access_to_camera_denied" = "O BMChat necessita de permissão de acesso à Câmera para tirar fotos ou vídeos, mas o acesso foi negado permanentemente. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões\" e active \"Câmera\".";
 // give the user an idea where to find the "Microphone" option. the hint is only shown if access was initially denied by the user. pick up wordings really used on the systems, but do not be overly precise: things shift around often and there are too many system we support to track every detail and click path
-"perm_explain_access_to_mic_denied" = "O Delta Chat necessita de permissão de acesso ao microfone para enviar mensagens de áudio, mas foi negado. Por favor, continue com as configurações do aplicativo, selecione \"Permissões\" e active \"Microfone\".";
-"perm_explain_access_to_storage_denied" = "O Delta Chat necessita da permissão de armazenamento para anexar ou exportar fotos, vídeos ou áudio, mas foi negado. Por favor, continue no menu de configurações do aplicativo, seleccione \"Permissões\" e active \"Armazenamento\".";
-"perm_explain_access_to_location_denied" = "O Delta Chat necessita permissão de acesso à localização para anexar um local, mas ele negado. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões \"e ative \"Localização\".";
+"perm_explain_access_to_mic_denied" = "O BMChat necessita de permissão de acesso ao microfone para enviar mensagens de áudio, mas foi negado. Por favor, continue com as configurações do aplicativo, selecione \"Permissões\" e active \"Microfone\".";
+"perm_explain_access_to_storage_denied" = "O BMChat necessita da permissão de armazenamento para anexar ou exportar fotos, vídeos ou áudio, mas foi negado. Por favor, continue no menu de configurações do aplicativo, seleccione \"Permissões\" e active \"Armazenamento\".";
+"perm_explain_access_to_location_denied" = "O BMChat necessita permissão de acesso à localização para anexar um local, mas ele negado. Por favor, continue no menu de configurações do aplicativo, selecione \"Permissões \"e ative \"Localização\".";
 "ImageEditorHud_rotate" = "Rodar";
 "global_menu_preferences_language_desktop" = "Escolha o seu idioma...";
 "global_menu_file_desktop" = "Arquivo";
@@ -428,4 +428,4 @@
 "menu.view.developer.open.log.folder" = "Abrir pasta de Log";
 "menu.view.developer.open.current.log.file" = "Abrir o aqrquio do log actual";
 // disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable
-"perm_enable_bg_reminder_title" = "Toque aqui para receber mensagens mesmo que o Delta Chat esteja em segundo plano.";
+"perm_enable_bg_reminder_title" = "Toque aqui para receber mensagens mesmo que o BMChat esteja em segundo plano.";
