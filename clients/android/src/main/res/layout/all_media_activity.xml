@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
-    android:layout_width="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_width="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -37,10 +39,23 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!--
+        BMChat 2.49.80 (Phase 3): Telegram-style mini-player pinned to
+        the bottom of the Shared Media browser. Reuses the same view as
+        the one in ConversationListActivity / ConversationActivity, so a
+        single track in the background is reachable from every screen.
+    -->
+    <org.thoughtcrime.securesms.components.audioplay.BMChatMiniPlayerView
+        android:id="@+id/bmchat_miniplayer"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/pager"
+        android:layout_below="@id/appbar"
+        android:layout_above="@id/bmchat_miniplayer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        android:layout_height="match_parent" />
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</RelativeLayout>

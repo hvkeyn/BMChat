@@ -1,6 +1,7 @@
 package org.thoughtcrime.securesms;
 
 import android.content.ComponentName;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -27,6 +28,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.ArrayList;
 import org.thoughtcrime.securesms.components.audioplay.AudioPlaybackViewModel;
+import org.thoughtcrime.securesms.components.audioplay.BMChatMiniPlayerView;
 import org.thoughtcrime.securesms.components.audioplay.ChatAudioQueueProvider;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.connect.DcHelper;
@@ -42,20 +44,34 @@ public class AllMediaActivity extends PassphraseRequiredActionBarActivity
   public static final String CONTACT_ID_EXTRA = "contact_id";
   public static final String FORCE_GALLERY = "force_gallery";
 
+  // BMChat 2.49.80 (Phase 3): Telegram-style Shared Media browser uses
+  // separate tabs per media kind. The {@link Kind} enum drives which
+  // fragment is instantiated for a tab; viewtypes are still propagated to
+  // the underlying loaders that accept up to three DC_MSG_* types.
+  enum Kind {
+    APPS,
+    PHOTOS,
+    VIDEOS,
+    AUDIO,
+    FILES,
+    LINKS
+  }
+
   static class TabData {
+    final Kind kind;
     final int title;
     final int type1;
     final int type2;
     final int type3;
 
-    TabData(int title, int type1, int type2, int type3) {
+    TabData(Kind kind, int title, int type1, int type2, int type3) {
+      this.kind = kind;
       this.title = title;
       this.type1 = type1;
       this.type2 = type2;
       this.type3 = type3;
     }
   }
-  ;
 
   private DcContext dcContext;
   private int chatId;
@@ -79,12 +95,17 @@ public class AllMediaActivity extends PassphraseRequiredActionBarActivity
 
   @Override
   protected void onCreate(Bundle bundle, boolean ready) {
-    tabs.add(new TabData(R.string.webxdc_apps, DcMsg.DC_MSG_WEBXDC, 0, 0));
+    // BMChat 2.49.80 (Phase 3): Telegram-style tabs in the Shared Media
+    // browser. Photos and Videos are split into separate tabs, Audio
+    // covers both music and voice notes, and a dedicated Links tab lists
+    // every URL discovered in chat texts and captions.
+    tabs.add(new TabData(Kind.APPS, R.string.webxdc_apps, DcMsg.DC_MSG_WEBXDC, 0, 0));
     tabs.add(
-        new TabData(
-            R.string.tab_gallery, DcMsg.DC_MSG_IMAGE, DcMsg.DC_MSG_GIF, DcMsg.DC_MSG_VIDEO));
-    tabs.add(new TabData(R.string.audio, DcMsg.DC_MSG_AUDIO, DcMsg.DC_MSG_VOICE, 0));
-    tabs.add(new TabData(R.string.files, DcMsg.DC_MSG_FILE, 0, 0));
+        new TabData(Kind.PHOTOS, R.string.bmchat_tab_photos, DcMsg.DC_MSG_IMAGE, DcMsg.DC_MSG_GIF, 0));
+    tabs.add(new TabData(Kind.VIDEOS, R.string.bmchat_tab_videos, DcMsg.DC_MSG_VIDEO, 0, 0));
+    tabs.add(new TabData(Kind.AUDIO, R.string.audio, DcMsg.DC_MSG_AUDIO, DcMsg.DC_MSG_VOICE, 0));
+    tabs.add(new TabData(Kind.FILES, R.string.files, DcMsg.DC_MSG_FILE, 0, 0));
+    tabs.add(new TabData(Kind.LINKS, R.string.tab_links, 0, 0, 0));
 
     setContentView(R.layout.all_media_activity);
 
@@ -101,7 +122,30 @@ public class AllMediaActivity extends PassphraseRequiredActionBarActivity
     this.tabLayout.setupWithViewPager(viewPager);
     this.viewPager.setAdapter(new AllMediaPagerAdapter(getSupportFragmentManager()));
     if (getIntent().getBooleanExtra(FORCE_GALLERY, false)) {
-      this.viewPager.setCurrentItem(1, false);
+      // Default to the Photos tab so the long-existing "open gallery" flow
+      // still lands on the most useful kind of media.
+      for (int i = 0; i < tabs.size(); i++) {
+        if (tabs.get(i).kind == Kind.PHOTOS) {
+          this.viewPager.setCurrentItem(i, false);
+          break;
+        }
+      }
+    }
+
+    BMChatMiniPlayerView miniPlayer = findViewById(R.id.bmchat_miniplayer);
+    if (miniPlayer != null) {
+      miniPlayer.setOnNavigateListener(
+          (accId, targetChatId, msgId) -> {
+            // The Shared Media browser does not own a conversation view, so
+            // any tap on the mini-player should hand off to the proper
+            // ConversationActivity for the track that is currently playing.
+            Intent intent = new Intent(this, ConversationActivity.class);
+            intent.putExtra(ConversationActivity.ACCOUNT_ID_EXTRA, accId);
+            intent.putExtra(ConversationActivity.CHAT_ID_EXTRA, targetChatId);
+            intent.putExtra(ConversationActivity.STARTING_POSITION_EXTRA, msgId);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
+          });
     }
 
     DcEventCenter eventCenter = DcHelper.getEventCenter(this);
@@ -214,19 +258,30 @@ public class AllMediaActivity extends PassphraseRequiredActionBarActivity
       TabData data = tabs.get(position);
       Fragment fragment;
       Bundle args = new Bundle();
+      int effectiveChatId = (chatId == 0 && !isGlobalGallery()) ? -1 : chatId;
 
-      if (data.type1 == DcMsg.DC_MSG_IMAGE) {
-        fragment = new AllMediaGalleryFragment();
-        args.putInt(
-            AllMediaGalleryFragment.CHAT_ID_EXTRA,
-            (chatId == 0 && !isGlobalGallery()) ? -1 : chatId);
-      } else {
-        fragment = new AllMediaDocumentsFragment();
-        args.putInt(
-            AllMediaDocumentsFragment.CHAT_ID_EXTRA,
-            (chatId == 0 && !isGlobalGallery()) ? -1 : chatId);
-        args.putInt(AllMediaDocumentsFragment.VIEWTYPE1, data.type1);
-        args.putInt(AllMediaDocumentsFragment.VIEWTYPE2, data.type2);
+      switch (data.kind) {
+        case PHOTOS:
+        case VIDEOS:
+          fragment = new AllMediaGalleryFragment();
+          args.putInt(AllMediaGalleryFragment.CHAT_ID_EXTRA, effectiveChatId);
+          args.putInt(AllMediaGalleryFragment.VIEWTYPE1, data.type1);
+          args.putInt(AllMediaGalleryFragment.VIEWTYPE2, data.type2);
+          args.putInt(AllMediaGalleryFragment.VIEWTYPE3, data.type3);
+          break;
+        case LINKS:
+          fragment = new AllMediaLinksFragment();
+          args.putInt(AllMediaLinksFragment.CHAT_ID_EXTRA, effectiveChatId);
+          break;
+        case APPS:
+        case AUDIO:
+        case FILES:
+        default:
+          fragment = new AllMediaDocumentsFragment();
+          args.putInt(AllMediaDocumentsFragment.CHAT_ID_EXTRA, effectiveChatId);
+          args.putInt(AllMediaDocumentsFragment.VIEWTYPE1, data.type1);
+          args.putInt(AllMediaDocumentsFragment.VIEWTYPE2, data.type2);
+          break;
       }
       fragment.setArguments(args);
       return fragment;
