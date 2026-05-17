@@ -878,6 +878,43 @@ public class ConversationFragment extends MessageSelectorFragment {
     }
   }
 
+  /**
+   * BMChat 2.49.81 (Phase 4): Telegram-style jump-to-date. Finds the
+   * message whose timestamp is closest to (but not after, if any) the
+   * requested target and scrolls the conversation to it.
+   *
+   * <p>Returns {@code true} if a candidate message was found and the
+   * scroll was issued, {@code false} when the chat has no messages.
+   */
+  public boolean jumpToDate(long targetTimestampMs) {
+    if (chatId == 0) return false;
+    com.b44t.messenger.DcContext dc =
+        org.thoughtcrime.securesms.connect.DcHelper.getContext(getContext());
+    int[] msgs = dc.getChatMsgs((int) chatId, 0, 0);
+    if (msgs == null || msgs.length == 0) return false;
+
+    // The Android getChatMsgs() return is chronological (oldest -> newest).
+    // Linear scan is good enough: typical chats sit well below 50k items
+    // and each getMsg() call is a cheap JNI lookup.
+    int bestMsgId = msgs[0];
+    long bestDelta = Long.MAX_VALUE;
+    for (int id : msgs) {
+      long ts = dc.getMsg(id).getTimestamp();
+      long delta = Math.abs(ts - targetTimestampMs);
+      if (delta < bestDelta) {
+        bestDelta = delta;
+        bestMsgId = id;
+      }
+      // Early exit once timestamps cross the target — chronological order
+      // guarantees no closer match remains in the rest of the array.
+      if (ts >= targetTimestampMs) {
+        break;
+      }
+    }
+    scrollToMsgId(bestMsgId);
+    return true;
+  }
+
   private void scrollMaybeSmoothToMsgId(final int msgId) {
     LinearLayoutManager layout = ((LinearLayoutManager) list.getLayoutManager());
     boolean smooth = false;

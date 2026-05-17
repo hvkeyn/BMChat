@@ -1,83 +1,102 @@
-# BMChat
+# BMChat / BroMoreChat
 
-BMChat / BroMoreChat is a planned branded fork of Delta Chat for desktop, Android, and iOS.
+**Email-first messenger в стиле Telegram, работающий через любой IMAP/SMTP-сервер.**
 
-The goal is to keep Delta Chat's decentralized messaging functionality while adding BMChat branding, configurable appearance, complete Russian localization, and a clear shared-chat UX for existing group chats.
+BMChat — самостоятельный мессенджер на базе движка Delta Chat (Rust core + Autocrypt). Цель — взять надёжное end-to-end шифрование Delta Chat, добавить Telegram-уровневый UX (альбомы, мини-плеер, Shared Media, реакции, прочтения, кружочки) и собственную инфраструктуру обновлений, не зависящую от сторонних сервисов.
 
-## Clients
+Весь чат-трафик идёт через почтовый сервер пользователя; сторонние серверы (`5.187.4.132` и зеркало `158.160.104.107:8080`) используются только для:
+- `/i` — лендинг приглашений (SecureJoin через Autocrypt);
+- `/update.json` + `/apk/` — Android auto-update манифест и APK;
+- `/desktop-update.json` — Desktop auto-update манифест.
 
-| Path | Platform | Upstream |
+## Клиенты
+
+| Путь | Платформа | Статус |
 | --- | --- | --- |
-| `clients/desktop` | Windows, Linux, macOS | `deltachat/deltachat-desktop` |
-| `clients/android` | Android | `deltachat/deltachat-android` |
-| `clients/ios` | iOS | `deltachat/deltachat-ios` |
+| `clients/android` | Android 5.0+ | основной фокус, релизный канал debug |
+| `clients/desktop` | Windows / Linux / macOS | работает, авто-обновлятор через `desktop-update.json` |
+| `clients/ios` | iOS | сборки требуют macOS + Xcode |
 
-Shared planning and audit documents are in `docs/`. Brand source values are in `brand/config/bmchat-brand.json`.
+## Реализованные функции
 
-## Current Status
+### Email и доставка
+- IMAP IDLE по всем подключенным аккаунтам, фоновая доставка через `KeepAliveService`.
+- Опция **«Сканировать все папки»** (`Config::ScanAllFolders`) — забирает сообщения из любых папок (не только Inbox/Mvbox).
+- Спам обрабатывается: `Config::FetchSpam` поднимает отдельный `simple_imap_loop` для папок `Spam/Junk` с `should_move_out_of_spam`.
+- Сообщения от не-BMChat отправителей (классические email без `Chat-Version`) показываются как обычные чаты.
 
-This repository is the BMChat fork workspace. The upstream clients are present, the first audits are documented, and the first visible rebrand pass is implemented for desktop, Android, and iOS client layers.
+### Медиа и UX в стиле Telegram
+- **Альбомы**: до 10 фото/видео компонуются в одну композитную JPEG-плитку (`AlbumComposer` + `AlbumThumbnailLayout`), Telegram-style сетка 1/2/3/4/2×n.
+- **Live CameraX picker** (`BMChatGalleryPickerActivity`) — первая плитка в галерее это живой видоискатель камеры, тап раскрывает её на полный экран.
+- **Реакции** — расширенный набор смайлов, плавающий picker над сообщением, кнопка «...» с полным picker'ом.
+- **Read receipts** (`get_message_read_receipts`) — в групповых чатах тап по галочке открывает диалог со списком кто и когда прочитал.
+- **Telegram-style mini-player** (Phase 2, 2.49.79) — `BMChatMiniPlayerView` снизу в списке чатов, в открытом чате и в Shared Media. Работает в фоне через `MediaSessionService`, управление с lock-screen и Bluetooth-наушников. Бейдж скорости `1×/1.5×/2×` рядом с длительностью аудио сообщения.
+- **Telegram-style download UX** (Phase 1, 2.49.78) — круговой индикатор прогресса поверх миниатюр для медиа, не загруженных на диск, иконка перезапуска при ошибке. Сохранение в `Pictures/BMChat`, `Movies/BMChat`, `Music/BMChat`, `Download/BMChat`.
+- **Shared Media browser** (Phase 3, 2.49.80) — Telegram-style вкладки `Apps · Photos · Videos · Audio · Files · Links` в профиле чата. Multi-select экспорт. Links-сканер собирает все URL из переписки.
 
-Implemented in the first rebrand pass:
+### Управление хранилищем
+- Структурированный API в Rust core (`storage_usage.rs`) — total/db/blobdir, evictable, per-category, per-chat.
+- Android UI «Память и данные» с Telegram-style donut chart, авто-очисткой (`WorkManager`) и опасным разделом удаления почты с сервера через `delete_server_after`.
 
-- `DESIGN.md` and `brand/config/bmchat-brand.json` define BMChat's first design tokens.
-- Desktop Electron metadata, app IDs, themes, local strings, help pages, and placeholder artwork use BMChat.
-- Android application IDs, app label, colors, launcher resources, Russian/English strings, and store metadata use BMChat.
-- iOS display names, bundle IDs, app groups, permission prompts, Russian/English strings, and basic color assets use BMChat.
-- Existing group chats are surfaced as shared/common chats in Russian and English.
+### Авто-обновления
+- Android: `BMChatUpdater` (foreground/manual/background через `WorkManager`) тянет `update.json`, проверяет SHA-256 и ставит через `PackageInstaller`.
+- Desktop: `bmchat-updater.ts` в Electron main делает то же через `desktop-update.json`.
+- Релизы заливаются на primary (`5.187.4.132`) и mirror (`158.160.104.107:8080`) через `infra/vps/deploy-*.sh`.
 
-Not yet complete:
+### Брендинг
+- `app_name`, цвета, иконки, темы, локализации (RU + EN), help-страницы и Fastlane-метаданные — везде **BMChat**. Все упоминания Delta Chat в пользовательском UI вычищены (`scripts/rebrand_strings.ps1`, `scripts/rebrand_java_logtags.ps1`).
+- Лицензии и attribution upstream-кода сохранены — это форк, а не переписывание.
 
-- Final production domains, signing identities, Firebase/APNs setup, and store metadata approval.
-- Final designer-provided BMChat icon and artwork set.
-- iOS build verification, because it requires macOS and Xcode.
+## Архитектура
 
-Verified in this workspace:
-
-- Desktop `pnpm -w check` passed with upstream warnings only when run through a Node 22 pnpm wrapper.
-- Desktop `pnpm -w build:electron` passed with `VERSION_INFO_GIT_REF=bmchat-rebrand`.
-- Desktop Windows test builds were produced:
-  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Setup.x64.exe`
-  - `clients/desktop/packages/target-electron/dist/BMChat-2.49.1-Portable.x64.exe`
-- Android `./gradlew.bat assembleDebug` passed and produced debug APKs:
-  - `clients/android/build/outputs/apk/foss/debug/BMChat-foss-debug-2.49.0.apk`
-  - `clients/android/build/outputs/apk/gplay/debug/BMChat-gplay-debug-2.49.0.apk`
-- iOS `xcodebuild` is not available on this Windows machine.
-
-## Development
-
-Read the project context first:
-
-```sh
-memory-bank/projectbrief.md
-memory-bank/activeContext.md
-docs/fork-strategy.md
-docs/brand-map.md
-docs/localization-audit.md
-docs/theme-plan.md
-docs/build-matrix.md
+```
+┌─── Android (Java) ─── ConversationActivity / AllMediaActivity / ...
+│         │
+│         └── Rust core via JNI (libnative-utils.so) ──────┐
+│                                                          │
+├─── Desktop (Electron + React) ── Tauri/electron-main ───┤
+│         │                                                │
+│         └── deltachat-rpc-server (Rust) via stdio ──────┤
+│                                                          │
+├─── iOS (Swift) ── SwiftUI/UIKit ─────────────────────────┤
+│         │                                                │
+│         └── deltachat-core-rust ────────────────────────┤
+│                                                          ▼
+│                            ┌──────────────────────────────┐
+└───── update + invites ──→  │ VPS: nginx /update.json /i   │
+                             │      /apk/ /desktop-update   │
+                             └──────────────────────────────┘
+                                              ▲
+                              user's own IMAP/SMTP server
+                              (всё чат-сообщения, fully E2E)
 ```
 
-Desktop:
+## Сборка
 
+Требования:
+- Android: JDK 17 (Eclipse Temurin), Android SDK + NDK r25c, Rust 1.91.1 для пересборки `libnative-utils.so`.
+- Desktop: Node.js 22, pnpm 9, Rust 1.91.1.
+- iOS: macOS + Xcode + CocoaPods.
+
+### Android
+```sh
+cd clients/android
+# Rust core (один раз или после правок в jni/deltachat-core-rust)
+scripts/ndk-make.sh
+# Debug APK
+./gradlew assembleFossDebug
+# Результат: clients/android/build/outputs/apk/foss/debug/BMChat-foss-debug-<version>.apk
+```
+
+### Desktop
 ```sh
 cd clients/desktop
 pnpm install
-pnpm -w check
 pnpm -w build:electron
 pnpm -w start:electron
 ```
 
-Android:
-
-```sh
-cd clients/android
-scripts/ndk-make.sh
-./gradlew assembleDebug
-```
-
-iOS requires macOS with Xcode:
-
+### iOS
 ```sh
 cd clients/ios
 git submodule update --init --recursive
@@ -86,12 +105,38 @@ pod install
 open deltachat-ios.xcworkspace
 ```
 
-## Licensing
+## Деплой
 
-This repository contains upstream Delta Chat clients and core code with their original licenses and notices.
+Все скрипты в `infra/vps/`. После сборки APK копируется в `infra/vps/apk/`, манифест обновляется в `infra/vps/www/update.json`, потом:
+```sh
+bash infra/vps/deploy-<version>.sh          # primary
+bash infra/vps/deploy-<version>-mirror.sh   # mirror
+```
 
-- Desktop and Android clients are GPL-based.
-- iOS client and Chatmail/Delta Chat core code are MPL-based according to the upstream license files.
-- Keep license notices and copyright attribution intact.
+## Документация
 
-See `docs/licensing-notes.md` for the current engineering notes.
+- `memory-bank/projectbrief.md` — постановка задачи.
+- `memory-bank/activeContext.md` — текущее состояние, последние решения.
+- `memory-bank/progress.md` — список реализованного / в работе.
+- `docs/fork-strategy.md` — стратегия форка vs upstream merge.
+- `docs/brand-map.md` — таблица заменённых брендовых полей.
+- `docs/build-matrix.md` — какие сборки/архитектуры проверены.
+
+## Лицензирование
+
+Этот репозиторий — форк Delta Chat. Лицензии upstream-кода сохранены:
+- Desktop и Android — GPL-based.
+- iOS клиент и Chatmail/Delta Chat core — MPL-based.
+- BMChat-специфичные изменения и инфраструктура (`infra/`, `brand/`, `scripts/`, `memory-bank/`, `docs/`) опубликованы в этом же репозитории под совместимыми условиями; см. `docs/licensing-notes.md`.
+
+## Дорожная карта (Phases)
+
+| Фаза | Версия | Содержание | Статус |
+| --- | --- | --- | --- |
+| Phase 1 | 2.49.78 | Telegram-style download UX (круговой прогресс, save-as) | завершено |
+| Phase 2 | 2.49.79 | Mini-player + playback speed | завершено |
+| Phase 3 | 2.49.80 | Shared Media browser (Photos/Videos/Audio/Files/Links) | завершено |
+| Phase 4 | 2.49.81 | Chat UX: PiP-video, swipe-to-reply, scheduled, jump-to-date | в работе |
+| Phase 5 | 2.49.82 | Круглые видео-сообщения (video notes) | планируется |
+| Phase 6 | — | Desktop порт фишек Phase 1–5 | планируется |
+| Phase 7 | — | iOS порт фишек Phase 1–5 | планируется |

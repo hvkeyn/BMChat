@@ -68,6 +68,12 @@
         android:icon="@drawable/ic_map_white_24dp"
         app:showAsAction="never" />
 
+    <!-- BMChat 2.49.81 (Phase 4): Telegram-style jump-to-date. -->
+    <item
+        android:id="@+id/bmchat_menu_jump_to_date"
+        android:title="@string/bmchat_jump_to_date"
+        app:showAsAction="never" />
+
     <item
         android:title="@string/menu_archive_chat"
         android:id="@+id/menu_archive_chat" />

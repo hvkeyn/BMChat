@@ -759,6 +759,9 @@
     <string name="tab_gallery">Gallery</string>
     <string name="tab_docs">Docs</string>
     <string name="tab_links">Links</string>
+    <!-- BMChat 2.49.81: Telegram-style jump-to-date in conversation menu. -->
+    <string name="bmchat_jump_to_date">Jump to date</string>
+    <string name="bmchat_jump_to_date_empty">This chat has no messages yet.</string>
     <!-- BMChat 2.49.80: Telegram-style Shared Media tabs split Photos and Videos. -->
     <string name="bmchat_tab_photos">Photos</string>
     <string name="bmchat_tab_videos">Videos</string>

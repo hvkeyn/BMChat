@@ -772,6 +772,9 @@
     <string name="tab_gallery">Галерея</string>
     <string name="tab_docs">Документы</string>
     <string name="tab_links">Ссылки</string>
+    <!-- BMChat 2.49.81: переход к дате в меню чата -->
+    <string name="bmchat_jump_to_date">Перейти к дате…</string>
+    <string name="bmchat_jump_to_date_empty">В этом чате ещё нет сообщений.</string>
     <!-- BMChat 2.49.80: вкладки Photos/Videos в Shared Media -->
     <string name="bmchat_tab_photos">Фото</string>
     <string name="bmchat_tab_videos">Видео</string>
