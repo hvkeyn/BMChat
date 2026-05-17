@@ -750,6 +750,12 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     } else if (itemId == R.id.bmchat_menu_jump_to_date) {
       handleJumpToDate();
       return true;
+    } else if (itemId == R.id.bmchat_menu_scheduled_messages) {
+      // BMChat 2.49.84 (Phase 4B): open the scheduled messages browser.
+      startActivity(
+          new android.content.Intent(
+              this, org.thoughtcrime.securesms.schedule.BMChatScheduledMessagesActivity.class));
+      return true;
     } else if (itemId == R.id.menu_start_audio_call) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         CallUtil.startAudioCall(context, chatId);
@@ -1254,6 +1260,17 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     attachButton.setOnClickListener(new AttachButtonListener());
     attachButton.setOnLongClickListener(new AttachButtonLongClickListener());
     sendButton.setOnClickListener(sendButtonListener);
+    // BMChat 2.49.84 (Phase 4B): long-press on the send button opens the schedule picker.
+    sendButton.setOnLongClickListener(
+        v -> {
+          if (!composeText.isEnabled()) return false;
+          if (composeText.getTextTrimmed().isEmpty() && !attachmentManager.isAttachmentPresent()) {
+            return false;
+          }
+          org.thoughtcrime.securesms.schedule.BMChatScheduleDialog.show(
+              this, this::scheduleCurrentMessage);
+          return true;
+        });
     sendButton.setEnabled(true);
     sendButton.addOnTransportChangedListener(
         (newTransport, manuallySelected) -> {
@@ -1449,6 +1466,101 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
 
   protected static final int ACTION_SEND_OUT = 1;
   protected static final int ACTION_SAVE_DRAFT = 2;
+
+  // BMChat 2.49.84 (Phase 4B): hand the currently-composed message off to the scheduled queue
+  // instead of sending it immediately. The body and any attachment are deep-copied into the
+  // scheduled/ directory so the user can clear the compose area right after.
+  protected void scheduleCurrentMessage(long scheduledAtMs) {
+    String body = composeText.getTextTrimmed();
+    org.thoughtcrime.securesms.mms.SlideDeck deck =
+        attachmentManager.isAttachmentPresent() ? attachmentManager.buildSlideDeck() : null;
+    if (body.isEmpty() && deck == null) return;
+
+    int viewType = DcMsg.DC_MSG_TEXT;
+    String attachmentPath = null;
+    String originalFileName = null;
+    String mimeType = null;
+
+    if (deck != null) {
+      try {
+        org.thoughtcrime.securesms.attachments.Attachment attachment = deck.asAttachments().get(0);
+        mimeType = attachment.getContentType();
+        if (org.thoughtcrime.securesms.util.MediaUtil.isImageType(mimeType)) {
+          viewType =
+              org.thoughtcrime.securesms.util.MediaUtil.isGif(mimeType)
+                  ? DcMsg.DC_MSG_GIF
+                  : DcMsg.DC_MSG_IMAGE;
+        } else if (org.thoughtcrime.securesms.util.MediaUtil.isAudioType(mimeType)) {
+          viewType =
+              attachment.isVoiceNote() ? DcMsg.DC_MSG_VOICE : DcMsg.DC_MSG_AUDIO;
+        } else if (org.thoughtcrime.securesms.util.MediaUtil.isVideoType(mimeType)) {
+          viewType = DcMsg.DC_MSG_VIDEO;
+        } else {
+          viewType = DcMsg.DC_MSG_FILE;
+        }
+        String sourcePath = attachment.getRealPath(this);
+        if (sourcePath != null) {
+          java.io.File dir = new java.io.File(getFilesDir(), "scheduled");
+          if (!dir.exists()) dir.mkdirs();
+          java.io.File copy =
+              new java.io.File(
+                  dir,
+                  "att-" + System.currentTimeMillis() + "-" + java.util.UUID.randomUUID() + ".bin");
+          try (java.io.FileInputStream in = new java.io.FileInputStream(sourcePath);
+              java.io.FileOutputStream out = new java.io.FileOutputStream(copy)) {
+            byte[] buf = new byte[64 * 1024];
+            int read;
+            while ((read = in.read(buf)) != -1) out.write(buf, 0, read);
+          }
+          attachmentPath = copy.getAbsolutePath();
+          originalFileName = attachment.getFileName();
+        }
+      } catch (Exception e) {
+        Log.w(TAG, "Failed to stage scheduled attachment", e);
+        Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
+        return;
+      }
+    }
+
+    Optional<QuoteModel> quote = inputPanel.getQuote();
+    int quoteMsgId =
+        quote.isPresent() && quote.get().getQuotedMsg() != null
+            ? quote.get().getQuotedMsg().getId()
+            : 0;
+
+    String id = org.thoughtcrime.securesms.schedule.BMChatScheduledMessageScheduler.newId();
+    org.thoughtcrime.securesms.schedule.BMChatScheduledMessage entry =
+        new org.thoughtcrime.securesms.schedule.BMChatScheduledMessage(
+            id,
+            chatId,
+            scheduledAtMs,
+            body,
+            viewType,
+            attachmentPath,
+            originalFileName,
+            mimeType,
+            quoteMsgId,
+            System.currentTimeMillis());
+
+    org.thoughtcrime.securesms.schedule.BMChatScheduledMessageStore store =
+        new org.thoughtcrime.securesms.schedule.BMChatScheduledMessageStore(this);
+    if (!store.add(entry)) {
+      Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
+      return;
+    }
+    org.thoughtcrime.securesms.schedule.BMChatScheduledMessageScheduler.schedule(this, entry);
+
+    composeText.setText("");
+    inputPanel.clearQuote();
+    attachmentManager.clear(glideRequests, false);
+
+    String when =
+        android.text.format.DateFormat.getMediumDateFormat(this)
+                .format(new java.util.Date(scheduledAtMs))
+            + " "
+            + android.text.format.DateFormat.getTimeFormat(this).format(new java.util.Date(scheduledAtMs));
+    Toast.makeText(this, getString(R.string.bmchat_schedule_saved, when), Toast.LENGTH_LONG).show();
+  }
 
   protected ListenableFuture<Integer> processComposeControls(int action) {
     return processComposeControls(
@@ -1824,10 +1936,25 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   public void onRecorderModeChanged(@NonNull org.thoughtcrime.securesms.components.MicrophoneRecorderView.Mode newMode) {
     Vibrator vibrator = ServiceUtil.getVibrator(this);
     vibrator.vibrate(15);
-    int toastRes = newMode == org.thoughtcrime.securesms.components.MicrophoneRecorderView.Mode.VIDEO_NOTE
-        ? R.string.bmchat_video_note_record
-        : R.string.audio;
-    Toast.makeText(this, toastRes, Toast.LENGTH_SHORT).show();
+    boolean videoNote =
+        newMode == org.thoughtcrime.securesms.components.MicrophoneRecorderView.Mode.VIDEO_NOTE;
+    Toast.makeText(
+            this,
+            videoNote ? R.string.bmchat_recorder_mode_video : R.string.bmchat_recorder_mode_voice,
+            Toast.LENGTH_SHORT)
+        .show();
+
+    // BMChat 2.49.84 — Pre-emptively ask for CAMERA + RECORD_AUDIO the moment the user picks
+    // the video note mode, so the next hold-to-record can bind CameraX without surfacing a
+    // generic "couldn't access the camera" toast.
+    if (videoNote
+        && !Permissions.hasAll(this, Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)) {
+      Permissions.with(this)
+          .request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+          .ifNecessary()
+          .withPermanentDenialDialog(getString(R.string.perm_explain_access_to_mic_denied))
+          .execute();
+    }
   }
 
   private void ensureVideoNoteRecorder() {
@@ -1860,6 +1987,22 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
           @Override
           public void onRecordingFailed(@Nullable Throwable error) {
             hideVideoNoteOverlay();
+            android.util.Log.w("BMChatVideoNote", "Video note recording failed", error);
+            // BMChat 2.49.84 — A SecurityException usually means the user dismissed the
+            // permission prompt halfway through; offer it again instead of showing a
+            // generic camera error so they can retry without digging into Settings.
+            if (error instanceof SecurityException
+                || !Permissions.hasAll(
+                    ConversationActivity.this,
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.RECORD_AUDIO)) {
+              Permissions.with(ConversationActivity.this)
+                  .request(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO)
+                  .ifNecessary()
+                  .withPermanentDenialDialog(getString(R.string.perm_explain_access_to_mic_denied))
+                  .execute();
+              return;
+            }
             Toast.makeText(
                     ConversationActivity.this,
                     R.string.bmchat_video_note_camera_error,

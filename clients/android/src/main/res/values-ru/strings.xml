@@ -781,6 +781,19 @@
     <string name="bmchat_video_note_switch_camera">Сменить камеру</string>
     <string name="bmchat_video_note_camera_error">Не удалось получить доступ к камере.</string>
     <string name="bmchat_video_note_menu">Кружочек</string>
+    <!-- BMChat 2.49.84 -->
+    <string name="bmchat_recorder_mode_voice">Голосовое сообщение</string>
+    <string name="bmchat_recorder_mode_video">Видео-кружочек</string>
+    <!-- BMChat 2.49.84 (Phase 4B): отложенные сообщения. -->
+    <string name="bmchat_schedule_message">Отложить отправку</string>
+    <string name="bmchat_scheduled_messages">Отложенные сообщения</string>
+    <string name="bmchat_schedule_pick_time">Выберите время</string>
+    <string name="bmchat_schedule_pending">Будет отправлено %1$s</string>
+    <string name="bmchat_schedule_empty">Нет отложенных сообщений.</string>
+    <string name="bmchat_schedule_in_the_past">Выберите момент в будущем.</string>
+    <string name="bmchat_schedule_cancel">Отменить отложенное сообщение</string>
+    <string name="bmchat_schedule_cancelled">Отложенное сообщение отменено.</string>
+    <string name="bmchat_schedule_saved">Запланировано на %1$s</string>
     <!-- BMChat 2.49.80: вкладки Photos/Videos в Shared Media -->
     <string name="bmchat_tab_photos">Фото</string>
     <string name="bmchat_tab_videos">Видео</string>

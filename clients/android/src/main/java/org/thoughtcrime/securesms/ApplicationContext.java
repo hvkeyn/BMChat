@@ -182,6 +182,13 @@ public class ApplicationContext extends MultiDexApplication {
     }
 
     try {
+      // BMChat 2.49.84 (Phase 4B): re-arm scheduled messages after a reboot or process restart.
+      org.thoughtcrime.securesms.schedule.BMChatScheduledMessageScheduler.rescheduleAll(this);
+    } catch (Throwable t) {
+      Log.w(TAG, "BMChatScheduledMessageScheduler.rescheduleAll failed", t);
+    }
+
+    try {
       org.thoughtcrime.securesms.storage.StorageCleanupWorker.schedule(this);
     } catch (Throwable t) {
       Log.w(TAG, "StorageCleanupWorker.schedule failed", t);

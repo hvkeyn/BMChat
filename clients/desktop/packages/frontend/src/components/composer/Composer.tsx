@@ -46,6 +46,11 @@ import {
 } from '../AudioRecorder/AudioRecorder'
 import AlertDialog from '../dialogs/AlertDialog'
 import { unknownErrorToString } from '@deltachat-desktop/shared/unknownErrorToString'
+import ScheduleMessageDialog from '../dialogs/ScheduleMessageDialog'
+import {
+  newId as newScheduledMessageId,
+  schedule as scheduleMessage,
+} from '../../scheduler/scheduledMessages'
 
 const log = getLogger('renderer/composer')
 
@@ -289,6 +294,52 @@ const Composer = forwardRef<
     !messageEditing.isEditingModeActive
       ? composerSendMessage
       : messageEditing.doSendEditRequest
+
+  // BMChat 2.49.84 (Phase 6, Phase 4B port): right-click on the send button opens the
+  // schedule picker, mirroring the Android long-press flow. The actual delivery is owned
+  // by `scheduledMessages.ts` — here we just stage the payload and clear the draft.
+  const openScheduleDialog = useCallback(() => {
+    if (messageEditing.isEditingModeActive) return
+    if (chatId === null) return
+    if (!(draftState.text.length > 0) && !draftState.file) return
+    openDialog(ScheduleMessageDialog, {
+      onConfirm: (scheduledAtMs: number) => {
+        const preSendDraftState = draftState
+        try {
+          scheduleMessage({
+            id: newScheduledMessageId(),
+            accountId,
+            chatId,
+            scheduledAtMs,
+            text: preSendDraftState.text,
+            file: preSendDraftState.file || null,
+            filename: preSendDraftState.fileName || null,
+            viewtype: preSendDraftState.viewType ?? null,
+            quotedMessageId:
+              preSendDraftState.quote?.kind === 'WithMessage'
+                ? preSendDraftState.quote.messageId
+                : null,
+            createdAtMs: Date.now(),
+          })
+          props.clearDraftState()
+          void BackendRemote.rpc.removeDraft(accountId, chatId)
+        } catch (err) {
+          openDialog(AlertDialog, {
+            message:
+              tx('error') + ': ' + unknownErrorToString(err),
+          })
+        }
+      },
+    })
+  }, [
+    accountId,
+    chatId,
+    draftState,
+    messageEditing.isEditingModeActive,
+    openDialog,
+    props,
+    tx,
+  ])
 
   useKeyBindingAction(KeybindAction.Composer_SelectReplyToUp, () => {
     if (messageEditing.isEditingModeActive) {
@@ -792,8 +843,15 @@ const Composer = forwardRef<
               // See `doSendEditRequest`.
               disabled={sendButtonAction == null}
               onClick={sendButtonAction ?? (() => {})}
+              onContextMenu={e => {
+                // BMChat 2.49.84 (Phase 6, Phase 4B port): right-click → schedule.
+                e.preventDefault()
+                if (sendButtonAction == null) return
+                openScheduleDialog()
+              }}
               aria-label={tx('menu_send')}
               aria-keyshortcuts={ariaSendShortcut}
+              title={tx('bmchat_schedule_message')}
             >
               <div className='paper-plane'></div>
             </button>

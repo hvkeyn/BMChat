@@ -768,6 +768,19 @@
     <string name="bmchat_video_note_switch_camera">Switch camera</string>
     <string name="bmchat_video_note_camera_error">Couldn\'t access the camera.</string>
     <string name="bmchat_video_note_menu">Video note</string>
+    <!-- BMChat 2.49.84: recorder mode hint after a tap on the mic/video toggle. -->
+    <string name="bmchat_recorder_mode_voice">Voice message</string>
+    <string name="bmchat_recorder_mode_video">Video note</string>
+    <!-- BMChat 2.49.84 (Phase 4B): scheduled messages UI. -->
+    <string name="bmchat_schedule_message">Schedule message</string>
+    <string name="bmchat_scheduled_messages">Scheduled messages</string>
+    <string name="bmchat_schedule_pick_time">Pick a time</string>
+    <string name="bmchat_schedule_pending">Will be sent on %1$s</string>
+    <string name="bmchat_schedule_empty">No scheduled messages.</string>
+    <string name="bmchat_schedule_in_the_past">Pick a moment in the future.</string>
+    <string name="bmchat_schedule_cancel">Cancel scheduled message</string>
+    <string name="bmchat_schedule_cancelled">Scheduled message cancelled.</string>
+    <string name="bmchat_schedule_saved">Scheduled for %1$s</string>
     <!-- BMChat 2.49.80: Telegram-style Shared Media tabs split Photos and Videos. -->
     <string name="bmchat_tab_photos">Photos</string>
     <string name="bmchat_tab_videos">Videos</string>

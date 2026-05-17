@@ -10,6 +10,7 @@ import {
   setLogHandler,
 } from '../../shared/logger'
 import { runtime } from '@deltachat-desktop/runtime-interface'
+import { bootstrap as bootstrapScheduledMessages } from './scheduler/scheduledMessages'
 
 async function main() {
   // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -19,6 +20,9 @@ async function main() {
     printProcessLogLevelInfo()
 
     initSystemIntegration()
+    // BMChat 2.49.84 (Phase 6, Phase 4B port): re-arm any pending scheduled messages so they
+    // fire on time even after the renderer was reloaded.
+    bootstrapScheduledMessages()
     const domNode = document.querySelector('#root')
     if (!domNode) {
       throw new Error('No element with ID root in the DOM. Cannot continue')
