@@ -772,6 +772,12 @@
     <string name="tab_gallery">Галерея</string>
     <string name="tab_docs">Документы</string>
     <string name="tab_links">Ссылки</string>
+    <!-- BMChat 2.49.80: вкладки Photos/Videos в Shared Media -->
+    <string name="bmchat_tab_photos">Фото</string>
+    <string name="bmchat_tab_videos">Видео</string>
+    <string name="bmchat_tab_links_empty_hint">Ссылки, отправленные в этом чате, появятся здесь.</string>
+    <string name="bmchat_tab_all_links_empty_hint">Ссылки, отправленные в любом чате, появятся здесь.</string>
+    <string name="bmchat_copy_link">Скопировать ссылку</string>
     <string name="tab_map">Карта</string>
     <string name="tab_gallery_empty_hint">Изображения и видео, прикреплённые к этому чату, будут показаны здесь.</string>
     <string name="tab_docs_empty_hint">Документы и прочие файлы, прикреплённые к этому чату, будут показаны здесь.</string>

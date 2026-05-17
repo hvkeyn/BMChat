@@ -34,6 +34,13 @@ public class AllMediaGalleryFragment extends MessageSelectorFragment
     implements LoaderManager.LoaderCallbacks<BucketedThreadMediaLoader.BucketedThreadMedia>,
         AllMediaGalleryAdapter.ItemClickListener {
   public static final String CHAT_ID_EXTRA = "chat_id";
+  // BMChat 2.49.80 (Phase 3): allow callers to narrow the gallery to a
+  // single viewtype (e.g. only photos or only videos) so the Telegram-style
+  // Photos / Videos / Files / Audio / Links tab layout can reuse this
+  // fragment without duplicating the loader logic.
+  public static final String VIEWTYPE1 = "viewtype1";
+  public static final String VIEWTYPE2 = "viewtype2";
+  public static final String VIEWTYPE3 = "viewtype3";
 
   protected TextView noMedia;
   protected RecyclerView recyclerView;
@@ -41,12 +48,18 @@ public class AllMediaGalleryFragment extends MessageSelectorFragment
   private final ActionModeCallback actionModeCallback = new ActionModeCallback();
 
   private int chatId;
+  private int viewtype1;
+  private int viewtype2;
+  private int viewtype3;
 
   @Override
   public void onCreate(Bundle bundle) {
     super.onCreate(bundle);
 
     chatId = getArguments().getInt(CHAT_ID_EXTRA, -1);
+    viewtype1 = getArguments().getInt(VIEWTYPE1, DcMsg.DC_MSG_IMAGE);
+    viewtype2 = getArguments().getInt(VIEWTYPE2, DcMsg.DC_MSG_GIF);
+    viewtype3 = getArguments().getInt(VIEWTYPE3, DcMsg.DC_MSG_VIDEO);
 
     getLoaderManager().initLoader(0, null, this);
   }
@@ -108,8 +121,7 @@ public class AllMediaGalleryFragment extends MessageSelectorFragment
   @Override
   public Loader<BucketedThreadMediaLoader.BucketedThreadMedia> onCreateLoader(
       int i, Bundle bundle) {
-    return new BucketedThreadMediaLoader(
-        getContext(), chatId, DcMsg.DC_MSG_IMAGE, DcMsg.DC_MSG_GIF, DcMsg.DC_MSG_VIDEO);
+    return new BucketedThreadMediaLoader(getContext(), chatId, viewtype1, viewtype2, viewtype3);
   }
 
   @Override
@@ -122,6 +134,12 @@ public class AllMediaGalleryFragment extends MessageSelectorFragment
     noMedia.setVisibility(recyclerView.getAdapter().getItemCount() > 0 ? View.GONE : View.VISIBLE);
     if (chatId == DC_CHAT_NO_CHAT) {
       noMedia.setText(R.string.tab_all_media_empty_hint);
+    } else if (viewtype1 == DcMsg.DC_MSG_VIDEO && viewtype2 == 0) {
+      // BMChat 2.49.80: dedicated Videos tab needs a video-specific hint.
+      noMedia.setText(R.string.tab_video_empty_hint);
+    } else if (viewtype1 == DcMsg.DC_MSG_IMAGE && viewtype3 == 0) {
+      // BMChat 2.49.80: Photos tab covers images + GIFs without videos.
+      noMedia.setText(R.string.tab_image_empty_hint);
     }
     getActivity().invalidateOptionsMenu();
   }

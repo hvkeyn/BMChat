@@ -759,6 +759,12 @@
     <string name="tab_gallery">Gallery</string>
     <string name="tab_docs">Docs</string>
     <string name="tab_links">Links</string>
+    <!-- BMChat 2.49.80: Telegram-style Shared Media tabs split Photos and Videos. -->
+    <string name="bmchat_tab_photos">Photos</string>
+    <string name="bmchat_tab_videos">Videos</string>
+    <string name="bmchat_tab_links_empty_hint">Links shared in this chat will appear here.</string>
+    <string name="bmchat_tab_all_links_empty_hint">Links shared in any chat will appear here.</string>
+    <string name="bmchat_copy_link">Copy link</string>
     <string name="tab_map">Map</string>
     <string name="tab_gallery_empty_hint">Images and videos attached to this chat will appear here.</string>
     <string name="tab_docs_empty_hint">Documents and other files attached to this chat will appear here.</string>
