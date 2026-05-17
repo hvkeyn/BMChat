@@ -106,12 +106,20 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
 
     LinearLayout header = card();
     header.setGravity(Gravity.CENTER_HORIZONTAL);
+    header.setPadding(dp(20), dp(20), dp(20), dp(20));
+
+    // Telegram-style donut with the headline number drawn in
+    // the centre so the chart can never look "cut off" — the text
+    // anchors the visual focus regardless of the ring stroke.
     donutView = new StorageDonutView(this);
-    header.addView(donutView, new LinearLayout.LayoutParams(dp(132), dp(132)));
+    LinearLayout.LayoutParams donutParams = new LinearLayout.LayoutParams(dp(140), dp(140));
+    donutParams.topMargin = dp(4);
+    donutParams.bottomMargin = dp(12);
+    header.addView(donutView, donutParams);
+
     totalText = titleText();
     totalText.setGravity(Gravity.CENTER);
-    totalText.setTextSize(16);
-    totalText.setPadding(0, dp(8), 0, 0);
+    totalText.setTextSize(15);
     header.addView(totalText, new LinearLayout.LayoutParams(-1, -2));
     freeText = subtitleText();
     freeText.setGravity(Gravity.CENTER);
@@ -602,8 +610,12 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
 
   public static final class StorageDonutView extends View {
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+    private final Paint subtextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF rect = new RectF();
     private StorageUsage usage;
+    private String centreText = "";
+    private String centreUnit = "";
     private final int[] colors = {
       0xff7B1226, 0xffC62A48, 0xffF08CA0, 0xff8F1830, 0xffB66A7A, 0xffD8B6BD
     };
@@ -612,36 +624,86 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
       super(context);
       paint.setStyle(Paint.Style.STROKE);
       paint.setStrokeCap(Paint.Cap.BUTT);
+
+      textPaint.setColor(0xff111111);
+      textPaint.setTextAlign(Paint.Align.CENTER);
+      textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+      subtextPaint.setColor(0xff666666);
+      subtextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
     void setUsage(@Nullable StorageUsage usage) {
       this.usage = usage;
+      this.centreText = formatCentre(usage);
       invalidate();
+    }
+
+    void setUnit(@Nullable String unit) {
+      this.centreUnit = unit == null ? "" : unit;
+      invalidate();
+    }
+
+    private static String formatCentre(@Nullable StorageUsage usage) {
+      long bytes = usage == null ? 0L : safe(usage.totalBytes);
+      if (bytes <= 0L) {
+        return "0";
+      }
+      double mb = bytes / (1024.0 * 1024.0);
+      if (mb >= 1024.0) {
+        return String.format(Locale.getDefault(), "%.1f GB", mb / 1024.0);
+      }
+      if (mb >= 10.0) {
+        return String.format(Locale.getDefault(), "%.0f MB", mb);
+      }
+      if (mb >= 1.0) {
+        return String.format(Locale.getDefault(), "%.1f MB", mb);
+      }
+      double kb = bytes / 1024.0;
+      return String.format(Locale.getDefault(), "%.0f KB", kb);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
       super.onDraw(canvas);
       int size = Math.min(getWidth(), getHeight());
-      float stroke = size * 0.14f;
-      paint.setStrokeWidth(stroke);
-      rect.set(stroke, stroke, size - stroke, size - stroke);
+      if (size <= 0) return;
 
-      paint.setColor(0xffeeeeee);
+      float stroke = size * 0.11f;
+      paint.setStrokeWidth(stroke);
+      float inset = stroke / 2f + size * 0.02f;
+      rect.set(inset, inset, size - inset, size - inset);
+
+      paint.setColor(0xffe5dade);
       canvas.drawArc(rect, -90, 360, false, paint);
       long total = usage == null ? 0L : safe(usage.blobdirBytes);
-      if (usage == null || usage.byCategory == null || total <= 0) {
-        return;
+      if (usage != null && usage.byCategory != null && total > 0) {
+        float start = -90f;
+        int index = 0;
+        for (StorageCategoryUsage item : usage.byCategory) {
+          long bytes = safe(item.bytes);
+          if (bytes <= 0) continue;
+          float sweep = (bytes * 360f) / total;
+          paint.setColor(colors[index++ % colors.length]);
+          canvas.drawArc(rect, start, sweep, false, paint);
+          start += sweep;
+        }
       }
-      float start = -90f;
-      int index = 0;
-      for (StorageCategoryUsage item : usage.byCategory) {
-        long bytes = safe(item.bytes);
-        if (bytes <= 0) continue;
-        float sweep = (bytes * 360f) / total;
-        paint.setColor(colors[index++ % colors.length]);
-        canvas.drawArc(rect, start, sweep, false, paint);
-        start += sweep;
+
+      textPaint.setTextSize(size * 0.18f);
+      subtextPaint.setTextSize(size * 0.10f);
+      float cx = size / 2f;
+      float cy = size / 2f - (textPaint.descent() + textPaint.ascent()) / 2f;
+      if (!centreUnit.isEmpty()) {
+        cy -= subtextPaint.getTextSize() * 0.55f;
+      }
+      canvas.drawText(centreText, cx, cy, textPaint);
+      if (!centreUnit.isEmpty()) {
+        canvas.drawText(
+            centreUnit,
+            cx,
+            cy + textPaint.getTextSize() * 0.75f,
+            subtextPaint);
       }
     }
 
