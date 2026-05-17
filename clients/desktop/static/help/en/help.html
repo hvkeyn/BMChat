@@ -1,22 +1,206 @@
-<ul>
-  <li><a href="#what-is-bmchat">What is BMChat?</a></li>
-  <li><a href="#email-transport">How does BMChat work through email systems?</a></li>
-  <li><a href="#shared-chats">How do I create shared chats?</a></li>
-  <li><a href="#privacy">How does BMChat protect messages?</a></li>
-  <li><a href="#upstream">What is BMChat based on?</a></li>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="initial-scale=1.0" />
+  <link rel="stylesheet" href="../help.css" />
+  <title>BMChat Help</title>
+</head>
+<body>
+
+<h1>BMChat — Help</h1>
+
+<p>
+  BMChat is a private, end-to-end encrypted messenger that uses your own e-mail
+  account as the transport. There are no central servers running your chats and
+  no telephone numbers tied to your identity.
+</p>
+
+<ul id="top">
+  <li><a href="#what">What is BMChat?</a></li>
+  <li><a href="#start">Setting up your first profile</a></li>
+  <li><a href="#invite">Inviting people to chat</a></li>
+  <li><a href="#groups">Groups</a></li>
+  <li><a href="#multiclient">Using BMChat on several devices</a></li>
+  <li><a href="#updates">App updates</a></li>
+  <li><a href="#storage">Storage and cache management</a></li>
+  <li><a href="#spam">Spam folder, all-folders sweep, classic e-mail</a></li>
+  <li><a href="#notifications">Notifications and battery</a></li>
+  <li><a href="#e2ee">End-to-end encryption</a></li>
+  <li><a href="#privacy">Privacy</a></li>
+  <li><a href="#sources">Source code and reporting bugs</a></li>
 </ul>
 
-<h2 id="what-is-bmchat">What is BMChat?</h2>
-<p>BMChat / BroMoreChat is a free messenger for communication through email systems. It keeps familiar chat, group, attachment, and QR invite workflows while using decentralized email/chatmail infrastructure instead of a single central service.</p>
+<h2 id="what">What is BMChat?</h2>
+<p>
+  BMChat is a fork of the Delta Chat messenger reworked into an
+  e-mail-first product. Every message travels through your own
+  IMAP/SMTP mailbox, encrypted end-to-end with the OpenPGP-based
+  Autocrypt standard. There is no centralised server holding your
+  contact list, no Apple/Google account tied to your identity, and no
+  third-party push notification service that can read your data.
+</p>
+<ul>
+  <li>End-to-end encryption is on by default for every conversation between BMChat users.</li>
+  <li>You bring your own mail server, so you fully decide where your data lives.</li>
+  <li>Group chats and direct messages share the same secure transport.</li>
+  <li>The app updates itself from <a href="http://5.187.4.132/update.json">our update server</a> with a SHA-256-verified APK.</li>
+</ul>
 
-<h2 id="email-transport">How does BMChat work through email systems?</h2>
-<p>Messages are transported through existing email or chatmail servers. For users it behaves like a messenger: create a profile, add contacts, send messages, share files, record voice messages, and invite people with QR codes.</p>
+<h2 id="start">Setting up your first profile</h2>
+<p>
+  On first launch you can either create a new chat profile or restore an
+  existing one from a backup. To create a profile:
+</p>
+<ol>
+  <li>Choose <strong>I have an e-mail account</strong>.</li>
+  <li>Enter the address and password of an IMAP-capable mailbox you control.</li>
+  <li>Tap <strong>Sign In</strong>. BMChat detects IMAP/SMTP settings automatically for most providers.</li>
+  <li>Optionally, set a display name and avatar in <strong>Settings &rarr; My Profile</strong>.</li>
+</ol>
+<p>
+  If you prefer to start from a backup, choose <strong>I already have a
+  profile</strong> on the welcome screen and follow the on-screen
+  instructions.
+</p>
 
-<h2 id="shared-chats">How do I create shared chats?</h2>
-<p>Press the new chat button and choose <strong>New Shared Chat</strong>. Set a name, add members, and send the first message. Other members will see the shared chat after that first message is sent.</p>
+<h2 id="invite">Inviting people to chat</h2>
+<p>BMChat does not have a public directory. Each contact is added explicitly:</p>
+<ul>
+  <li><strong>QR code:</strong> tap the QR icon in the upper right corner and ask the other person to scan it with their BMChat app.</li>
+  <li><strong>Invite link:</strong> from the same screen, choose <strong>Copy</strong> or <strong>Share</strong> and send the link through any other private channel.</li>
+  <li><strong>Direct e-mail:</strong> just write to a known address from inside BMChat. The first message becomes a contact request that the other side must accept.</li>
+</ul>
+<p>
+  As soon as both sides exchange one message, end-to-end encryption is
+  established automatically and stays in place for every following
+  message.
+</p>
 
-<h2 id="privacy">How does BMChat protect messages?</h2>
-<p>BMChat inherits BMChat's secure messaging model: end-to-end encryption, QR contact verification, profile backups, and communication without depending on one provider. Exact behavior depends on the mail server and client version.</p>
+<h2 id="groups">Groups</h2>
+<p>Groups in BMChat are secure: every member has the same rights and the entire member list is end-to-end encrypted.</p>
+<ul>
+  <li>Open the menu in the chat list and choose <strong>New group</strong>.</li>
+  <li>Pick a name, an optional avatar and the members.</li>
+  <li>Anyone in the group can later add or remove members, change the avatar or set disappearing-message timers.</li>
+</ul>
+<p>
+  Groups behave best with up to roughly 150 trusted contacts. Larger
+  rooms are technically possible but get socially noisy quickly.
+</p>
 
-<h2 id="upstream">What is BMChat based on?</h2>
-<p>BMChat is a fork of BMChat and preserves required upstream attribution. Technical references to BMChat, chatmail, and core components may remain in licenses, developer documentation, and protocol-compatible internals.</p>
+<h2 id="multiclient">Using BMChat on several devices</h2>
+<p>
+  Every device runs an independent copy of your profile. To synchronise
+  them:
+</p>
+<ol>
+  <li>On the existing device open <strong>Settings &rarr; Add Second Device</strong> and unlock if prompted.</li>
+  <li>Make sure both devices are on the same Wi-Fi or local network.</li>
+  <li>Install BMChat on the new device, choose <strong>Add as Second Device</strong> on the welcome screen and scan the QR code.</li>
+  <li>Wait for the transfer to finish on both ends.</li>
+</ol>
+<p>
+  If <strong>Add Second Device</strong> is not available, use
+  <strong>Settings &rarr; Chats &rarr; Export Backup</strong> on the
+  source device and <strong>Restore from Backup</strong> on the
+  destination one.
+</p>
+
+<h2 id="updates">App updates</h2>
+<p>
+  BMChat ships its own updater. The Android app polls
+  <a href="http://5.187.4.132/update.json">http://5.187.4.132/update.json</a>
+  every few hours, downloads the new APK from the same host, verifies
+  its SHA-256 fingerprint, and asks you to install it through the
+  standard Android package installer. The desktop client follows the
+  same model with <code>desktop-update.json</code>.
+</p>
+<p>
+  You can also force a check from <strong>Settings &rarr; Advanced
+  &rarr; Check for updates now</strong>.
+</p>
+
+<h2 id="storage">Storage and cache management</h2>
+<p>
+  BMChat keeps a local cache of received attachments and the chat
+  database. To inspect or clean it:
+</p>
+<ul>
+  <li>Open <strong>Settings &rarr; Storage and Data</strong>.</li>
+  <li>The donut chart shows total used space, evictable cache and free space.</li>
+  <li>You can clear individual categories (photos, video, voice, files, apps) or pick specific chats.</li>
+  <li><strong>Auto-clean</strong> can drop messages older than a configurable threshold and keep cache size below a chosen limit.</li>
+</ul>
+<p>
+  Cleared local copies can usually be redownloaded from the mail server
+  on demand. A separate &laquo;dangerous zone&raquo; lets you also
+  delete messages from the IMAP server itself; that operation is
+  irreversible and confirms with an explicit dialog.
+</p>
+
+<h2 id="spam">Spam folder, all-folders sweep, classic e-mail</h2>
+<p>
+  Some providers move legitimate chat traffic into the Spam or Junk
+  folder. BMChat handles that for you:
+</p>
+<ul>
+  <li>By default, BMChat watches Inbox, Sent, your move-to folder and Spam/Junk, moves chat-shaped messages out of Spam and shows them as normal chats.</li>
+  <li>If your provider hides chat traffic in non-standard folders, enable <strong>Settings &rarr; Advanced &rarr; Scan all server folders</strong>. BMChat will periodically sweep every folder outside Trash for new chat messages. This costs more bandwidth and battery, so it is opt-in.</li>
+  <li>Plain e-mails from non-BMChat senders also appear in your chat list as classic-mail conversations marked with an envelope icon.</li>
+</ul>
+
+<h2 id="notifications">Notifications and battery</h2>
+<p>
+  Reliable notifications on Android usually require the app to keep a
+  small background connection alive. If new messages arrive only after
+  you reopen BMChat, try the following in order:
+</p>
+<ol>
+  <li><strong>Settings &rarr; Notifications &rarr; Force Background Connection</strong>.</li>
+  <li>Disable battery optimisation for BMChat in your phone&rsquo;s system settings.</li>
+  <li>Some Android vendors restrict background apps aggressively. See <a href="https://dontkillmyapp.com">dontkillmyapp.com</a> for vendor-specific tips.</li>
+</ol>
+
+<h2 id="e2ee">End-to-end encryption</h2>
+<p>
+  BMChat uses OpenPGP via the Autocrypt protocol. Keys are generated
+  locally and never uploaded to a key server. As soon as you exchange
+  one message with a contact, every following message between you is
+  end-to-end encrypted, including attachments and metadata such as
+  filenames.
+</p>
+<p>
+  In contact details you will see two fingerprints. If both devices
+  display the same pair, the connection is verified. Adding contacts
+  via QR-code or invite link gives you a verified channel from the
+  start.
+</p>
+<p>
+  Mail sent to or from non-BMChat addresses is not end-to-end
+  encrypted; such conversations are clearly marked with a small
+  envelope icon next to messages.
+</p>
+
+<h2 id="privacy">Privacy</h2>
+<ul>
+  <li>BMChat does not collect telemetry. There is no &laquo;send statistics&raquo; toggle that ships data to a third party.</li>
+  <li>Your IP address is visible only to the IMAP/SMTP server you log into. The BMChat update server only ever sees update-check requests, not message data.</li>
+  <li>Local cache, profile pictures and group state live on your device, not on a central server.</li>
+  <li>You can run a fresh profile against a throw-away mailbox at any time; nothing connects different profiles together.</li>
+</ul>
+
+<h2 id="sources">Source code and reporting bugs</h2>
+<p>
+  BMChat is free software. The source code lives at
+  <a href="https://github.com/hvkeyn/BMChat">github.com/hvkeyn/BMChat</a>.
+  Bug reports and feature requests go to
+  <a href="https://github.com/hvkeyn/BMChat/issues">github.com/hvkeyn/BMChat/issues</a>.
+  When opening an issue please include the version number from
+  <strong>Settings &rarr; About</strong> and, where relevant, an
+  exported log file (<strong>Settings &rarr; Advanced &rarr; View
+  log</strong>).
+</p>
+
+</body>
+</html>
