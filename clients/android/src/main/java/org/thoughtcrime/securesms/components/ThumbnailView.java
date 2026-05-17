@@ -40,12 +40,14 @@ public class ThumbnailView extends FrameLayout {
 
   private final ImageView image;
   private final View playOverlay;
+  private final BMChatDownloadOverlay downloadOverlay;
   /** When true, the play overlay is shown regardless of the slide
    *  type. Used by ConversationItem to mark "video poster" image
    *  bubbles (BMChat-specific Telegram-bot fallback for >20 MB
    *  videos) so they look and feel like the native video bubble. */
   private boolean forcePlayOverlay = false;
   private OnClickListener parentClickListener;
+  private OnClickListener downloadClickListener;
 
   private final int[] dimens = new int[2];
   private final int[] bounds = new int[4];
@@ -69,6 +71,7 @@ public class ThumbnailView extends FrameLayout {
 
     this.image = findViewById(R.id.thumbnail_image);
     this.playOverlay = findViewById(R.id.play_overlay);
+    this.downloadOverlay = findViewById(R.id.bmchat_download_overlay);
     super.setOnClickListener(new ThumbnailClickDispatcher());
 
     if (attrs != null) {
@@ -223,6 +226,28 @@ public class ThumbnailView extends FrameLayout {
 
   public View getPlayOverlay() { return playOverlay; }
 
+  /**
+   * Telegram-style download chrome on top of the bubble thumbnail. Called
+   * by ConversationItem from {@code setBodyText} so the overlay state stays
+   * in sync with the message's current {@code DcMsg.getDownloadState()}.
+   * The download overlay hides the play badge while it is visible so the
+   * user never sees both glyphs at once.
+   */
+  public void setDownloadState(int overlayState) {
+    if (downloadOverlay == null) return;
+    downloadOverlay.setState(overlayState);
+    if (overlayState != BMChatDownloadOverlay.STATE_HIDDEN) {
+      playOverlay.setVisibility(View.GONE);
+    } else if (slide != null && (slide.hasPlayOverlay() || forcePlayOverlay)) {
+      playOverlay.setVisibility(View.VISIBLE);
+    }
+  }
+
+  /** Click handler used when the download overlay is interactable. */
+  public void setOnDownloadClickListener(OnClickListener listener) {
+    this.downloadClickListener = listener;
+  }
+
   @Override
   public void setClickable(boolean clickable) {
     super.setClickable(clickable);
@@ -332,6 +357,13 @@ public class ThumbnailView extends FrameLayout {
   private class ThumbnailClickDispatcher implements View.OnClickListener {
     @Override
     public void onClick(View view) {
+      if (downloadOverlay != null
+          && downloadClickListener != null
+          && (downloadOverlay.getState() == BMChatDownloadOverlay.STATE_AVAILABLE
+              || downloadOverlay.getState() == BMChatDownloadOverlay.STATE_FAILED)) {
+        downloadClickListener.onClick(view);
+        return;
+      }
       if (thumbnailClickListener != null
           && slide != null
           && slide.asAttachment().getDataUri() != null

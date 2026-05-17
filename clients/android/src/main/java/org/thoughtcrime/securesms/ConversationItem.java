@@ -603,6 +603,24 @@ public class ConversationItem extends BaseConversationItem {
     return dcMsg.getType() == DcMsg.DC_MSG_VCARD;
   }
 
+  /**
+   * Translate the Delta-Chat core download enum into the four states the
+   * Telegram-style {@code BMChatDownloadOverlay} understands. Anything
+   * fully delivered (DC_DOWNLOAD_DONE) maps to STATE_HIDDEN so the overlay
+   * disappears as soon as the body is on disk.
+   */
+  private int computeDownloadOverlayState(DcMsg messageRecord) {
+    int dl = messageRecord.getDownloadState();
+    if (dl == DcMsg.DC_DOWNLOAD_AVAILABLE) {
+      return org.thoughtcrime.securesms.components.BMChatDownloadOverlay.STATE_AVAILABLE;
+    } else if (dl == DcMsg.DC_DOWNLOAD_IN_PROGRESS) {
+      return org.thoughtcrime.securesms.components.BMChatDownloadOverlay.STATE_IN_PROGRESS;
+    } else if (dl == DcMsg.DC_DOWNLOAD_FAILURE) {
+      return org.thoughtcrime.securesms.components.BMChatDownloadOverlay.STATE_FAILED;
+    }
+    return org.thoughtcrime.securesms.components.BMChatDownloadOverlay.STATE_HIDDEN;
+  }
+
   private boolean hasDocument(DcMsg dcMsg) {
     return dcMsg.getType() == DcMsg.DC_MSG_FILE;
   }
@@ -694,9 +712,21 @@ public class ConversationItem extends BaseConversationItem {
     }
 
     int downloadState = messageRecord.getDownloadState();
-    if (downloadState == DcMsg.DC_DOWNLOAD_AVAILABLE
-        || downloadState == DcMsg.DC_DOWNLOAD_FAILURE
-        || downloadState == DcMsg.DC_DOWNLOAD_IN_PROGRESS) {
+    boolean isPartial =
+        downloadState == DcMsg.DC_DOWNLOAD_AVAILABLE
+            || downloadState == DcMsg.DC_DOWNLOAD_FAILURE
+            || downloadState == DcMsg.DC_DOWNLOAD_IN_PROGRESS;
+    // BMChat 2.49.78 (Phase 1A): inline media bubbles get a Telegram-style
+    // circular download glyph rendered by the slide view itself (image,
+    // video poster, audio, document). For those bubbles we suppress the
+    // legacy text button below so the user only sees one affordance.
+    boolean hasInlineDownloadAffordance =
+        isPartial
+            && (hasThumbnail(messageRecord)
+                || hasAudio(messageRecord)
+                || hasDocument(messageRecord));
+
+    if (isPartial && !hasInlineDownloadAffordance) {
       showFullButton.setVisibility(View.GONE);
       msgActionButton.setVisibility(View.VISIBLE);
       if (downloadState == DcMsg.DC_DOWNLOAD_IN_PROGRESS) {
@@ -775,6 +805,17 @@ public class ConversationItem extends BaseConversationItem {
       audioViewStub.get().setPlaybackViewModel(playbackViewModel);
       audioViewStub.get().setOnActionListener(audioPlayPauseListener);
       audioViewStub.get().setAudio(new AudioSlide(context, messageRecord));
+      audioViewStub.get().setDownloadState(computeDownloadOverlayState(messageRecord));
+      audioViewStub
+          .get()
+          .setOnDownloadClickListener(
+              view -> {
+                if (eventListener != null && batchSelected.isEmpty()) {
+                  eventListener.onDownloadClicked(messageRecord);
+                } else {
+                  passthroughClickListener.onClick(view);
+                }
+              });
       audioViewStub.get().setOnClickListener(passthroughClickListener);
       audioViewStub.get().setOnLongClickListener(passthroughClickListener);
       audioViewStub
@@ -800,6 +841,17 @@ public class ConversationItem extends BaseConversationItem {
       //noinspection ConstantConditions
       documentViewStub.get().setDocument(new DocumentSlide(context, messageRecord));
       documentViewStub.get().setDocumentClickListener(new ThumbnailClickListener());
+      documentViewStub.get().setDownloadState(computeDownloadOverlayState(messageRecord));
+      documentViewStub
+          .get()
+          .setOnDownloadClickListener(
+              view -> {
+                if (eventListener != null && batchSelected.isEmpty()) {
+                  eventListener.onDownloadClicked(messageRecord);
+                } else {
+                  passthroughClickListener.onClick(view);
+                }
+              });
       documentViewStub.get().setOnLongClickListener(passthroughClickListener);
       documentViewStub
           .get()
@@ -967,6 +1019,19 @@ public class ConversationItem extends BaseConversationItem {
           .get()
           .setImageResource(glideRequests, slide, thumbnailSize.width, thumbnailSize.height);
       mediaThumbnailStub.get().setThumbnailClickListener(new ThumbnailClickListener());
+      mediaThumbnailStub
+          .get()
+          .setDownloadState(computeDownloadOverlayState(messageRecord));
+      mediaThumbnailStub
+          .get()
+          .setOnDownloadClickListener(
+              view -> {
+                if (eventListener != null && batchSelected.isEmpty()) {
+                  eventListener.onDownloadClicked(messageRecord);
+                } else {
+                  passthroughClickListener.onClick(view);
+                }
+              });
       mediaThumbnailStub.get().setOnLongClickListener(passthroughClickListener);
       mediaThumbnailStub.get().setOnClickListener(passthroughClickListener);
       mediaThumbnailStub.get().showShade(TextUtils.isEmpty(messageRecord.getText()));

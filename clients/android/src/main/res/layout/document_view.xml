@@ -14,17 +14,30 @@
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
-        <org.thoughtcrime.securesms.components.CircleColorImageView
-            android:id="@+id/document_button"
-            android:padding="4dp"
+        <FrameLayout
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/ic_insert_drive_file_white_24dp"
-            android:scaleType="center"
-            android:contentDescription="@string/file"
-            app:circleColor="@color/document_icon" />
+            android:layout_marginRight="5dp">
+
+            <org.thoughtcrime.securesms.components.CircleColorImageView
+                android:id="@+id/document_button"
+                android:padding="4dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_insert_drive_file_white_24dp"
+                android:scaleType="center"
+                android:contentDescription="@string/file"
+                app:circleColor="@color/document_icon" />
+
+            <org.thoughtcrime.securesms.components.BMChatDownloadOverlay
+                android:id="@+id/document_download_overlay"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:longClickable="false" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

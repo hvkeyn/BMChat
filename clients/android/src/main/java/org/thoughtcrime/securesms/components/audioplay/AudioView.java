@@ -12,12 +12,14 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.content.res.AppCompatResources;
 import androidx.lifecycle.Observer;
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat;
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 import java.util.Map;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.components.BMChatDownloadOverlay;
 import org.thoughtcrime.securesms.mms.AudioSlide;
 import org.thoughtcrime.securesms.util.DateUtils;
 
@@ -35,7 +37,9 @@ public class AudioView extends FrameLayout {
   private final @NonNull TextView timestamp;
   private final @NonNull TextView title;
   private final @NonNull View mask;
+  private final @NonNull BMChatDownloadOverlay downloadOverlay;
   private OnActionListener listener;
+  private @Nullable View.OnClickListener downloadClickListener;
 
   private int msgId = -1;
   private Uri audioUri;
@@ -63,6 +67,13 @@ public class AudioView extends FrameLayout {
     this.timestamp = findViewById(R.id.timestamp);
     this.title = findViewById(R.id.title);
     this.mask = findViewById(R.id.interception_mask);
+    this.downloadOverlay = findViewById(R.id.audio_download_overlay);
+    this.downloadOverlay.setOnClickListener(
+        v -> {
+          if (downloadClickListener != null) {
+            downloadClickListener.onClick(v);
+          }
+        });
 
     updateTimestampsAndSeekBar();
 
@@ -238,6 +249,26 @@ public class AudioView extends FrameLayout {
 
   public void setOnActionListener(OnActionListener listener) {
     this.listener = listener;
+  }
+
+  /**
+   * Telegram-style overlay rendered on top of the round play button while
+   * the audio body has not been fetched yet. While the overlay is visible
+   * the play button stays hidden and the seek bar becomes non-interactive,
+   * so the only available action is "download". Call from
+   * {@code ConversationItem.setMediaAttributes} after {@link
+   * #setAudio(AudioSlide)} on every bind.
+   */
+  public void setDownloadState(int overlayState) {
+    downloadOverlay.setState(overlayState);
+    boolean partial = overlayState != BMChatDownloadOverlay.STATE_HIDDEN;
+    playPauseButton.setVisibility(partial ? View.INVISIBLE : View.VISIBLE);
+    seekBar.setEnabled(!partial);
+  }
+
+  /** Click handler for the in-progress download glyph. */
+  public void setOnDownloadClickListener(@Nullable View.OnClickListener listener) {
+    this.downloadClickListener = listener;
   }
 
   public void togglePlay() {

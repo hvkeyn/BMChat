@@ -34,4 +34,11 @@
 
     </FrameLayout>
 
+    <org.thoughtcrime.securesms.components.BMChatDownloadOverlay
+        android:id="@+id/bmchat_download_overlay"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:longClickable="false" />
+
 </merge>

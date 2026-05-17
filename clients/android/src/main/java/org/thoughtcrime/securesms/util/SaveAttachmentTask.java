@@ -161,6 +161,25 @@ public class SaveAttachmentTask
   }
 
   /**
+   * Telegram-style folder for the given mime type. On API 29+ this is fed
+   * into {@code MediaStore.MediaColumns.RELATIVE_PATH}; on legacy Android
+   * we append the same suffix to {@link #getExternalPathForType}.
+   *
+   * <p>The trailing slash matters because MediaStore validates it.
+   */
+  private @NonNull String getRelativePathForType(@NonNull String contentType) {
+    final String app = "BMChat";
+    if (contentType.startsWith("video/")) {
+      return Environment.DIRECTORY_MOVIES + "/" + app + "/";
+    } else if (contentType.startsWith("audio/")) {
+      return Environment.DIRECTORY_MUSIC + "/" + app + "/";
+    } else if (isMediaStoreImageType(contentType)) {
+      return Environment.DIRECTORY_PICTURES + "/" + app + "/";
+    }
+    return Environment.DIRECTORY_DOWNLOADS + "/" + app + "/";
+  }
+
+  /**
    * Checks if the content type is a standard image format supported by Android's MediaStore.
    * Non-standard image formats (like XCF, PSD, etc.) should be saved to Downloads instead.
    */
@@ -227,6 +246,16 @@ public class SaveAttachmentTask
       return null;
     }
 
+    // BMChat 2.49.78 (Phase 1B): keep saved attachments grouped under a
+    // per-app subfolder so the Photos / Music / Movies / Downloads stack
+    // matches what Telegram does. ensureExternalPath() creates the dir if
+    // necessary and falls back to the parent if mkdirs() fails so we never
+    // return null just because the subfolder could not be created.
+    File appSubfolder = new File(storage, "BMChat");
+    if (appSubfolder.exists() || appSubfolder.mkdirs()) {
+      storage = appSubfolder;
+    }
+
     return storage.getAbsolutePath();
   }
 
@@ -273,6 +302,7 @@ public class SaveAttachmentTask
 
     if (Build.VERSION.SDK_INT > 28) {
       contentValues.put(MediaStore.MediaColumns.IS_PENDING, 1);
+      contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, getRelativePathForType(contentType));
     } else if (Util.equals(outputUri.getScheme(), ContentResolver.SCHEME_FILE)) {
       File outputDirectory = new File(outputUri.getPath());
       File outputFile = new File(outputDirectory, base + "." + extension);

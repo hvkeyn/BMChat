@@ -18,8 +18,11 @@ public class DocumentView extends FrameLayout {
 
   private final @NonNull TextView fileName;
   private final @NonNull TextView fileSize;
+  private final @NonNull CircleColorImageView documentButton;
+  private final @NonNull BMChatDownloadOverlay downloadOverlay;
 
   private @Nullable SlideClickListener viewListener;
+  private @Nullable View.OnClickListener downloadClickListener;
 
   public DocumentView(@NonNull Context context) {
     this(context, null);
@@ -36,6 +39,31 @@ public class DocumentView extends FrameLayout {
 
     this.fileName = findViewById(R.id.file_name);
     this.fileSize = findViewById(R.id.file_size);
+    this.documentButton = findViewById(R.id.document_button);
+    this.downloadOverlay = findViewById(R.id.document_download_overlay);
+    this.downloadOverlay.setOnClickListener(
+        v -> {
+          if (downloadClickListener != null) {
+            downloadClickListener.onClick(v);
+          }
+        });
+  }
+
+  /**
+   * Show the Telegram-style download glyph instead of the standard
+   * filetype icon while the body has not been fetched yet. The
+   * file-name / file-size text stays visible so the user knows what they
+   * are about to download.
+   */
+  public void setDownloadState(int overlayState) {
+    downloadOverlay.setState(overlayState);
+    documentButton.setVisibility(
+        overlayState == BMChatDownloadOverlay.STATE_HIDDEN ? View.VISIBLE : View.INVISIBLE);
+  }
+
+  /** Click handler for the in-progress download glyph. */
+  public void setOnDownloadClickListener(@Nullable View.OnClickListener listener) {
+    this.downloadClickListener = listener;
   }
 
   public void setDocumentClickListener(@Nullable SlideClickListener listener) {
