@@ -6,6 +6,7 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Completed
 
+- 2.49.75: Removed the upstream Delta Chat `checkNdkArchitecture()` developer dialog from `ConversationListActivity` and deleted the stale `clients/android/ndkArch` file. The "Apparently you used `ndk-make.sh x86_64`, but this device is arm64-v8a … github.com/deltachat/deltachat-android/issues" alert no longer fires for end users, and the Delta Chat brand link is no longer present in the active runtime UI. APK `BMChat-foss-debug-2.49.75.apk` (`versionCode 823`, 77,696,052 bytes, SHA-256 `b71275004b8b6dc9930d0ee04cb5cbe17a5f2662bb3df24eacbbf3d67e066034`) deployed to primary and mirror VPS; `update.json` repointed.
 - Confirmed the workspace started empty.
 - Created Memory Bank documentation structure.
 - Defined initial product, architecture, licensing, and technical context.

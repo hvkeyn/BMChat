@@ -1,15 +1,15 @@
 {
-  "versionCode": 822,
-  "versionName": "2.49.74",
+  "versionCode": 823,
+  "versionName": "2.49.75",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.74.apk",
-  "sha256": "db67fca56280b1c86c6d769afa53f789e033cf988dcb0479c32bc08767f6a6a8",
-  "size": 77697070,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.75.apk",
+  "sha256": "b71275004b8b6dc9930d0ee04cb5cbe17a5f2662bb3df24eacbbf3d67e066034",
+  "size": 77696052,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-17T00:47:00Z",
+  "publishedAt": "2026-05-17T11:57:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.49.74 — hotfix экрана «Память и данные».\n\nИСПРАВЛЕНИЕ:\n• Верхняя карточка памяти опущена ещё ниже: теперь между toolbar и белой карточкой есть явный отступ, видны верхние скругления карточки, а донат полностью помещается внутри формы.\n• Сохраняется Telegram-style донат и опция «Сканировать все папки сервера» из 2.49.72."
+  "notes": "BMChat 2.49.75 — убран служебный диалог «Apparently you used ndk-make.sh ...»\n\nИСПРАВЛЕНИЕ:\n• Удалено разработческое предупреждение Delta Chat про несовпадение архитектуры ndk-make.sh — оно появлялось у некоторых пользователей debug-сборки и пугало понапрасну: BMChat поставляется с native-библиотекой для всех ABI (arm64-v8a, armeabi-v7a, x86, x86_64), и ничего у пользователя не сломано.\n• Заодно удалена ссылка на github.com/deltachat/deltachat-android/issues из активного UI."
 }

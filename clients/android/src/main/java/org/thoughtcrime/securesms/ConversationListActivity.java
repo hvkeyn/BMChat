@@ -91,7 +91,6 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     implements ConversationListFragment.ConversationSelectedListener {
   private static final String TAG = "ConversationListActivity";
   private static final String OPENPGP4FPR = "openpgp4fpr";
-  private static final String NDK_ARCH_WARNED = "ndk_arch_warned";
   public static final String CLEAR_NOTIFICATIONS = "clear_notifications";
   public static final String ACCOUNT_ID_EXTRA = "account_id";
   public static final String FROM_WELCOME = "from_welcome";
@@ -261,7 +260,12 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
 
     refresh();
 
-    if (BuildConfig.DEBUG) checkNdkArchitecture();
+    // BMChat: the upstream Delta Chat checkNdkArchitecture() developer
+    // dialog has been removed. BMChat releases ship prebuilt
+    // libnative-utils.so for every supported ABI under clients/android/libs,
+    // so a per-arch ndk-make.sh hint is meaningless to end users and the
+    // dialog text linked to deltachat-android/issues, which is forbidden in
+    // active BMChat UI by .cursorrules.
 
     DcHelper.maybeShowMigrationError(this);
 
@@ -271,75 +275,6 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
       QrCodeHandler qrCodeHandler = new QrCodeHandler(this);
       qrCodeHandler.secureJoinByQr(rawQrString, SecurejoinSource.Scan, SecurejoinUiPath.Unknown);
     }
-  }
-
-  /**
-   * If the build script is invoked with a specific architecture (e.g.`ndk-make.sh arm64-v8a`), it
-   * will compile the core only for this arch. This method checks if the arch was correct.
-   *
-   * <p>In order to do this, `ndk-make.sh` writes its argument into the file `ndkArch`.
-   * `getNdkArch()` in `build.gradle` then reads this file and its content is assigned to
-   * `BuildConfig.NDK_ARCH`.
-   */
-  @SuppressWarnings("ConstantConditions")
-  private void checkNdkArchitecture() {
-    boolean wrongArch = false;
-
-    if (!TextUtils.isEmpty(BuildConfig.NDK_ARCH)) {
-      String archProperty = System.getProperty("os.arch");
-      String arch;
-
-      // armv8l is 32 bit mode in 64 bit CPU:
-      if (archProperty.startsWith("armv7") || archProperty.startsWith("armv8l"))
-        arch = "armeabi-v7a";
-      else if (archProperty.equals("aarch64")) arch = "arm64-v8a";
-      else if (archProperty.equals("i686")) arch = "x86";
-      else if (archProperty.equals("x86_64")) arch = "x86_64";
-      else {
-        Log.e(TAG, "Unknown os.arch: " + archProperty);
-        arch = "";
-      }
-
-      if (!arch.equals(BuildConfig.NDK_ARCH)) {
-        wrongArch = true;
-
-        String message;
-        if (arch.equals("")) {
-          message =
-              "This phone has the unknown architecture "
-                  + archProperty
-                  + ".\n\n"
-                  + "Please open an issue at https://github.com/deltachat/deltachat-android/issues.";
-        } else {
-          message =
-              "Apparently you used `ndk-make.sh "
-                  + BuildConfig.NDK_ARCH
-                  + "`, but this device is "
-                  + arch
-                  + ".\n\n"
-                  + "You can use the app, but changes you made to the Rust code were not applied.\n\n"
-                  + "To compile in your changes, you can:\n"
-                  + "- Either run `ndk-make.sh "
-                  + arch
-                  + "` to build only for "
-                  + arch
-                  + " in debug mode\n"
-                  + "- Or run `ndk-make.sh` without argument to build for all architectures in release mode\n\n"
-                  + "If something doesn't work, please open an issue at https://github.com/deltachat/deltachat-android/issues!!";
-        }
-        Log.e(TAG, message);
-
-        if (!Prefs.getBooleanPreference(this, NDK_ARCH_WARNED, false)) {
-          new AlertDialog.Builder(this)
-              .setMessage(message)
-              .setPositiveButton(android.R.string.ok, null)
-              .show();
-          Prefs.setBooleanPreference(this, NDK_ARCH_WARNED, true);
-        }
-      }
-    }
-
-    if (!wrongArch) Prefs.setBooleanPreference(this, NDK_ARCH_WARNED, false);
   }
 
   @Override

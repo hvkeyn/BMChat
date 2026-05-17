@@ -73,3 +73,14 @@ artifacts/
 # Throw-away VPS deploy scripts that contain credentials / SSH passwords.
 .tmp-vps-*.sh
 .tmp-*.sh
+
+# Built APKs and desktop installers — staged for VPS rollout, not committed.
+/releases/
+infra/vps/apk/
+infra/vps/desktop/
+
+# Ad-hoc Delta Chat / BMChat capture logs (verbatim adb logcat dumps).
+deltachat-log-*.txt
+
+# Build-time arch hint written by clients/android/scripts/ndk-make.sh.
+clients/android/ndkArch
