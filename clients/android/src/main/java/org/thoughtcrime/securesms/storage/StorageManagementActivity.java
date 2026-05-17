@@ -99,7 +99,7 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
     LinearLayout root = new LinearLayout(this);
     root.setOrientation(LinearLayout.VERTICAL);
     int padH = dp(16);
-    int padTop = dp(12);
+    int padTop = dp(48);
     int padBottom = dp(24);
     root.setPadding(padH, padTop, padH, padBottom);
     scrollView.addView(root, new ScrollView.LayoutParams(-1, -2));
@@ -108,9 +108,10 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
     header.setGravity(Gravity.CENTER_HORIZONTAL);
     header.setPadding(dp(20), dp(20), dp(20), dp(20));
 
-    // Telegram-style donut with the headline number drawn in
-    // the centre so the chart can never look "cut off" — the text
-    // anchors the visual focus regardless of the ring stroke.
+    // Telegram-style donut with the headline number drawn in the centre.
+    // The screen intentionally keeps a large top gap above this card because
+    // the base activity can draw the action bar over the first content pixels
+    // on some Samsung/One UI builds.
     donutView = new StorageDonutView(this);
     LinearLayout.LayoutParams donutParams = new LinearLayout.LayoutParams(dp(140), dp(140));
     donutParams.topMargin = dp(4);
