@@ -193,6 +193,17 @@ public class ConversationItemThumbnail extends FrameLayout {
     thumbnail.setForcePlayOverlay(force);
   }
 
+  /** Forward Telegram-style download-overlay state into the inner
+   *  {@link ThumbnailView}. */
+  public void setDownloadState(int overlayState) {
+    thumbnail.setDownloadState(overlayState);
+  }
+
+  /** Forward click handler for the download glyph. */
+  public void setOnDownloadClickListener(View.OnClickListener listener) {
+    thumbnail.setOnDownloadClickListener(listener);
+  }
+
   @Override
   public boolean performClick() {
     return thumbnail.performClick();

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <!--
+        Telegram-style circular download indicator that BMChat overlays on
+        partially-fetched media (thumbnails, video posters, etc.).
+        Three visible states:
+          AVAILABLE   - solid arrow-down icon.
+          IN_PROGRESS - indeterminate ring spinning around the icon.
+          FAILED      - refresh icon on top of a static ring; tap retries.
+    -->
+
+    <View
+        android:id="@+id/bmchat_download_overlay_bg"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:background="@drawable/circle_universal_overlay" />
+
+    <com.google.android.material.progressindicator.CircularProgressIndicator
+        android:id="@+id/bmchat_download_overlay_progress"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:indicatorColor="@color/core_white"
+        app:indicatorSize="44dp"
+        app:trackThickness="2dp" />
+
+    <ImageView
+        android:id="@+id/bmchat_download_overlay_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/download"
+        android:src="@drawable/ic_file_download_white_24dp" />
+
+</merge>
