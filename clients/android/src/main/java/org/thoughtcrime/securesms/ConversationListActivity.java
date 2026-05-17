@@ -203,6 +203,23 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
       updateBanner = null;
     }
 
+    // BMChat 2.49.79 (Phase 2): Telegram-style mini-player at the bottom
+    // of the chat list. Tap jumps into the conversation that owns the
+    // current track at the message position.
+    org.thoughtcrime.securesms.components.audioplay.BMChatMiniPlayerView miniPlayer =
+        findViewById(R.id.bmchat_miniplayer);
+    if (miniPlayer != null) {
+      miniPlayer.setOnNavigateListener(
+          (accountId, chatId, msgId) -> {
+            Intent intent = new Intent(this, ConversationActivity.class);
+            intent.putExtra(ConversationActivity.ACCOUNT_ID_EXTRA, accountId);
+            intent.putExtra(ConversationActivity.CHAT_ID_EXTRA, chatId);
+            intent.putExtra(ConversationActivity.STARTING_POSITION_EXTRA, msgId);
+            startActivity(intent);
+            overridePendingTransition(R.anim.slide_from_right, R.anim.fade_scale_out);
+          });
+    }
+
     // add margin to avoid content hidden behind system bars
     ViewUtil.applyWindowInsetsAsMargin(searchToolbar, true, true, true, false);
 

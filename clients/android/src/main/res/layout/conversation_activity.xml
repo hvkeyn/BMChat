@@ -36,6 +36,11 @@
                 android:layout_height="0dp"
                 android:layout_weight="1" />
 
+            <org.thoughtcrime.securesms.components.audioplay.BMChatMiniPlayerView
+                android:id="@+id/bmchat_miniplayer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
             <ViewStub
                 android:id="@+id/attachment_editor_stub"
                 android:inflatedId="@+id/attachment_editor"

@@ -13,6 +13,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.PlaybackException;
+import androidx.media3.common.PlaybackParameters;
 import androidx.media3.common.Player;
 import androidx.media3.session.MediaController;
 import java.util.Collections;
@@ -42,6 +43,9 @@ public class AudioPlaybackViewModel extends ViewModel {
   private @Nullable Player.Listener playerListener;
   private final Handler handler;
   private boolean isUserSeeking = false;
+  // Mirrors BMChatPlaybackPrefs.getSpeed(); kept in-memory so we don't
+  // have to hold a Context inside the ViewModel.
+  private float playbackSpeed = 1.0f;
 
   public AudioPlaybackViewModel() {
     playbackState = new MutableLiveData<>(AudioPlaybackState.idle());
@@ -97,7 +101,39 @@ public class AudioPlaybackViewModel extends ViewModel {
 
     mediaController.setMediaItems(items, startIndex, 0);
     mediaController.prepare();
+    // BMChat 2.49.79 (Phase 2): apply whatever playback speed was
+    // configured last via setPlaybackSpeed() so the first frame is
+    // already at the right tempo (avoids the audible jump that happens
+    // when PlaybackParameters land mid-playback).
+    mediaController.setPlaybackParameters(new PlaybackParameters(playbackSpeed));
     mediaController.play();
+  }
+
+  /**
+   * Apply a new playback speed to the live session immediately and
+   * persist it as the BMChat-wide default. Caller is responsible for
+   * passing a fresh {@link Context} for the SharedPreferences write —
+   * the ViewModel does not retain one.
+   */
+  public void setPlaybackSpeed(@NonNull Context context, float speed) {
+    if (speed <= 0f) speed = 1.0f;
+    BMChatPlaybackPrefs.setSpeed(context, speed);
+    this.playbackSpeed = speed;
+    if (mediaController != null) {
+      mediaController.setPlaybackParameters(new PlaybackParameters(speed));
+    }
+  }
+
+  public float getPlaybackSpeed() {
+    return playbackSpeed;
+  }
+
+  /** Reload the persisted speed from prefs; called from {@code AudioView.setupControls}. */
+  public void refreshPlaybackSpeed(@NonNull Context context) {
+    this.playbackSpeed = BMChatPlaybackPrefs.getSpeed(context);
+    if (mediaController != null) {
+      mediaController.setPlaybackParameters(new PlaybackParameters(playbackSpeed));
+    }
   }
 
   private static int indexOfMediaId(List<MediaItem> items, String mediaId) {
