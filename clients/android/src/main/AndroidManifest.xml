@@ -361,12 +361,20 @@
             android:windowSoftInputMode="stateHidden"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
 
+        <!--
+            BMChat 2.49.81 (Phase 4): Picture-in-Picture support for videos.
+            screenSize + smallestScreenSize + screenLayout are required for
+            Android 8.0+ PiP so the activity is not recreated when the
+            system shrinks the window into the floating PiP container.
+        -->
         <activity
             android:name=".MediaPreviewActivity"
             android:label="@string/media_preview"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask"
-            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+            android:supportsPictureInPicture="true"
+            android:resizeableActivity="true"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize|smallestScreenSize" />
 
         <!-- BMChat 2.49.63: Telegram-style media picker. Uses the same
              NoActionBar theme as ProfileActivity / AllMediaActivity so the

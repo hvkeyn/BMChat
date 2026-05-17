@@ -19,12 +19,17 @@ package org.thoughtcrime.securesms;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.PictureInPictureParams;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Rational;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -60,6 +65,7 @@ import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientModifiedListener;
 import org.thoughtcrime.securesms.util.DateUtils;
 import org.thoughtcrime.securesms.util.DynamicTheme;
+import org.thoughtcrime.securesms.util.MediaUtil;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask;
 import org.thoughtcrime.securesms.util.SaveAttachmentTask.Attachment;
 import org.thoughtcrime.securesms.util.StorageUtil;
@@ -198,7 +204,64 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
   @Override
   public void onPause() {
     super.onPause();
+    // BMChat 2.49.81 (Phase 4): when the system shrinks the activity into
+    // Picture-in-Picture we want playback to keep running, otherwise the
+    // floating window would freeze. cleanupMedia() is only run on real
+    // exits / configuration changes.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInPictureInPictureMode()) {
+      return;
+    }
     restartItem = cleanupMedia();
+  }
+
+  @Override
+  protected void onUserLeaveHint() {
+    super.onUserLeaveHint();
+    // BMChat 2.49.81 (Phase 4): Telegram-style PiP — when the user swipes
+    // home / opens another app while watching a video, drop into a
+    // floating PiP window so playback survives the multitask jump.
+    maybeEnterPictureInPicture();
+  }
+
+  /**
+   * Enters PiP if the current media item is a video and the device
+   * supports the feature. Silently no-ops on phones/launchers that
+   * don't expose PiP.
+   */
+  private void maybeEnterPictureInPicture() {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return;
+    if (!getPackageManager().hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE)) return;
+
+    MediaItem mediaItem = getCurrentMediaItem();
+    if (mediaItem == null || !MediaUtil.isVideoType(mediaItem.type)) return;
+
+    try {
+      PictureInPictureParams params =
+          new PictureInPictureParams.Builder()
+              // Standard 16:9 frame fits both landscape captures and most
+              // portrait phone videos without weird letterboxing.
+              .setAspectRatio(new Rational(16, 9))
+              .build();
+      enterPictureInPictureMode(params);
+    } catch (IllegalStateException | IllegalArgumentException e) {
+      Log.w(TAG, "PiP not available", e);
+    }
+  }
+
+  @Override
+  public void onPictureInPictureModeChanged(boolean isInPip, Configuration newConfig) {
+    super.onPictureInPictureModeChanged(isInPip, newConfig);
+    // BMChat 2.49.81 (Phase 4): hide the action bar / save & share toolbar
+    // when shrinking into PiP so the small floating window shows just the
+    // video; restore them when the user expands the activity back.
+    if (getSupportActionBar() != null) {
+      if (isInPip) {
+        getSupportActionBar().hide();
+      } else {
+        getSupportActionBar().show();
+      }
+    }
+    invalidateOptionsMenu();
   }
 
   @Override

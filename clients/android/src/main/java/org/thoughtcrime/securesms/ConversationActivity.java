@@ -731,6 +731,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     } else if (itemId == R.id.menu_show_map) {
       WebxdcActivity.openMaps(this, chatId);
       return true;
+    } else if (itemId == R.id.bmchat_menu_jump_to_date) {
+      handleJumpToDate();
+      return true;
     } else if (itemId == R.id.menu_start_audio_call) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         CallUtil.startAudioCall(context, chatId);
@@ -782,6 +785,42 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   }
 
   //////// Event Handlers
+
+  /**
+   * BMChat 2.49.81 (Phase 4): Telegram-style jump-to-date. Shows a date
+   * picker pre-selected to the message currently visible at the top of
+   * the list and asks {@link ConversationFragment} to scroll to the
+   * closest message at or before midnight of the chosen day.
+   */
+  private void handleJumpToDate() {
+    java.util.Calendar cal = java.util.Calendar.getInstance();
+    android.app.DatePickerDialog dialog =
+        new android.app.DatePickerDialog(
+            this,
+            (view, year, month, dayOfMonth) -> {
+              java.util.Calendar target = java.util.Calendar.getInstance();
+              target.set(year, month, dayOfMonth, 12, 0, 0);
+              target.set(java.util.Calendar.MILLISECOND, 0);
+              // Delta Chat exposes message timestamps in seconds, but the
+              // Android getTimestamp() shim returns millis already, so we
+              // pass millis directly to ConversationFragment.
+              boolean ok = fragment.jumpToDate(target.getTimeInMillis());
+              if (!ok) {
+                android.widget.Toast.makeText(
+                        this, R.string.bmchat_jump_to_date_empty, android.widget.Toast.LENGTH_SHORT)
+                    .show();
+              }
+            },
+            cal.get(java.util.Calendar.YEAR),
+            cal.get(java.util.Calendar.MONTH),
+            cal.get(java.util.Calendar.DAY_OF_MONTH));
+    if (dialog.getDatePicker() != null) {
+      // Limit the picker to dates up to today so users can't aim at a
+      // moment in the future where, by definition, no messages exist.
+      dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+    }
+    dialog.show();
+  }
 
   private void handleEphemeralMessages() {
     DcContext dcContext = DcHelper.getContext(context);
