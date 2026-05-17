@@ -164,6 +164,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private static final int GROUP_EDIT = 6;
   private static final int TAKE_PHOTO = 7;
   private static final int RECORD_VIDEO = 8;
+  // BMChat 2.49.82 (Phase 5): Telegram-style round video notes.
+  private static final int BMCHAT_VIDEO_NOTE = 22;
   private static final int PICK_WEBXDC = 9;
 
   private GlideRequests glideRequests;
@@ -569,6 +571,21 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       case ScribbleActivity.SCRIBBLE_REQUEST_CODE:
         setMedia(data.getData(), MediaType.IMAGE);
         break;
+
+      case BMCHAT_VIDEO_NOTE:
+        // BMChat 2.49.82 (Phase 5): Telegram-style round video note. The
+        // recorder activity returns a cached MP4 whose filename carries
+        // a ".vn." infix; the bubble renderer reads that infix later to
+        // pick a circular outline for the playback view.
+        Uri vnUri =
+            data.getParcelableExtra(
+                org.thoughtcrime.securesms.videonote.BMChatVideoNoteActivity.EXTRA_RESULT_URI);
+        if (vnUri != null) {
+          setMedia(vnUri, MediaType.VIDEO);
+        } else {
+          Toast.makeText(this, R.string.bmchat_video_note_camera_error, Toast.LENGTH_LONG).show();
+        }
+        break;
     }
   }
 
@@ -734,6 +751,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     } else if (itemId == R.id.bmchat_menu_jump_to_date) {
       handleJumpToDate();
       return true;
+    } else if (itemId == R.id.bmchat_menu_video_note) {
+      handleRecordVideoNote();
+      return true;
     } else if (itemId == R.id.menu_start_audio_call) {
       if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         CallUtil.startAudioCall(context, chatId);
@@ -820,6 +840,19 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
     }
     dialog.show();
+  }
+
+  /**
+   * BMChat 2.49.82 (Phase 5): launch the Telegram-style round video note
+   * recorder. On a successful capture the activity returns to
+   * {@link #onActivityResult} where the resulting MP4 is staged into the
+   * attachment manager as a normal video — the {@code .vn.} infix in the
+   * filename later switches the bubble renderer into circular mode.
+   */
+  private void handleRecordVideoNote() {
+    Intent intent =
+        new Intent(this, org.thoughtcrime.securesms.videonote.BMChatVideoNoteActivity.class);
+    startActivityForResult(intent, BMCHAT_VIDEO_NOTE);
   }
 
   private void handleEphemeralMessages() {

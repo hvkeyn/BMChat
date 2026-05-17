@@ -762,6 +762,12 @@
     <!-- BMChat 2.49.81: Telegram-style jump-to-date in conversation menu. -->
     <string name="bmchat_jump_to_date">Jump to date</string>
     <string name="bmchat_jump_to_date_empty">This chat has no messages yet.</string>
+    <!-- BMChat 2.49.82: Telegram-style round video notes. -->
+    <string name="bmchat_video_note_title">Video note</string>
+    <string name="bmchat_video_note_record">Record video note</string>
+    <string name="bmchat_video_note_switch_camera">Switch camera</string>
+    <string name="bmchat_video_note_camera_error">Couldn\'t access the camera.</string>
+    <string name="bmchat_video_note_menu">Video note</string>
     <!-- BMChat 2.49.80: Telegram-style Shared Media tabs split Photos and Videos. -->
     <string name="bmchat_tab_photos">Photos</string>
     <string name="bmchat_tab_videos">Videos</string>
