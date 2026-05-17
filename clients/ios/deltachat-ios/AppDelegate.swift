@@ -213,7 +213,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
            let host = components.host {
             logger.info("➡️ open univeral link url")
 
-            if host == Utils.inviteDomain {
+            if Utils.isInviteHost(host) {
                 appCoordinator.handleQRCode(incomingURL.absoluteString)
                 return true
             } else {
@@ -236,7 +236,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
 
         switch url.scheme?.lowercased() {
         case "dcaccount", "dclogin",
-             "https" where url.host == Utils.inviteDomain:
+             "https" where Utils.isInviteHost(url.host),
+             "http"  where Utils.isInviteHost(url.host):
             appCoordinator.handleQRCode(url.absoluteString)
             return true
         case "openpgp4fpr":

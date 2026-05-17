@@ -25,9 +25,12 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcChatlist;
+import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcLot;
 import java.lang.ref.WeakReference;
+import java.util.HashSet;
+import java.util.Locale;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -47,6 +50,12 @@ class ConversationListAdapter
   private final WeakReference<Context> context;
   private @NonNull DcContext dcContext;
   private @NonNull DcChatlist dcChatlist;
+  /**
+   * BMChat keeps mailing-list chats and classic-mail contact requests out of the
+   * chat list entirely. {@code visibleIndices} maps adapter position -> source
+   * chatlist index for the entries that survive that filter.
+   */
+  private @NonNull int[] visibleIndices = new int[0];
   private final @NonNull GlideRequests glideRequests;
   private final @NonNull LayoutInflater inflater;
   private final @Nullable ItemClickListener clickListener;
@@ -63,12 +72,69 @@ class ConversationListAdapter
 
   @Override
   public int getItemCount() {
-    return dcChatlist.getCnt();
+    return visibleIndices.length;
   }
 
   @Override
   public long getItemId(int i) {
-    return dcChatlist.getChatId(i);
+    return dcChatlist.getChatId(visibleIndices[i]);
+  }
+
+  private void rebuildVisibleIndices() {
+    int total = dcChatlist.getCnt();
+    int[] keep = new int[total];
+    int j = 0;
+    // BMChat: enforce one 1:1 chat per e-mail. The chatlist arrives sorted
+    // newest-first, so the first chat we see for a given peer e-mail wins
+    // and any later mirror entries are hidden from the home screen.
+    final HashSet<String> seenAddrs = new HashSet<>();
+    for (int i = 0; i < total; i++) {
+      int chatId = dcChatlist.getChatId(i);
+      if (chatId <= DcChat.DC_CHAT_ID_LAST_SPECIAL) {
+        keep[j++] = i;
+        continue;
+      }
+      DcChat chat = dcContext.getChat(chatId);
+      if (chat.isMailingList()) {
+        continue;
+      }
+      // BMChat 2.49.71: previously we hid every unencrypted contact
+      // request from the home screen ("classic-mail" senders without
+      // Chat-Version handshake). That made messages from any new
+      // counterpart that does not yet run BMChat / Delta Chat disappear
+      // silently, which felt like the app was broken. We now keep them
+      // visible — the request badge in the row already makes it clear
+      // they are not yet accepted, and the user can block or accept
+      // explicitly from the conversation screen.
+      if (chat.getType() == DcChat.DC_CHAT_TYPE_SINGLE
+          && !chat.isSelfTalk()
+          && !chat.isDeviceTalk()) {
+        int[] members = dcContext.getChatContacts(chatId);
+        if (members != null && members.length == 1
+            && members[0] != DcContact.DC_CONTACT_ID_SELF) {
+          String addr = null;
+          try {
+            addr = dcContext.getContact(members[0]).getAddr();
+          } catch (Throwable ignored) {
+            // ignored: fall through to the default keep path
+          }
+          if (addr != null) {
+            String key = addr.trim().toLowerCase(Locale.ROOT);
+            if (!key.isEmpty() && !seenAddrs.add(key)) {
+              continue;
+            }
+          }
+        }
+      }
+      keep[j++] = i;
+    }
+    if (j == total) {
+      visibleIndices = keep;
+    } else {
+      int[] trimmed = new int[j];
+      System.arraycopy(keep, 0, trimmed, 0, j);
+      visibleIndices = trimmed;
+    }
   }
 
   ConversationListAdapter(
@@ -132,13 +198,14 @@ class ConversationListAdapter
       return;
     }
 
-    DcChat chat = dcContext.getChat(dcChatlist.getChatId(i));
-    DcLot summary = dcChatlist.getSummary(i, chat);
+    int idx = visibleIndices[i];
+    DcChat chat = dcContext.getChat(dcChatlist.getChatId(idx));
+    DcLot summary = dcChatlist.getSummary(idx, chat);
     viewHolder
         .getItem()
         .bind(
             DcHelper.getThreadRecord(context, summary, chat),
-            dcChatlist.getMsgId(i),
+            dcChatlist.getMsgId(idx),
             summary,
             glideRequests,
             batchSet,
@@ -147,7 +214,7 @@ class ConversationListAdapter
 
   @Override
   public int getItemViewType(int i) {
-    int chatId = dcChatlist.getChatId(i);
+    int chatId = dcChatlist.getChatId(visibleIndices[i]);
 
     if (chatId == DcChat.DC_CHAT_ID_ARCHIVED_LINK) {
       return MESSAGE_TYPE_SWITCH_ARCHIVE;
@@ -160,7 +227,7 @@ class ConversationListAdapter
 
   @Override
   public void selectAllThreads() {
-    for (int i = 0; i < dcChatlist.getCnt(); i++) {
+    for (int i : visibleIndices) {
       long threadId = dcChatlist.getChatId(i);
       if (threadId > DcChat.DC_CHAT_ID_LAST_SPECIAL) {
         batchSet.add(threadId);
@@ -188,6 +255,7 @@ class ConversationListAdapter
       dcChatlist = chatlist;
       dcContext = DcHelper.getContext(context);
     }
+    rebuildVisibleIndices();
     notifyDataSetChanged();
   }
 }

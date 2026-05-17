@@ -7,7 +7,9 @@
   - `clients/desktop`: Delta Chat Desktop fork on `bmchat/main`.
   - `clients/android`: Delta Chat Android fork on `bmchat/main`.
   - `clients/ios`: Delta Chat iOS fork on `bmchat/main`.
-- Treat `clients/android/jni/deltachat-core-rust` and `clients/ios/deltachat-ios/libraries/deltachat-core-rust` as upstream core submodules. Do not brand-edit core unless a user-facing string is proven to come from there.
+- Treat `clients/android/jni/deltachat-core-rust` and `clients/ios/deltachat-ios/libraries/deltachat-core-rust` as upstream core submodules. Do not brand-edit core unless a user-facing string or BMChat protocol/server policy requires it.
 - Default licensing assumption: desktop and Android BMChat distributions must stay GPL-compatible; iOS and core are MPL-based per upstream files. This is not legal advice.
 - Brand source of truth starts at `brand/config/bmchat-brand.json`; keep generated platform assets and identifiers documented in `docs/brand-map.md`.
+- Empty BMChat endpoint values mean disable that Delta/upstream network integration rather than falling back to public Delta/chatmail infrastructure.
+- BMChat strict mail policy: ordinary emails without `Chat-Version` or known BMChat/Delta thread linkage must not create chats or notifications.
 - Russian localization audit is in `docs/localization-audit.md`; do not assume existing Russian translations are BMChat-ready.

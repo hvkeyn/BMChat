@@ -111,7 +111,7 @@
 		30E348E524F6647D005C93D1 /* FileTextCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E348E424F6647D005C93D1 /* FileTextCell.swift */; };
 		30E8F2132447285600CE2C90 /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30E8F2122447285600CE2C90 /* ShareViewController.swift */; };
 		30E8F2162447285600CE2C90 /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 30E8F2142447285600CE2C90 /* MainInterface.storyboard */; };
-		30E8F21A2447285600CE2C90 /* Delta Chat.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 30E8F2102447285600CE2C90 /* Delta Chat.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		30E8F21A2447285600CE2C90 /* BMChat.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 30E8F2102447285600CE2C90 /* BMChat.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		30E8F2252447622300CE2C90 /* DcCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 304219D1243F588500516852 /* DcCore.framework */; };
 		30E8F2512449EA0E00CE2C90 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 3060119E22DDE24000C1CE6F /* Localizable.strings */; };
 		30EF7308252F6A3300E2C54A /* PaddingTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 30F4BFED252E3E020006B9B3 /* PaddingTextView.swift */; };
@@ -311,7 +311,7 @@
 			files = (
 				B2D0E4992B93A4B200791949 /* DcNotificationService.appex in Embed Foundation Extensions */,
 				D878C50C2CF72AA1009AF551 /* DcWidget.appex in Embed Foundation Extensions */,
-				30E8F21A2447285600CE2C90 /* Delta Chat.appex in Embed Foundation Extensions */,
+				30E8F21A2447285600CE2C90 /* BMChat.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -482,7 +482,7 @@
 		30DED712292EE4280040835D /* LogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogViewController.swift; sourceTree = "<group>"; };
 		30E348E024F53772005C93D1 /* ImageTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTextCell.swift; sourceTree = "<group>"; };
 		30E348E424F6647D005C93D1 /* FileTextCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileTextCell.swift; sourceTree = "<group>"; };
-		30E8F2102447285600CE2C90 /* Delta Chat.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Delta Chat.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		30E8F2102447285600CE2C90 /* BMChat.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "BMChat.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
 		30E8F2122447285600CE2C90 /* ShareViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareViewController.swift; sourceTree = "<group>"; };
 		30E8F2152447285600CE2C90 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
 		30E8F2172447285600CE2C90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1005,7 +1005,7 @@
 			isa = PBXGroup;
 			children = (
 				7A9FB1401FB061E2001FEA36 /* deltachat-ios.app */,
-				30E8F2102447285600CE2C90 /* Delta Chat.appex */,
+				30E8F2102447285600CE2C90 /* BMChat.appex */,
 				B2D0E4922B93A4B200791949 /* DcNotificationService.appex */,
 				DCA000022CF72AA0009AF551 /* DcAppClip.app */,
 				D878C4FB2CF72AA0009AF551 /* DcWidget.appex */,
@@ -1355,7 +1355,7 @@
 			);
 			name = DcShare;
 			productName = DcShare;
-			productReference = 30E8F2102447285600CE2C90 /* Delta Chat.appex */;
+			productReference = 30E8F2102447285600CE2C90 /* BMChat.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 		643B44762E0C2BD800AEE026 /* DcTests */ = {
@@ -2252,8 +2252,8 @@
 					"-iframework",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImageWebPCoder\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcShare;
-				PRODUCT_NAME = "Delta Chat";
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcShare;
+				PRODUCT_NAME = BMChat;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.5;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2294,8 +2294,8 @@
 					"-iframework",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/SDWebImageWebPCoder\"",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcShare;
-				PRODUCT_NAME = "Delta Chat";
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcShare;
+				PRODUCT_NAME = BMChat;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.5;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2320,7 +2320,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcTests;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
@@ -2347,7 +2347,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcTests;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_ENABLE_EXPLICIT_MODULES = NO;
@@ -2542,7 +2542,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReachabilitySwift\"",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2610,7 +2610,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/ReachabilitySwift\"",
 				);
 				OTHER_LDFLAGS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -2631,7 +2631,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DcNotificationService/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DcNotificationService;
+				INFOPLIST_KEY_CFBundleDisplayName = "BMChat Notification Service";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 merlinux GmbH. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2642,7 +2642,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcNotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcNotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -2665,7 +2665,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DcNotificationService/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DcNotificationService;
+				INFOPLIST_KEY_CFBundleDisplayName = "BMChat Notification Service";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 merlinux GmbH. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2675,7 +2675,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcNotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcNotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2699,7 +2699,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DcWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DcWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = "BMChat Widget";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 merlinux GmbH. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2710,7 +2710,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -2735,7 +2735,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = DcWidget/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = DcWidget;
+				INFOPLIST_KEY_CFBundleDisplayName = "BMChat Widget";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2024 merlinux GmbH. All rights reserved.";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2745,7 +2745,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.DcWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.DcWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2769,7 +2769,7 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = DcAppClip/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Delta Chat Invite Handler";
+				INFOPLIST_KEY_CFBundleDisplayName = "BMChat Invite Handler";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2777,7 +2777,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.Clip;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -2801,14 +2801,14 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				INFOPLIST_FILE = DcAppClip/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "Delta Chat Invite Handler";
+				INFOPLIST_KEY_CFBundleDisplayName = "BMChat Invite Handler";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = chat.delta.Clip;
+				PRODUCT_BUNDLE_IDENTIFIER = chat.bromore.bmchat.Clip;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.5;

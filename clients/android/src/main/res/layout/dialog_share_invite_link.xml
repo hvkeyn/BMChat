@@ -36,9 +36,25 @@
                 android:ellipsize="marquee"
                 android:fontFamily="sans-serif"
                 android:textSize="16sp"
-                tools:text="https://i.delta.chat/#9AF055DB87EC48A1C009B6CA55E3712A6F7D346F&amp;a=botsindex%40nine.testrun.org&amp;n=Public%20Bots&amp;i=QpBSronexvP&amp;s=nAfQ0q_JomN" />
+                tools:text="http://5.187.4.132/i#9AF055DB87EC48A1C009B6CA55E3712A6F7D346F&amp;a=alice%40example.org&amp;n=Alice&amp;i=QpBSronexvP&amp;s=nAfQ0q_JomN" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/bmchat_share_via_email"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="@string/bmchat_send_invite_by_email" />
+
+        <Button
+            android:id="@+id/bmchat_share_qr_image"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/bmchat_send_invite_qr_image" />
 
     </LinearLayout>
 

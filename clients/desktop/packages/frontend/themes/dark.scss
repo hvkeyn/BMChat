@@ -1,33 +1,33 @@
 /* Set theme variables used for theme Generation */
 @use './_themebase' with (
   $themeDarkOrLight: dark,
-  $accentColor: #2090ea,
-  $bgChatView: #19232b,
+  $accentColor: #c62a48,
+  $bgChatView: #160208,
   $bgImage: url('./images/background_dark.svg'),
-  $bgMessageBubbleIncoming: #303030,
-  $bgMessageBubbleOutgoing: #354535,
-  $messageOutgoingStatusColor: #e4d4d3,
-  $bgNavBar: #272727,
-  $bgPrimary: #222,
-  $bgSecondary: #333,
-  $chatListItemSelectedBg: #4c6e7d,
+  $bgMessageBubbleIncoming: #24050d,
+  $bgMessageBubbleOutgoing: #7b1226,
+  $messageOutgoingStatusColor: #f4d8de,
+  $bgNavBar: #2a030d,
+  $bgPrimary: #160208,
+  $bgSecondary: #24050d,
+  $chatListItemSelectedBg: #7b1226,
   $colorDanger: #ff5c5a,
   $colorNone: #a0a0a0,
-  $colorPrimary: #42a5f5,
-  $newChatButtonBg: #a0a0a0,
-  $keybindingSectionHeaderBackground: #555555,
-  $keybindingActionBackground: #454545,
+  $colorPrimary: #f4a0af,
+  $newChatButtonBg: #7b1226,
+  $keybindingSectionHeaderBackground: #3b0714,
+  $keybindingActionBackground: #24050d,
   $keybindingKeyBorder: rgba(0, 0, 0, 0.6),
-  $textNavBar: #ddddf0,
+  $textNavBar: #fff7f8,
   $textPrimary: #fff,
-  $textSecondary: #ddd,
+  $textSecondary: #f0c9d1,
   $btnPrimaryText: #fff,
-  $colorLessContrast: #898989,
+  $colorLessContrast: #c0919c,
 
   $scrollbarTransparency: 0.34
 );
 
 .theme-meta {
-  --name: 'Dark Theme';
-  --description: 'Our default dark theme.';
+  --name: 'BMChat Dark';
+  --description: 'Deep burgundy BMChat theme based on the B-mark identity.';
 }

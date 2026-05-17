@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Custom selection action-mode entry shown inside the
+  QuoteSelectorActivity faux-bubble. Replaces the per-context
+  "Quote selection" label that we used to inject via runtime ids
+  with a proper menu resource, so the system selection toolbar
+  merges it with the platform actions (Cut / Copy / Share) in the
+  expected order.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_quote_selected_part"
+        android:title="@string/bmchat_quote_selector_action_quote"
+        app:showAsAction="always" />
+</menu>

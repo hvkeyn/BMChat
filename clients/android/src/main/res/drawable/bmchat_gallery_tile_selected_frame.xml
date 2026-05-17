@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BMChat 2.49.63: thick coloured border drawn as the foreground of a tile
+  whenever it is part of the current selection. We rely on a transparent
+  fill so the underlying thumbnail keeps showing through.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <stroke android:width="3dp" android:color="@color/delta_primary"/>
+    <solid android:color="@android:color/transparent"/>
+</shape>

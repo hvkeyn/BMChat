@@ -180,6 +180,16 @@ public class Rpc {
     return transport.callForResult(new TypeReference<String>(){}, "get_storage_usage_report_string", mapper.valueToTree(accountId));
   }
 
+  /** Get structured storage usage for UI clients. */
+  public StorageUsage getStorageUsage(Integer accountId) throws RpcException {
+    return transport.callForResult(new TypeReference<StorageUsage>(){}, "get_storage_usage", mapper.valueToTree(accountId));
+  }
+
+  /** Clear locally cached media while keeping messages available for download. */
+  public StorageClearResult clearLocalStorage(Integer accountId, StorageClearRequest request) throws RpcException {
+    return transport.callForResult(new TypeReference<StorageClearResult>(){}, "clear_local_storage", mapper.valueToTree(accountId), mapper.valueToTree(request));
+  }
+
   /** Get the blob dir. */
   public String getBlobDir(Integer accountId) throws RpcException {
     return transport.callForResult(new TypeReference<String>(){}, "get_blob_dir", mapper.valueToTree(accountId));

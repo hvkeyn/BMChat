@@ -19,20 +19,78 @@ import org.thoughtcrime.securesms.notifications.NotificationCenter;
 import org.thoughtcrime.securesms.util.IntentUtils;
 import org.thoughtcrime.securesms.util.Prefs;
 
+/**
+ * Foreground service that keeps the IMAP IDLE socket alive while the
+ * user has BMChat in the background. The implementation is the
+ * classical Delta-chat pattern: as soon as {@link #onCreate} or
+ * {@link #onStartCommand} fires we attach a visible FGS notification.
+ *
+ * <h2>What we deliberately avoid</h2>
+ *
+ * <p>BMChat 2.49.45–2.49.52 experimented with several "invisible
+ * foreground service" tricks (per-transition detach/re-attach,
+ * 600 ms transient stopForeground, debounced re-attach…). All of
+ * them broke in production on Android 12+ Samsung One UI:
+ *
+ * <ul>
+ *   <li>{@code ForegroundServiceDidNotStartInTimeException} when a
+ *       caller invoked {@code startForegroundService} for an already
+ *       running service (Android's 5-second deadline applies to the
+ *       <em>next</em> startForeground call too).</li>
+ *   <li>OEM aggressive task-killers reaping the service whenever the
+ *       FGS notification was temporarily detached.</li>
+ *   <li>"Empty BMChat" ghost rows in the shade because Samsung One UI
+ *       insists on rendering the app label even when title and body
+ *       are blank.</li>
+ * </ul>
+ *
+ * <p>This file is now intentionally <strong>boring</strong>: every
+ * entry point ends up calling {@link #startForeground} synchronously,
+ * the notification carries a real, single-line title, and there is
+ * no detach path. Tested to keep IMAP IDLE alive on Samsung S21
+ * Android 15.
+ */
 public class KeepAliveService extends Service {
 
   private static final String TAG = "KeepAliveService";
 
   static KeepAliveService s_this = null;
 
+  /** Tracks whether {@link #startForeground} has been called. */
+  private boolean isInForeground = false;
+
+  /**
+   * Starts the service when the user has opted into "reliable mode".
+   * Safe to call from any thread, idempotent: when the service is
+   * already running we use {@link #ensureForeground} to satisfy
+   * Android's 5-second startForeground deadline instead of issuing a
+   * fresh {@code startForegroundService} call (which would crash with
+   * {@code ForegroundServiceDidNotStartInTimeException} on Android
+   * 12+).
+   */
   public static void maybeStartSelf(Context context) {
-    // note, that unfortunately, the check for isIgnoringBatteryOptimizations() is not sufficient,
-    // this checks only stock-android settings, several os have additional "optimizers" that ignore
-    // this setting.
-    // therefore, the most reliable way to not get killed is a permanent-foreground-notification.
-    if (Prefs.reliableService(context)) {
-      startSelf(context);
+    if (!Prefs.reliableService(context)) return;
+    KeepAliveService self = s_this;
+    if (self != null) {
+      // Service already alive — just make sure the FGS notification
+      // is attached. Re-invoking startForegroundService here is what
+      // produced the Samsung One UI crash chain.
+      self.ensureForeground();
+      return;
     }
+    startSelf(context);
+  }
+
+  /**
+   * Legacy alias for {@link #maybeStartSelf(Context)}. BMChat
+   * 2.49.45–2.49.52 used a more elaborate deferred-start scheme that
+   * deliberately skipped attaching FGS until the first activity was
+   * visible; in 2.49.53 we keep the method signature for compatibility
+   * with {@code ApplicationContext.onCreate} but the body is now
+   * identical to the regular entry point.
+   */
+  public static void maybeStartSelfIfUiUsed(Context context) {
+    maybeStartSelf(context);
   }
 
   public static void startSelf(Context context) {
@@ -43,29 +101,60 @@ public class KeepAliveService extends Service {
     }
   }
 
-  @Override
-  public void onCreate() {
-    Log.i("DeltaChat", "*** KeepAliveService.onCreate()");
-    // there's nothing more to do here as all initialisation stuff is already done in
-    // ApplicationLoader.onCreate() which is called before this broadcast is sended.
-    s_this = this;
+  /** No-op: kept so callers across the codebase still compile. */
+  public static void onUiForeground() {
+    KeepAliveService self = s_this;
+    if (self == null) return;
+    // Make sure FGS is attached — Samsung One UI sometimes drops the
+    // notification when the device transitions out of "Power saving"
+    // mode and we want to refresh it on first foreground.
+    self.ensureForeground();
+  }
 
-    // set self as foreground
+  /**
+   * Counterpart of {@link #onUiForeground()}. Used to be the place
+   * where we re-attached a previously detached FGS notification; now
+   * it just makes sure the service is still alive.
+   */
+  public static void onUiBackground(Context appContext) {
+    KeepAliveService self = s_this;
+    if (self == null) {
+      maybeStartSelf(appContext);
+      return;
+    }
+    self.ensureForeground();
+  }
+
+  /**
+   * Calls {@link #startForeground} idempotently. Guarded by
+   * {@link #isInForeground} so we don't spam the system when the user
+   * flips between activities at high speed.
+   */
+  private void ensureForeground() {
+    if (isInForeground) return;
     try {
-      stopForeground(true);
       startForeground(NotificationCenter.ID_PERMANENT, createNotification());
-    } catch (Exception e) {
-      Log.i(TAG, "Error in onCreate()", e);
+      isInForeground = true;
+    } catch (Throwable t) {
+      Log.w(TAG, "ensureForeground failed", t);
     }
   }
 
   @Override
+  public void onCreate() {
+    Log.i("DeltaChat", "*** KeepAliveService.onCreate()");
+    s_this = this;
+    ensureForeground();
+  }
+
+  @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    // START_STICKY ensured, the service is recreated as soon it is terminated for any reasons.
-    // as ApplicationLoader.onCreate() is called before a service starts, there is no more to do
-    // here,
-    // the app is just running fine.
     Log.i("DeltaChat", "*** KeepAliveService.onStartCommand()");
+    // CRITICAL: Android 12+ requires startForeground() within ~5 s of
+    // every startForegroundService() call, even when the service was
+    // already running. Without this branch any subsequent invocation
+    // would crash the process with ForegroundServiceDidNotStartInTimeException.
+    ensureForeground();
     return START_STICKY;
   }
 
@@ -77,7 +166,8 @@ public class KeepAliveService extends Service {
   @Override
   public void onDestroy() {
     Log.i("DeltaChat", "*** KeepAliveService.onDestroy()");
-    // the service will be restarted due to START_STICKY automatically, there's nothing more to do.
+    isInForeground = false;
+    if (s_this == this) s_this = null;
   }
 
   @Override
@@ -86,33 +176,41 @@ public class KeepAliveService extends Service {
   }
 
   public static KeepAliveService getInstance() {
-    return s_this; // may be null
+    return s_this;
   }
 
-  /* The notification
-   * A notification is required for a foreground service; and without a foreground service,
-   * Delta Chat won't get new messages reliable
-   **********************************************************************************************/
+  /* The notification ******************************************************/
 
   private Notification createNotification() {
     Intent intent = new Intent(this, ConversationListActivity.class);
     PendingIntent contentIntent =
         PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | IntentUtils.FLAG_MUTABLE());
-    // a notification _must_ contain a small icon, a title and a text, see
-    // https://developer.android.com/guide/topics/ui/notifiers/notifications.html#Required
+
     NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-    builder.setContentTitle(getString(R.string.app_name));
-    builder.setContentText(getString(R.string.notify_background_connection_enabled));
-
     builder.setPriority(NotificationCompat.PRIORITY_MIN);
-    builder.setWhen(0);
+    builder.setOngoing(true);
+    builder.setCategory(NotificationCompat.CATEGORY_STATUS);
+    builder.setShowWhen(false);
+    builder.setSilent(true);
+    builder.setVisibility(NotificationCompat.VISIBILITY_SECRET);
+    builder.setColor(ContextCompat.getColor(this, R.color.delta_accent));
     builder.setContentIntent(contentIntent);
     builder.setSmallIcon(R.drawable.notification_permanent);
+    // BMChat 2.49.53: use a real, single-line title rather than empty
+    // strings. Samsung One UI was previously falling back to the
+    // launcher app label, producing a "BMChat" row with no body that
+    // users invariably read as "you have a new message". Setting an
+    // explicit title plus a low-importance channel ensures the row
+    // never gets promoted into the alerting cluster.
+    builder.setContentTitle(getString(R.string.bmchat_fg_notification_title));
+    builder.setContentText(getString(R.string.bmchat_fg_notification_text));
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       createFgNotificationChannel(this);
       builder.setChannelId(NotificationCenter.CH_PERMANENT);
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+      builder.setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_DEFERRED);
     }
     return builder.build();
   }
@@ -123,14 +221,30 @@ public class KeepAliveService extends Service {
   private static void createFgNotificationChannel(Context context) {
     if (!ch_created) {
       ch_created = true;
+      NotificationManager notificationManager =
+          context.getSystemService(NotificationManager.class);
+
+      // BMChat: cleanup of obsolete fg channels from previous BMChat builds.
+      try {
+        notificationManager.deleteNotificationChannel("bmchat_fg_notification_ch");
+        notificationManager.deleteNotificationChannel("bmchat_fg_notification_ch_v2");
+        notificationManager.deleteNotificationChannel("bmchat_fg_notification_ch_v3");
+        notificationManager.deleteNotificationChannel("dc_foreground_notification_ch");
+      } catch (Throwable ignored) {
+      }
+
       NotificationChannel channel =
           new NotificationChannel(
               NotificationCenter.CH_PERMANENT,
-              "Receive messages in background.",
-              NotificationManager.IMPORTANCE_MIN); // IMPORTANCE_DEFAULT will play a sound
-      channel.setDescription("Ensure reliable message receiving.");
+              context.getString(R.string.notify_background_connection_channel),
+              NotificationManager.IMPORTANCE_MIN);
+      channel.setDescription(
+          context.getString(R.string.notify_background_connection_channel_description));
       channel.setShowBadge(false);
-      NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+      channel.setSound(null, null);
+      channel.enableLights(false);
+      channel.enableVibration(false);
+      channel.setLockscreenVisibility(Notification.VISIBILITY_SECRET);
       notificationManager.createNotificationChannel(channel);
     }
   }

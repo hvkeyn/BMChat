@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BMChat 2.49.64: foreground drawn over an album tile that participates in
+  the current batch-select session. Transparent fill + 4 dp brand-coloured
+  stroke so the photo keeps showing through. Lifted on top of the thumbnail
+  via View.setForeground so it never changes the tile's measured size, which
+  is what caused the previous "frames overlapping" regression.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <stroke android:width="4dp" android:color="@color/delta_primary"/>
+            <solid android:color="#33d31a3a"/>
+        </shape>
+    </item>
+</layer-list>

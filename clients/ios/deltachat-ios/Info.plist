@@ -5,7 +5,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Delta Chat</string>
+	<string>BMChat</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -24,10 +24,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>chat.delta.qr</string>
+			<string>chat.bromore.bmchat.qr</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>chat.delta</string>
+				<string>bmchat</string>
 				<string>openpgp4fpr</string>
 				<string>dcaccount</string>
 				<string>dclogin</string>
@@ -37,7 +37,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>chat.delta.mailto</string>
+			<string>chat.bromore.bmchat.mailto</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>mailto</string>
@@ -47,10 +47,10 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>chat.delta.deeplink</string>
+			<string>chat.bromore.bmchat.deeplink</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>chat.delta.deeplink</string>
+				<string>bmchat.deeplink</string>
 			</array>
 		</dict>
 	</array>
@@ -61,17 +61,17 @@
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Delta Chat uses your camera to take and send photos and videos and to scan QR codes.</string>
+	<string>BMChat uses your camera to take and send photos and videos and to scan QR codes.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Delta Chat needs the location permission in order to share your location for the timespan you have enabled location sharing.</string>
+	<string>BMChat needs the location permission in order to share your location for the timespan you have enabled location sharing.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Delta Chat needs the location permission in order to share your location for the timespan you have enabled location sharing.</string>
+	<string>BMChat needs the location permission in order to share your location for the timespan you have enabled location sharing.</string>
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Delta Chat uses your microphone to record and send voice messages and videos with sound.</string>
+	<string>BMChat uses your microphone to record and send voice messages and videos with sound.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>Delta Chat wants to save images to your photo library.</string>
+	<string>BMChat wants to save images to your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Delta Chat will let you choose which photos from your library to send.</string>
+	<string>BMChat will let you choose which photos from your library to send.</string>
 	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
 	<true/>
 	<key>NSUserActivityTypes</key>
@@ -108,7 +108,7 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSFaceIDUsageDescription</key>
-	<string>Delta Chat uses Face ID to protect your local profile, backup creation and second device setup.</string>
+	<string>BMChat uses Face ID to protect your local profile, backup creation and second device setup.</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UIDesignRequiresCompatibility</key>

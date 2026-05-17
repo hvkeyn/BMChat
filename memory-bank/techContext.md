@@ -13,6 +13,8 @@ Important build realities:
 - Android can be prepared on Windows, but upstream build docs focus on Linux/Nix/Docker and Android Studio setups.
 - iOS builds require macOS with Xcode and signing credentials.
 - Store distribution requires separate signing identities, package IDs, bundle IDs, notification services, and store metadata.
+- Desktop packaging mutates pnpm/node_modules state via upstream `pack:patch-node-modules`; restore dependencies before development checks.
+- On the current Windows setup, pnpm's local store has repeatedly restored wrong TypeScript contents for `typescript@5.9.3`/`5.8.3`. If desktop checks show TypeScript 4.9 behavior, repair the local package from the official npm tarball before rerunning.
 
 Licensing context:
 - `deltachat-desktop` is GPL-3.0-or-later.

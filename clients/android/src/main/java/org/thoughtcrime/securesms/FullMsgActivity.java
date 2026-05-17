@@ -66,7 +66,9 @@ public class FullMsgActivity extends WebViewActivity {
     dcContext = DcHelper.getContext(this);
     rpc = DcHelper.getRpc(this);
     msgId = getIntent().getIntExtra(MSG_ID_EXTRA, 0);
-    String title = dcContext.getMsg(msgId).getSubject();
+    String title =
+        org.thoughtcrime.securesms.update.UpdateBroadcast.strip(
+            dcContext.getMsg(msgId).getSubject());
     if (title.isEmpty()) title = getString(R.string.chat_input_placeholder);
     getSupportActionBar().setTitle(title);
 
@@ -78,7 +80,9 @@ public class FullMsgActivity extends WebViewActivity {
         () -> {
           try {
             FullMsgActivity activity = activityReference.get();
-            String html = activity.dcContext.getMsgHtml(activity.msgId);
+            String html =
+                org.thoughtcrime.securesms.update.UpdateBroadcast.strip(
+                    activity.dcContext.getMsgHtml(activity.msgId));
 
             activity.runOnUiThread(
                 () -> {

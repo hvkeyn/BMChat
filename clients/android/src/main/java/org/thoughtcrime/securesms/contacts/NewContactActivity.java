@@ -77,7 +77,10 @@ public class NewContactActivity extends PassphraseRequiredActionBarActivity {
       String addr = addrInput.getText() == null ? "" : addrInput.getText().toString();
       String name = nameInput.getText() == null ? "" : nameInput.getText().toString();
       if (name.isEmpty()) name = null;
-      int contactId = dcContext.mayBeValidAddr(addr) ? dcContext.createContact(name, addr) : 0;
+      int contactId = dcContext.mayBeValidAddr(addr) ? dcContext.lookupContactIdByAddr(addr) : 0;
+      if (contactId == 0 && dcContext.mayBeValidAddr(addr)) {
+        contactId = dcContext.createContact(name, addr);
+      }
       if (contactId == 0) {
         Toast.makeText(this, getString(R.string.login_error_mail), Toast.LENGTH_LONG).show();
         return true;

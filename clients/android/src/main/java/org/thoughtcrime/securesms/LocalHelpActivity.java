@@ -2,15 +2,21 @@ package org.thoughtcrime.securesms;
 
 import android.content.res.AssetManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import androidx.activity.OnBackPressedCallback;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+import org.json.JSONObject;
 import org.thoughtcrime.securesms.util.TextUtil;
 import org.thoughtcrime.securesms.util.Util;
 
 public class LocalHelpActivity extends WebViewActivity {
+  private static final String TAG = "LocalHelpActivity";
   public static final String SECTION_EXTRA = "section_extra";
 
   @Override
@@ -60,10 +66,23 @@ public class LocalHelpActivity extends WebViewActivity {
               }
             });
 
-    webView.loadUrl(
-        "file:///android_asset/"
-            + helpPath.replace("LANG", helpLang)
-            + (section != null ? section : ""));
+    String resolvedPath = helpPath.replace("LANG", helpLang);
+    try {
+      String html = readAssetAsUtf8(resolvedPath);
+      webView.loadDataWithBaseURL(
+          "file:///android_asset/help/" + helpLang + "/",
+          html,
+          "text/html; charset=UTF-8",
+          "UTF-8",
+          null);
+      if (section != null && section.startsWith("#")) {
+        String hash = JSONObject.quote(section.substring(1));
+        webView.postDelayed(() -> webView.loadUrl("javascript:location.hash=" + hash), 100);
+      }
+    } catch (IOException e) {
+      Log.w(TAG, "failed to load help as UTF-8, falling back to file URL", e);
+      webView.loadUrl("file:///android_asset/" + resolvedPath + (section != null ? section : ""));
+    }
   }
 
   @Override
@@ -71,23 +90,7 @@ public class LocalHelpActivity extends WebViewActivity {
     super.onPrepareOptionsMenu(menu);
     this.getMenuInflater().inflate(R.menu.local_help, menu);
 
-    // Append " ↗" to external link buttons
-    MenuItem item = menu.findItem(R.id.learn_more);
-    if (item != null) {
-      item.setTitle(TextUtil.markAsExternal(getString(R.string.delta_chat_homepage)));
-    }
-
-    item = menu.findItem(R.id.privacy_policy);
-    if (item != null) {
-      item.setTitle(TextUtil.markAsExternal(getString(R.string.privacy_policy)));
-    }
-
-    item = menu.findItem(R.id.contribute);
-    if (item != null) {
-      item.setTitle(TextUtil.markAsExternal(getString(R.string.contribute)));
-    }
-
-    item = menu.findItem(R.id.report_issue);
+    MenuItem item = menu.findItem(R.id.report_issue);
     if (item != null) {
       item.setTitle(TextUtil.markAsExternal(getString(R.string.global_menu_help_report_desktop)));
     }
@@ -102,17 +105,8 @@ public class LocalHelpActivity extends WebViewActivity {
     if (itemId == R.id.log_scroll_up) {
       webView.scrollTo(0, 0);
       return true;
-    } else if (itemId == R.id.learn_more) {
-      openOnlineUrl("https://delta.chat");
-      return true;
-    } else if (itemId == R.id.privacy_policy) {
-      openOnlineUrl("https://delta.chat/gdpr");
-      return true;
-    } else if (itemId == R.id.contribute) {
-      openOnlineUrl("https://delta.chat/contribute");
-      return true;
     } else if (itemId == R.id.report_issue) {
-      openOnlineUrl("https://github.com/deltachat/deltachat-android/issues");
+      openOnlineUrl("https://github.com/hvkeyn/BMChat/issues");
       return true;
     }
     return false;
@@ -132,5 +126,21 @@ public class LocalHelpActivity extends WebViewActivity {
       ; // a non-existent asset is no error, the function's purpose is to check exactly that.
     }
     return exists;
+  }
+
+  private String readAssetAsUtf8(String fileName) throws IOException {
+    try (InputStream input = getResources().getAssets().open(fileName);
+        ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+      byte[] buffer = new byte[16 * 1024];
+      int read;
+      while ((read = input.read(buffer)) != -1) {
+        output.write(buffer, 0, read);
+      }
+      String html = output.toString(StandardCharsets.UTF_8.name());
+      if (!html.isEmpty() && html.charAt(0) == '\uFEFF') {
+        html = html.substring(1);
+      }
+      return html;
+    }
   }
 }

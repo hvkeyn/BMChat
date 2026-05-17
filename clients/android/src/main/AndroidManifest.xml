@@ -75,6 +75,34 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
     <uses-permission android:name="android.permission.MANAGE_OWN_CALLS" />
 
+    <!-- Launcher icon unread badges (per-OEM intent broadcasts handled by
+         ShortcutBadger). Without these the badge stays empty on Samsung
+         One UI / Sony / Huawei / Xiaomi MIUI / OPPO / ZTE / Asus
+         launchers - which is exactly the regression visible on
+         screenshot 2 (May 10): VK and Telegram show counters, BMChat
+         shows none. The list mirrors the recipients ShortcutBadger ships
+         with; granting them is harmless on launchers that ignore them. -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" />
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="android.permission.READ_APP_BADGE" />
+    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+    <uses-permission android:name="com.zte.mifavor.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.zte.mifavor.launcher.permission.WRITE_SETTINGS" />
+    <uses-permission android:name="com.zui.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.zui.launcher.permission.WRITE_SETTINGS" />
+
     <!-- force compiling libs on older sdk than supported; runtime checks are required -->
     <uses-sdk tools:overrideLibrary="androidx.core.telecom,im.conversations.webrtc" />
 
@@ -86,6 +114,7 @@
         android:allowBackup="false"
         android:theme="@style/TextSecure.LightTheme"
         android:largeHeap="true"
+        android:networkSecurityConfig="@xml/network_security_config"
         tools:ignore="GoogleAppIndexingWarning"
         android:requestLegacyExternalStorage="true"
         tools:targetApi="TIRAMISU"
@@ -187,10 +216,21 @@
                     tools:ignore="AppLinkUrlError" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="http"
+                    android:host="5.187.4.132"
+                    android:pathPrefix="/i" />
+                <data
+                    android:scheme="https"
+                    android:host="5.187.4.132"
+                    android:pathPrefix="/i" />
+                <data
+                    android:scheme="https"
+                    android:host="i.bmchat.example" />
                 <data
                     android:scheme="https"
                     android:host="i.delta.chat" />
@@ -268,6 +308,11 @@
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
 
         <activity
+            android:name=".storage.StorageManagementActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
             android:name=".WelcomeActivity"
             android:launchMode="singleTop"
             android:theme="@style/TextSecure.LightNoActionBar"
@@ -321,6 +366,18 @@
             android:label="@string/media_preview"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTask"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <!-- BMChat 2.49.63: Telegram-style media picker. Uses the same
+             NoActionBar theme as ProfileActivity / AllMediaActivity so the
+             custom Toolbar can serve as the action bar (otherwise the
+             system action-bar collides with setSupportActionBar at create
+             time and the activity crashes — see 2.49.64 crash logs). -->
+        <activity
+            android:name=".album.BMChatGalleryPickerActivity"
+            android:label="@string/bmchat_gallery_picker_title"
+            android:exported="true"
+            android:theme="@style/TextSecure.LightNoActionBar"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
 
         <activity
@@ -397,6 +454,75 @@
             android:theme="@style/TextSecure.LightTheme"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".bots.ui.BotsActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".bots.ui.AddBotActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".bots.ui.BotChatPickerActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".bots.ui.PendingPostsActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".bots.ui.PendingPostPreviewActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".bots.ui.TgMediaPlayerActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:hardwareAccelerated="true" />
+
+        <activity
+            android:name=".emailbots.ui.EmailBotsActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".emailbots.ui.EmailBotEditActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
+        <activity
+            android:name=".emailbots.ui.EmailBotCallbackActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:exported="true"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="bmchat-bot" />
+            </intent-filter>
+        </activity>
+
+        <!-- Telegram-style "select fragment to quote" screen. Hosted
+             as an Activity (rather than a dialog) so the standard
+             Android text-selection handles work reliably across
+             vendor skins. Returns the chosen substring back to
+             ConversationActivity via startActivityForResult. -->
+        <activity
+            android:name=".quote.QuoteSelectorActivity"
+            android:theme="@style/TextSecure.LightNoActionBar"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".qr.QrActivity"
@@ -493,6 +619,24 @@
             android:exported="false"
             android:foregroundServiceType="camera|microphone|phoneCall" />
 
+        <!-- Background APK downloader. Runs as a foreground service
+             (dataSync) so the download survives Home press / app
+             swipe-away and shows a progress notification the user
+             can monitor or cancel from anywhere. -->
+        <service
+            android:name=".update.UpdateDownloadService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!-- "Tap to install" notification companion. Only used by
+             our own progress notification, never invoked from
+             outside the app, hence exported=false. -->
+        <receiver
+            android:name=".update.UpdateDownloadService$UpdateInstallReceiver"
+            android:enabled="true"
+            android:exported="false" />
+
         <receiver
             android:name=".notifications.MarkReadReceiver"
             android:enabled="true"
@@ -500,6 +644,7 @@
             <intent-filter>
                 <action android:name="org.thoughtcrime.securesms.notifications.MARK_NOTICED" />
                 <action android:name="org.thoughtcrime.securesms.notifications.CANCEL" />
+                <action android:name="org.thoughtcrime.securesms.notifications.SUMMARY_DISMISSED" />
             </intent-filter>
         </receiver>
 
@@ -559,6 +704,15 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="info.guardianproject.panic.action.TRIGGER" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".update.BMChatUpdater$UpdateNotifReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="org.thoughtcrime.securesms.update.BMChatUpdater.NOTIF_INSTALL" />
+                <action android:name="org.thoughtcrime.securesms.update.BMChatUpdater.NOTIF_DISMISS" />
             </intent-filter>
         </receiver>
 

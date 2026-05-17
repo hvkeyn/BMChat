@@ -450,9 +450,18 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
                   uriList,
                   () -> {
                     Util.runOnAnyBackgroundThread(
-                        () -> {
-                          SendRelayedMessageUtil.sendMultipleMsgs(this, chatId, uriList, null);
-                        });
+                        // BMChat 2.49.57: Telegram-style media album. The
+                        // gallery picker only returns image/* and video/*
+                        // mimes, so every uri here is a media file and
+                        // sendAlbum stamps a shared album_id into all
+                        // outgoing captions. ConversationItem then shows
+                        // a "Альбом 1/N" header on every bubble of the
+                        // group so the receiver instantly understands
+                        // these messages belong together. Documents /
+                        // audio still take the unchanged sendMultipleMsgs
+                        // path via PICK_DOCUMENT below.
+                        () ->
+                            SendRelayedMessageUtil.sendAlbum(this, chatId, uriList, null));
                   });
             }
           }
@@ -460,10 +469,46 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         break;
 
       case PICK_DOCUMENT:
-        final String docMimeType = MediaUtil.getMimeType(this, data.getData());
-        final MediaType docMediaType =
-            MediaUtil.isAudioType(docMimeType) ? MediaType.AUDIO : MediaType.DOCUMENT;
-        setMedia(data.getData(), docMediaType);
+        // BMChat 2.49.56: support Telegram-style multi-pick for documents
+        // and audio. If the user picked a single file, behave exactly as
+        // before — populate the attachment preview so the user can add a
+        // caption. If they picked several, fan them out as separate
+        // outgoing messages (one DcMsg per uri) since Delta Chat's
+        // attachment preview only holds one slide at a time and audio
+        // / document bubbles cannot be visually grouped the way photos
+        // can. Plus this is what Telegram does for non-media files.
+        if (data.getData() != null) {
+          final String docMimeType = MediaUtil.getMimeType(this, data.getData());
+          final MediaType docMediaType =
+              MediaUtil.isAudioType(docMimeType) ? MediaType.AUDIO : MediaType.DOCUMENT;
+          setMedia(data.getData(), docMediaType);
+        } else {
+          final ClipData multiDocs = data.getClipData();
+          if (multiDocs != null) {
+            final int docCount = multiDocs.getItemCount();
+            if (docCount > 0) {
+              ArrayList<Uri> docUriList = new ArrayList<>(docCount);
+              for (int i = 0; i < docCount; i++) {
+                docUriList.add(multiDocs.getItemAt(i).getUri());
+              }
+              if (docUriList.size() == 1) {
+                final Uri singleDocUri = docUriList.get(0);
+                final String mimeType = MediaUtil.getMimeType(this, singleDocUri);
+                final MediaType docMediaType =
+                    MediaUtil.isAudioType(mimeType) ? MediaType.AUDIO : MediaType.DOCUMENT;
+                setMedia(singleDocUri, docMediaType);
+              } else {
+                askSendingFiles(
+                    docUriList,
+                    () ->
+                        Util.runOnAnyBackgroundThread(
+                            () ->
+                                SendRelayedMessageUtil.sendMultipleMsgs(
+                                    this, chatId, docUriList, null)));
+              }
+            }
+          }
+        }
         break;
 
       case PICK_WEBXDC:
@@ -560,6 +605,36 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       menu.findItem(R.id.menu_archive_chat).setTitle(R.string.menu_unarchive_chat);
     }
 
+    // BMChat: when this is a 1:1 chat the other side has not yet replied to,
+    // expose a "Re-send invite by e-mail" entry so the user can nudge them
+    // again from the conversation itself instead of digging into Settings →
+    // QR-code → Share-by-email.
+    {
+      MenuItem resendItem = menu.findItem(R.id.menu_bmchat_resend_invite);
+      if (resendItem != null) {
+        boolean show = false;
+        try {
+          if (!dcChat.isMultiUser()
+              && !dcChat.isSelfTalk()
+              && !dcChat.isMailingList()
+              && !dcChat.isInBroadcast()
+              && !dcChat.isOutBroadcast()) {
+            DcContext dcCtx = DcHelper.getContext(context);
+            int[] contacts = dcCtx.getChatContacts(chatId);
+            if (contacts != null && contacts.length == 1) {
+              DcContact c = dcCtx.getContact(contacts[0]);
+              show = c != null
+                  && c.getAddr() != null
+                  && !c.getAddr().isEmpty();
+            }
+          }
+        } catch (Throwable t) {
+          Log.w(TAG, "resend-invite menu visibility check failed", t);
+        }
+        resendItem.setVisible(show);
+      }
+    }
+
     Util.redMenuItem(menu, R.id.menu_leave);
     Util.redMenuItem(menu, R.id.menu_clear_chat);
     Util.redMenuItem(menu, R.id.menu_delete_chat);
@@ -619,6 +694,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       return true;
     } else if (itemId == R.id.menu_archive_chat) {
       handleArchiveChat();
+      return true;
+    } else if (itemId == R.id.menu_bmchat_resend_invite) {
+      handleBMChatResendInvite();
       return true;
     } else if (itemId == R.id.menu_clear_chat) {
       fragment.handleClearChat();
@@ -777,6 +855,53 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
             .show();
     Util.redPositiveButton(dialog);
     Util.redButton(dialog, AlertDialog.BUTTON_NEGATIVE);
+  }
+
+  /**
+   * BMChat: re-send the SecureJoin invite by ordinary e-mail to the contact
+   * of the current 1:1 chat. The body contains the canonical
+   * {@code http://5.187.4.132/i#…} link (rewritten via {@link Util}); the
+   * receiver's BMChat picks it up automatically through
+   * {@code BMChatInviteAutoAcceptor}, so the contact lands in a fresh
+   * verified chat without manually tapping the link.
+   */
+  private void handleBMChatResendInvite() {
+    final DcContext dcCtx = DcHelper.getContext(context);
+    int[] contacts = dcCtx.getChatContacts(chatId);
+    if (contacts == null || contacts.length != 1) {
+      Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    DcContact contact = dcCtx.getContact(contacts[0]);
+    final String addr = contact != null ? contact.getAddr() : null;
+    if (addr == null || addr.isEmpty()) {
+      Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    final String inviteUrl = Util.rewriteInviteLink(dcCtx.getSecurejoinQr(0));
+    if (inviteUrl == null || inviteUrl.isEmpty()) {
+      Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
+      return;
+    }
+    new AlertDialog.Builder(this)
+        .setTitle(R.string.bmchat_resend_invite_title)
+        .setMessage(getString(R.string.bmchat_resend_invite_explain, addr))
+        .setNegativeButton(R.string.cancel, null)
+        .setPositiveButton(R.string.menu_send, (d, w) -> {
+          try {
+            int targetChatId =
+                dcCtx.createChatByContactId(contacts[0]);
+            DcMsg msg = new DcMsg(dcCtx, DcMsg.DC_MSG_TEXT);
+            msg.setText(getString(R.string.bmchat_invite_email_body, inviteUrl));
+            dcCtx.sendMsg(targetChatId, msg);
+            Toast.makeText(this, R.string.bmchat_resend_invite_done,
+                Toast.LENGTH_LONG).show();
+          } catch (Throwable t) {
+            Log.w(TAG, "resend-invite failed", t);
+            Toast.makeText(this, R.string.error, Toast.LENGTH_LONG).show();
+          }
+        })
+        .show();
   }
 
   private void handleArchiveChat() {
@@ -1152,7 +1277,17 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   private void addAttachment(int type) {
     switch (type) {
       case AttachmentTypeSelector.ADD_GALLERY:
-        AttachmentManager.selectGallery(this, PICK_GALLERY);
+        // BMChat 2.49.64: route gallery picks through our Telegram-style
+        // picker (3-col grid, ordered numbered selection, 10-photo cap)
+        // instead of the OS-default ACTION_GET_CONTENT chooser. The picker
+        // returns either a single Uri or a multi-uri ClipData — exactly the
+        // shape PICK_GALLERY already expects — so the album-send path in
+        // onActivityResult requires no changes at all.
+        startActivityForResult(
+            new Intent(
+                this,
+                org.thoughtcrime.securesms.album.BMChatGalleryPickerActivity.class),
+            PICK_GALLERY);
         break;
       case AttachmentTypeSelector.ADD_DOCUMENT:
         AttachmentManager.selectDocument(this, PICK_DOCUMENT);
@@ -1241,7 +1376,38 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   }
 
   protected ListenableFuture<Integer> processComposeControls(
-      final int action, String body, SlideDeck slideDeck) {
+      final int action, String bodyRaw, SlideDeck slideDeck) {
+
+    // BMChat P2P update broadcast: when sending out, append the
+    // invisible "BMU(…)" marker if the local client knows about a
+    // build that's newer than the one it's currently running. The
+    // receiver's ConversationItem.setBodyText ingests this snapshot
+    // into shared prefs and strips the marker before rendering, so
+    // even if 5.187.4.132 is unreachable the peer learns where to
+    // grab the new APK.
+    //
+    // BMChat 2.49.56: the marker is now skipped for outgoing
+    // broadcast lists / mailing lists. In a channel (DC_CHAT_TYPE_OUT_BROADCAST)
+    // a single message is delivered to many readers, including
+    // non-BMChat clients (Thunderbird, plain Delta Chat, web mail UIs)
+    // that have no idea what to do with the zero-width framing. If
+    // those framing bytes are stripped by an SMTP relay the literal
+    // "BMU(base64...)" payload ends up rendered verbatim in the
+    // channel feed — which is what triggered the user-visible
+    // garbage on the "Inner Circle" channel screenshot. For private
+    // chats and small groups the marker still rides along, since
+    // those audiences are uniformly BMChat clients who strip it.
+    // Drafts are never decorated either way.
+    final boolean wantBroadcastMarker =
+        (action == ACTION_SEND_OUT && bodyRaw != null && !bodyRaw.isEmpty())
+            && dcChat != null
+            && !dcChat.isOutBroadcast()
+            && !dcChat.isMailingList();
+    final String body =
+        wantBroadcastMarker
+            ? org.thoughtcrime.securesms.update.UpdateBroadcast
+                .maybeAppend(getApplicationContext(), bodyRaw)
+            : (bodyRaw == null ? "" : bodyRaw);
 
     final SettableFuture<Integer> future = new SettableFuture<>();
 
@@ -1395,6 +1561,12 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     fragment.setLastSeen(-1);
     fragment.scrollToBottom();
     attachmentManager.cleanup();
+    // Tiny audible "ушло" tick: Telegram and most modern messengers
+    // give the user immediate audio feedback even when they are
+    // inside the chat (where the notification channel sound is
+    // suppressed). Driven by the same in-chat-sounds preference so
+    // a user who explicitly silenced the app stays silent.
+    org.thoughtcrime.securesms.notifications.BMChatSounds.playSent(this);
   }
 
   // handle attachment drawer, camera, recorder
@@ -1738,6 +1910,29 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     inputPanel.setQuote(
         GlideApp.with(this), msg, msg.getTimestamp(), author, text, slideDeck, false);
 
+    inputPanel.clickOnComposeInput();
+  }
+
+  @Override
+  public void handleQuoteFragment(@NonNull DcMsg sourceMessage, @NonNull String fragment) {
+    // Render the user's highlighted substring as a Markdown
+    // blockquote: every line gets a leading "> " so our own
+    // MessageMarkdown.QUOTE_LINE pattern picks it up on the
+    // receiving end and draws the left-bar quote. Two trailing
+    // newlines separate the quote from the user's reply text and
+    // keep the caret on a fresh line. We append rather than replace
+    // so the user doesn't lose anything they were already typing.
+    StringBuilder sb = new StringBuilder();
+    for (String line : fragment.split("\n", -1)) {
+      sb.append("> ").append(line).append('\n');
+    }
+    sb.append('\n');
+    String quoted = sb.toString();
+
+    int caret = composeText.getSelectionStart();
+    if (caret < 0) caret = composeText.length();
+    composeText.getText().insert(caret, quoted);
+    composeText.setSelection(caret + quoted.length());
     inputPanel.clickOnComposeInput();
   }
 

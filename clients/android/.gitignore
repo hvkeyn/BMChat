@@ -9,6 +9,7 @@ gen/
 .idea/
 *.iml
 *.so
+!libs/*/libnative-utils.so
 out
 tests
 lint.xml

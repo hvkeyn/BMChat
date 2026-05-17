@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- BMChat 2.49.63: id used by ConversationItem to find an existing
+         AlbumThumbnailLayout child inside body_bubble across recycling. -->
+    <item
+        name="bmchat_album_grid"
+        type="id" />
+
+    <!-- BMChat 2.49.64: "Send (N)" action item in the gallery picker. -->
+    <item
+        name="bmchat_gallery_picker_send"
+        type="id" />
+
     <!-- Tag IDs for storing original padding values when applying window insets -->
     <item
         name="tag_window_insets_padding_left"
@@ -27,4 +38,24 @@
     <item
         name="tag_window_insets_margin_bottom"
         type="id" />
+
+    <!-- Selection-action-mode entries injected by ComposeText so the
+         user can wrap a highlighted run with Markdown markers.
+         Declared as <item type="id"> rather than as a menu xml because
+         they live on a runtime-built ActionMode menu (selection
+         toolbar), not on a static menu resource. -->
+    <item name="compose_format_bold"      type="id" />
+    <item name="compose_format_italic"    type="id" />
+    <item name="compose_format_strike"    type="id" />
+    <item name="compose_format_underline" type="id" />
+    <item name="compose_format_spoiler"   type="id" />
+    <item name="compose_format_code"      type="id" />
+
+    <!-- Quote-text companion to the existing menu_context_reply
+         action: when the user has a selection inside an incoming
+         message bubble, the chat context menu offers "цитировать
+         фрагмент" which forwards only the selected substring as
+         the quote body. Created here for the same reason as above —
+         the menu is built dynamically by ConversationFragment. -->
+    <item name="menu_context_quote_selection" type="id" />
 </resources>

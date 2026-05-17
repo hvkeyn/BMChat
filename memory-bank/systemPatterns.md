@@ -16,6 +16,8 @@ Technical strategy:
 - Keep internal namespaces stable where changing them would make upstream merges risky.
 - Move repeated branding decisions into documented config and generated assets.
 - Preserve upstream license notices and copyright attribution.
+- For BMChat-controlled infrastructure, empty endpoint values in the brand config mean "disable this integration"; do not fall back to Delta/chatmail public infrastructure.
+- Treat classic mailbox mail as non-chat input by default. Chat UI creation requires `Chat-Version` or known BMChat/Delta thread linkage.
 
 Update strategy:
 - Track upstream remotes for desktop, Android, and iOS separately.

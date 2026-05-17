@@ -72,6 +72,11 @@
         android:title="@string/menu_archive_chat"
         android:id="@+id/menu_archive_chat" />
 
+    <item
+        android:title="@string/bmchat_resend_invite_menu"
+        android:id="@+id/menu_bmchat_resend_invite"
+        android:visible="false" />
+
     <item android:title="@string/menu_more_options">
         <menu>
             <item

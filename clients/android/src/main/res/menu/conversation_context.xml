@@ -59,6 +59,16 @@
         android:id="@+id/menu_context_reply_privately"
         app:showAsAction="never" />
 
+    <!-- "Цитировать фрагмент": opens a dialog that lets the user
+         highlight a substring of the source message and inserts it
+         into the composer as a Markdown blockquote. Sits next to
+         the regular reply action which already quotes the entire
+         message. -->
+    <item
+        android:title="@string/bmchat_quote_selection"
+        android:id="@+id/menu_context_quote_selection"
+        app:showAsAction="never" />
+
     <item
         android:title="@string/resend"
         android:id="@+id/menu_resend"

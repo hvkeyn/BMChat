@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import org.thoughtcrime.securesms.ApplicationContext;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.notifications.BMChatBadge;
 import org.thoughtcrime.securesms.service.FetchForegroundService;
 import org.thoughtcrime.securesms.util.Util;
 
@@ -194,8 +195,38 @@ public class DcEventCenter {
 
     switch (id) {
       case DcContext.DC_EVENT_INCOMING_MSG:
+        // BMChat 2.49.61: explicit "incoming" log so users debugging missing
+        // notifications can confirm whether the core actually delivered an
+        // inbound event or whether the silence is upstream (no IMAP, message
+        // not parsed, …). Pair with NotificationCenter logs to trace the
+        // full pipeline in `adb logcat -s DeltaChat NotificationCenter`.
+        android.util.Log.i(
+            "DeltaChat",
+            "DC_EVENT_INCOMING_MSG account=" + accountId
+                + " chat=" + event.getData1Int()
+                + " msg=" + event.getData2Int());
         DcHelper.getNotificationCenter(context)
             .notifyMessage(accountId, event.getData1Int(), event.getData2Int());
+        // BMChat: detect e-mailed invite links and auto-trigger SecureJoin so
+        // the user gets a verified contact without having to tap the link.
+        if (accountId == context.getDcContext().getAccountId()) {
+          BMChatInviteAutoAcceptor.onIncomingMsg(
+              context, context.getDcContext(), event.getData1Int(), event.getData2Int());
+          // BMChat: collapse mirror 1:1 chats with the same e-mail (e.g. when
+          // the peer recreated their account and core spawned a new chat).
+          BMChatChatDedupe.scheduleScan(context, context.getDcContext());
+        }
+        // BMChat: hand the message to the e-mail-bot dispatcher so any
+        // registered bot of the owner account can react to it. Bots are
+        // scoped per account, so we route every event regardless of
+        // which account it belongs to.
+        try {
+          org.thoughtcrime.securesms.emailbots.EmailBotIntegration.get(context)
+              .getDispatcher()
+              .onIncomingMessage(accountId, event.getData1Int(), event.getData2Int());
+        } catch (Throwable t) {
+          android.util.Log.w("DcEventCenter", "email-bot dispatch failed", t);
+        }
         break;
 
       case DcContext.DC_EVENT_INCOMING_REACTION:
@@ -248,6 +279,40 @@ public class DcEventCenter {
       // Possibly a chat was deleted or the avatar was changed, directly refresh DirectShare so that
       // a new chat can move up / the chat avatar change is populated
       DirectShareUtil.triggerRefreshDirectShare(context);
+      // BMChat: a freshly modified chat may be a brand-new mirror of an
+      // existing 1:1 conversation -> archive the older duplicates.
+      BMChatChatDedupe.scheduleScan(context, context.getDcContext());
+    } else if (id == DcContext.DC_EVENT_CONTACTS_CHANGED
+        || id == DcContext.DC_EVENT_MSGS_CHANGED) {
+      // Same idea for any contact/message churn that might have introduced
+      // a new key-contact for an e-mail we already track.
+      BMChatChatDedupe.scheduleScan(context, context.getDcContext());
+    }
+
+    // BMChat: keep the launcher icon unread badge in sync with the core's
+    // fresh-message count for any event that can plausibly change it.
+    switch (id) {
+      case DcContext.DC_EVENT_INCOMING_MSG:
+      case DcContext.DC_EVENT_INCOMING_REACTION:
+      case DcContext.DC_EVENT_INCOMING_WEBXDC_NOTIFY:
+      case DcContext.DC_EVENT_MSGS_CHANGED:
+      case DcContext.DC_EVENT_MSG_DELETED:
+      case DcContext.DC_EVENT_CHAT_MODIFIED:
+        BMChatBadge.refresh(context);
+        break;
+      case DcContext.DC_EVENT_MSGS_NOTICED:
+        // BMChat: a read happened — most often from another device or a
+        // notification action — so make sure the system tray and the
+        // launcher badge stop advertising messages that are no longer
+        // unread. reconcileAccount also refreshes the badge.
+        try {
+          DcHelper.getNotificationCenter(context).reconcileAccount(accountId);
+        } catch (Throwable t) {
+          BMChatBadge.refresh(context);
+        }
+        break;
+      default:
+        break;
     }
 
     return 0;

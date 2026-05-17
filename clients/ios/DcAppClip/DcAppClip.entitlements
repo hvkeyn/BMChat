@@ -4,15 +4,15 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>appclips:i.delta.chat</string>
+		<string>appclips:i.bmchat.example</string>
 	</array>
 	<key>com.apple.developer.parent-application-identifiers</key>
 	<array>
-		<string>$(AppIdentifierPrefix)chat.delta</string>
+		<string>$(AppIdentifierPrefix)chat.bromore.bmchat</string>
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.chat.delta.ios</string>
+		<string>group.chat.bromore.bmchat.ios</string>
 	</array>
 </dict>
 </plist>

@@ -1,0 +1,54 @@
+# Repo-wide line ending policy.
+# Default: let git auto-detect text vs binary, normalize text to LF in repo.
+* text=auto eol=lf
+
+# Shell scripts must always use LF, otherwise CRLF breaks ndk-make.sh and friends.
+*.sh text eol=lf
+*.bash text eol=lf
+
+# Makefiles and similar build inputs must keep LF as well.
+Makefile text eol=lf
+*.mk text eol=lf
+
+# Python / Rust / C / Swift / Kotlin / Java / Gradle: LF for portability with WSL/Linux builders.
+*.py text eol=lf
+*.rs text eol=lf
+*.toml text eol=lf
+*.c text eol=lf
+*.h text eol=lf
+*.cpp text eol=lf
+*.swift text eol=lf
+*.kt text eol=lf
+*.kts text eol=lf
+*.java text eol=lf
+*.gradle text eol=lf
+
+# Windows-specific files keep CRLF.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Native binaries and other binary blobs.
+*.so binary
+*.a binary
+*.o binary
+*.apk binary
+*.aab binary
+*.ipa binary
+*.dmg binary
+*.exe binary
+*.dll binary
+*.dylib binary
+*.zip binary
+*.7z binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.icns binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.LinkProperties;
 import android.net.NetworkCapabilities;
@@ -13,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.multidex.MultiDexApplication;
+import androidx.preference.PreferenceManager;
 import androidx.work.Constraints;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.NetworkType;
@@ -153,6 +155,38 @@ public class ApplicationContext extends MultiDexApplication {
 
     Log.i("DeltaChat", "++++++++++++++++++ ApplicationContext.onCreate() ++++++++++++++++++");
 
+    // BMChat: bind the auto-updater to the whole application lifecycle so a
+    // pending update is detected on every foreground transition, not only on
+    // the chat list.
+    try {
+      org.thoughtcrime.securesms.update.BMChatUpdater.bindGlobalLifecycle(this);
+    } catch (Throwable t) {
+      Log.w(TAG, "BMChatUpdater.bindGlobalLifecycle failed", t);
+    }
+
+    // BMChat 2.49.58: a periodic background update probe so users who
+    // keep BMChat in the background still hear about a new release
+    // within ~6 hours, without having to re-open the app first. The
+    // worker posts a low-priority "Доступно обновление" notification
+    // (no heads-up, no sound) — see BMChatUpdater.checkSilentlyFromBackground.
+    try {
+      org.thoughtcrime.securesms.update.BMChatUpdateWorker.schedule(this);
+    } catch (Throwable t) {
+      Log.w(TAG, "BMChatUpdateWorker.schedule failed", t);
+    }
+
+    try {
+      org.thoughtcrime.securesms.bots.BotPollManager.ensurePeriodicScheduled(this);
+    } catch (Throwable t) {
+      Log.w(TAG, "BotPollManager.ensurePeriodicScheduled failed", t);
+    }
+
+    try {
+      org.thoughtcrime.securesms.storage.StorageCleanupWorker.schedule(this);
+    } catch (Throwable t) {
+      Log.w(TAG, "StorageCleanupWorker.schedule failed", t);
+    }
+
     System.loadLibrary("native-utils");
 
     // Initialize DcAccounts in background to avoid ANR during SQL migrations
@@ -229,6 +263,15 @@ public class ApplicationContext extends MultiDexApplication {
                 // Revert it to the default if it was changed in the past.
                 ac.setConfigInt("webxdc_realtime_enabled", 1);
 
+                // BMChat 2.49.71: enable Spam/Junk fetching by default for
+                // existing users that never toggled the flag, otherwise
+                // BMChat silently drops legitimate messages routed to Spam
+                // by the IMAP server.
+                String fetchSpam = ac.getConfig(DcHelper.CONFIG_FETCH_SPAM);
+                if (fetchSpam == null || fetchSpam.isEmpty()) {
+                  ac.setConfigInt(DcHelper.CONFIG_FETCH_SPAM, 1);
+                }
+
                 // 2025-11-12: this is needed until core starts ignoring "delete_server_after" for
                 // chatmail
                 if (ac.isChatmail()) {
@@ -254,6 +297,11 @@ public class ApplicationContext extends MultiDexApplication {
               DcHelper.setStockTranslations(this);
 
               dcAccounts.startIo();
+
+              // BMChat: refresh the launcher icon unread badge as soon as the
+              // accounts are open, so a freshly-restarted device immediately
+              // shows the existing fresh-message count on the icon.
+              org.thoughtcrime.securesms.notifications.BMChatBadge.refresh(this);
             } catch (Exception e) {
               Log.e(TAG, "Fatal error during DcAccounts initialization", e);
               // Mark as initialized even on error to avoid deadlock
@@ -318,7 +366,37 @@ public class ApplicationContext extends MultiDexApplication {
         networkStateReceiver,
         new IntentFilter(android.net.ConnectivityManager.CONNECTIVITY_ACTION));
 
-    KeepAliveService.maybeStartSelf(this);
+    // BMChat 2.49.51/52 one-shot migration: 2.49.49–2.49.50 shipped with
+    // hidePermanentNotification=true, which on Samsung One UI / MIUI
+    // turned out to silently kill background mail delivery (the
+    // "transient FGS" stops being a true foreground service and the OS
+    // reaps the started service). Reset any stale "true" left over by
+    // those builds so users come back to live notifications on update.
+    // We also drop the "doze already asked" flag so that users who
+    // previously declined the system battery prompt see it again —
+    // without the OEM whitelist, background IDLE is still going to
+    // die regardless of FGS visibility.
+    try {
+      SharedPreferences migrationPrefs = getSharedPreferences("bmchat_migrations", MODE_PRIVATE);
+      SharedPreferences defaults = PreferenceManager.getDefaultSharedPreferences(this);
+      if (!migrationPrefs.getBoolean("hide_fg_default_reset_v51", false)) {
+        defaults.edit().putBoolean(Prefs.HIDE_FG_NOTIFICATION_PREF, false).apply();
+        migrationPrefs.edit().putBoolean("hide_fg_default_reset_v51", true).apply();
+        Log.i("BMChat", "migrated hide_fg pref to false (2.49.51)");
+      }
+      if (!migrationPrefs.getBoolean("doze_reprompt_v52", false)) {
+        defaults.edit()
+            .putBoolean(Prefs.DOZE_ASKED_DIRECTLY, false)
+            .putInt("pref_prompted_doze_msg_id", 0)
+            .apply();
+        migrationPrefs.edit().putBoolean("doze_reprompt_v52", true).apply();
+        Log.i("BMChat", "reset doze-prompt state (2.49.52)");
+      }
+    } catch (Throwable t) {
+      Log.w("BMChat", "migrations failed", t);
+    }
+
+    KeepAliveService.maybeStartSelfIfUiUsed(this);
 
     initializeLogging();
     initializeJobManager();

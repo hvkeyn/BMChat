@@ -1,9 +1,11 @@
-export const appName = 'Delta Chat'
-export const homePageUrl = 'https://delta.chat'
-export const gitHubUrl = 'https://github.com/deltachat/deltachat-desktop'
+export const appName = 'BMChat'
+export const homePageUrl = 'http://5.187.4.132/'
+export const gitHubUrl = 'https://github.com/hvkeyn/BMChat'
 export const gitHubIssuesUrl = gitHubUrl + '/issues'
 export const gitHubLicenseUrl = gitHubUrl + '/blob/main/LICENSE'
-export const donationUrl = 'https://delta.chat/donate'
+// Donations were removed from BMChat; the constant points at the project page
+// for any UI surfaces that still reference it through legacy code paths.
+export const donationUrl = 'http://5.187.4.132/'
 
 export const appWindowTitle = appName
 

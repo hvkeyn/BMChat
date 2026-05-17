@@ -28,6 +28,10 @@ clients/android/.idea/
 clients/android/build/
 clients/android/app/build/
 clients/android/libs/
+# but ship the prebuilt native core so the APK can be assembled on Windows without WSL/NDK
+!clients/android/libs/
+!clients/android/libs/**/
+!clients/android/libs/*/libnative-utils.so
 
 # iOS local files
 clients/ios/Pods/
@@ -62,3 +66,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+
+# Local test artifacts (kept on disk for ad-hoc handoff, not committed)
+artifacts/
+
+# Throw-away VPS deploy scripts that contain credentials / SSH passwords.
+.tmp-vps-*.sh
+.tmp-*.sh

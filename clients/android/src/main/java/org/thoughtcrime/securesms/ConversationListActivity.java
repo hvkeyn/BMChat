@@ -105,6 +105,16 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
   private SearchToolbar searchToolbar;
   private ImageView searchAction;
   private ViewGroup fragmentContainer;
+
+  /**
+   * In-app sticky banner that mirrors the foreground-service update
+   * download notification. Lives at the top of the chat list so the
+   * user can confirm install without pulling the shade. The banner
+   * is hidden by default and bound from {@link #onResume()} once
+   * UpdateDownloadService starts publishing state.
+   */
+  private View updateBanner;
+  private android.content.BroadcastReceiver updateBannerReceiver;
   private ViewGroup selfAvatarContainer;
 
   /**
@@ -187,6 +197,12 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     searchToolbar = findViewById(R.id.search_toolbar);
     searchAction = findViewById(R.id.search_action);
     fragmentContainer = findViewById(R.id.fragment_container);
+    try {
+      updateBanner = findViewById(R.id.update_banner);
+    } catch (Throwable t) {
+      Log.w("ConvListAct", "update banner not present", t);
+      updateBanner = null;
+    }
 
     // add margin to avoid content hidden behind system bars
     ViewUtil.applyWindowInsetsAsMargin(searchToolbar, true, true, true, false);
@@ -444,6 +460,155 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
     if (DcHelper.getContext(this).isSendingLocationsToChat(0)) {
       LocationStreamingService.ensureRunning(this);
     }
+    org.thoughtcrime.securesms.update.BMChatUpdater.scheduleForActivity(this);
+
+    // BMChat: reopening the chat list is the user's signal that they
+    // are reviewing their mail; clear out any system notifications and
+    // launcher badge entries for chats that no longer have unread
+    // messages. Cheap, idempotent and survives external markseen events.
+    try {
+      DcHelper.getNotificationCenter(this).reconcileAllAccounts();
+    } catch (Throwable t) {
+      Log.w("ConvListAct", "reconcile failed", t);
+    }
+
+    // 2.49.39 safety net: never let the optional update banner take
+    // down the main chat list activity. If anything throws on resume
+    // (R8 stripping a static, a missing resource, a theme attribute
+    // not resolving, …) we simply hide the banner and keep going.
+    try {
+      registerUpdateBannerReceiver();
+      refreshUpdateBanner();
+    } catch (Throwable t) {
+      Log.w("ConvListAct", "update banner setup failed", t);
+      if (updateBanner != null) {
+        try { updateBanner.setVisibility(View.GONE); } catch (Throwable ignored) {}
+      }
+    }
+  }
+
+  @Override
+  public void onPause() {
+    super.onPause();
+    try {
+      unregisterUpdateBannerReceiver();
+    } catch (Throwable ignored) {}
+  }
+
+  private void registerUpdateBannerReceiver() {
+    if (updateBannerReceiver != null) return;
+    updateBannerReceiver = new android.content.BroadcastReceiver() {
+      @Override
+      public void onReceive(android.content.Context c, Intent i) {
+        refreshUpdateBanner();
+      }
+    };
+    androidx.localbroadcastmanager.content.LocalBroadcastManager
+        .getInstance(getApplicationContext())
+        .registerReceiver(
+            updateBannerReceiver,
+            new android.content.IntentFilter(
+                org.thoughtcrime.securesms.update.UpdateDownloadService
+                    .ACTION_PROGRESS_BROADCAST));
+  }
+
+  private void unregisterUpdateBannerReceiver() {
+    if (updateBannerReceiver == null) return;
+    try {
+      androidx.localbroadcastmanager.content.LocalBroadcastManager
+          .getInstance(getApplicationContext())
+          .unregisterReceiver(updateBannerReceiver);
+    } catch (Throwable ignored) {}
+    updateBannerReceiver = null;
+  }
+
+  /**
+   * Render the banner from the latest UpdateDownloadService snapshot.
+   * Always safe to call: hides the banner when the service is idle.
+   */
+  private void refreshUpdateBanner() {
+    if (updateBanner == null) return;
+    final org.thoughtcrime.securesms.update.UpdateDownloadService.State state =
+        org.thoughtcrime.securesms.update.UpdateDownloadService.STATE;
+
+    if (state == org.thoughtcrime.securesms.update.UpdateDownloadService.State.IDLE) {
+      updateBanner.setVisibility(View.GONE);
+      return;
+    }
+    updateBanner.setVisibility(View.VISIBLE);
+
+    TextView title    = updateBanner.findViewById(R.id.update_banner_title);
+    TextView subtitle = updateBanner.findViewById(R.id.update_banner_subtitle);
+    androidx.appcompat.widget.AppCompatButton primary =
+        updateBanner.findViewById(R.id.update_banner_primary);
+    android.widget.ProgressBar progress =
+        updateBanner.findViewById(R.id.update_banner_progress);
+
+    String versionName =
+        org.thoughtcrime.securesms.update.UpdateDownloadService.VERSION_NAME;
+    if (versionName == null) versionName = "";
+
+    switch (state) {
+      case RUNNING: {
+        title.setText(getString(R.string.bmchat_update_banner_running_title_fmt, versionName));
+        long dl = org.thoughtcrime.securesms.update.UpdateDownloadService.DOWNLOADED;
+        long total = org.thoughtcrime.securesms.update.UpdateDownloadService.TOTAL;
+        int pct = org.thoughtcrime.securesms.update.UpdateDownloadService.PROGRESS;
+        subtitle.setText(getString(
+            R.string.bmchat_update_banner_running_subtitle_fmt,
+            android.text.format.Formatter.formatShortFileSize(this, dl),
+            android.text.format.Formatter.formatShortFileSize(this, Math.max(total, dl)),
+            pct));
+        progress.setVisibility(View.VISIBLE);
+        progress.setIndeterminate(dl == 0);
+        progress.setProgress(pct);
+        primary.setText(R.string.bmchat_update_banner_cancel);
+        primary.setOnClickListener(v -> {
+          Intent stop = new Intent(
+              this,
+              org.thoughtcrime.securesms.update.UpdateDownloadService.class)
+              .setAction(
+                  org.thoughtcrime.securesms.update.UpdateDownloadService.ACTION_STOP);
+          startService(stop);
+        });
+        break;
+      }
+      case READY: {
+        title.setText(getString(R.string.bmchat_update_banner_ready_title_fmt, versionName));
+        long total = org.thoughtcrime.securesms.update.UpdateDownloadService.TOTAL;
+        subtitle.setText(getString(
+            R.string.bmchat_update_banner_ready_subtitle_fmt,
+            android.text.format.Formatter.formatShortFileSize(this, total)));
+        progress.setVisibility(View.GONE);
+        primary.setText(R.string.bmchat_update_banner_install);
+        final String apkPath =
+            org.thoughtcrime.securesms.update.UpdateDownloadService.READY_APK_PATH;
+        primary.setOnClickListener(v -> {
+          if (apkPath != null) {
+            org.thoughtcrime.securesms.update.UpdateDownloadService
+                .launchInstaller(this, new java.io.File(apkPath));
+          }
+        });
+        break;
+      }
+      case ERROR: {
+        title.setText(getString(R.string.bmchat_update_banner_error_title_fmt, versionName));
+        String err = org.thoughtcrime.securesms.update.UpdateDownloadService.ERROR_MSG;
+        subtitle.setText(err == null
+            ? getString(R.string.bmchat_update_dl_failed_body)
+            : err);
+        progress.setVisibility(View.GONE);
+        primary.setText(R.string.bmchat_update_banner_dismiss);
+        primary.setOnClickListener(v -> {
+          org.thoughtcrime.securesms.update.UpdateDownloadService.STATE =
+              org.thoughtcrime.securesms.update.UpdateDownloadService.State.IDLE;
+          refreshUpdateBanner();
+        });
+        break;
+      }
+      default:
+        updateBanner.setVisibility(View.GONE);
+    }
   }
 
   @Override
@@ -596,7 +761,8 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
 
       if (uri.getScheme().equalsIgnoreCase(OPENPGP4FPR) || Util.isInviteURL(uri)) {
         QrCodeHandler qrCodeHandler = new QrCodeHandler(this);
-        qrCodeHandler.handleOnlySecureJoinQr(uri.toString(), SecurejoinSource.ExternalLink, null);
+        String inviteLink = Util.isInviteURL(uri) ? Util.getInviteLinkFromUri(uri) : uri.toString();
+        qrCodeHandler.handleOnlySecureJoinQr(inviteLink, SecurejoinSource.ExternalLink, null);
       }
     }
   }
@@ -663,7 +829,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
   private void shareInvite() {
     Intent intent = new Intent(Intent.ACTION_SEND);
     intent.setType("text/plain");
-    String inviteURL = DcHelper.getContext(this).getSecurejoinQr(0);
+    String inviteURL = Util.rewriteInviteLink(DcHelper.getContext(this).getSecurejoinQr(0));
     intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.invite_friends_text, inviteURL));
     startActivity(Intent.createChooser(intent, getString(R.string.chat_share_with_title)));
   }
@@ -686,7 +852,7 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
           // Util.copy(inputStream, new FileOutputStream(outputFile));
           // msg.setFile(outputFile, "image/jpeg");
 
-          msg.setText(getString(R.string.update_2_0, "https://delta.chat/donate"));
+          msg.setText(getString(R.string.update_2_0, ""));
         }
         dcContext.addDeviceMsg(deviceMsgLabel, msg);
 

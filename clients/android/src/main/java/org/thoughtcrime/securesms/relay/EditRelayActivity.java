@@ -23,6 +23,7 @@ import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.Group;
 import chat.delta.rpc.Rpc;
 import chat.delta.rpc.RpcException;
@@ -153,6 +154,10 @@ public class EditRelayActivity extends BaseActionBarActivity
           @Override
           public void afterTextChanged(Editable s) {
             maybeCleanProviderInfo();
+            // BMChat: show the app-password hint immediately when the user finishes typing
+            // the domain part, without waiting for focus to leave the field. Users who tab
+            // straight from e-mail to password were missing the warning entirely.
+            maybeShowInlineProviderHint(s.toString());
           }
         });
     emailInput.setOnFocusChangeListener(
@@ -335,16 +340,67 @@ public class EditRelayActivity extends BaseActionBarActivity
     }
   }
 
-  private void onProviderLink() {
-    if (provider != null) {
-      String url = provider.getOverviewPage();
-      if (!url.isEmpty()) {
-        IntentUtils.showInBrowser(this, url);
-      } else {
-        // this should normally not happen
-        Toast.makeText(this, "ErrProviderWithoutUrl", Toast.LENGTH_LONG).show();
-      }
+  /**
+   * BMChat: when the user has typed a recognised mail domain, show a yellow inline banner
+   * explaining that the provider requires an "app password" instead of the normal web-cabinet
+   * password. This is much more reliable than {@link #updateProviderInfo()} which only fires
+   * after the e-mail field loses focus and can be skipped entirely when the user tabs to
+   * password.
+   */
+  private void maybeShowInlineProviderHint(String email) {
+    if (email == null || !email.contains("@")) {
+      providerLayout.setVisibility(View.GONE);
+      return;
     }
+    ProviderLoginHelp.Hint hint = ProviderLoginHelp.forEmail(email);
+    if (hint == null) {
+      return; // upstream provider DB (updateProviderInfo) will take over on blur if relevant
+    }
+    Resources res = getResources();
+    providerHint.setText(
+        getString(hint.titleRes) + "\n\n" + getString(hint.messageRes));
+    providerHint.setTextColor(res.getColor(R.color.provider_prep_fg));
+    if (hint.settingsButtonLabel != null) {
+      providerLink.setText(hint.settingsButtonLabel);
+      providerLink.setTextColor(res.getColor(R.color.provider_prep_fg));
+    }
+    providerLayout.setBackgroundColor(res.getColor(R.color.provider_prep_bg));
+    providerLayout.setVisibility(View.VISIBLE);
+    // overwrite onClickListener so the link button opens the provider settings page directly
+    providerLink.setOnClickListener(
+        v -> {
+          if (hint.settingsUrl != null) {
+            IntentUtils.showInBrowser(this, hint.settingsUrl);
+          } else {
+            onProviderLink();
+          }
+        });
+  }
+
+  private void onProviderLink() {
+    if (provider == null) {
+      return;
+    }
+    String url = provider.getOverviewPage();
+    if (!url.isEmpty() && !url.startsWith("https://providers.delta.chat/")) {
+      IntentUtils.showInBrowser(this, url);
+      return;
+    }
+    // BMChat does not depend on providers.delta.chat anymore. Show the full
+    // provider hint inline so the user can act on it without leaving the app.
+    String hint = provider.getBeforeLoginHint();
+    if (hint == null || hint.isEmpty()) {
+      hint = getString(R.string.login_advanced_hint);
+    }
+    new AlertDialog.Builder(this)
+        .setTitle(R.string.more_info_desktop)
+        .setMessage(hint)
+        .setPositiveButton(android.R.string.ok, null)
+        .setNeutralButton(
+            R.string.menu_help,
+            (d, which) ->
+                IntentUtils.showInBrowser(this, "https://github.com/hvkeyn/BMChat#login"))
+        .show();
   }
 
   private void verifyEmail(TextInputEditText view) {
@@ -516,7 +572,7 @@ public class EditRelayActivity extends BaseActionBarActivity
                   Util.runOnMain(
                       () -> {
                         progressDialog.dismiss();
-                        WelcomeActivity.maybeShowConfigurationError(this, e.getMessage());
+                        showSmartConfigurationError(e.getMessage());
                       });
                 }
               }
@@ -531,6 +587,55 @@ public class EditRelayActivity extends BaseActionBarActivity
       value = value.trim();
     }
     return value.isEmpty() ? null : value;
+  }
+
+  /**
+   * BMChat: replaces the generic "Configuration failed. Error: …" alert from
+   * {@link WelcomeActivity#maybeShowConfigurationError} with a domain-specific one whenever
+   * the e-mail entered by the user belongs to a provider known to require an app-specific
+   * password and the error from the core looks like an authentication failure. For everything
+   * else (TLS / DNS / unknown providers) we fall back to the old generic dialog so we never
+   * eat a useful error message.
+   */
+  private void showSmartConfigurationError(@Nullable String rawError) {
+    String email = emailInput.getText() == null ? null : emailInput.getText().toString();
+    ProviderLoginHelp.Hint hint = ProviderLoginHelp.forErrorAndEmail(rawError, email);
+    if (hint == null) {
+      WelcomeActivity.maybeShowConfigurationError(this, rawError);
+      return;
+    }
+
+    AlertDialog.Builder builder =
+        new AlertDialog.Builder(this)
+            .setTitle(R.string.bmchat_login_help_dialog_title)
+            .setMessage(getString(hint.titleRes) + "\n\n" + getString(hint.messageRes))
+            .setNegativeButton(R.string.bmchat_login_help_try_again, null);
+
+    if (hint.settingsUrl != null) {
+      String label =
+          hint.settingsButtonLabel != null
+              ? hint.settingsButtonLabel
+              : getString(R.string.bmchat_login_help_open_settings);
+      builder.setPositiveButton(
+          label,
+          (d, which) -> IntentUtils.showInBrowser(this, hint.settingsUrl));
+    } else {
+      builder.setPositiveButton(android.R.string.ok, null);
+    }
+
+    builder.setNeutralButton(
+        R.string.pref_view_log, (d, which) -> showLog());
+
+    AlertDialog dialog = builder.create();
+    dialog.show();
+    try {
+      TextView msg = dialog.findViewById(android.R.id.message);
+      if (msg != null) {
+        android.text.util.Linkify.addLinks(
+            msg, android.text.util.Linkify.WEB_URLS | android.text.util.Linkify.EMAIL_ADDRESSES);
+      }
+    } catch (Throwable ignored) {
+    }
   }
 
   @Override

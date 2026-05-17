@@ -129,7 +129,8 @@ class QrViewController: UIViewController {
     func getQrImage(svg: String?) -> UIImage? {
         guard let svg else { return nil }
 
-        let svgData = svg.data(using: .utf8)
+        let cleaned = Utils.stripDeltaBranding(in: svg)
+        let svgData = cleaned.data(using: .utf8)
         let image = SDImageSVGKCoder.shared.decodedImage(with: svgData, options: [:])
         return image
     }

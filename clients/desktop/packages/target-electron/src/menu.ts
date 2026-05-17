@@ -4,7 +4,6 @@ import { join } from 'path'
 
 import {
   gitHubIssuesUrl,
-  homePageUrl,
   appWindowTitle,
 } from '@deltachat-desktop/shared/constants.js'
 import { getLogger } from '@deltachat-desktop/shared/logger.js'
@@ -257,18 +256,6 @@ export function getHelpMenu(
       },
       {
         type: 'separator',
-      },
-      {
-        label: tx('delta_chat_homepage'),
-        click: () => {
-          shell.openExternal(homePageUrl)
-        },
-      },
-      {
-        label: tx('contribute'),
-        click: () => {
-          shell.openExternal('https://delta.chat/contribute')
-        },
       },
       {
         label: tx('global_menu_help_report_desktop'),

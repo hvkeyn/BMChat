@@ -3058,27 +3058,11 @@ pub(crate) async fn save_text_edit_to_db(
 }
 
 async fn donation_request_maybe(context: &Context) -> Result<()> {
-    let secs_between_checks = 30 * 24 * 60 * 60;
-    let now = time();
-    let ts = context
-        .get_config_i64(Config::DonationRequestNextCheck)
-        .await?;
-    if ts > now {
-        return Ok(());
-    }
-    let msg_cnt = context.sql.count(
-        "SELECT COUNT(*) FROM msgs WHERE state>=? AND hidden=0",
-        (MessageState::OutDelivered,),
-    );
-    let ts = if ts == 0 || msg_cnt.await? < 100 {
-        now.saturating_add(secs_between_checks)
-    } else {
-        let mut msg = Message::new_text(stock_str::donation_request(context));
-        add_device_msg(context, None, Some(&mut msg)).await?;
-        i64::MAX
-    };
     context
-        .set_config_internal(Config::DonationRequestNextCheck, Some(&ts.to_string()))
+        .set_config_internal(
+            Config::DonationRequestNextCheck,
+            Some(&i64::MAX.to_string()),
+        )
         .await
 }
 

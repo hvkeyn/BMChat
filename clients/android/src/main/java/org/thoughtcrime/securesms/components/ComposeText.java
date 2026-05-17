@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.SpannableStringBuilder;
@@ -14,6 +15,9 @@ import android.text.TextUtils.TruncateAt;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.ActionMode;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import androidx.annotation.NonNull;
@@ -171,6 +175,80 @@ public class ComposeText extends AppCompatEditText {
     if (Prefs.isIncognitoKeyboardEnabled(getContext())) {
       setImeOptions(getImeOptions() | EditorInfoCompat.IME_FLAG_NO_PERSONALIZED_LEARNING);
     }
+    // Add formatting commands (bold/italic/strike/underline/spoiler/code)
+    // to the text-selection floating action menu. Matches the
+    // "select text → choose style" gesture that users expect from
+    // Telegram, but for outgoing messages: we just wrap the selected
+    // span with the appropriate Markdown markers, which our own
+    // MessageMarkdown then renders correctly on the receiving side.
+    setCustomSelectionActionModeCallback(new FormattingActionMode());
+  }
+
+  /**
+   * Wraps {@code [start, end)} of the current text with {@code prefix}
+   * and {@code suffix}, then re-selects the wrapped region so the user
+   * can pile up styles (e.g. select → bold → italic) without having to
+   * re-highlight. No-op when the selection is empty.
+   *
+   * <p>Operates on the {@link Editable} directly so it survives IME
+   * composing state without losing other spans.
+   */
+  void wrapSelection(@NonNull String prefix, @NonNull String suffix) {
+    int start = getSelectionStart();
+    int end   = getSelectionEnd();
+    if (start < 0 || end <= start) return;
+    Editable txt = getText();
+    if (txt == null) return;
+    // Insert the suffix first so the prefix insertion doesn't shift
+    // our end index. The order matters more than it might look —
+    // the EditText fires a TextWatcher between the two calls, and
+    // inserting the prefix first would point the suffix at an
+    // already-shifted index.
+    txt.insert(end, suffix);
+    txt.insert(start, prefix);
+    int newEnd = end + prefix.length() + suffix.length();
+    setSelection(start, newEnd);
+  }
+
+  /**
+   * Selection-toolbar callback that adds the BMChat formatting items
+   * to whatever the system already shows (cut/copy/paste). We
+   * deliberately keep numeric ids (R.id.compose_*) so the system
+   * action mode merges our items with its own and the user gets a
+   * single combined toolbar.
+   */
+  private final class FormattingActionMode implements ActionMode.Callback {
+    @Override public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+      menu.add(0, R.id.compose_format_bold,
+          Menu.NONE, R.string.bmchat_compose_format_bold);
+      menu.add(0, R.id.compose_format_italic,
+          Menu.NONE, R.string.bmchat_compose_format_italic);
+      menu.add(0, R.id.compose_format_strike,
+          Menu.NONE, R.string.bmchat_compose_format_strike);
+      menu.add(0, R.id.compose_format_underline,
+          Menu.NONE, R.string.bmchat_compose_format_underline);
+      menu.add(0, R.id.compose_format_spoiler,
+          Menu.NONE, R.string.bmchat_compose_format_spoiler);
+      menu.add(0, R.id.compose_format_code,
+          Menu.NONE, R.string.bmchat_compose_format_code);
+      return true;
+    }
+    @Override public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+      return false;
+    }
+    @Override public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+      int id = item.getItemId();
+      if      (id == R.id.compose_format_bold)      wrapSelection("**", "**");
+      else if (id == R.id.compose_format_italic)    wrapSelection("__", "__");
+      else if (id == R.id.compose_format_strike)    wrapSelection("~~", "~~");
+      else if (id == R.id.compose_format_underline) wrapSelection("++", "++");
+      else if (id == R.id.compose_format_spoiler)   wrapSelection("||", "||");
+      else if (id == R.id.compose_format_code)      wrapSelection("`",  "`");
+      else return false;
+      mode.finish();
+      return true;
+    }
+    @Override public void onDestroyActionMode(ActionMode mode) {}
   }
 
   private static class CommitContentListener

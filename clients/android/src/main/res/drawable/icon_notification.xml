@@ -1,0 +1,29 @@
+<!--
+  BMChat notification icon — single-colour silhouette of the brand "B".
+
+  Android renders status-bar / Quick-Settings icons in white on a transparent
+  background, so the entire shape MUST be a single solid path with the system
+  tint applied automatically. The legacy raster `icon_notification.png` files
+  in `drawable-*hdpi/` shipped a Delta Chat δ shape which leaked through into
+  status bar / download indicators (see screenshots 1 & 2). Switching to a
+  vector drawable here lets every density and theme pull the BMChat "B"
+  cleanly without further per-density rasters; vector drawables override
+  density-suffixed PNGs of the same resource name in any modern Android
+  resource lookup.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="?android:attr/colorControlNormal">
+    <!-- Outer rounded body of the BMChat "B": a tall, slightly bold capital
+         drawn at status-bar scale. Two stacked lobes joined by a vertical
+         bar; the negative space inside the lobes is cut out via even-odd
+         fill so we keep the icon as a single path that the system can
+         re-tint without fighting overlapping shapes. -->
+    <path
+        android:fillColor="@android:color/white"
+        android:fillType="evenOdd"
+        android:pathData="M6,3 L13,3 C16.31,3 18,4.79 18,7.25 C18,8.83 17.21,10.16 15.86,10.93 C17.66,11.65 18.7,13.13 18.7,15 C18.7,17.62 16.85,19.5 13.5,19.5 L6,19.5 Z M9,6 L9,10.05 L12.7,10.05 C14,10.05 14.85,9.32 14.85,8.05 C14.85,6.78 14,6 12.7,6 Z M9,13 L9,16.5 L13.1,16.5 C14.55,16.5 15.4,15.7 15.4,14.45 C15.4,13.2 14.55,13 13.1,13 Z" />
+</vector>

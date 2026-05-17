@@ -158,12 +158,33 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
         relativeTimeSpan = getString(R.string.draft);
       }
 
-      if (mediaItem.outgoing) getSupportActionBar().setTitle(getString(R.string.self));
-      else {
+      String title;
+      if (mediaItem.outgoing) {
+        title = getString(R.string.self);
+      } else {
         int fromId = dcContext.getMsg(mediaItem.msgId).getFromId();
-        getSupportActionBar().setTitle(dcContext.getContact(fromId).getDisplayName());
+        title = dcContext.getContact(fromId).getDisplayName();
       }
 
+      // BMChat 2.49.58: when the currently shown photo / video belongs to a
+      // Telegram-style media album we attach a "1 / N" suffix to the title and
+      // the album's caption (if any) to the subtitle, so the viewer immediately
+      // knows where they are inside the group — exactly the way Telegram's
+      // grouped media preview labels every page.
+      try {
+        com.b44t.messenger.DcMsg msg = dcContext.getMsg(mediaItem.msgId);
+        if (msg != null) {
+          org.thoughtcrime.securesms.album.AlbumMarker.Info albumInfo =
+              org.thoughtcrime.securesms.album.AlbumMarker.parse(msg.getText());
+          if (albumInfo != null && albumInfo.total > 1) {
+            title = title + " • " + albumInfo.index + " / " + albumInfo.total;
+          }
+        }
+      } catch (Throwable t) {
+        // Defensive: never break the preview if album parsing fails.
+      }
+
+      getSupportActionBar().setTitle(title);
       getSupportActionBar().setSubtitle(relativeTimeSpan);
     }
   }

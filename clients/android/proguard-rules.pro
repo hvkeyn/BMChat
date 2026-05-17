@@ -18,3 +18,15 @@
 -keep class org.webrtc.** { *; }
 -keepclassmembers class org.webrtc.** { *; }
 -keepattributes InnerClasses
+
+# 2.49.39: keep LocalBroadcastManager + our UpdateDownloadService
+# state fields. R8 was stripping the static volatiles
+# (PROGRESS/STATE/READY_APK_PATH/...) used by the in-app banner,
+# causing the conversation list to NPE on resume.
+-keep class androidx.localbroadcastmanager.** { *; }
+-keep class org.thoughtcrime.securesms.update.UpdateDownloadService {
+    public static *;
+}
+-keep class org.thoughtcrime.securesms.update.UpdateDownloadService$* {
+    *;
+}

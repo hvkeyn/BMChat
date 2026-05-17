@@ -25,6 +25,10 @@ public class Prefs {
   private static final String TAG = "Prefs";
 
   public static final String RELIABLE_SERVICE_PREF = "pref_reliable_service";
+  // BMChat: hide the persistent KeepAliveService FGS notification from
+  // the shade. Default ON, mirrors Telegram's FCM-style "no permanent
+  // entry" experience; users who notice missed mail can re-enable it.
+  public static final String HIDE_FG_NOTIFICATION_PREF = "pref_bmchat_hide_fg_notification";
   public static final String DISABLE_PASSPHRASE_PREF = "pref_disable_passphrase";
   public static final String THEME_PREF = "pref_theme";
   public static final String BACKGROUND_PREF = "pref_chat_background";
@@ -239,6 +243,28 @@ public class Prefs {
 
   public static void setReliableService(Context context, boolean value) {
     setBooleanPreference(context, RELIABLE_SERVICE_PREF, value);
+  }
+
+  /**
+   * BMChat: when {@code true}, {@link
+   * org.thoughtcrime.securesms.connect.KeepAliveService} drops its
+   * foreground notification immediately after {@code startForeground}
+   * and keeps running as a regular started service. The shade stays
+   * clean (no "BMChat" entry) at the cost of being killed sooner by
+   * Doze. Default {@code true} — matches what most users expect after
+   * coming from Telegram.
+   */
+  public static boolean hidePermanentNotification(Context context) {
+    // BMChat 2.49.51: default flipped to FALSE. The "transient FGS"
+    // trick (startForeground → stopForeground after 600 ms) makes the
+    // shade Telegram-clean, but on Samsung One UI / MIUI the OS then
+    // treats the process as an ordinary started service and reaps it
+    // aggressively in the background. Result: IMAP IDLE drops, no
+    // push notifications until the user re-opens the app — which is
+    // precisely the regression reported between 2.49.49 and 2.49.50.
+    // Users who really want the clean shade can flip it back from
+    // Settings → Notifications.
+    return getBooleanPreference(context, HIDE_FG_NOTIFICATION_PREF, false);
   }
 
   public static boolean reliableService(Context context) {

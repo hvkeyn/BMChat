@@ -1,0 +1,8 @@
+# Только index.php и webhook.php должны быть видны снаружи.
+DirectoryIndex index.php
+
+# Запретить листинг каталога.
+Options -Indexes
+
+# Базовая защита: cтавим UTF-8.
+AddDefaultCharset UTF-8

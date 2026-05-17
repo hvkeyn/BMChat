@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Pending-post card. Designed to read like a Telegram post preview:
+  meta line on top (time + media kind / album size + status pill),
+  multi-line text preview underneath, and a horizontally aligned row
+  of small icon buttons at the bottom-right. The whole row sits inside
+  a faint card background so adjacent entries do not visually merge,
+  which was the main complaint on screenshots 3 and 4.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pending_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    android:paddingStart="14dp"
+    android:paddingEnd="10dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="6dp"
+    android:background="@drawable/bot_card_bg"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/pending_meta"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="12sp"
+            android:textColor="?android:attr/textColorSecondary"
+            android:singleLine="true"
+            android:ellipsize="end" />
+
+        <TextView
+            android:id="@+id/pending_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFFFF"
+            android:singleLine="true"
+            android:background="@drawable/bot_status_badge_pending" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/pending_preview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textSize="15sp"
+        android:textColor="?android:attr/textColorPrimary"
+        android:lineSpacingExtra="2dp"
+        android:maxLines="4"
+        android:ellipsize="end" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bot_card_divider" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:layout_marginTop="2dp">
+
+        <ImageButton
+            android:id="@+id/pending_publish_btn"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_send_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/bmchat_bots_queue_publish" />
+
+        <ImageButton
+            android:id="@+id/pending_schedule_btn"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_schedule_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/bmchat_bots_queue_schedule" />
+
+        <ImageButton
+            android:id="@+id/pending_delete_btn"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:src="@drawable/ic_delete_24"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/bmchat_bots_queue_drop" />
+    </LinearLayout>
+</LinearLayout>

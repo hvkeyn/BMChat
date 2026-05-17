@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BMChat 2.49.63: blue circle background for the numbered "selection" badge
+  on each picker tile. Matches Telegram's selection chip in tone.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/delta_primary"/>
+    <stroke android:width="2dp" android:color="#FFFFFFFF"/>
+</shape>

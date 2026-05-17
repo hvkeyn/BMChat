@@ -93,9 +93,25 @@
 
     </androidx.appcompat.widget.Toolbar>
 
+    <!--
+        In-app banner that mirrors the foreground-service download
+        notification. Pinned right below the toolbar so the user
+        always sees the live download state without having to pull
+        the notification shade. The whole banner is collapsed
+        (visibility=GONE) until UpdateDownloadService publishes a
+        state via LocalBroadcastManager.
+    -->
+    <include
+        android:id="@+id/update_banner"
+        layout="@layout/update_progress_banner"
+        android:layout_below="@id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone" />
+
     <FrameLayout
         android:id="@+id/fragment_container"
-        android:layout_below="@id/toolbar"
+        android:layout_below="@id/update_banner"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

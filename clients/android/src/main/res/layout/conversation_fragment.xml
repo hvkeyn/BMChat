@@ -2,6 +2,7 @@
 
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/conversation_container"
     android:layout_width="fill_parent"
@@ -74,53 +75,206 @@
     <org.thoughtcrime.securesms.reactions.AddReactionView
         android:id="@+id/add_reaction_view"
         android:visibility="invisible"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingStart="7dp"
-        android:paddingEnd="7dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="4dp"
         android:gravity="center"
-        android:background="@drawable/reaction_pill_background">
+        android:background="@android:color/transparent">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/reaction_0"
-            android:text="👍"
+        <!-- Row 1: Telegram-style emoji reaction picker. Tap inserts
+             the emoji as a reaction. The "⋯" tile opens the full
+             emoji picker for any other character. The row is wrapped
+             in a HorizontalScrollView so a wider set of defaults plus
+             the trailing "⋯" always stay reachable on narrow screens. -->
+        <HorizontalScrollView
+            android:id="@+id/add_reaction_row_scroll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AddReaction" />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/reaction_1"
-            android:text="👎"
+            android:scrollbars="none"
+            android:overScrollMode="never"
+            android:fillViewport="false"
+            android:background="@drawable/reaction_pill_background">
+        <LinearLayout
+            android:id="@+id/add_reaction_row"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AddReaction" />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/reaction_2"
-            android:text="❤️"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:gravity="center">
+
+            <!-- BMChat quick reactions: keep the full emoji picker behind
+                 the final ⋯ button, but expose the common Telegram-style
+                 set directly so most reactions are one tap. -->
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_0"
+                android:text="👍"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_1"
+                android:text="❤️"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_2"
+                android:text="🔥"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_3"
+                android:text="😂"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_4"
+                android:text="😮"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_5"
+                android:text="😢"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_6"
+                android:text="🙏"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_7"
+                android:text="👎"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/reaction_any"
+                android:text="⋯"
+                android:textColor="?attr/pref_icon_tint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/AddReaction" />
+        </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Row 2: Telegram-style one-tap action icons. Same pill
+             background, just below the reactions. Visibility of
+             each icon is decided at runtime depending on the chat
+             type (canSend, canReply, isOutgoing, hasFile…). -->
+        <LinearLayout
+            android:id="@+id/add_reaction_actions"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AddReaction" />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/reaction_3"
-            android:text="😂"
+            android:layout_marginTop="6dp"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:gravity="center"
+            android:background="@drawable/reaction_pill_background">
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_reply"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/notify_reply_button"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="?menu_reply_icon"
+                app:tint="?attr/pref_icon_tint" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_quote_fragment"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/bmchat_quote_selection"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_format_quote_24"
+                app:tint="?attr/pref_icon_tint" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_edit"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/edit_message"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_create_white_24dp"
+                app:tint="?attr/pref_icon_tint" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_copy"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/menu_copy_text_to_clipboard"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="?menu_copy_icon"
+                app:tint="?attr/pref_icon_tint" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_forward"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/menu_forward"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="?menu_forward_icon"
+                app:tint="?attr/pref_icon_tint" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/action_delete"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:padding="8dp"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_delete_24"
+                app:tint="?attr/pref_icon_tint" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/add_reaction_read_receipts"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/AddReaction" />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/reaction_4"
-            android:text="🙁"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AddReaction" />
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/reaction_any"
-            android:text="⋯"
-            android:textColor="?attr/pref_icon_tint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/AddReaction" />
+            android:layout_marginTop="6dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp"
+            android:gravity="center_vertical"
+            android:visibility="gone"
+            android:background="@drawable/reaction_pill_background">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/add_reaction_read_receipts_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/pref_icon_tint"
+                android:textSize="14sp"
+                tools:text="2 прочитали" />
+
+            <LinearLayout
+                android:id="@+id/add_reaction_read_receipts_avatars"
+                android:orientation="horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:gravity="center_vertical" />
+        </LinearLayout>
     </org.thoughtcrime.securesms.reactions.AddReactionView>
 
 </FrameLayout>

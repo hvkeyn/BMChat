@@ -40,7 +40,7 @@ export function windowDefaults() {
       y,
     },
     headerHeight,
-    // On 0.6x zoom Delta Chat and 200x window size it's still somewhat usable,
+    // On 0.6x zoom BMChat and 200x window size it's still somewhat usable,
     // not much is overflowing.
     minWidth: 225,
     minHeight: 125,
@@ -73,7 +73,7 @@ export function getTempDir() {
   // if multiple users use the same tmp dir
   const uid = process.getuid?.()
   const suffix = uid !== undefined ? `-${uid}` : ''
-  return join(app.getPath('temp'), `chat.delta.desktop-temp${suffix}`)
+  return join(app.getPath('temp'), `chat.bromore.bmchat.desktop-temp${suffix}`)
 }
 
 export const supportedURISchemes = [

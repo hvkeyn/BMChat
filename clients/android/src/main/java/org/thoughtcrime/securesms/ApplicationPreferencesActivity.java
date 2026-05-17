@@ -44,7 +44,6 @@ import org.thoughtcrime.securesms.preferences.NotificationsPreferenceFragment;
 import org.thoughtcrime.securesms.preferences.widgets.ProfilePreference;
 import org.thoughtcrime.securesms.qr.BackupTransferActivity;
 import org.thoughtcrime.securesms.util.DynamicTheme;
-import org.thoughtcrime.securesms.util.IntentUtils;
 import org.thoughtcrime.securesms.util.Prefs;
 import org.thoughtcrime.securesms.util.ScreenLockUtil;
 import org.thoughtcrime.securesms.util.ViewUtil;
@@ -61,10 +60,10 @@ public class ApplicationPreferencesActivity extends PassphraseRequiredActionBarA
       "preference_category_notifications";
   private static final String PREFERENCE_CATEGORY_APPEARANCE = "preference_category_appearance";
   private static final String PREFERENCE_CATEGORY_CHATS = "preference_category_chats";
+  private static final String PREFERENCE_CATEGORY_STORAGE = "preference_category_storage";
   private static final String PREFERENCE_CATEGORY_MULTIDEVICE = "preference_category_multidevice";
   private static final String PREFERENCE_CATEGORY_ADVANCED = "preference_category_advanced";
   private static final String PREFERENCE_CATEGORY_CONNECTIVITY = "preference_category_connectivity";
-  private static final String PREFERENCE_CATEGORY_DONATE = "preference_category_donate";
   private static final String PREFERENCE_CATEGORY_HELP = "preference_category_help";
 
   public static final int REQUEST_CODE_SET_BACKGROUND = 11;
@@ -147,13 +146,12 @@ public class ApplicationPreferencesActivity extends PassphraseRequiredActionBarA
           .setOnPreferenceClickListener(new CategoryClickListener(PREFERENCE_CATEGORY_APPEARANCE));
       this.findPreference(PREFERENCE_CATEGORY_CHATS)
           .setOnPreferenceClickListener(new CategoryClickListener(PREFERENCE_CATEGORY_CHATS));
+      this.findPreference(PREFERENCE_CATEGORY_STORAGE)
+          .setOnPreferenceClickListener(new CategoryClickListener(PREFERENCE_CATEGORY_STORAGE));
       this.findPreference(PREFERENCE_CATEGORY_MULTIDEVICE)
           .setOnPreferenceClickListener(new CategoryClickListener(PREFERENCE_CATEGORY_MULTIDEVICE));
       this.findPreference(PREFERENCE_CATEGORY_ADVANCED)
           .setOnPreferenceClickListener(new CategoryClickListener(PREFERENCE_CATEGORY_ADVANCED));
-
-      this.findPreference(PREFERENCE_CATEGORY_DONATE)
-          .setOnPreferenceClickListener(new CategoryClickListener(PREFERENCE_CATEGORY_DONATE));
 
       this.findPreference(PREFERENCE_CATEGORY_HELP)
           .setOnPreferenceClickListener(new CategoryClickListener(PREFERENCE_CATEGORY_HELP));
@@ -202,6 +200,8 @@ public class ApplicationPreferencesActivity extends PassphraseRequiredActionBarA
           .setSummary(AppearancePreferenceFragment.getSummary(getActivity()));
       this.findPreference(PREFERENCE_CATEGORY_CHATS)
           .setSummary(ChatsPreferenceFragment.getSummary(getActivity()));
+      this.findPreference(PREFERENCE_CATEGORY_STORAGE)
+          .setSummary(R.string.bmchat_storage_summary);
       this.findPreference(PREFERENCE_CATEGORY_CONNECTIVITY)
           .setSummary(
               DcHelper.getConnectivitySummary(
@@ -251,6 +251,12 @@ public class ApplicationPreferencesActivity extends PassphraseRequiredActionBarA
           case PREFERENCE_CATEGORY_CHATS:
             fragment = new ChatsPreferenceFragment();
             break;
+          case PREFERENCE_CATEGORY_STORAGE:
+            startActivity(
+                new Intent(
+                    getActivity(),
+                    org.thoughtcrime.securesms.storage.StorageManagementActivity.class));
+            break;
           case PREFERENCE_CATEGORY_MULTIDEVICE:
             if (!ScreenLockUtil.applyScreenLock(
                 getActivity(),
@@ -273,9 +279,6 @@ public class ApplicationPreferencesActivity extends PassphraseRequiredActionBarA
             break;
           case PREFERENCE_CATEGORY_ADVANCED:
             fragment = new AdvancedPreferenceFragment();
-            break;
-          case PREFERENCE_CATEGORY_DONATE:
-            IntentUtils.showInBrowser(requireActivity(), "https://delta.chat/donate");
             break;
           case PREFERENCE_CATEGORY_HELP:
             startActivity(new Intent(getActivity(), LocalHelpActivity.class));

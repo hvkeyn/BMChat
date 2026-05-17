@@ -1178,6 +1178,7 @@ VALUES (?, ?, ?, ?, ?, ?)
             .await?
             .into_iter()
             .collect::<HashSet<_>>();
+        let mut seen_addrs = HashSet::new();
         let mut add_self = false;
         let mut ret = Vec::new();
         let flag_add_self = (listflags & constants::DC_GCL_ADD_SELF) != 0;
@@ -1220,7 +1221,8 @@ ORDER BY c.origin>=? DESC, c.last_seen DESC, c.id DESC
                     |rows| {
                         for row in rows {
                             let (id, addr) = row?;
-                            if !self_addrs.contains(&addr) {
+                            let normalized_addr = addr_normalize(&addr);
+                            if !self_addrs.contains(&addr) && seen_addrs.insert(normalized_addr) {
                                 ret.push(id);
                             }
                         }
@@ -1275,7 +1277,8 @@ ORDER BY c.origin>=? DESC, c.last_seen DESC, c.id DESC
                     |rows| {
                         for row in rows {
                             let (id, addr) = row?;
-                            if !self_addrs.contains(&addr) {
+                            let normalized_addr = addr_normalize(&addr);
+                            if !self_addrs.contains(&addr) && seen_addrs.insert(normalized_addr) {
                                 ret.push(id);
                             }
                         }

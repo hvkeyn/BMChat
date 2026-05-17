@@ -210,10 +210,18 @@ function CreateChatMain(props: CreateChatMainProps) {
   // - https://github.com/deltachat/deltachat-ios/blob/a0043be425d9c14f4039561957adb82ef1ab2adb/deltachat-ios/Controller/NewChatViewController.swift#L76-L78
 
   const showNewEmail = !isChatmail && queryStr.length === 0
+  const exactContactFetch = useRpcFetch(
+    BackendRemote.rpc.lookupContactIdByAddr,
+    queryStrIsValidEmail ? [accountId, queryStr.trim()] : null
+  )
+  const exactContactExists =
+    exactContactFetch?.lingeringResult?.ok &&
+    exactContactFetch.lingeringResult.value !== null
 
   const showAddContact = !(
     isChatmail ||
     queryStr === '' ||
+    exactContactExists ||
     (contactIds.length === 1 &&
       contactCache[contactIds[0]]?.address.toLowerCase() ===
         queryStr.trim().toLowerCase())
@@ -263,11 +271,10 @@ function CreateChatMain(props: CreateChatMainProps) {
     if (!queryStrIsValidEmail) return
 
     try {
-      const contactId = await BackendRemote.rpc.createContact(
-        accountId,
-        queryStr.trim(),
-        null
-      )
+      const email = queryStr.trim()
+      const contactId =
+        (await BackendRemote.rpc.lookupContactIdByAddr(accountId, email)) ??
+        (await BackendRemote.rpc.createContact(accountId, email, null))
       await createChatByContactId(accountId, contactId)
       onClose()
     } catch (error: any) {

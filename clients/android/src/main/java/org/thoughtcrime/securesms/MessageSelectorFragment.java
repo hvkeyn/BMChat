@@ -6,6 +6,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StyleSpan;
+import android.graphics.Typeface;
 import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
@@ -18,6 +22,8 @@ import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcMsg;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.permissions.Permissions;
@@ -43,7 +49,7 @@ public abstract class MessageSelectorFragment extends Fragment
   protected void handleDisplayDetails(DcMsg dcMsg) {
     View view = View.inflate(getActivity(), R.layout.message_details_view, null);
     TextView detailsText = view.findViewById(R.id.details_text);
-    detailsText.setText(DcHelper.getContext(getContext()).getMsgInfo(dcMsg.getId()));
+    detailsText.setText(formatMessageDetails(DcHelper.getContext(getContext()).getMsgInfo(dcMsg.getId())));
 
     AlertDialog d =
         new AlertDialog.Builder(getActivity())
@@ -51,6 +57,58 @@ public abstract class MessageSelectorFragment extends Fragment
             .setPositiveButton(android.R.string.ok, null)
             .create();
     d.show();
+  }
+
+  private CharSequence formatMessageDetails(String rawInfo) {
+    if (rawInfo == null || rawInfo.trim().isEmpty()) {
+      return "";
+    }
+
+    Pattern statusPattern = Pattern.compile("^(Sent|Read):\\s*(.*?)\\s+by\\s+(.+)$");
+    SpannableStringBuilder readable = new SpannableStringBuilder();
+    StringBuilder technical = new StringBuilder();
+
+    for (String line : rawInfo.split("\\n")) {
+      Matcher matcher = statusPattern.matcher(line.trim());
+      if (matcher.matches()) {
+        appendStatusLine(readable, matcher.group(1), matcher.group(2), matcher.group(3));
+      } else {
+        if (technical.length() > 0) technical.append('\n');
+        technical.append(line);
+      }
+    }
+
+    if (readable.length() == 0) {
+      return rawInfo;
+    }
+    if (technical.length() > 0) {
+      if (readable.length() > 0) readable.append('\n');
+      appendBold(readable, getString(R.string.bmchat_msg_info_technical));
+      readable.append('\n').append(technical.toString().trim());
+    }
+    return readable;
+  }
+
+  private void appendStatusLine(
+      SpannableStringBuilder target, String kind, String timestamp, String actor) {
+    if (target.length() > 0) target.append('\n');
+    appendBold(
+        target,
+        "Sent".equals(kind)
+            ? getString(R.string.bmchat_msg_info_sent)
+            : getString(R.string.bmchat_msg_info_read));
+    target.append('\n');
+    appendBold(target, actor);
+    if (timestamp != null && !timestamp.trim().isEmpty()) {
+      target.append('\n').append(timestamp.trim());
+    }
+    target.append('\n');
+  }
+
+  private static void appendBold(SpannableStringBuilder target, String text) {
+    int start = target.length();
+    target.append(text == null ? "" : text.trim());
+    target.setSpan(new StyleSpan(Typeface.BOLD), start, target.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
   }
 
   protected void handleDeleteMessages(int chatId, final Set<DcMsg> messageRecords) {

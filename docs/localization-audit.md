@@ -6,6 +6,13 @@ Audit date: 2026-05-04.
 
 Russian localization exists in all three clients, but it is still Delta Chat-branded and not complete enough for a BMChat release without a focused pass.
 
+First implementation pass target:
+
+- Normal UI uses `BMChat`.
+- Marketing/about copy may use `BroMoreChat`.
+- Russian group creation labels use «общий чат» where that improves clarity for the BMChat concept, while preserving the existing group-chat behavior.
+- License, upstream, and protocol compatibility references can still mention Delta Chat when they are not normal user-facing product identity.
+
 ## File Coverage
 
 | Platform | Russian files found | Baseline files | Approximate key count |
@@ -35,7 +42,7 @@ Desktop and Android XML:
 
 - `app_name`: `Delta Chat`.
 - `invite_friends_text`: invites user to contact via Delta Chat.
-- `donate_device_msg`: donation copy points to `https://delta.chat/donate`.
+- `donate_device_msg`: donations were dropped from BMChat; the unused stock string now points at the BMChat landing (`http://5.187.4.132/`) and `donation_request_maybe` is a no-op in the core.
 - `multidevice_*`: instructions say to install/open/update Delta Chat.
 - `send_stats_to_devs` and related stats strings mention Delta Chat.
 - `welcome_desktop`, `delta_chat_homepage`, `global_menu_help_about_desktop`, `global_menu_file_open_desktop`.
@@ -72,3 +79,12 @@ Create a strict localization checker before release:
 - Search for visible English strings in Russian files.
 - Search for `Delta Chat`, `Deltachat`, `DeltaChat`, `delta.chat`, `chat.delta`, and store/help links.
 - Produce a report that separates user-visible branding, legal attribution, and protocol/compatibility strings.
+
+## First-Pass Verification Scope
+
+After the initial rebrand, verify at least these normal flows in Russian:
+
+- App name, welcome/onboarding, about/help entry points.
+- New chat, new shared/group chat, add members, QR invite.
+- Account setup/import, multi-device setup, settings, notifications.
+- Android store metadata and desktop packaging names.

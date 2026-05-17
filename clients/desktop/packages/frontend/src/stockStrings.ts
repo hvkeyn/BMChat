@@ -164,7 +164,6 @@ export async function updateCoreStrings() {
     [C.DC_STR_MESSAGE_ADD_MEMBER]: tx('member_x_added'),
     [C.DC_STR_YOU_REACTED]: tx('reaction_by_you'),
     [C.DC_STR_REACTED_BY]: tx('reaction_by_other'),
-    [C.DC_STR_DONATION_REQUEST]: tx('donate_device_msg'),
     [C.DC_STR_PROXY_ENABLED]: tx('proxy_enabled'),
     [C.DC_STR_PROXY_ENABLED_DESCRIPTION]: tx('proxy_enabled_hint'),
     [C.DC_STR_CHANNEL_LEFT_BY_YOU]: tx('channel_left_by_you'),

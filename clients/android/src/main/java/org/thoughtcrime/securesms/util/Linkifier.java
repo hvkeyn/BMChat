@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.util;
 
+import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
@@ -33,18 +34,26 @@ public class Linkifier {
     return brokenPhoneLinkifier == 1;
   }
 
-  private static void replaceURLSpan(SpannableString messageBody) {
+  private static void replaceURLSpan(Spannable messageBody) {
     URLSpan[] urlSpans = messageBody.getSpans(0, messageBody.length(), URLSpan.class);
     for (URLSpan urlSpan : urlSpans) {
       int start = messageBody.getSpanStart(urlSpan);
       int end = messageBody.getSpanEnd(urlSpan);
       // LongClickCopySpan must not be derived from URLSpan, otherwise links will be removed on the
       // next addLinks() call
+      messageBody.removeSpan(urlSpan);
       messageBody.setSpan(
           new LongClickCopySpan(urlSpan.getURL()), start, end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
     }
   }
 
+  /**
+   * Backwards-compatible {@code SpannableString} entry point. Newer
+   * call sites (chat bubble) use the more general {@link
+   * #linkify(Spannable)} variant so they can pass a
+   * {@link android.text.SpannableStringBuilder} after Markdown
+   * stripping.
+   */
   public static SpannableString linkify(SpannableString messageBody) {
     // linkify commands such as `/echo` -
     // do this first to avoid `/xkcd_123456` to be treated partly as a phone number
@@ -80,5 +89,44 @@ public class Linkifier {
     }
 
     return messageBody;
+  }
+
+  /**
+   * Variant of {@link #linkify(SpannableString)} that operates on any
+   * {@link Spannable} (notably {@link android.text.SpannableStringBuilder}),
+   * so callers can pass a Markdown-stripped builder without losing the
+   * existing URLSpan -> LongClickCopySpan rewriting.
+   *
+   * <p>{@link android.text.util.Linkify#addLinks(Spannable, int)}
+   * removes any pre-existing {@link URLSpan}s — that's why we also run
+   * {@link #replaceURLSpan(Spannable)} BEFORE the URL pass, to convert
+   * any Markdown-driven links into the safer {@link LongClickCopySpan}
+   * form first; otherwise [label](url) markdown spans would be wiped
+   * by the WEB_URLS pass.
+   */
+  public static void linkify(Spannable messageBody) {
+    // Convert Markdown-driven URLSpans into LongClickCopySpan up
+    // front — addLinks(WEB_URLS) will drop them otherwise.
+    replaceURLSpan(messageBody);
+
+    if (Linkify.addLinks(messageBody, CMD_PATTERN, "cmd:", null, null)) {
+      replaceURLSpan(messageBody);
+    }
+    if (Linkify.addLinks(messageBody, PROXY_PATTERN, null, null, null)) {
+      replaceURLSpan(messageBody);
+    }
+    int flags;
+    if (internalPhoneLinkifierNeeded()) {
+      if (Linkify.addLinks(messageBody, PHONE_PATTERN, "tel:",
+          Linkify.sPhoneNumberMatchFilter, Linkify.sPhoneNumberTransformFilter)) {
+        replaceURLSpan(messageBody);
+      }
+      flags = Linkify.EMAIL_ADDRESSES | Linkify.WEB_URLS;
+    } else {
+      flags = Linkify.EMAIL_ADDRESSES | Linkify.WEB_URLS | Linkify.PHONE_NUMBERS;
+    }
+    if (Linkify.addLinks(messageBody, flags)) {
+      replaceURLSpan(messageBody);
+    }
   }
 }

@@ -77,7 +77,13 @@ public class ProfileFragment extends Fragment
                         ContactMultiSelectionActivity.DESELECTED_CONTACTS_EXTRA);
                 Util.runOnAnyBackgroundThread(
                     () -> {
-                      if (deselected != null) { // Remove members that were deselected
+                      DcChat chat = dcContext.getChat(chatId);
+                      boolean isBroadcast = chat != null && chat.isOutBroadcast();
+
+                      if (deselected != null && !isBroadcast) {
+                        // Broadcasts join via QR/invite-link, not via
+                        // dc_remove_contact_from_chat — leave membership
+                        // edits to the recipient there.
                         Log.i(TAG, deselected.size() + " members removed");
                         int[] members = dcContext.getChatContacts(chatId);
                         for (int contactId : deselected) {
@@ -91,10 +97,14 @@ public class ProfileFragment extends Fragment
                       }
 
                       if (selected != null) { // Add new members
-                        Log.i(TAG, selected.size() + " members added");
-                        for (Integer contactId : selected) {
-                          if (contactId != null) {
-                            dcContext.addContactToChat(chatId, contactId);
+                        Log.i(TAG, selected.size() + " members selected (broadcast=" + isBroadcast + ")");
+                        if (isBroadcast) {
+                          inviteContactsToBroadcast(chatId, selected);
+                        } else {
+                          for (Integer contactId : selected) {
+                            if (contactId != null) {
+                              dcContext.addContactToChat(chatId, contactId);
+                            }
                           }
                         }
                       }
@@ -251,11 +261,81 @@ public class ProfileFragment extends Fragment
     DcChat dcChat = dcContext.getChat(chatId);
     Intent intent = new Intent(getContext(), ContactMultiSelectionActivity.class);
     ArrayList<Integer> preselectedContacts = new ArrayList<>();
-    for (int memberId : dcContext.getChatContacts(chatId)) {
-      preselectedContacts.add(memberId);
+    if (dcChat != null && dcChat.isOutBroadcast()) {
+      // For broadcast/channel invites we don't preselect existing recipients
+      // because Delta-core doesn't expose a simple "is X already subscribed
+      // via QR?" check, and the goal here is "send invitations" rather than
+      // "edit a member list" — sending the same invite link twice is fine.
+    } else {
+      for (int memberId : dcContext.getChatContacts(chatId)) {
+        preselectedContacts.add(memberId);
+      }
     }
     intent.putExtra(ContactSelectionListFragment.PRESELECTED_CONTACTS, preselectedContacts);
     pickContactLauncher.launch(intent);
+  }
+
+  /**
+   * Send a "join my channel" invite link to every selected contact's 1:1
+   * chat. Channels (broadcast lists) in Delta-core do not accept blind
+   * {@code dc_add_contact_to_chat} — recipients have to walk through the
+   * QR/SecureJoin flow themselves. This wraps that flow in a one-tap UX:
+   * you pick contacts, BMChat opens (or reuses) the 1:1 chat with each of
+   * them and posts the channel's invite link. The recipient taps it,
+   * lands in {@link org.thoughtcrime.securesms.connect.BMChatInviteAutoAcceptor}
+   * and is auto-joined.
+   */
+  private void inviteContactsToBroadcast(int broadcastChatId, List<Integer> contactIds) {
+    if (contactIds == null || contactIds.isEmpty()) return;
+    String inviteUrl;
+    try {
+      inviteUrl = Util.rewriteInviteLink(dcContext.getSecurejoinQr(broadcastChatId));
+    } catch (Throwable t) {
+      Log.w(TAG, "getSecurejoinQr failed for broadcast " + broadcastChatId, t);
+      return;
+    }
+    if (inviteUrl == null || inviteUrl.isEmpty()) {
+      Log.w(TAG, "no invite URL for broadcast " + broadcastChatId);
+      return;
+    }
+    DcChat broadcast = dcContext.getChat(broadcastChatId);
+    String channelName = broadcast != null ? broadcast.getName() : "";
+    String body = getString(R.string.bmchat_channel_invite_body_fmt, channelName, inviteUrl);
+
+    int sent = 0;
+    int skipped = 0;
+    for (Integer contactId : contactIds) {
+      if (contactId == null || contactId <= 0) continue;
+      if (contactId == DcContact.DC_CONTACT_ID_SELF) {
+        skipped++;
+        continue;
+      }
+      try {
+        int dmChatId = dcContext.createChatByContactId(contactId);
+        if (dmChatId <= 0) { skipped++; continue; }
+        dcContext.sendTextMsg(dmChatId, body);
+        sent++;
+      } catch (Throwable t) {
+        Log.w(TAG, "channel invite to contact " + contactId + " failed", t);
+        skipped++;
+      }
+    }
+    final int fSent = sent;
+    final int fSkipped = skipped;
+    Util.runOnMain(() -> {
+      Context ctx = getContext();
+      if (ctx == null) return;
+      String msg;
+      if (fSent > 0 && fSkipped == 0) {
+        msg = getResources().getQuantityString(
+            R.plurals.bmchat_channel_invite_sent, fSent, fSent);
+      } else if (fSent > 0) {
+        msg = getString(R.string.bmchat_channel_invite_partial_fmt, fSent, fSkipped);
+      } else {
+        msg = getString(R.string.bmchat_channel_invite_failed);
+      }
+      Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+    });
   }
 
   public void onQrInvite() {

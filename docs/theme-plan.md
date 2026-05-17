@@ -11,16 +11,24 @@ Source of truth:
 
 ## Brand Tokens
 
-Initial tokens from `brand/config/bmchat-brand.json`:
+First implementation tokens from `brand/config/bmchat-brand.json` and `DESIGN.md`:
 
-- `primaryColor`: `#2563eb`
-- `accentColor`: `#16a34a`
-- `backgroundLight`: `#f8fafc`
-- `backgroundDark`: `#0f172a`
+- `primaryColor`: `#2563EB`
+- `primaryDark`: `#172554`
+- `primarySoft`: `#DBEAFE`
+- `accentColor`: `#10B981`
+- `accentDark`: `#047857`
+- `backgroundLight`: `#F8FAFC`
+- `backgroundDark`: `#0F172A`
+- `surfaceLight`: `#FFFFFF`
+- `surfaceDark`: `#111827`
+- `textPrimary`: `#0F172A`
+- `textInverse`: `#F8FAFC`
+- `borderLight`: `#D8E2F1`
 - `shortName`: `BMChat`
 - `longName`: `BroMoreChat`
 
-These values are placeholders and should be replaced by final design decisions before release.
+The first BMChat visual direction is `Tech Utility + friendly messenger`: reliable blue for infrastructure and primary actions, green for free connection/status, calm native surfaces, and no Telegram-specific visual borrowing.
 
 ## Desktop
 
@@ -35,13 +43,13 @@ Current upstream themes:
 - `dev_minimal.scss`
 - `dev_rocket.scss`
 
-BMChat approach:
+BMChat first-pass implementation:
 
-1. Add BMChat built-in themes, for example `bmchat_light.scss` and `bmchat_dark.scss`.
+1. Recolor the built-in `light.scss` and `dark.scss` defaults to BMChat tokens.
 2. Keep custom theme support through the existing `custom-themes` folder.
-3. Replace default theme metadata names with BMChat-visible names only for BMChat themes.
-4. Replace background assets referenced by `$bgImage` with BMChat backgrounds.
-5. Keep `_themebase.scss` mostly upstream-compatible to reduce merge conflicts.
+3. Keep `_themebase.scss` mostly upstream-compatible to reduce merge conflicts.
+4. Keep separate BMChat source tokens in `brand/config/bmchat-brand.json` and `DESIGN.md`.
+5. Replace background assets referenced by `$bgImage` with BMChat-colored background SVGs.
 6. Update documentation and UI labels so theme help refers to BMChat, while preserving upstream attribution where relevant.
 
 Important desktop files:
@@ -65,9 +73,9 @@ Current brand-colored resources include:
 - `clients/android/src/main/res/drawable/*`: button, bubble, launcher foreground, and UI drawable colors.
 - `clients/android/src/main/res/values-night` and dark resources if present.
 
-BMChat approach:
+BMChat first-pass implementation:
 
-1. Introduce BMChat color aliases while preserving upstream names initially, for example map `delta_primary` to BMChat primary until a broader rename is safe.
+1. Map existing `delta_*` color names to BMChat token values to preserve upstream mergeability.
 2. Replace launcher icons and monochrome foreground assets.
 3. Replace chat backgrounds and onboarding imagery.
 4. Keep native light/dark behavior first; add user-selectable custom themes only after BMChat branding is stable.
@@ -87,12 +95,12 @@ Important files:
 - `clients/ios/deltachat-ios/Info.plist`
 - `clients/ios/deltachat-ios.xcodeproj/project.pbxproj`
 
-BMChat approach:
+BMChat first-pass implementation:
 
-1. Replace app icons and logo image sets.
-2. Replace light/dark chat backgrounds.
-3. Update color asset catalogs for reaction, accent, and surface colors.
-4. Update display names and localized permission prompts.
+1. Update display names, localized permission prompts, and bundle identifiers.
+2. Replace app icons and logo image sets where they exist in this checkout.
+3. Replace light/dark chat backgrounds.
+4. Update color asset catalogs for reaction, accent, and surface colors where present.
 5. Treat app extensions and app groups as part of the same brand identity.
 6. Defer runtime theme switching unless product requirements explicitly demand it; start with native light/dark plus BMChat colors.
 

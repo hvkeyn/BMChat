@@ -143,7 +143,7 @@ class ChatListViewController: UITableViewController {
         let deviceMsgLabel = "update_2_3_ios"
         if !dcAccounts.isFreshlyAdded(id: dcContext.id) {
             let msg = dcContext.newMessage(viewType: DC_MSG_TEXT)
-            msg.text = String.localizedStringWithFormat(String.localized("update_2_0"), "https://delta.chat/donate")
+            msg.text = String.localizedStringWithFormat(String.localized("update_2_0"), "")
             dcContext.addDeviceMessage(label: deviceMsgLabel, msg: msg)
         } else {
             dcContext.addDeviceMessage(label: deviceMsgLabel, msg: nil)

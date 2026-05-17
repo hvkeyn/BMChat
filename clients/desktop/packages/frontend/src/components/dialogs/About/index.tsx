@@ -16,8 +16,6 @@ import { LogDialog } from '../Log'
 import styles from './styles.module.scss'
 
 import type { DialogProps } from '../../../contexts/DialogContext'
-import { ClickableLink } from '../../helpers/ClickableLink'
-
 export default function About({ onClose }: DialogProps) {
   const tx = useTranslationFunction()
 
@@ -53,7 +51,7 @@ export default function About({ onClose }: DialogProps) {
         <DialogContent>
           <div className={styles.aboutContent}>
             <img src='./images/intro1.png' />
-            <h1 className={styles.appName}>Delta Chat {edition}</h1>
+            <h1 className={styles.appName}>BMChat {edition}</h1>
             <div>
               v{VERSION}
               {runtime.getRC_Config().devmode && (
@@ -63,11 +61,7 @@ export default function About({ onClose }: DialogProps) {
                 </>
               )}
             </div>
-            <div>
-              <ClickableLink href={'https://delta.chat'}>
-                {'https://delta.chat'}
-              </ClickableLink>
-            </div>
+            <div>Bro More Chat</div>
           </div>
         </DialogContent>
       </DialogBody>

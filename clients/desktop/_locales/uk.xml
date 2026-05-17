@@ -764,8 +764,8 @@
     <string name="pref_default_status_label">Текст підпису</string>
     <string name="chat_description">Опис</string>
     <!-- Option name for changing behaviour of the "Enter key" to sending out a message directly (instead of adding new line). If in doubt, please refer to a similar option in other messengers. -->
-    <string name="pref_enter_sends">Відправляти клявішею   Enter</string>
-    <string name="pref_enter_sends_explain">Натискаючи клявішу   Enter відправлятимете текстові повідомлення</string>
+    <string name="pref_enter_sends">Відправляти клавішею Enter</string>
+    <string name="pref_enter_sends_explain">Натискаючи клавішу Enter, відправлятимете текстові повідомлення</string>
     <string name="pref_outgoing_media_quality">Якість вихідних медіа файлів</string>
     <string name="pref_outgoing_media_quality_hint">Щоб надіслати в оригінальній якості, прикріпіть медіа як \"Файл\". При цьому використовується значно більше даних для вас і ваших одержувачів.</string>
     <string name="pref_outgoing_balanced">Збалансована якість</string>

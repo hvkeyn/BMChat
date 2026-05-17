@@ -46,7 +46,9 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
     if (query == null && addScanQRLink) {
       additional_items = Util.appendInt(additional_items, DcContact.DC_CONTACT_ID_QR_INVITE);
     }
-    if (addCreateContactLink && !dcContext.isChatmail()) {
+    boolean hasExistingContactForQuery =
+        query != null && dcContext.mayBeValidAddr(query) && dcContext.lookupContactIdByAddr(query) > 0;
+    if (addCreateContactLink && !dcContext.isChatmail() && !hasExistingContactForQuery) {
       additional_items =
           Util.appendInt(additional_items, DcContact.DC_CONTACT_ID_NEW_CLASSIC_CONTACT);
     }

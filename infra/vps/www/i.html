@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#7B1226" />
+<title>BMChat — приглашение</title>
+<link rel="icon" href="/bmchat/static/favicon.svg" type="image/svg+xml" />
+<style>
+:root {
+  --c-primary:           #7B1226;
+  --c-primary-container: #F4D8DE;
+  --c-primary-dark:      #2A030D;
+  --c-accent:            #C62A48;
+  --c-accent-pressed:    #8F1830;
+  --c-on-primary:        #FFF7F8;
+  --c-canvas:            #FFF7F8;
+  --c-surface:           #FFFFFF;
+  --c-ink:               #1F050B;
+  --c-muted:             #6B4A52;
+  --c-border:            #E8C3CB;
+  --r-md: 12px; --r-lg: 18px; --r-pill: 999px;
+  --font-ui: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-caps: "Space Grotesk", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-canvas: #160208; --c-surface: #24050D;
+    --c-ink: #FFF7F8; --c-muted: #C8A6AC;
+    --c-border: rgba(232,195,203,0.18);
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-ui); font-size: 17px; line-height: 1.55;
+  background: var(--c-canvas); color: var(--c-ink);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+main { max-width: 560px; margin: 0 auto; padding: 56px 20px 80px; }
+
+.brand-mark {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: var(--c-primary); color: var(--c-on-primary);
+  display: grid; place-items: center;
+  font-weight: 800; font-size: 36px; letter-spacing: -0.04em;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 24px rgba(42, 3, 13, 0.25);
+}
+
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-caps);
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--c-primary);
+  background: var(--c-primary-container);
+  padding: 5px 10px; border-radius: var(--r-pill);
+  margin-bottom: 12px;
+}
+.eyebrow .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--c-accent);
+}
+
+h1 {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 700; line-height: 1.1; letter-spacing: -0.02em;
+  margin: 0 0 14px;
+}
+h1 em { font-style: normal; color: var(--c-primary); }
+
+.lede { color: var(--c-muted); margin: 0 0 28px; }
+
+.actions { display: flex; flex-direction: column; gap: 10px; }
+.btn {
+  display: flex; align-items: center; justify-content: center;
+  padding: 14px 18px;
+  border-radius: var(--r-md);
+  font-family: var(--font-caps);
+  font-size: 12px; letter-spacing: 0.14em;
+  text-transform: uppercase; font-weight: 600;
+  text-decoration: none; cursor: pointer;
+  border: 1px solid transparent;
+  transition: transform 0.06s ease, background 0.15s ease, color 0.15s ease;
+}
+.btn:active { transform: translateY(0); }
+.btn-primary { background: var(--c-primary); color: var(--c-on-primary); }
+.btn-primary:hover { background: var(--c-accent-pressed); }
+.btn-secondary {
+  background: transparent; color: var(--c-ink);
+  border-color: var(--c-border);
+}
+.btn-secondary:hover { color: var(--c-primary); border-color: var(--c-primary); }
+
+small { display: block; margin-top: 18px; color: var(--c-muted); font-size: 0.88rem; line-height: 1.45; }
+small code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--c-primary-container);
+  color: var(--c-primary-dark);
+  padding: 2px 6px; border-radius: 4px;
+}
+@media (prefers-color-scheme: dark) {
+  small code { background: rgba(244,216,222,0.10); color: var(--c-primary-container); }
+}
+
+.raw {
+  display: block; word-break: break-all;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  padding: 12px; border-radius: var(--r-md);
+  font-family: var(--font-mono); font-size: 0.82rem;
+  margin-top: 14px;
+  color: var(--c-muted);
+}
+
+.copied { color: var(--c-accent); margin-left: 8px; }
+
+.mirrors {
+  margin-top: 28px;
+  padding: 14px;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  font-size: 0.85rem;
+  color: var(--c-muted);
+}
+.mirrors strong { color: var(--c-ink); }
+.mirrors a { color: var(--c-primary); text-decoration: none; }
+.mirrors a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand-mark">B</div>
+  <span class="eyebrow"><span class="dot"></span>приглашение</span>
+  <h1>Вас пригласили в <em>BMChat</em></h1>
+  <p class="lede">
+    BMChat — мессенджер, который работает напрямую через вашу почту. Никаких сторонних серверов: чат, приглашения и контакты идут по обычному IMAP/SMTP, шифрованно.
+  </p>
+
+  <div class="actions">
+    <a id="open" class="btn btn-primary" href="#">Открыть в BMChat</a>
+    <a class="btn btn-secondary" href="/apk/BMChat-foss-debug-latest.apk">Скачать APK для Android</a>
+    <button id="copy" class="btn btn-secondary" type="button">Скопировать ссылку приглашения<span id="copied" class="copied"></span></button>
+  </div>
+
+  <small>
+    Уже установлен BMChat — нажмите <strong>«Открыть в BMChat»</strong>. Нет — установите APK, при первом запуске откройте <code>BMChat → Сканер QR → Вставить</code> и вставьте скопированную ссылку.
+  </small>
+
+  <code class="raw" id="raw"></code>
+
+  <div class="mirrors">
+    <strong>Сервер заблокирован?</strong> Этот же экран есть на резервном зеркале — <a href="http://158.160.104.107:8080/i" id="mirror-link">158.160.104.107:8080/i</a>. Клиент BMChat сам выберет рабочий узел при следующей проверке обновлений.
+  </div>
+</main>
+
+<script>
+(function () {
+  var raw = location.hash.replace(/^#/, "");
+  var canonical = raw ? "http://5.187.4.132/i#" + raw : "";
+  document.getElementById("raw").textContent = canonical || "(в ссылке нет данных приглашения)";
+
+  if (raw) {
+    var mirrorAnchor = document.getElementById("mirror-link");
+    if (mirrorAnchor) mirrorAnchor.href = "http://158.160.104.107:8080/i#" + raw;
+  }
+
+  if (!raw) return;
+  var openLink = document.getElementById("open");
+  openLink.href = canonical;
+
+  var ua = (navigator.userAgent || "").toLowerCase();
+  if (ua.indexOf("android") !== -1) {
+    var intentUrl =
+      "intent://5.187.4.132/i?bmchat_invite=" + encodeURIComponent(raw) +
+      "#Intent;scheme=http;package=chat.bromore.bmchat.foss;" +
+      "S.browser_fallback_url=" + encodeURIComponent(canonical) +
+      ";end";
+    openLink.href = intentUrl;
+  }
+
+  document.getElementById("copy").addEventListener("click", function () {
+    var done = document.getElementById("copied");
+    var ok = function () { done.textContent = " ✓"; setTimeout(function () { done.textContent = ""; }, 2000); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(canonical).then(ok, function () { fb(canonical, ok); });
+    } else { fb(canonical, ok); }
+  });
+
+  function fb(text, ok) {
+    try {
+      var ta = document.createElement("textarea");
+      ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      document.execCommand("copy"); document.body.removeChild(ta); ok();
+    } catch (e) {}
+  }
+})();
+</script>
+</body>
+</html>

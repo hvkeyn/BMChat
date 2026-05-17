@@ -605,7 +605,7 @@ async fn test_cache_is_cleared_when_io_is_started() -> Result<()> {
     let alice = TestContext::new_alice().await;
     assert_eq!(
         alice.get_config(Config::ShowEmails).await?,
-        Some("2".to_string())
+        Some("0".to_string())
     );
 
     // Change the config circumventing the cache
@@ -614,15 +614,15 @@ async fn test_cache_is_cleared_when_io_is_started() -> Result<()> {
     alice
         .sql
         .execute(
-            "INSERT OR REPLACE INTO config (keyname, value) VALUES ('show_emails', '0')",
+            "INSERT OR REPLACE INTO config (keyname, value) VALUES ('show_emails', '2')",
             (),
         )
         .await?;
 
-    // Alice's Delta Chat doesn't know about it yet:
+    // Alice's BMChat doesn't know about it yet:
     assert_eq!(
         alice.get_config(Config::ShowEmails).await?,
-        Some("2".to_string())
+        Some("0".to_string())
     );
 
     // Starting IO will fail of course because no server settings are configured,
@@ -631,7 +631,7 @@ async fn test_cache_is_cleared_when_io_is_started() -> Result<()> {
 
     assert_eq!(
         alice.get_config(Config::ShowEmails).await?,
-        Some("0".to_string())
+        Some("2".to_string())
     );
 
     Ok(())

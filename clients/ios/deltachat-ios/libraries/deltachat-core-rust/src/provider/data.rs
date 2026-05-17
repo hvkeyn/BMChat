@@ -636,7 +636,7 @@ static P_HERMES_RADIO: Provider = Provider {
         },
         ConfigDefault {
             key: Config::ShowEmails,
-            value: "2",
+            value: "0",
         },
     ]),
     oauth2_authorizer: None,

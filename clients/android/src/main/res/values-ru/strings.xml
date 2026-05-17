@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
     <!-- common strings without special context -->
-    <string name="app_name">Delta Chat</string>
+    <string name="app_name">BMChat</string>
     <string name="ok">OK</string>
     <string name="cancel">Отмена</string>
     <string name="clear_search">Очистить поиск</string>
@@ -239,8 +239,8 @@
     <string name="webxdc_app">Приложение</string>
     <!-- plural of "App"; used to present "Webxdc App" (https://webxdc.org) in a user friendly way. Please stay close to the original term and keep it short (it is used in menus with few screen space). -->
     <string name="webxdc_apps">Приложения</string>
-    <string name="webxdc_store_url">URL селектора приложений</string>
-    <string name="webxdc_store_url_explain">Если установлено, URL будет использоваться в качестве селектора приложений вместо стандартного</string>
+    <string name="webxdc_store_url">Каталог приложений</string>
+    <string name="webxdc_store_url_explain">URL каталога Webxdc-приложений. Нажмите, чтобы изменить полный адрес.</string>
     <string name="webxdc_draft_hint">Нажмите \"Отправить\", чтобы поделиться</string>
     <string name="home">Домой</string>
     <string name="games">Игры</string>
@@ -277,7 +277,7 @@
     <string name="menu_new_classic_contact">Добавить контакт вручную</string>
     <string name="new_classic_contact_explain">Контакты, добавленные вручную, можно использовать для отправки текстовых сообщений по обычной электронной почте, без гарантированного сквозного шифрования.</string>
     <string name="menu_new_chat">Новый чат</string>
-    <string name="menu_new_group">Новая группа</string>
+    <string name="menu_new_group">Новый общий чат</string>
     <!-- "Chat" is a verb here, "Message to" would also fit. the string might be used in the "New Chat" screen above the contact list -->
     <string name="chat_with">Начать чат с…</string>
     <string name="clone_chat">Клонировать чат</string>
@@ -304,7 +304,7 @@
     <string name="menu_send">Отправить</string>
     <string name="menu_toggle_keyboard">Эмодзи клавиатура</string>
     <string name="menu_edit_group">Редактировать группу</string>
-    <string name="menu_group_name_and_image">Название и изображение группы</string>
+    <string name="menu_group_name_and_image">Название и изображение общего чата</string>
     <string name="menu_show_global_map">Все местоположения</string>
     <string name="menu_archive_chat">Отправить чат в архив</string>
     <string name="menu_unarchive_chat">Вернуть чат из архива</string>
@@ -322,8 +322,189 @@
     <string name="share_invite_link">Поделиться ссылкой-приглашением</string>
     <string name="share_invite_link_explain">Кто угодно, у кого есть эта ссылка, сможет просмотреть ваш профиль и начать с вами беседу. Делитесь ею только с теми людьми, которым вы доверяете.</string>
     <string name="invite_friends">Пригласить друзей</string>
-    <!-- %1$s is replaced by the user's invitation link ("https://i.delta.chat/...") -->
-    <string name="invite_friends_text">Свяжитесь со мной через Delta Chat:\n%1$s</string>
+    <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...") -->
+    <string name="invite_friends_text">Свяжитесь со мной через BMChat:\n%1$s</string>
+
+    <!-- BMChat: отправка инвайт-ссылки на e-mail через SMTP пользователя -->
+    <string name="bmchat_send_invite_by_email">Отправить на e-mail</string>
+    <string name="bmchat_send_invite_by_email_explain">BMChat отправит инвайт-ссылку получателю через ваш почтовый ящик. Если у него установлен BMChat — переписка подхватится автоматически.</string>
+    <string name="bmchat_send_invite_by_email_sent">Приглашение поставлено в очередь отправки. Чат уже открыт — можно писать дальше.</string>
+    <!-- %1$s is replaced by the invite link -->
+    <string name="bmchat_invite_email_body">Привет! Я хочу пообщаться с тобой через BMChat. Открой ссылку ниже — если у тебя уже установлен BMChat, приглашение подхватится автоматически; иначе на странице по ссылке есть инструкция, как поставить приложение.\n\n%1$s</string>
+    <string name="bmchat_invite_email_auto_accepted">Получено приглашение BMChat по e-mail — принято автоматически.</string>
+    <string name="bmchat_send_invite_qr_image">Отправить QR картинкой</string>
+    <string name="bmchat_signin_with_email">Войти через свою почту</string>
+    <string name="bmchat_check_for_updates">Проверить обновления</string>
+    <string name="bmchat_check_for_updates_summary">Текущая сборка: %1$s %2$s</string>
+    <string name="bmchat_resend_invite_title">Повторно отправить приглашение?</string>
+    <string name="bmchat_resend_invite_explain">BMChat отправит письмо с приглашением на %1$s через ваш SMTP. Получатель сможет открыть его в BMChat и автоматически установить защищённый канал — стороннние серверы не задействуются.</string>
+    <string name="bmchat_resend_invite_done">Приглашение отправлено повторно.</string>
+    <string name="bmchat_resend_invite_menu">Повторно пригласить по e-mail</string>
+    <string name="bmchat_profile_updated_marker">🔄 Профиль обновлён.</string>
+    <string name="bmchat_profile_publish_title">Разослать обновлённый профиль контактам?</string>
+    <string name="bmchat_profile_publish_explain">Ваши контакты увидят новое имя и фото только когда вы им напишете. BMChat может прямо сейчас отправить во все ваши личные чаты короткое «Профиль обновлён», чтобы все увидели свежую карточку — без сторонних серверов, через ваш почтовый ящик.</string>
+    <string name="bmchat_profile_publish_now">Разослать</string>
+    <string name="bmchat_profile_publish_skip">Не сейчас</string>
+    <string name="bmchat_profile_publish_menu">Разослать профиль контактам</string>
+    <string name="bmchat_profile_publish_done_n">Профиль разослан %1$d контактам.</string>
+    <string name="bmchat_profile_publish_no_targets">Нет активных личных чатов для рассылки.</string>
+
+    <!-- BMChat Telegram bots -->
+    <string name="bmchat_bots_title">Боты Telegram</string>
+    <string name="bmchat_bots_summary">Подключайте Telegram-ботов — их сообщения будут появляться здесь.</string>
+    <string name="bmchat_bots_empty_title">Боты ещё не подключены</string>
+    <string name="bmchat_bots_empty_explain">Нажмите «+» чтобы подключить бота, созданного через @BotFather. Новые посты будут автоматически появляться в выбранном чате.</string>
+    <string name="bmchat_bots_add">Добавить Telegram-бота</string>
+    <string name="bmchat_bots_add_explain">Вставьте токен бота, который вам выдал @BotFather. Токен хранится только на этом устройстве.</string>
+    <string name="bmchat_bots_token_hint">123456789:ABCDEF…</string>
+    <string name="bmchat_bots_verify">Проверить токен</string>
+    <string name="bmchat_bots_verifying">Проверяем у Telegram…</string>
+    <string name="bmchat_bots_connecting">Регистрируем бота как контакт и подгружаем его аватар…</string>
+    <string name="bmchat_bots_invalid_token">Telegram отклонил токен.</string>
+    <string name="bmchat_bots_invalid_token_format">Токен должен быть вида 123456789:ABC…</string>
+    <string name="bmchat_bots_token_ok">Токен принят.</string>
+    <string name="bmchat_bots_target_explain">Куда складывать посты бота?</string>
+    <string name="bmchat_bots_pick_chat">Выбрать чат-получатель…</string>
+    <string name="bmchat_bots_pick_chat_title">Куда публиковать посты бота</string>
+    <string name="bmchat_bots_pick_self_recommend">Рекомендуем — локальная лента.</string>
+    <string name="bmchat_bots_pick_dm_warn">⚠ Посты будут отправлены по почте этому собеседнику.</string>
+    <string name="bmchat_bots_pick_group_warn">⚠ Посты будут отправлены по почте всем участникам.</string>
+    <string name="bmchat_bots_picked_target_fmt">Получатель: %1$s</string>
+    <string name="bmchat_bots_connect">Подключить бота</string>
+    <string name="bmchat_bots_added_fmt">Бот %1$s подключён.</string>
+    <string name="bmchat_bots_warn_title">Посты пойдут по почте</string>
+    <string name="bmchat_bots_warn_explain">Каждый пост из Telegram будет отправлен через вашу почту в чат «%1$s». Получатель (или все участники группы) будут реально получать эти сообщения по e-mail. Продолжить?</string>
+    <string name="bmchat_bots_warn_continue">Да, продолжить</string>
+    <string name="bmchat_bots_check_now">Проверить сейчас</string>
+    <string name="bmchat_bots_pause">Приостановить бота</string>
+    <string name="bmchat_bots_resume">Возобновить бота</string>
+    <string name="bmchat_bots_remove">Отключить бота</string>
+    <string name="bmchat_bots_remove_confirm_fmt">Отключить бота %1$s? Токен будет забыт и посты перестанут приходить.</string>
+    <string name="bmchat_bots_status_paused">Приостановлен</string>
+    <string name="bmchat_bots_status_never_polled">Ещё не проверялся</string>
+    <string name="bmchat_bots_status_last_check_fmt">Последняя проверка: %1$s</string>
+    <string name="bmchat_bots_open_home">Открыть чат бота</string>
+    <string name="bmchat_bots_add_to_chat">Добавить бота в чат…</string>
+    <string name="bmchat_bots_remove_from_chat">Убрать бота из чата…</string>
+    <string name="bmchat_bots_remove_from_chat_title">Откуда убрать бота</string>
+    <string name="bmchat_bots_no_eligible_chats">Нет подходящих чатов. Бота можно добавить в любую группу или канал — но не в личный чат между двумя пользователями.</string>
+    <string name="bmchat_bots_not_attached_anywhere">Этот бот пока не добавлен ни в одну группу или канал.</string>
+    <string name="bmchat_bots_legacy_no_contact">Старый бот — удалите его и подключите заново, чтобы использовать эту функцию.</string>
+    <string name="bmchat_bots_added_to_fmt">Бот добавлен в «%1$s».</string>
+    <string name="bmchat_bots_removed_from_fmt">Бот убран из «%1$s».</string>
+    <string name="bmchat_bots_add_failed">Не удалось добавить бота в этот чат.</string>
+    <string name="bmchat_bots_no_home_chat">Домашний чат бота недоступен.</string>
+    <string name="bmchat_bots_label_channel">канал</string>
+    <string name="bmchat_channel_invite_body_fmt">Приглашаю вас в мой канал BMChat «%1$s». Нажмите на ссылку, чтобы присоединиться:\n\n%2$s</string>
+    <string name="bmchat_channel_invite_partial_fmt">Отправлено приглашений: %1$d. Не удалось отправить: %2$d.</string>
+    <string name="bmchat_channel_invite_failed">Не удалось отправить ни одного приглашения.</string>
+    <string name="bmchat_bots_manual_review_enable">Включить ручную модерацию</string>
+    <string name="bmchat_bots_manual_review_disable">Отключить ручную модерацию</string>
+    <string name="bmchat_bots_manual_review_on">Ручная модерация включена — входящие посты ставятся в очередь.</string>
+    <string name="bmchat_bots_manual_review_off">Ручная модерация выключена — посты снова публикуются автоматически.</string>
+    <string name="bmchat_bots_open_queue">Очередь сообщений</string>
+    <string name="bmchat_bots_open_queue_n_fmt">Очередь сообщений (%1$d)</string>
+    <string name="bmchat_bots_queue_title">Очередь сообщений</string>
+    <string name="bmchat_bots_queue_publish">Опубликовать</string>
+    <string name="bmchat_bots_queue_drop">Удалить</string>
+    <string name="bmchat_bots_queue_clear">Очистить очередь</string>
+    <string name="bmchat_bots_queue_clear_confirm">Удалить все сообщения из очереди этого бота?</string>
+    <string name="bmchat_bots_queue_publish_all">Опубликовать всё</string>
+    <string name="bmchat_bots_queue_publish_all_confirm">Опубликовать все сообщения из очереди в чаты бота?</string>
+    <string name="bmchat_bots_queue_published_one">Опубликовано.</string>
+    <string name="bmchat_bots_queue_publish_failed">Не удалось опубликовать.</string>
+    <string name="bmchat_bots_queue_dropped">Удалено из очереди.</string>
+    <string name="bmchat_bots_queue_no_preview">(без текста)</string>
+    <string name="bmchat_bots_queue_media_fmt">[%1$s]</string>
+    <string name="bmchat_bots_queue_album_fmt">альбом · %1$d элементов</string>
+    <string name="bmchat_bots_queue_album_preview_fmt">[альбом · %1$d элементов]</string>
+    <string name="bmchat_bots_queue_schedule">Запланировать</string>
+    <string name="bmchat_bots_queue_reschedule">Изменить время</string>
+    <string name="bmchat_bots_queue_publish_now">Опубликовать сейчас</string>
+    <string name="bmchat_bots_queue_status_pending">ожидает</string>
+    <string name="bmchat_bots_queue_status_scheduled_fmt">в %1$s</string>
+    <string name="bmchat_bots_queue_status_due">пора публиковать</string>
+    <string name="bmchat_bots_queue_status_published">опубликовано</string>
+    <string name="bmchat_bots_queue_schedule_in_past">Выберите время в будущем.</string>
+    <string name="bmchat_bots_queue_scheduled_fmt">Запланировано на %1$s, %2$s.</string>
+    <string name="bmchat_bots_queue_count_fmt">в очереди: %1$d</string>
+    <string name="bmchat_bots_queue_count_history_fmt">в журнале: %1$d</string>
+    <string name="bmchat_bots_queue_count_empty">очередь пуста</string>
+    <string name="bmchat_bots_queue_empty_title">Очередь пуста</string>
+    <string name="bmchat_bots_queue_empty_explain">Все посты, которые приходят боту из Telegram, попадают сюда. Включите ручную модерацию, чтобы посты ждали публикации вручную, либо планируйте отдельные посты на нужное время.</string>
+    <string name="bmchat_bots_queue_preview_title">Превью поста</string>
+    <string name="bmchat_bots_queue_preview_loading">Загружаем медиа…</string>
+    <string name="bmchat_bots_queue_preview_no_media">(в посте нет медиа)</string>
+    <string name="bmchat_bots_queue_preview_album_fmt">Альбом · %1$d элементов</string>
+    <string name="bmchat_bots_queue_preview_open_action">Нажмите на карточку, чтобы открыть превью поста</string>
+    <string name="bmchat_tg_media_player_title">Просмотр медиа</string>
+    <string name="bmchat_tg_media_player_error_title">Не получилось проиграть видео</string>
+    <string name="bmchat_tg_media_player_error_explain">Встроенный плеер не справился с этим клипом. Можно открыть его во внешнем видеоплеере.</string>
+    <string name="bmchat_tg_media_player_open_external">Открыть во внешнем приложении</string>
+    <string name="bmchat_tg_media_player_play_pause">Воспроизвести / пауза</string>
+    <string name="bmchat_tg_media_player_fullscreen">Полный экран</string>
+    <string name="bmchat_tg_media_player_exit_fullscreen">Выйти из полного экрана</string>
+    <string name="bmchat_tg_media_player_speed">Скорость воспроизведения</string>
+    <!-- Composer formatting toolbar (2.49.35). -->
+    <string name="bmchat_compose_format_bold">Жирный</string>
+    <string name="bmchat_compose_format_italic">Курсив</string>
+    <string name="bmchat_compose_format_strike">Зачёркнутый</string>
+    <string name="bmchat_compose_format_underline">Подчёркнутый</string>
+    <string name="bmchat_compose_format_spoiler">Спойлер</string>
+    <string name="bmchat_compose_format_code">Моно</string>
+    <string name="bmchat_quote_selection">Цитировать фрагмент</string>
+    <string name="bmchat_quote_selection_short">Цитировать</string>
+    <string name="bmchat_mute_chat_title">Уведомления</string>
+    <string name="bmchat_mute_chat_on">Звук и всплывашки включены</string>
+    <string name="bmchat_mute_chat_off">Отключены</string>
+    <string name="bmchat_mute_for_1_hour">Заглушить на 1 час</string>
+    <string name="bmchat_mute_for_8_hours">Заглушить на 8 часов</string>
+    <string name="bmchat_mute_for_1_day">Заглушить на сутки</string>
+    <string name="bmchat_mute_until_unmuted">Заглушить пока не включу обратно</string>
+    <string name="bmchat_unmute_chat">Включить уведомления</string>
+    <string name="bmchat_notifications_section_general">Основные</string>
+    <string name="bmchat_notifications_section_sound">Звук и вибрация</string>
+    <string name="bmchat_notifications_section_display">Отображение</string>
+    <string name="bmchat_notifications_master_summary">Если выключено — BMChat не будет проигрывать звуки и показывать всплывашки о новых сообщениях. Заглушать отдельные чаты при этом всё равно можно.</string>
+    <string name="bmchat_notifications_sound_summary">Мелодия для входящих сообщений. Нажмите, чтобы выбрать из системных звуков.</string>
+    <string name="bmchat_notifications_inchat_summary">Короткий звук при отправке вашего сообщения и при приходе ответа, когда чат открыт.</string>
+    <string name="bmchat_notifications_privacy_summary">Что показывать на заблокированном экране: имя отправителя и текст, только имя или просто значок «новое сообщение».</string>
+    <string name="bmchat_update_dl_channel_name">Загрузка обновлений</string>
+    <string name="bmchat_update_dl_channel_desc">Прогресс и итог скачивания обновлений BMChat в системной шторке.</string>
+    <string name="bmchat_update_dl_title_fmt">Скачиваем BMChat %1$s…</string>
+    <string name="bmchat_update_dl_starting">Начинаем загрузку…</string>
+    <string name="bmchat_update_dl_cancel">Отменить</string>
+    <string name="bmchat_update_dl_done_title_fmt">BMChat %1$s готов к установке</string>
+    <string name="bmchat_update_dl_done_body">Нажмите, чтобы открыть системный установщик.</string>
+    <string name="bmchat_update_dl_install_action">Установить</string>
+    <string name="bmchat_update_dl_failed_title">Не удалось скачать обновление</string>
+    <string name="bmchat_update_dl_failed_body">Загрузка не завершилась. Откройте BMChat, чтобы повторить попытку.</string>
+    <string name="bmchat_update_dl_starts_in_bg">Загрузка продолжится в фоне — её прогресс показан в шторке уведомлений, отменить можно кнопкой «Отменить» в этом же уведомлении.</string>
+    <string name="bmchat_quote_selector_title">Цитата к сообщению</string>
+    <string name="bmchat_quote_selector_subtitle">Потяните ручки выделения, чтобы выбрать нужный фрагмент</string>
+    <string name="bmchat_quote_selector_confirm_all">Цитировать (выделенное или целиком)</string>
+    <string name="bmchat_quote_selector_confirm_part">Цитировать выделенный фрагмент</string>
+    <string name="bmchat_quote_selector_action_quote">Цитировать выделение</string>
+    <string name="bmchat_update_banner_running_title_fmt">Загружаем BMChat %1$s</string>
+    <string name="bmchat_update_banner_running_subtitle_fmt">%1$s / %2$s · %3$d%%</string>
+    <string name="bmchat_update_banner_ready_title_fmt">BMChat %1$s готов к установке</string>
+    <string name="bmchat_update_banner_ready_subtitle_fmt">Размер %1$s — нажмите «Установить»</string>
+    <string name="bmchat_update_banner_error_title_fmt">Не удалось скачать BMChat %1$s</string>
+    <string name="bmchat_update_banner_install">Установить</string>
+    <string name="bmchat_update_banner_cancel">Отменить</string>
+    <string name="bmchat_update_banner_dismiss">Скрыть</string>
+    <plurals name="bmchat_channel_invite_sent">
+        <item quantity="one">Приглашение отправлено %1$d контакту.</item>
+        <item quantity="few">Приглашения отправлены %1$d контактам.</item>
+        <item quantity="many">Приглашения отправлены %1$d контактам.</item>
+        <item quantity="other">Приглашения отправлены %1$d контактам.</item>
+    </plurals>
+    <plurals name="bmchat_bots_member_of_n_chats">
+        <item quantity="one">в %1$d чате</item>
+        <item quantity="few">в %1$d чатах</item>
+        <item quantity="many">в %1$d чатах</item>
+        <item quantity="other">в %1$d чате</item>
+    </plurals>
     <string name="menu_copy_selection_to_clipboard">Копировать выделенное</string>
     <string name="menu_copy_link_to_clipboard">Копировать ссылку</string>
     <string name="menu_copy_text_to_clipboard">Копировать текст</string>
@@ -393,8 +574,8 @@
     <string name="source_code">Исходный код</string>
     <!-- Menu item beside an app/chat that adds an icon to the system's home screen. If the user taps that icon, the app/chat is opened directly. -->
     <string name="add_to_home_screen">Добавить на главный экран</string>
-    <string name="donate">Пожертвовать</string>
-    <string name="donate_device_msg">❤️ Кажется, вам нравится Delta Chat!\n\nРассмотрите возможность сделать пожертвование, чтобы помочь нам сохранить Delta Chat бесплатным для всех пользователей.\n\nХотя использование Delta Chat бесплатно и исходный код открыт, разработка требует финансовых затрат. Помогите нам сохранить независимость Delta Chat и сделать его еще лучше в будущем.\n\nhttps://delta.chat/donate</string>
+    <string name="donate">Поддержка проекта</string>
+    <string name="donate_device_msg"></string>
 
     <string name="mute_for_one_hour">На 1 час</string>
     <string name="mute_for_eight_hours">На 8 часов</string>
@@ -513,7 +694,7 @@
     <string name="chat_new_one_to_one_hint">Отправьте сообщение %1$s.</string>
     <!-- consider keeping the term "channel" as in WhatsApp or Telegram -->
     <string name="chat_new_channel_hint">Каналы представляют собой инструмент одностороннего вещания ваших сообщений множеству получателей.</string>
-    <string name="chat_new_group_hint">Другие пользователи увидят эту группу только после того, как вы отправите первое сообщение.</string>
+    <string name="chat_new_group_hint">Другие пользователи увидят этот общий чат только после того, как вы отправите первое сообщение.</string>
     <string name="chat_record_slide_to_cancel">Смахните для отмены</string>
     <string name="chat_record_explain">Нажмите и удерживайте для записи голосового сообщения, отпустите для отправки</string>
     <string name="chat_no_chats_yet_title">Нет чатов.\nНажмите \"+\" чтобы начать новый чат.</string>
@@ -572,13 +753,13 @@
     <string name="search_unread">Не прочитано</string>
 
     <!-- create/edit groups, contact/group profile -->
-    <string name="group_name">Название группы</string>
+    <string name="group_name">Название общего чата</string>
     <string name="group_avatar">Изображение группы</string>
     <string name="remove_group_image">Удалить изображение группы</string>
     <string name="change_group_image">Изменить изображение группы</string>
-    <string name="group_create_button">Создать группу</string>
+    <string name="group_create_button">Создать общий чат</string>
     <!-- deprecated, use please_enter_chat_name -->
-    <string name="group_please_enter_group_name">Введите название группы</string>
+    <string name="group_please_enter_group_name">Введите название общего чата</string>
     <string name="please_enter_chat_name">Пожалуйста, введите имя.</string>
     <string name="group_add_members">Добавить участников</string>
     <string name="group_self_not_in_group">Вы должны быть участником группы, чтобы выполнить это действие.</string>
@@ -613,15 +794,15 @@
     <string name="multidevice_title">Добавить второе устройство</string>
     <string name="multidevice_same_network_hint">Убедитесь, что оба устройства подключены к одной и той же локальной или Wi-Fi сети.</string>
     <string name="multidevice_this_creates_a_qr_code">Это позволяет создать QR-код, который можно отсканировать на втором устройстве, чтобы скопировать профиль.\n\nУбедитесь, что посторонние лица или камеры не могут видеть следующий экран.</string>
-    <string name="multidevice_install_dc_on_other_device">Установите Delta Chat на другом устройстве (https://get.delta.chat)</string>
+    <string name="multidevice_install_dc_on_other_device">Установите BMChat на другом устройстве</string>
     <!-- "I Already Have a Profile / Add as Second Device” should be the same text as defined by the keys onboarding_alternative_logins and multidevice_receiver_title -->
-    <string name="multidevice_tap_scan_on_other_device">Запустите Delta Chat, нажмите \"У меня уже есть профиль / Добавить как второе устройство\" и отсканируйте показанный здесь код</string>
+    <string name="multidevice_tap_scan_on_other_device">Запустите BMChat, нажмите \"У меня уже есть профиль / Добавить как второе устройство\" и отсканируйте показанный здесь код</string>
     <!-- Shown inside a "QR code card" with very limited space; please formulate the text as short as possible therefore. The placeholder will be replaced by the profile name eg. "Scan to set up second device for Alice" -->
     <string name="multidevice_qr_subtitle">Отсканируйте, чтобы настроить второе устройство для %1$s</string>
     <string name="multidevice_receiver_title">Добавить как второе устройство</string>
-    <string name="multidevice_open_settings_on_other_device">На первом устройстве запустите Delta Chat, перейдите в \"Настройки / Добавить второе устройство\" и отсканируйте показанный там код</string>
+    <string name="multidevice_open_settings_on_other_device">На первом устройстве запустите BMChat, перейдите в \"Настройки / Добавить второе устройство\" и отсканируйте показанный там код</string>
     <string name="multidevice_receiver_scanning_ask">Скопировать профиль с другого устройства на это устройство?</string>
-    <string name="multidevice_receiver_needs_update">Профиль, который вы хотите импортировать, создан в более новой версии Delta Chat.\n\nЧтобы продолжить настройку второго устройства, пожалуйста, обновите это устройство до последней версии Delta Chat.</string>
+    <string name="multidevice_receiver_needs_update">Профиль, который вы хотите импортировать, создан в более новой версии BMChat.\n\nЧтобы продолжить настройку второго устройства, пожалуйста, обновите это устройство до последней версии BMChat.</string>
     <string name="multidevice_abort">Прервать настройку второго устройства?</string>
     <string name="multidevice_abort_will_invalidate_copied_qr">Это сделает недействительным QR-код, скопированный в буфер обмена.</string>
     <string name="multidevice_transfer_done_devicemsg">ℹ️ Профиль перенесен на ваше второе устройство.</string>
@@ -650,6 +831,34 @@
     <string name="not_supported_by_provider">Не поддерживается вашим провайдером.</string>
     <!-- Subtitle in quota context of "Connectivity" view. Should be be plural always, no number is prefixed. -->
     <string name="messages">Сообщения</string>
+    <string name="bmchat_connectivity_stats_title">Статистика BMChat</string>
+    <string name="bmchat_connectivity_stats_hint">Локальная сводка по этому профилю. Данные не отправляются на сервер BMChat.</string>
+    <string name="bmchat_stats_contacts">Контакты</string>
+    <string name="bmchat_stats_contacts_hint">Контакты в адресной книге BMChat</string>
+    <string name="bmchat_stats_verified_contacts">Проверенные</string>
+    <string name="bmchat_stats_verified_contacts_hint">Контакты с подтверждённой защитой</string>
+    <string name="bmchat_stats_chats">Чаты</string>
+    <string name="bmchat_stats_chats_hint">Личные, группы и каналы</string>
+    <string name="bmchat_stats_groups">Группы</string>
+    <string name="bmchat_stats_groups_hint">Общие чаты с несколькими участниками</string>
+    <string name="bmchat_stats_messages">Сообщения</string>
+    <string name="bmchat_stats_messages_hint">Пользовательские сообщения без служебных записей</string>
+    <string name="bmchat_stats_attachments">Вложения</string>
+    <string name="bmchat_stats_attachments_hint">Файлы, изображения, аудио и другие вложения</string>
+    <string name="bmchat_stats_incoming">Входящие</string>
+    <string name="bmchat_stats_incoming_hint">Получено от собеседников</string>
+    <string name="bmchat_stats_outgoing">Исходящие</string>
+    <string name="bmchat_stats_outgoing_hint">Отправлено вами</string>
+    <string name="bmchat_stats_delivered">Доставлено</string>
+    <string name="bmchat_stats_delivered_hint">Исходящие с подтверждением доставки</string>
+    <string name="bmchat_stats_read">Прочитано</string>
+    <string name="bmchat_stats_read_hint">Исходящие с подтверждением прочтения</string>
+    <string name="bmchat_stats_failed">Ошибки</string>
+    <string name="bmchat_stats_failed_hint">Исходящие, которые не удалось отправить</string>
+    <string name="bmchat_stats_pending">В очереди</string>
+    <string name="bmchat_stats_pending_hint">Черновики и сообщения в процессе отправки</string>
+    <string name="bmchat_stats_chat_mix">Состав чатов</string>
+    <string name="bmchat_stats_chat_mix_value">личные: %1$s, группы: %2$s, каналы: %3$s, архив: %4$s, закреплено: %5$s, запросы: %6$s, защищённых: %7$s</string>
     <!-- Used for describing resource usage, resulting string will be eg. "1.2 GiB of 3 GiB used" -->
     <string name="part_of_total_used">%1$s из %2$s используется</string>
 
@@ -680,7 +889,7 @@
     <!-- Question shown when group's/channel's QR code is scanned from onboarding screen -->
     <string name="instant_onboarding_confirm_group">Создать новый профиль и присоединиться к \"%1$s\"?</string>
 
-    <string name="welcome_chat_over_email">Безопасный децентрализованный чат</string>
+    <string name="welcome_chat_over_email">BMChat — мессенджер на вашей почте</string>
     <string name="scan_invitation_code">Сканировать код приглашения</string>
     <string name="login_title">Войти</string>
     <string name="login_advanced_hint">Этот способ входа предназначен для опытных пользователей:\n\n• Не используйте адрес, который вы уже используете в другом приложении.\n\n• Обычный почтовый сервер позволяет вести чаты без сквозного шифрования, (такие чаты помечаются значком конверта).</string>
@@ -719,7 +928,7 @@
     <string name="hide_from_contacts">Скрыть из контактов</string>
     <string name="hidden_from_contacts">Скрыт из контактов</string>
     <!-- Hint for the list of relays -->
-    <string name="transport_list_hint">Сообщения поступают на все релеи.\n\n⚠️ Если вы измените какие-либо настройки в этом разделе, убедитесь, что на всех ваших устройствах установлена версия Delta Chat не ниже 2.47.0. В противном случае старые версии могут не получать сообщения.</string>
+    <string name="transport_list_hint">Сообщения поступают на все релеи.\n\n⚠️ Если вы измените какие-либо настройки в этом разделе, убедитесь, что на всех ваших устройствах установлена версия BMChat не ниже 2.47.0. В противном случае старые версии могут не получать сообщения.</string>
     <!-- shown if a QR code was scanned that can be used as a relay -->
     <string name="confirm_add_transport">Добавить этот релей?</string>
     <string name="invalid_transport_qr">Отсканированный QR-код не содержит корректный релей.</string>
@@ -783,7 +992,7 @@
     <string name="pref_outgoing_balanced">Сбалансированное</string>
     <string name="pref_outgoing_worse">Низкое качество, малый размер</string>
     <string name="pref_vibrate">Вибрация</string>
-    <string name="pref_screen_security">Безопасность экрана</string>
+    <string name="pref_screen_security">Защита экрана</string>
     <!-- Translators: Must indicate that there is no guarantee as the system may not honor our request. -->
     <string name="pref_screen_security_explain">Запрос на блокировку скриншотов в списке недавних и внутри приложения</string>
     <string name="pref_screen_security_please_restart_hint">Перезапустите приложение для применения настроек безопасности экрана.</string>
@@ -811,7 +1020,7 @@
     <string name="pref_theme">Тема</string>
     <string name="pref_language">Язык</string>
     <string name="pref_use_system_ui_font">Использовать системный шрифт</string>
-    <string name="pref_incognito_keyboard">Клавиатура инкогнито</string>
+    <string name="pref_incognito_keyboard">Инкогнито-клавиатура</string>
     <!-- Translators: Must indicate that there is no guarantee as the system may not honor our request. -->
     <string name="pref_incognito_keyboard_explain">Запрос клавиатуре на отключение персонализированного обучения</string>
     <string name="pref_read_receipts">Уведомления о прочтении</string>
@@ -845,15 +1054,21 @@
     <string name="pref_multidevice">Режим нескольких устройств</string>
     <string name="pref_multidevice_explain">Синхронизируйте свои сообщения с другими устройствами. Функция включается автоматически при добавлении второго устройства</string>
     <string name="pref_multidevice_change_warn">Режим нескольких устройств должен быть включен, если вы используете один и тот же профиль на нескольких устройствах. Отключайте эту настройку, только если вы удалили этот профиль со всех остальных устройств.\n\nОтключение режима нескольких устройств при использовании профиля на нескольких устройствах приведет к потере сообщений и возникновению других проблем.</string>
-    <string name="pref_auto_folder_moves">Автоперемещение в папку DeltaChat</string>
-    <string name="pref_only_fetch_mvbox_title">Загружать только из папки DeltaChat</string>
+    <string name="bmchat_mail_folder_category">Служебная папка</string>
+    <string name="pref_auto_folder_moves">Автопапка</string>
+    <string name="pref_auto_folder_moves_summary">Автоматически перемещать служебные письма BMChat</string>
+    <string name="pref_only_fetch_mvbox_title">Только служебная</string>
+    <string name="pref_only_fetch_mvbox_summary">Загружать сообщения только из служебной папки</string>
+    <string name="bmchat_pref_fetch_spam_title">Проверять папку «Спам»</string>
+    <string name="bmchat_pref_fetch_spam_summary">Следить за Spam/Junk и переносить сообщения BMChat обратно как «не спам»</string>
     <string name="pref_show_emails">Показывать обычную почту</string>
     <string name="pref_show_emails_no">Нет, только чаты</string>
     <string name="pref_show_emails_accepted_contacts">Для принятых контактов</string>
     <string name="pref_show_emails_all">Все</string>
     <string name="pref_experimental_features">Экспериментальные функции</string>
     <string name="pref_experimental_features_explain">Эти функции могут быть нестабильными и могут быть изменены или удалены</string>
-    <string name="pref_on_demand_location_streaming">Трансляция местоположения по запросу</string>
+    <string name="pref_on_demand_location_streaming">Геолокация в чате</string>
+    <string name="pref_on_demand_location_streaming_summary">Показывать отправку местоположения в меню вложений</string>
     <string name="pref_background_default">Изображение по умолчанию</string>
     <string name="pref_background_default_color">Цвет по умолчанию</string>
     <string name="pref_background_custom_image">Персональное изображение</string>
@@ -870,14 +1085,14 @@
     <string name="profile_image_delete">Удалить изображение профиля</string>
     <string name="pref_show_tray_icon">Показать значок в системном трее</string>
     <string name="pref_edit_profile">Редактировать профиль</string>
-    <string name="send_stats_to_devs">Отправить статистику разработчикам Delta Chat</string>
-    <string name="stats_device_message">Хотите помочь улучшить Delta Chat и поддержать исследования, отправляя еженедельную анонимную статистику использования?\n\n👉 Нажмите здесь...👈</string>
-    <string name="stats_confirmation_dialog">Хотите помочь улучшить Delta Chat и поддержать исследования, отправляя еженедельную анонимную статистику использования?</string>
-    <string name="stats_thanks">Спасибо! Вы всегда можете отключить отправку в разделе \"Настройки -> Дополнительно\"\n\nУ вас есть 5 минут, чтобы принять участие в исследовании безопасности Delta Chat?</string>
+    <string name="send_stats_to_devs">Отправить статистику разработчикам BMChat</string>
+    <string name="stats_device_message"></string>
+    <string name="stats_confirmation_dialog">Хотите помочь улучшить BMChat и поддержать исследования, отправляя еженедельную анонимную статистику использования?</string>
+    <string name="stats_thanks">Спасибо! Вы всегда можете отключить отправку в разделе \"Настройки -> Дополнительно\"\n\nУ вас есть 5 минут, чтобы принять участие в исследовании безопасности BMChat?</string>
     <string name="stats_disable_dialog">Отправка статистики уже включена.\n\nВы хотите отключить её?</string>
     <string name="disable">Отключить</string>
     <string name="stats_keep_sending">Продолжить отправку</string>
-    <string name="stats_msg_body">Вложение содержит анонимную статистику использования, которая поможет нам улучшить Delta Chat. Более подробную информацию смотрите на https://delta.chat/help#statssending. Спасибо!</string>
+    <string name="stats_msg_body">Вложение содержит анонимную статистику использования, которая поможет нам улучшить BMChat. Спасибо!</string>
 
     <!-- Emoji picker and categories -->
     <string name="emoji_search_results">Результаты поиска</string>
@@ -927,9 +1142,9 @@
     <string name="systemmsg_subject_for_new_contact">Сообщение от %1$s</string>
     <string name="systemmsg_failed_sending_to">Не удалось отправить сообщение %1$s.</string>
     <!-- %1$s will be replaced by the old group name, %2$s will be replaced by the new group name -->
-    <string name="group_name_changed_by_you">Вы изменили название группы с \"%1$s\" на \"%2$s\".</string>
+    <string name="group_name_changed_by_you">Вы изменили название общего чата с \"%1$s\" на \"%2$s\".</string>
     <!-- %1$s will be replaced by the old group name, %2$s will be replaced by the new group name, %3$s will be replaced by name and address of the contact who did the action. -->
-    <string name="group_name_changed_by_other">%3$s меняет название группы с \"%1$s\" на \"%2$s\".</string>
+    <string name="group_name_changed_by_other">%3$s меняет название общего чата с \"%1$s\" на \"%2$s\".</string>
     <!-- %1$s will be replaced by the old channel name, %2$s will be replaced by the new channel name -->
     <string name="channel_name_changed">Название канала изменено с \"%1$s\" на \"%2$s\".</string>
     <string name="group_image_changed_by_you">Вы изменили изображение группы.</string>
@@ -1012,7 +1227,7 @@
     <string name="devicemsg_storage_exceeding">⚠️ Место на сервере вашего провайдера скоро закончится, уже использовано: %1$s%%.\n\nЕсли место на сервере будет полностью заполнено, вы не сможете получать сообщения.\n\n👉 Проверьте, можно ли удалить старые данные через веб-интерфейс вашего провайдера, и подумайте о включении опции \"Настройки / Чаты / Удалить старые сообщения\". Вы всегда можете проверить текущее использование места на сервере в разделе \"Настройки / Соединение\".</string>
     <!-- %1%s will be replaced by date and time in some human-readable format -->
     <string name="devicemsg_bad_time">⚠️ Вероятно, дата или время на вашем устройстве установлены неверно (%1$s).\n\nНастройте часы ⏰🔧 чтобы ваши сообщения доставлялись правильно.</string>
-    <string name="devicemsg_update_reminder">⚠️ Вероятно, ваша версия Delta Chat устарела.\n\nЭто может вызвать проблемы, поскольку ваши собеседники используют более новые версии, а у вас нет доступа к последним функциям. 😳\nПожалуйста, проверьте наличие обновлений на сайте https://get.delta.chat или в магазине приложений.</string>
+    <string name="devicemsg_update_reminder">⚠️ Вероятно, ваша версия BMChat устарела.\n\nЭто может вызвать проблемы, поскольку ваши собеседники используют более новые версии, а у вас нет доступа к последним функциям. Пожалуйста, установите последнюю сборку BMChat.</string>
 
     <!-- Some options as "Add Second Device" or "Backup" may require the system PIN/Fingerprint/Gesture/Etc. to be entered in a system dialog. This hint is added to the system dialog, below a title as "Add Second Device" or "Backup". -->
     <string name="enter_system_secret_to_continue">Разблокируйте для продолжения</string>
@@ -1061,7 +1276,7 @@
     <string name="secure_join_channel_started">%1$s приглашает вас присоединиться к этому каналу.\n\nОжидаем ответа от устройства %2$s...</string>
     <!-- placeholder will be replaced by the name of the inviter. -->
     <string name="secure_join_replies">%1$s ответил(а), ожидаем добавления в группу…</string>
-    <string name="secure_join_wait">Устанавливается соединение, пожалуйста, подождите…</string>
+    <string name="secure_join_wait">Ожидаем ответа собеседника. Если он не пользуется BMChat — отправьте ему ссылку или QR-код вручную, и можно сразу писать сообщения по почте.</string>
     <string name="contact_verified">%1$s подтверждён.</string>
     <string name="contact_blocked">Вы заблокировали контакт</string>
     <!-- Shown in contact profile. The placeholder will be replaced by the name of the contact that introduced the contact. -->
@@ -1078,7 +1293,11 @@
     <!-- notifications -->
     <string name="notify_reply_button">Ответить</string>
     <string name="notify_new_message">Новое сообщение</string>
-    <string name="notify_background_connection_enabled">Соединение в фоновом режиме включено</string>
+    <string name="notify_new_messages">Новые сообщения</string>
+    <string name="notify_background_connection_enabled"></string>
+    <string name="notify_background_connection_title">BMChat</string>
+    <string name="notify_background_connection_channel">Работа BMChat в фоне</string>
+    <string name="notify_background_connection_channel_description">Показывает, что BMChat продолжает проверять почту и сможет принять новые сообщения.</string>
     <string name="notify_priority_high">Высокий</string>
     <string name="notify_priority_max">Максимальный</string>
     <string name="notify_name_and_message">Имя и сообщение</string>
@@ -1095,7 +1314,7 @@
     <string name="location_streaming_channel_desc">Канал для потоковой передачи местоположения по запросу</string>
     <string name="location_streaming_notification_title">Потоковая передача местоположения</string>
     <string name="location_streaming_notification_text">Вы делитесь своим местоположением</string>
-    <string name="location_rationale">Чтобы поделиться своим местоположением в реальном времени с участниками чата, разрешите Delta Chat использовать данные о вашем местоположении.\n\nДля обеспечения бесперебойной работы функции передачи геопозиции данные используются даже тогда, когда приложение закрыто или не активно.</string>
+    <string name="location_rationale">Чтобы поделиться своим местоположением в реальном времени с участниками чата, разрешите BMChat использовать данные о вашем местоположении.\n\nДля обеспечения бесперебойной работы функции передачи геопозиции данные используются даже тогда, когда приложение закрыто или не активно.</string>
 
     <!-- permissions -->
     <string name="perm_required_title">Требуется разрешение</string>
@@ -1105,7 +1324,7 @@
     <string name="perm_explain_access_to_mic_denied">Чтобы отправлять аудиосообщения, откройте настройки приложения, выберите \"Разрешения\" или \"Конфиденциальность и безопасность\" и включите доступ к \"Микрофону\".</string>
     <string name="perm_explain_access_to_storage_denied">Чтобы получать или отправлять файлы, откройте настройки приложения, выберите \"Разрешения\" и включите доступ к \"Хранилищу\".</string>
     <string name="perm_explain_access_to_location_denied">Чтобы прикрепить местоположение, откройте настройки приложения, выберите \"Разрешения\" и включите доступ к \"Местоположению\".</string>
-    <string name="perm_explain_access_to_notifications_denied">Для получения уведомлений, перейдите в \"Настройки системы / Приложения / Delta Chat\" и включите доступ к \"Уведомлениям\".</string>
+    <string name="perm_explain_access_to_notifications_denied">Для получения уведомлений перейдите в \"Настройки системы / Приложения / BMChat\" и включите доступ к \"Уведомлениям\".</string>
 
     <!-- ImageEditorHud -->
     <string name="ImageEditorHud_draw_anywhere_to_blur">Нарисуйте где угодно, чтобы размыть</string>
@@ -1117,7 +1336,7 @@
     <string name="ImageEditorHud_flip">Отразить</string>
     <string name="ImageEditorHud_rotate">Вращать</string>
 
-    <string name="welcome_desktop">Добро пожаловать в Delta Chat</string>
+    <string name="welcome_desktop">Добро пожаловать в BMChat</string>
     <string name="global_menu_preferences_language_desktop">Выбор языка</string>
     <string name="global_menu_file_desktop">Файл</string>
     <string name="global_menu_file_quit_desktop">Выход</string>
@@ -1132,11 +1351,11 @@
     <string name="global_menu_view_developer_desktop">Разработчик</string>
     <string name="global_menu_view_developer_tools_desktop">Инструменты разработчика</string>
     <string name="global_menu_help_desktop">Справка</string>
-    <string name="delta_chat_homepage">Домашняя страница Delta Chat</string>
+    <string name="delta_chat_homepage">Домашняя страница BMChat</string>
     <string name="contribute">Внести вклад</string>
     <string name="global_menu_help_report_desktop">Сообщить о проблеме</string>
-    <string name="global_menu_help_about_desktop">О Delta Chat</string>
-    <string name="global_menu_file_open_desktop">Открыть Delta Chat</string>
+    <string name="global_menu_help_about_desktop">О BMChat</string>
+    <string name="global_menu_file_open_desktop">Открыть BMChat</string>
     <string name="global_menu_minimize_to_tray">Свернуть</string>
     <string name="no_account_selected">Выберите или создайте новый профиль</string>
     <string name="no_chat_selected_suggestion_desktop">Выберите или создайте новый чат</string>
@@ -1156,11 +1375,11 @@
     <string name="message_detail_received_desktop">Получено</string>
     <string name="menu.view.developer.open.log.folder">Открыть папку журналов</string>
     <string name="menu.view.developer.open.current.log.file">Открыть текущий файл журнала</string>
-    <string name="explain_desktop_minimized_disabled_tray_pref" tools:ignore="TypographyDashes">Значок в системном трее нельзя отключить, поскольку Delta Chat был запущен с параметром --minimized.</string>
+    <string name="explain_desktop_minimized_disabled_tray_pref" tools:ignore="TypographyDashes">Значок в системном трее нельзя отключить, поскольку BMChat был запущен с параметром --minimized.</string>
     <!-- deprecated, used on desktop although there is not spell checker -->
     <string name="no_spellcheck_suggestions_found">Не найдены варианты исправления орфографии.</string>
     <string name="show_window">Показать окно</string>
-    <string name="data_found_other_installation_message">Профили из другой установки Delta Chat недоступны - разные экземпляры приложения хранят данные в отдельных папках.\n\nЧтобы сохранить существующие профили:\n1. Выйдите сейчас.\n2. Откройте другую установку Delta Chat - если потребуется, переустановите её из %1$s\n3. Создайте резервные копии каждого профиля в разделе \"Настройки/Чаты\"\n4. Запустите текущую версию приложения\n5. Восстановите данные из резервных копий, выбрав \"У меня уже есть профиль\"\n\nПродолжить без предыдущих профилей?</string>
+    <string name="data_found_other_installation_message">Профили из другой установки BMChat недоступны — разные экземпляры приложения хранят данные в отдельных папках.\n\nЧтобы сохранить существующие профили:\n1. Выйдите сейчас.\n2. Откройте другое приложение — если потребуется, переустановите его из %1$s\n3. Создайте резервные копии каждого профиля в разделе \"Настройки/Чаты\"\n4. Запустите текущую версию приложения\n5. Восстановите данные из резервных копий, выбрав \"У меня уже есть профиль\"\n\nПродолжить без предыдущих профилей?</string>
 
     <!-- title of the "keybindings" dialog (for the keybindings names as such, where possible the normal command strings are used) -->
     <string name="keybindings">Горячие клавиши</string>
@@ -1204,7 +1423,7 @@
     <string name="import_device_contacts">Импорт контактов устройства</string>
     <string name="import_device_contacts_hint">Чтобы переписываться с контактами из вашей адресной книги, откройте \"Настройки\" и включите доступ к \"Контактам\".</string>
     <!-- iOS notification settings -->
-    <string name="disabled_in_dc">Отключено в Delta Chat.</string>
+    <string name="disabled_in_dc">Отключено в BMChat.</string>
     <string name="disabled_in_system_settings">Отключено в системных настройках</string>
     <string name="bg_app_refresh_disabled">\"Фоновое обновление приложений\" отключено в системных настройках</string>
     <string name="notifications_avg_minutes">В среднем каждые %1$d минут(ы)</string>
@@ -1217,19 +1436,19 @@
     <!-- use the same translation for "Shortcuts" as the system is using, often the term "Shortcut" stays untranslated; check eg. how the "Shortcuts" system app is called in your locale -->
     <string name="shortcuts_widget_title">Ярлыки</string>
     <!-- use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated -->
-    <string name="shortcuts_widget_description">Используйте \"Добавить в виджет\" Delta Chat, чтобы добавить элементы</string>
+    <string name="shortcuts_widget_description">Используйте \"Добавить в виджет\" BMChat, чтобы добавить элементы</string>
     <!-- use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated -->
     <string name="remove_from_widget">Удалить из виджета</string>
     <!-- use the same translation for "Widget" as the system is using; often the term "Widget" stays untranslated -->
     <string name="add_to_widget">Добавить в виджет</string>
     <!-- iOS permissions, copy from "deltachat-ios/Info.plist", which is used on missing translations in "deltachat-ios/LANG.lproj/InfoPlist.strings" -->
-    <string name="InfoPlist_NSCameraUsageDescription">Delta Chat использует вашу камеру для фото- и видеосъёмки, а также для сканирования QR-кодов.</string>
-    <string name="InfoPlist_NSLocationAlwaysAndWhenInUseUsageDescription">Delta Chat требует разрешения на передачу информации о вашем местоположении на тот период времени, в течение которого вы разрешили обмен данными о местоположении.</string>
-    <string name="InfoPlist_NSLocationWhenInUseUsageDescription">Delta Chat требует разрешения на передачу информации о вашем местоположении на тот период времени, в течение которого вы разрешили обмен данными о местоположении.</string>
-    <string name="InfoPlist_NSMicrophoneUsageDescription">Delta Chat использует микрофон для записи и отправки голосовых сообщений, а также видео со звуком.</string>
-    <string name="InfoPlist_NSPhotoLibraryUsageDescription">Delta Chat предоставит вам возможность выбирать какие фотографии и из какой галереи отправлять.</string>
-    <string name="InfoPlist_NSPhotoLibraryAddUsageDescription">Delta Chat хочет сохранить изображения в вашей галерее.</string>
-    <string name="InfoPlist_NSFaceIDUsageDescription">Delta Chat может использовать Face ID для защиты локального профиля, создания резервных копий и настройки второго устройства.</string>
+    <string name="InfoPlist_NSCameraUsageDescription">BMChat использует вашу камеру для фото- и видеосъёмки, а также для сканирования QR-кодов.</string>
+    <string name="InfoPlist_NSLocationAlwaysAndWhenInUseUsageDescription">BMChat требует разрешения на передачу информации о вашем местоположении на тот период времени, в течение которого вы разрешили обмен данными о местоположении.</string>
+    <string name="InfoPlist_NSLocationWhenInUseUsageDescription">BMChat требует разрешения на передачу информации о вашем местоположении на тот период времени, в течение которого вы разрешили обмен данными о местоположении.</string>
+    <string name="InfoPlist_NSMicrophoneUsageDescription">BMChat использует микрофон для записи и отправки голосовых сообщений, а также видео со звуком.</string>
+    <string name="InfoPlist_NSPhotoLibraryUsageDescription">BMChat предоставит вам возможность выбирать, какие фотографии и из какой галереи отправлять.</string>
+    <string name="InfoPlist_NSPhotoLibraryAddUsageDescription">BMChat хочет сохранить изображения в вашей галерее.</string>
+    <string name="InfoPlist_NSFaceIDUsageDescription">BMChat может использовать Face ID для защиты локального профиля, создания резервных копий и настройки второго устройства.</string>
 
     <!-- android specific strings, developers: please take care to remove strings that are no longer used! -->
     <string name="pref_instant_delivery">Мгновенная доставка</string>
@@ -1238,11 +1457,115 @@
     <string name="pref_reliable_service">Принудительное соединение в фоновом режиме</string>
     <string name="pref_reliable_service_explain">Активирует постоянное уведомление</string>
 
-    <string name="pref_background_notifications_rationale">Чтобы поддерживать соединение с сервером электронной почты и получать сообщения в фоновом режиме, отключите оптимизацию батареи на следующем шаге.\n\nDelta Chat расходует мало ресурсов и бережно относится к вашей батарее.</string>
+    <string name="pref_background_notifications_rationale">Чтобы поддерживать соединение с сервером электронной почты и получать сообщения в фоновом режиме, отключите оптимизацию батареи на следующем шаге.\n\nBMChat расходует мало ресурсов и бережно относится к вашей батарее.</string>
     <!-- disabling "Reliable service" will hide a the maybe annoying permanent-notification with the drawback that new-message-notifications get potentially unreliable -->
-    <string name="perm_enable_bg_reminder_title">Нажмите здесь, чтобы получать сообщения, когда Delta Chat находится в фоновом режиме.</string>
-    <string name="perm_enable_bg_already_done">Вы уже разрешили Delta Chat получать сообщения в фоновом режиме.\n\nЕсли сообщения все равно не приходят в фоновом режиме, также проверьте настройки вашей системы.</string>
+    <string name="perm_enable_bg_reminder_title">Нажмите здесь, чтобы получать сообщения, когда BMChat находится в фоновом режиме.</string>
+    <string name="perm_enable_bg_already_done">Вы уже разрешили BMChat получать сообщения в фоновом режиме.\n\nЕсли сообщения все равно не приходят в фоновом режиме, также проверьте настройки вашей системы.</string>
 
     <!-- device messages for updates -->
-    <string name="update_2_0">Что нового?\n\n💯 Сквозное шифрование стало постоянной и надёжной функцией. Значки замков 🔒 убраны!\n\n✉️ Обычные письма без сквозного шифрования помечены значком конверта\n\n😻 Обновлённый экран профиля для всех контактов\n\n🔲 Новая кнопка быстрого доступа к приложениям, используемым в чате\n\n❤️ Пожалуйста, сделайте пожертвование, чтобы помочь нам сохранить независимость и продолжать работу над улучшениями: %1$s</string>
+    <string name="update_2_0">Что нового?\n\n💯 Сквозное шифрование стало постоянной и надёжной функцией.\n\n✉️ BMChat показывает только сообщения формата чата и не превращает обычную почту в уведомления.\n\n😻 Обновлён экран профиля и оформление BMChat.\n\n🔲 Улучшен быстрый доступ к приложениям, используемым в чате.</string>
+
+    <!-- BMChat e-mail bots -->
+    <string name="bmchat_email_bots_title">Email-боты</string>
+    <string name="bmchat_email_bots_summary">Создайте ботов в стиле Telegram BotFather, работающих по почте.</string>
+    <string name="bmchat_email_bots_empty">Здесь пока нет email-ботов.\n\nEmail-боты — это аналог Telegram-ботов: имя оканчивается на «bot», задаётся отображаемое имя и описание. Пользователь обязан нажать «/start», иначе бот молчит. Все обновления автоматически уходят на e-mail разработчика бота (вебхук «на почту»), а его ответ в том же письме возвращается в исходный чат.</string>
+    <string name="bmchat_email_bots_add">Создать бота</string>
+    <string name="bmchat_email_bot_new_title">Новый email-бот</string>
+    <string name="bmchat_email_bot_edit_title">Бот @%1$s</string>
+    <string name="bmchat_email_bot_field_name">Имя бота (username, без @)</string>
+    <string name="bmchat_email_bot_field_name_hint">например, helper_bot</string>
+    <string name="bmchat_email_bot_field_name_subhint">Латиница, цифры и «_». Должно оканчиваться на «bot» или «_bot» — как у Telegram BotFather. Если забыли — припишем сами.</string>
+    <string name="bmchat_email_bot_field_display_name">Отображаемое имя</string>
+    <string name="bmchat_email_bot_field_display_name_hint">например, Помощник по погоде</string>
+    <string name="bmchat_email_bot_field_description">Описание (необязательно)</string>
+    <string name="bmchat_email_bot_field_description_hint">Краткое описание бота — пользователь увидит его после /start.</string>
+    <string name="bmchat_email_bot_field_developer_email">E-mail разработчика бота</string>
+    <string name="bmchat_email_bot_field_developer_email_hint">developer@example.com</string>
+    <string name="bmchat_email_bot_field_developer_email_subhint">«Вебхук на почту»: BMChat будет присылать каждое сообщение пользователя на этот e-mail в формате Telegram Update. Ваш сервис отвечает обычным письмом, и BMChat пересылает ответ в исходный чат.</string>
+    <string name="bmchat_email_bot_error_developer_email_invalid">Неверный e-mail разработчика</string>
+    <string name="bmchat_email_bot_enabled">Бот включён</string>
+    <string name="bmchat_email_bot_enabled_hint">Когда выключено — бот не отвечает на сообщения, но настройки сохраняются.</string>
+    <string name="bmchat_email_bot_field_commands">Команды</string>
+    <string name="bmchat_email_bot_field_commands_hint">В тексте ответа можно использовать {{arg}} (аргументы команды), {{from}} (почта отправителя), {{bot}} (имя бота).</string>
+    <string name="bmchat_email_bot_command_name_hint">команда</string>
+    <string name="bmchat_email_bot_command_reply_hint">текст ответа бота</string>
+    <string name="bmchat_email_bot_add_command">+ команда</string>
+    <string name="bmchat_email_bot_remove_command">Удалить команду</string>
+    <string name="bmchat_email_bot_field_webhook">HTTP webhook URL (legacy, необязательно)</string>
+    <string name="bmchat_email_bot_field_webhook_hint">Альтернативный канал для совместимости с обычными Telegram-ботами по HTTP. Основной транспорт — почтовый webhook выше.</string>
+    <string name="bmchat_email_bot_field_webhook_placeholder">https://example.com/bot</string>
+    <string name="bmchat_email_bot_save">Сохранить</string>
+    <string name="bmchat_email_bot_saved">Сохранено</string>
+    <string name="bmchat_email_bot_delete">Удалить бота</string>
+    <string name="bmchat_email_bot_delete_title">Удалить бота?</string>
+    <string name="bmchat_email_bot_delete_message">Бот @%1$s будет удалён. Он сразу перестанет отвечать на сообщения.</string>
+    <string name="bmchat_email_bot_error_name_required">Укажите имя бота</string>
+    <string name="bmchat_email_bot_error_name_invalid">Допустимы только латиница, цифры и «_»</string>
+    <string name="bmchat_email_bot_error_name_taken">Бот с таким именем уже существует</string>
+    <string name="bmchat_email_bot_status_enabled">включён</string>
+    <string name="bmchat_email_bot_status_disabled">выключен</string>
+    <string name="bmchat_email_bot_subtitle_empty">нет команд</string>
+    <string name="bmchat_email_bot_subtitle_webhook">webhook</string>
+    <plurals name="bmchat_email_bot_subtitle_commands">
+        <item quantity="one">%d команда</item>
+        <item quantity="few">%d команды</item>
+        <item quantity="many">%d команд</item>
+        <item quantity="other">%d команды</item>
+    </plurals>
+    <string name="bmchat_email_bot_cb_no_bot">Бот @%1$s не найден</string>
+    <string name="bmchat_email_bot_cb_no_webhook">У бота не задан webhook URL</string>
+    <string name="bmchat_email_bot_cb_no_reply">Бот не ответил</string>
+    <string name="bmchat_email_bot_token_label">Токен API (для webhook):</string>
+    <string name="bmchat_email_bot_token_copy">Скопировать</string>
+    <string name="bmchat_email_bot_token_copied">Токен скопирован</string>
+    <string name="bmchat_email_bot_api_docs_link">Документация API: http://5.187.4.132/email-bot-api.html</string>
+
+    <string name="bmchat_fg_notification_title">BMChat активен</string>
+    <string name="bmchat_fg_notification_text">Готов получать сообщения в фоне</string>
+    <string name="bmchat_hide_fg_notification_title">Скрывать значок BMChat в шторке</string>
+    <string name="bmchat_hide_fg_notification_summary">Чистая шторка как у Telegram, но на Samsung One UI и MIUI Android может прибить фоновый процесс — сообщения тогда приходят пачкой только после открытия приложения. Если новые письма перестали падать в реальном времени — выключите.</string>
+    <string name="bmchat_storage_title">Память и данные</string>
+    <string name="bmchat_storage_summary">Использование памяти, очистка кэша и очистка почтового сервера</string>
+    <string name="bmchat_storage_loading">Подсчитываем память…</string>
+    <string name="bmchat_storage_load_error">Не удалось подсчитать использование памяти</string>
+    <string name="bmchat_storage_empty">Локальные медиа не найдены</string>
+    <string name="bmchat_storage_used_fmt">BMChat занимает %1$s</string>
+    <string name="bmchat_storage_free_fmt">Свободно на устройстве: %1$s</string>
+    <string name="bmchat_storage_evictable_fmt">Можно безопасно очистить: %1$s</string>
+    <string name="bmchat_storage_by_type">По типам</string>
+    <string name="bmchat_storage_by_chat">По чатам</string>
+    <string name="bmchat_storage_row_summary">%1$s занято · %2$s можно очистить</string>
+    <string name="bmchat_storage_category_images">Фото и изображения</string>
+    <string name="bmchat_storage_category_videos">Видео</string>
+    <string name="bmchat_storage_category_audio">Музыка и голосовые</string>
+    <string name="bmchat_storage_category_files">Файлы</string>
+    <string name="bmchat_storage_category_webxdc">Приложения и webxdc</string>
+    <string name="bmchat_storage_category_other">Другое</string>
+    <string name="bmchat_storage_unknown_chat">Чат</string>
+    <string name="bmchat_storage_clear_selected">Очистить выбранный кэш</string>
+    <string name="bmchat_storage_select_something">Выберите хотя бы один тип и один чат.</string>
+    <string name="bmchat_storage_clear_confirm">Будут удалены только локальные кэшированные файлы. Сообщения останутся в чатах, а вложения можно будет скачать снова с почтового сервера, если исходное письмо ещё доступно.</string>
+    <string name="bmchat_storage_clear">Очистить кэш</string>
+    <string name="bmchat_storage_clearing">Очищаем кэш…</string>
+    <string name="bmchat_storage_clear_error">Не удалось очистить кэш</string>
+    <string name="bmchat_storage_clear_done">Кэш очищен</string>
+    <string name="bmchat_storage_clear_done_body">Освобождено: %1$s\nПропущено без безопасной повторной загрузки: %2$s</string>
+    <string name="bmchat_storage_auto_cleanup">Автоочистка кэша</string>
+    <string name="bmchat_storage_auto_enabled">Включить автоматическую очистку локального кэша</string>
+    <string name="bmchat_storage_auto_age">Хранить кэшированные медиа</string>
+    <string name="bmchat_storage_auto_limit">Максимальный размер локального кэша</string>
+    <string name="bmchat_storage_keep_forever">Всегда</string>
+    <string name="bmchat_storage_keep_3_days">3 дня</string>
+    <string name="bmchat_storage_keep_1_week">1 неделю</string>
+    <string name="bmchat_storage_keep_1_month">1 месяц</string>
+    <string name="bmchat_storage_keep_3_months">3 месяца</string>
+    <string name="bmchat_storage_keep_1_year">1 год</string>
+    <string name="bmchat_storage_limit_none">Без лимита</string>
+    <string name="bmchat_storage_server_cleanup">Очистка на почтовом сервере</string>
+    <string name="bmchat_storage_server_warning">Это отдельно от очистки кэша. Старые сообщения могут быть удалены с почтового сервера, исчезнуть на других устройствах и перестать скачиваться повторно.</string>
+    <string name="bmchat_storage_server_after">Удалять сообщения с сервера через</string>
+    <string name="bmchat_storage_server_understand">Я понимаю, что это может удалить письма с сервера</string>
+    <string name="bmchat_storage_apply_danger">Применить</string>
+    <string name="bmchat_storage_server_need_confirm">Подтвердите, что понимаете риск удаления на сервере.</string>
+    <string name="bmchat_storage_server_estimate_fmt">Очистка на сервере может затронуть около %1$d сообщений.</string>
 </resources>

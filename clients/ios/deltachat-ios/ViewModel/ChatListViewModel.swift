@@ -29,9 +29,15 @@ class ChatListViewModel: NSObject {
 
     var chatList: DcChatlist!
 
+    /// Source-list indices that survive the BMChat visibility filter
+    /// (mailing lists and unencrypted contact requests are hidden so they
+    /// never look like real chats in the chat list).
+    private var visibleIndices: [Int] = []
+
     // for search filtering
     private var searchText: String = ""
     private var searchResultChatList: DcChatlist?
+    private var searchResultVisibleIndices: [Int] = []
     private var searchResultContactIds: [Int] = []
     private var searchResultMessageIds: [Int] = []
 
@@ -59,9 +65,40 @@ class ChatListViewModel: NSObject {
             gclFlags |= DC_GCL_FOR_FORWARDING
         }
         self.chatList = dcContext.getChatlist(flags: gclFlags, queryString: nil, queryId: 0)
+        self.visibleIndices = computeVisibleIndices(in: chatList)
         if notifyListener {
             handleOnChatListUpdate()
         }
+    }
+
+    /// Rebuilds the visible-index map for `list`, dropping any entry that we
+    /// don't want to surface in the chat list (mailing lists, unencrypted
+    /// contact requests). Specials such as the archive shortcut are kept.
+    private func computeVisibleIndices(in list: DcChatlist?) -> [Int] {
+        guard let list else { return [] }
+        var result: [Int] = []
+        result.reserveCapacity(list.length)
+        for i in 0..<list.length {
+            let chatId = list.getChatId(index: i)
+            if chatId <= DC_CHAT_ID_LAST_SPECIAL {
+                result.append(i)
+                continue
+            }
+            let chat = dcContext.getChat(chatId: chatId)
+            if chat.isMailinglist {
+                continue
+            }
+            if chat.isContactRequest && !chat.isEncrypted {
+                continue
+            }
+            result.append(i)
+        }
+        return result
+    }
+
+    private func sourceIndex(for row: Int, in indices: [Int]) -> Int? {
+        guard row >= 0 && row < indices.count else { return nil }
+        return indices[row]
     }
 
     func handleOnChatListUpdate() {
@@ -92,14 +129,14 @@ class ChatListViewModel: NSObject {
         if showSearchResults {
             switch searchResultSections[section] {
             case .chats:
-                return searchResultChatList?.length ?? 0
+                return searchResultVisibleIndices.count
             case .contacts:
                 return searchResultContactIds.count
             case .messages:
                 return searchResultMessageIds.count
             }
         }
-        return chatList.length
+        return visibleIndices.count
     }
 
     func cellDataFor(section: Int, row: Int) -> AvatarCellViewModel {
@@ -188,7 +225,8 @@ class ChatListViewModel: NSObject {
         if showSearchResults {
             return nil
         }
-        return chatList.getMsgId(index: row)
+        guard let index = sourceIndex(for: row, in: visibleIndices) else { return nil }
+        return chatList.getMsgId(index: index)
     }
 
     func refreshData() {
@@ -326,8 +364,10 @@ class ChatListViewModel: NSObject {
     func makeChatCellViewModel(index: Int, searchText: String) -> AvatarCellViewModel {
 
         let list: DcChatlist = searchResultChatList ?? chatList
-        let chatId = list.getChatId(index: index)
-        let summary = list.getSummary(index: index)
+        let activeIndices: [Int] = searchResultChatList != nil ? searchResultVisibleIndices : visibleIndices
+        let sourceIdx = sourceIndex(for: index, in: activeIndices) ?? index
+        let chatId = list.getChatId(index: sourceIdx)
+        let summary = list.getSummary(index: sourceIdx)
         let chat = dcContext.getChat(chatId: chatId)
         let unreadMessages = dcContext.getUnreadMessages(chatId: chatId)
 
@@ -401,6 +441,7 @@ class ChatListViewModel: NSObject {
 
     private func resetSearch() {
         searchResultChatList = nil
+        searchResultVisibleIndices = []
         searchResultContactIds = []
         searchResultMessageIds = []
         updateSearchResultSections()
@@ -421,6 +462,7 @@ class ChatListViewModel: NSObject {
 
         // #1 - search for chats with searchPattern in title
         searchResultChatList = dcContext.getChatlist(flags: DC_GCL_NO_SPECIALS, queryString: searchText, queryId: 0)
+        searchResultVisibleIndices = computeVisibleIndices(in: searchResultChatList)
         if let chatlist = searchResultChatList {
             overallCnt += chatlist.length
         }

@@ -3,7 +3,29 @@
     "shortName": "BMChat",
     "longName": "BroMoreChat",
     "desktopPackageName": "bmchat-desktop",
-    "website": "https://bmchat.example"
+    "website": "https://bmchat.example",
+    "tagline": "Свободный мессенджер через почтовые системы",
+    "description": "BMChat combines familiar messenger workflows with decentralized email/chatmail transport."
+  },
+  "endpoints": {
+    "defaultChatmailHost": "",
+    "relayDirectoryUrl": "",
+    "providerOverviewBaseUrl": "",
+    "inviteScheme": "http",
+    "inviteHost": "5.187.4.132",
+    "invitePath": "/i",
+    "legacyInviteHosts": ["i.bmchat.example", "i.delta.chat"],
+    "notificationRegisterUrl": "",
+    "turnServerHost": "",
+    "statsRecipient": "",
+    "updateUrl": "http://5.187.4.132/update.json",
+    "updateApkBaseUrl": "http://5.187.4.132/apk",
+    "websiteUrl": "http://5.187.4.132/"
+  },
+  "mailPolicy": {
+    "allowClassicEmailLogin": true,
+    "showClassicEmailsDefault": "off",
+    "acceptIncomingWithoutChatVersion": false
   },
   "identifiers": {
     "androidApplicationId": "chat.bromore.bmchat",
@@ -11,10 +33,18 @@
     "desktopAppId": "chat.bromore.bmchat.desktop"
   },
   "theme": {
-    "primaryColor": "#2563eb",
-    "accentColor": "#16a34a",
-    "backgroundLight": "#f8fafc",
-    "backgroundDark": "#0f172a"
+    "primaryColor": "#7B1226",
+    "primaryDark": "#2A030D",
+    "primarySoft": "#F4D8DE",
+    "accentColor": "#C62A48",
+    "accentDark": "#8F1830",
+    "backgroundLight": "#FFF7F8",
+    "backgroundDark": "#160208",
+    "surfaceLight": "#FFFFFF",
+    "surfaceDark": "#24050D",
+    "textPrimary": "#1F050B",
+    "textInverse": "#FFF7F8",
+    "borderLight": "#E8C3CB"
   },
   "locales": {
     "default": "ru",
