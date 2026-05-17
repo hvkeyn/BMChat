@@ -1,4 +1,16 @@
 {
+  "bmchat_schedule_message": {
+    "message": "Schedule message"
+  },
+  "bmchat_scheduled_messages": {
+    "message": "Scheduled messages"
+  },
+  "bmchat_schedule_pick_time": {
+    "message": "Pick a time"
+  },
+  "bmchat_schedule_in_the_past": {
+    "message": "Pick a moment in the future."
+  },
   "pref_background_sync_disabled": {
     "message": "Only Synchronize Selected Profile"
   },

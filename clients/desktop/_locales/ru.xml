@@ -297,6 +297,11 @@
     <!-- the "Subject" of an email, use the term common in classic email apps -->
     <string name="subject">Тема</string>
     <string name="menu_send">Отправить</string>
+    <!-- BMChat 2.49.84 (Phase 6) -->
+    <string name="bmchat_schedule_message">Отложить отправку</string>
+    <string name="bmchat_scheduled_messages">Отложенные сообщения</string>
+    <string name="bmchat_schedule_pick_time">Выберите момент</string>
+    <string name="bmchat_schedule_in_the_past">Выберите момент в будущем.</string>
     <string name="menu_toggle_keyboard">Эмодзи клавиатура</string>
     <string name="menu_edit_group">Редактировать группу</string>
     <string name="menu_group_name_and_image">Название и изображение общего чата</string>

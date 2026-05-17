@@ -280,6 +280,11 @@
     <!-- the "Subject" of an email, use the term common in classic email apps -->
     <string name="subject">Subject</string>
     <string name="menu_send">Send</string>
+    <!-- BMChat 2.49.84 (Phase 6, Phase 4B port): scheduled messages -->
+    <string name="bmchat_schedule_message">Schedule message</string>
+    <string name="bmchat_scheduled_messages">Scheduled messages</string>
+    <string name="bmchat_schedule_pick_time">Pick a time</string>
+    <string name="bmchat_schedule_in_the_past">Pick a moment in the future.</string>
     <string name="menu_toggle_keyboard">Toggle Emoji Keyboard</string>
     <string name="menu_edit_group">Edit Group</string>
     <string name="menu_group_name_and_image">Shared Chat Name and Image</string>

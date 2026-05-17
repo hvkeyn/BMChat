@@ -384,6 +384,12 @@
         <!-- BMChat 2.49.83 (Phase 5C): round video notes are now recorded inline via an overlay
              above the input panel; no stand-alone activity entry is required anymore. -->
 
+        <!-- BMChat 2.49.84 (Phase 4B): scheduled messages browser. -->
+        <activity
+            android:name=".schedule.BMChatScheduledMessagesActivity"
+            android:label="@string/bmchat_scheduled_messages"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <activity
             android:name=".album.BMChatGalleryPickerActivity"
             android:label="@string/bmchat_gallery_picker_title"
