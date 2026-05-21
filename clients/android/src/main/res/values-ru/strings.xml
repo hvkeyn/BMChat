@@ -1555,6 +1555,17 @@
     <string name="bmchat_fg_notification_text">Готов получать сообщения в фоне</string>
     <string name="bmchat_hide_fg_notification_title">Скрывать значок BMChat в шторке</string>
     <string name="bmchat_hide_fg_notification_summary">Чистая шторка как у Telegram, но на Samsung One UI и MIUI Android может прибить фоновый процесс — сообщения тогда приходят пачкой только после открытия приложения. Если новые письма перестали падать в реальном времени — выключите.</string>
+
+    <!-- BMChat 2.49.85: live status notification. -->
+    <string name="bmchat_status_online">BMChat ● Связь есть</string>
+    <string name="bmchat_status_working">BMChat ● Подключение…</string>
+    <string name="bmchat_status_offline">BMChat ● Нет связи</string>
+    <string name="bmchat_status_no_sync_yet">ещё не было</string>
+    <string name="bmchat_status_summary">Обновлено: %1$s</string>
+    <string name="bmchat_status_summary_with_unread">%1$d непрочитанных · обновлено %2$s</string>
+    <string name="bmchat_status_last_sync_line">Последняя проверка: %1$s</string>
+    <string name="bmchat_status_unread_line">Непрочитанных: %1$d</string>
+    <string name="bmchat_status_accounts_line">Аккаунтов: %1$d</string>
     <string name="bmchat_storage_title">Память и данные</string>
     <string name="bmchat_storage_summary">Использование памяти, очистка кэша и очистка почтового сервера</string>
     <string name="bmchat_storage_loading">Подсчитываем память…</string>

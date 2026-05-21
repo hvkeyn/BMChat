@@ -1660,4 +1660,15 @@
     <string name="bmchat_fg_notification_text">Готов получать сообщения в фоне</string>
     <string name="bmchat_hide_fg_notification_title">Скрывать значок BMChat в шторке</string>
     <string name="bmchat_hide_fg_notification_summary">Чистая шторка как у Telegram, но на Samsung One UI и MIUI Android может прибить фоновый процесс — сообщения тогда приходят пачкой только после открытия приложения. Если новые письма перестали падать в реальном времени — выключите.</string>
+
+    <!-- BMChat 2.49.85: live status surface that replaces the static FGS notification. -->
+    <string name="bmchat_status_online">BMChat ● Online</string>
+    <string name="bmchat_status_working">BMChat ● Connecting…</string>
+    <string name="bmchat_status_offline">BMChat ● Offline</string>
+    <string name="bmchat_status_no_sync_yet">never synced yet</string>
+    <string name="bmchat_status_summary">Last sync: %1$s</string>
+    <string name="bmchat_status_summary_with_unread">%1$d unread · last sync %2$s</string>
+    <string name="bmchat_status_last_sync_line">Last sync: %1$s</string>
+    <string name="bmchat_status_unread_line">Unread: %1$d</string>
+    <string name="bmchat_status_accounts_line">Accounts: %1$d</string>
 </resources>

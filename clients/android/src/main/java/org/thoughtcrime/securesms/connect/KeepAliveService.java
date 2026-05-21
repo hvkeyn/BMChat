@@ -60,6 +60,24 @@ public class KeepAliveService extends Service {
   private boolean isInForeground = false;
 
   /**
+   * BMChat 2.49.85: cached snapshot used to redraw the FGS notification in place. Updated by the
+   * status listener whenever connectivity / fresh-message counters change so we can call
+   * {@link NotificationManager#notify} without rebuilding from scratch each time.
+   */
+  private volatile BMChatStatusManager.StatusInfo cachedStatus;
+  private final BMChatStatusManager.StatusListener statusListener =
+      info -> {
+        cachedStatus = info;
+        if (!isInForeground) return;
+        try {
+          NotificationManager nm = getSystemService(NotificationManager.class);
+          if (nm != null) nm.notify(NotificationCenter.ID_PERMANENT, createNotification());
+        } catch (Throwable t) {
+          Log.w(TAG, "Failed to refresh status notification", t);
+        }
+      };
+
+  /**
    * Starts the service when the user has opted into "reliable mode".
    * Safe to call from any thread, idempotent: when the service is
    * already running we use {@link #ensureForeground} to satisfy
@@ -144,6 +162,9 @@ public class KeepAliveService extends Service {
   public void onCreate() {
     Log.i("BMChat", "*** KeepAliveService.onCreate()");
     s_this = this;
+    BMChatStatusManager manager = BMChatStatusManager.getInstance(this);
+    manager.start();
+    manager.setListener(statusListener);
     ensureForeground();
   }
 
@@ -187,6 +208,12 @@ public class KeepAliveService extends Service {
         PendingIntent.getActivity(
             this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | IntentUtils.FLAG_MUTABLE());
 
+    BMChatStatusManager.StatusInfo info = cachedStatus;
+    if (info == null) {
+      info = BMChatStatusManager.getInstance(this).buildStatus();
+      cachedStatus = info;
+    }
+
     NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
     builder.setPriority(NotificationCompat.PRIORITY_MIN);
     builder.setOngoing(true);
@@ -194,17 +221,32 @@ public class KeepAliveService extends Service {
     builder.setShowWhen(false);
     builder.setSilent(true);
     builder.setVisibility(NotificationCompat.VISIBILITY_SECRET);
-    builder.setColor(ContextCompat.getColor(this, R.color.delta_accent));
+
+    // BMChat 2.49.85: tint the icon by the current connectivity severity. setColor() draws the
+    // small icon and the action buttons in the supplied accent on most launchers, which gives
+    // the user the "one-glance" cue they asked for (зелёный/жёлтый/красный).
+    int accentRes;
+    switch (info.severity) {
+      case OK:
+        accentRes = R.color.bmchat_status_ok;
+        break;
+      case WORKING:
+        accentRes = R.color.bmchat_status_working;
+        break;
+      default:
+        accentRes = R.color.bmchat_status_offline;
+        break;
+    }
+    builder.setColor(ContextCompat.getColor(this, accentRes));
+    builder.setColorized(false);
     builder.setContentIntent(contentIntent);
     builder.setSmallIcon(R.drawable.notification_permanent);
-    // BMChat 2.49.53: use a real, single-line title rather than empty
-    // strings. Samsung One UI was previously falling back to the
-    // launcher app label, producing a "BMChat" row with no body that
-    // users invariably read as "you have a new message". Setting an
-    // explicit title plus a low-importance channel ensures the row
-    // never gets promoted into the alerting cluster.
-    builder.setContentTitle(getString(R.string.bmchat_fg_notification_title));
-    builder.setContentText(getString(R.string.bmchat_fg_notification_text));
+
+    builder.setContentTitle(info.title(this));
+    builder.setContentText(info.summary(this));
+    builder.setStyle(new NotificationCompat.BigTextStyle().bigText(info.details(this)));
+    if (info.unread > 0) builder.setNumber(info.unread);
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       createFgNotificationChannel(this);
       builder.setChannelId(NotificationCenter.CH_PERMANENT);
