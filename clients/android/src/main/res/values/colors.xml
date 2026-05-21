@@ -8,6 +8,11 @@
     <color name="delta_accent">#7B1226</color>
     <color name="delta_accent_darker">#ff8F1830</color>
 
+    <!-- BMChat 2.49.85: live status notification accents. -->
+    <color name="bmchat_status_ok">#2E7D32</color>
+    <color name="bmchat_status_working">#F9A825</color>
+    <color name="bmchat_status_offline">#C62828</color>
+
     <color name="primary_alpha_focus">#887B1226</color>
     <color name="primary_alpha33">#557B1226</color>
 
