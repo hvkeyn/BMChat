@@ -279,23 +279,40 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
   }
 
   /**
-   * BMChat 2.49.86: hide the action bar in landscape so the video viewport truly fills the screen
-   * and toggle `fitsSystemWindows` on the root container at the same time. The portrait layout
-   * needs the insets (so the toolbar reserves room and photos don't slide under the status bar)
-   * but in landscape those same insets create asymmetric padding — status bar + toolbar on top,
-   * navigation bar at the bottom — which is what produced the «video offset down + black strip
-   * on top» bug. Because the activity declares `orientation` in `configChanges`, Android does not
-   * recreate us on rotation, so we have to flip these properties at runtime ourselves; the
-   * `res/layout-land/media_preview_activity.xml` variant only covers the initial inflation when
-   * the activity launches directly in landscape.
+   * BMChat 2.49.87: in landscape we go fully immersive — both the status bar AND the navigation
+   * bar are hidden and the activity content stretches across the whole screen. Toggling
+   * `fitsSystemWindows` alone wasn't enough on Samsung One UI: the OS kept reserving padding for
+   * the action bar / status bar even after we set the flag to false, so the video viewport
+   * still ended up off-centre with a black strip on top. With the system bars hidden the
+   * StyledPlayerView simply receives the full window rect and centres the frame automatically.
+   *
+   * <p>In portrait we restore the system bars and the action bar — photo preview still benefits
+   * from the toolbar (Save / Share / overflow) and the bottom navigation gesture pill.
    */
   private void applyOrientation(@NonNull Configuration config) {
     boolean landscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    Window window = getWindow();
+    if (window != null) {
+      androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, !landscape);
+      androidx.core.view.WindowInsetsControllerCompat controller =
+          androidx.core.view.WindowCompat.getInsetsController(window, window.getDecorView());
+      if (controller != null) {
+        if (landscape) {
+          controller.setSystemBarsBehavior(
+              androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+          controller.hide(
+              androidx.core.view.WindowInsetsCompat.Type.statusBars()
+                  | androidx.core.view.WindowInsetsCompat.Type.navigationBars());
+        } else {
+          controller.show(
+              androidx.core.view.WindowInsetsCompat.Type.statusBars()
+                  | androidx.core.view.WindowInsetsCompat.Type.navigationBars());
+        }
+      }
+    }
     View root = findViewById(android.R.id.content);
     if (root instanceof ViewGroup) {
       ViewGroup container = (ViewGroup) root;
-      // findViewById on android.R.id.content returns the FrameLayout wrapper Android creates
-      // under the decor view; the actual media_preview_activity root is its only child.
       View previewRoot = container.getChildCount() > 0 ? container.getChildAt(0) : null;
       if (previewRoot != null) {
         previewRoot.setFitsSystemWindows(!landscape);
@@ -461,14 +478,17 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
   }
 
   private void performSavetoDisk(@NonNull MediaItem mediaItem) {
-    // BMChat 2.49.86: when a video / media is only partially downloaded, DcMsg.getFileAsFile()
-    // points at the thumbnail JPEG instead of the original mp4. Saving that file produces the
-    // exact "saved a photo instead of a video" report the user described. Trigger a full
-    // download and ask the user to retry once the original is local.
+    String contentType = mediaItem.type;
+    String fileName = mediaItem.name;
+    Uri sourceUri = mediaItem.uri;
+
     if (mediaItem.msgId != DcMsg.DC_MSG_NO_ID) {
       DcMsg dcMsg = dcContext.getMsg(mediaItem.msgId);
       int state = dcMsg.getDownloadState();
       if (state != DcMsg.DC_DOWNLOAD_DONE) {
+        // BMChat 2.49.86 + 87: when DC core only has the partial download (thumbnail JPEG for a
+        // video, header-only for audio) saving would produce the «video as picture» bug. Trigger
+        // a full download and ask the user to retry once the blob is local.
         if (state == DcMsg.DC_DOWNLOAD_AVAILABLE) {
           dcContext.downloadFullMsg(mediaItem.msgId);
         }
@@ -481,12 +501,50 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
             .show();
         return;
       }
+
+      // BMChat 2.49.87: even with DC_DOWNLOAD_DONE the MIME and the on-disk file Delta core
+      // hands back can be out of sync for media that the sender embedded as a thumbnail (e.g.
+      // forwarded videos where the receiver only ever sees the auto-generated JPEG preview).
+      // In that case `getFilemime()` returns `image/jpeg` and `getFileAsFile()` points at the
+      // preview JPEG, so SaveAttachmentTask would dutifully drop a JPEG into Pictures with a
+      // .jpg extension — exactly the «saved a picture instead of the video» bug the user kept
+      // reporting. Trust the ViewType (which always reflects the original intent of the
+      // message), force a video/audio MIME and copy bytes from `dcMsg.getFile()` directly so
+      // routing into Movies/Music is unambiguous.
+      int viewType = dcMsg.getType();
+      String dcFile = dcMsg.getFile();
+      if (dcFile != null && !dcFile.isEmpty()) {
+        sourceUri = Uri.fromFile(new java.io.File(dcFile));
+      }
+      if (viewType == DcMsg.DC_MSG_VIDEO && (contentType == null || !contentType.startsWith("video/"))) {
+        Log.w(TAG, "Save: VIDEO viewtype but MIME=" + contentType + "; coercing to video/mp4");
+        contentType = "video/mp4";
+      } else if ((viewType == DcMsg.DC_MSG_AUDIO || viewType == DcMsg.DC_MSG_VOICE)
+          && (contentType == null || !contentType.startsWith("audio/"))) {
+        Log.w(TAG, "Save: AUDIO viewtype but MIME=" + contentType + "; coercing to audio/mpeg");
+        contentType = "audio/mpeg";
+      }
     }
+
+    if (contentType == null) contentType = "application/octet-stream";
+
+    // BMChat 2.49.87: surface that the save started so users on slow disks see progress even
+    // before the ProgressDialog has a chance to lay out. We pass the resolved MIME family so
+    // the toast reads «Saving video…» / «Saving audio…» / «Saving image…».
+    String kind = contentType.startsWith("video/") ? "video"
+        : contentType.startsWith("audio/") ? "audio"
+        : contentType.startsWith("image/") ? "image"
+        : "file";
+    android.widget.Toast.makeText(
+            this, getString(R.string.bmchat_save_started, kind), android.widget.Toast.LENGTH_SHORT)
+        .show();
+    Log.i(TAG, "Save: uri=" + sourceUri + " mime=" + contentType + " name=" + fileName);
+
     SaveAttachmentTask saveTask = new SaveAttachmentTask(MediaPreviewActivity.this);
     long saveDate = (mediaItem.date > 0) ? mediaItem.date : System.currentTimeMillis();
     saveTask.executeOnExecutor(
         AsyncTask.THREAD_POOL_EXECUTOR,
-        new Attachment(mediaItem.uri, mediaItem.type, saveDate, mediaItem.name));
+        new Attachment(sourceUri, contentType, saveDate, fileName));
   }
 
   private void showInChat() {
@@ -570,7 +628,36 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
       menu.findItem(R.id.media_preview__edit).setVisible(false);
     }
 
+    // BMChat 2.49.87: Mute item only makes sense for video. For static images we just hide it.
+    MenuItem muteItem = menu.findItem(R.id.bmchat_media_preview__mute);
+    if (muteItem != null) {
+      MediaItem current = getCurrentMediaItem();
+      boolean isVideo = current != null && current.type != null && current.type.startsWith("video/");
+      muteItem.setVisible(isVideo);
+      if (isVideo) {
+        MediaItemAdapter adapter = (MediaItemAdapter) mediaPager.getAdapter();
+        MediaView mv = adapter == null ? null : adapter.getMediaViewFor(mediaPager.getCurrentItem());
+        boolean muted = mv != null && mv.isVideoMuted();
+        muteItem.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+      }
+    }
+
     return true;
+  }
+
+  /**
+   * BMChat 2.49.87: flip mute state on the current page's MediaView and refresh the menu so the
+   * item title updates to match. If we can't find a video — silently no-op (the item is hidden
+   * for non-video pages anyway).
+   */
+  private void toggleVideoMute(@NonNull MenuItem item) {
+    MediaItemAdapter adapter = (MediaItemAdapter) mediaPager.getAdapter();
+    if (adapter == null) return;
+    MediaView mv = adapter.getMediaViewFor(mediaPager.getCurrentItem());
+    if (mv == null) return;
+    boolean nextMuted = !mv.isVideoMuted();
+    mv.setMuted(nextMuted);
+    item.setTitle(nextMuted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
   }
 
   @Override
@@ -586,6 +673,9 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
       return true;
     } else if (itemId == R.id.media_preview__share) {
       share();
+      return true;
+    } else if (itemId == R.id.bmchat_media_preview__mute) {
+      toggleVideoMute(item);
       return true;
     } else if (itemId == R.id.save) {
       saveToDisk();
@@ -746,6 +836,12 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
 
     @Override
     public void pause(int position) {}
+
+    @Nullable
+    @Override
+    public MediaView getMediaViewFor(int position) {
+      return null;
+    }
   }
 
   private static class DcMediaPagerAdapter extends PagerAdapter implements MediaItemAdapter {
@@ -857,6 +953,12 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
       if (mediaView != null) mediaView.pause();
     }
 
+    @Nullable
+    @Override
+    public MediaView getMediaViewFor(int position) {
+      return mediaViews.get(position);
+    }
+
     private int getCursorPosition(int position) {
       if (leftIsRecent) return position;
       else return gallery.getCount() - 1 - position;
@@ -897,5 +999,13 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
     MediaItem getMediaItemFor(int position);
 
     void pause(int position);
+
+    /**
+     * BMChat 2.49.87: lookup helper so the activity can route the mute toggle to whichever
+     * MediaView is currently on screen. May return {@code null} (e.g. for the
+     * SingleItemPagerAdapter or before the view is instantiated) — callers must null-check.
+     */
+    @Nullable
+    MediaView getMediaViewFor(int position);
   }
 }

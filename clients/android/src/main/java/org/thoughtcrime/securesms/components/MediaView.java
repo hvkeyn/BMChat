@@ -79,6 +79,19 @@ public class MediaView extends FrameLayout {
     }
   }
 
+  /**
+   * BMChat 2.49.87: forward mute toggle to the underlying video player; no-op for images.
+   */
+  public void setMuted(boolean muted) {
+    if (this.videoView.resolved()) {
+      this.videoView.get().setMuted(muted);
+    }
+  }
+
+  public boolean isVideoMuted() {
+    return this.videoView.resolved() && this.videoView.get().isMuted();
+  }
+
   public void cleanup() {
     this.imageView.cleanup();
     if (this.videoView.resolved()) {

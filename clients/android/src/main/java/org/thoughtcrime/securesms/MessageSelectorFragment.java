@@ -238,14 +238,31 @@ public abstract class MessageSelectorFragment extends Fragment
         new SaveAttachmentTask.Attachment[ready.size()];
     int index = 0;
     for (DcMsg message : ready) {
+      String mime = message.getFilemime();
+      String filePath = message.getFile();
+      Uri uri =
+          (filePath != null && !filePath.isEmpty())
+              ? Uri.fromFile(new java.io.File(filePath))
+              : Uri.fromFile(message.getFileAsFile());
+      // BMChat 2.49.87: align MIME with ViewType to avoid saving a video as a `.jpg` thumbnail.
+      int vt = message.getType();
+      if (vt == DcMsg.DC_MSG_VIDEO && (mime == null || !mime.startsWith("video/"))) {
+        mime = "video/mp4";
+      } else if ((vt == DcMsg.DC_MSG_AUDIO || vt == DcMsg.DC_MSG_VOICE)
+          && (mime == null || !mime.startsWith("audio/"))) {
+        mime = "audio/mpeg";
+      }
+      if (mime == null) mime = "application/octet-stream";
       attachments[index] =
-          new SaveAttachmentTask.Attachment(
-              Uri.fromFile(message.getFileAsFile()),
-              message.getFilemime(),
-              message.getDateReceived(),
-              message.getFilename());
+          new SaveAttachmentTask.Attachment(uri, mime, message.getDateReceived(), message.getFilename());
       index++;
     }
+    // BMChat 2.49.87: explicit "Saving N files…" feedback in addition to the ProgressDialog.
+    Toast.makeText(
+            getContext(),
+            getString(R.string.bmchat_save_started, String.valueOf(attachments.length)),
+            Toast.LENGTH_SHORT)
+        .show();
     SaveAttachmentTask saveTask = new SaveAttachmentTask(getContext());
     saveTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, attachments);
     if (actionMode != null) actionMode.finish();

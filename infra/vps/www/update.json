@@ -1,15 +1,15 @@
 {
-  "versionCode": 834,
-  "versionName": "2.49.86",
+  "versionCode": 835,
+  "versionName": "2.49.87",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.86.apk",
-  "sha256": "4e17e1eabd61a0549861bfd33374d7c87002be04484297d4e7e1a8efd6dbcc42",
-  "size": 77470648,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.87.apk",
+  "sha256": "f1c13041bec5ecbd6995a6d06aa450493d298c16cd96ae150a7f1531fb89dcfd",
+  "size": 77473395,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-22T17:55:00Z",
+  "publishedAt": "2026-05-22T18:55:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.49.86 — три быстрых фикса по 2.49.85.\n\nИЗМЕНЕНИЯ:\n• Foreground-уведомление статуса: убран дубль строки «BMChat ● Связь есть» внутри развёрнутого блока (она уже отображается в title), теперь раскрытое уведомление показывает три действительно полезные строки: «Непрочитанных: N / Последняя проверка: … / Аккаунтов: K».\n• Полноэкранное видео в landscape: в горизонтальном просмотре видео больше не съезжает вниз с чёрной полосой сверху. Новый landscape-layout убирает `fitsSystemWindows`, action bar временно скрывается, и StyledPlayerView центрирует кадр на весь экран. При повороте экрана те же свойства применяются программно (потому что активити объявлена с `configChanges=orientation`).\n• Save As для медиа: исправлен баг, при котором у не полностью скачанных сообщений сохранялась JPEG-миниатюра вместо оригинала видео/аудио. Теперь приложение проверяет `DownloadState`, автоматически запускает докачку `downloadFullMsg(...)` и просит попробовать «Сохранить» ещё раз через несколько секунд. Дополнительно `SaveAttachmentTask` теперь приводит расширение файла к MIME (например `clip.jpg` с MIME `video/mp4` сохранится как `clip.mp4`), чтобы MediaStore роутил байты в правильную коллекцию (Movies / Music / Pictures).\n\nПЛАНЫ:\n• Phase 6 шаг 2: durable main-process scheduler + порт mini-player / PiP / video notes на Desktop.\n• Phase 7: порт на iOS."
+  "notes": "BMChat 2.49.87 — повторный заход на три проблемы из 2.49.86.\n\nИЗМЕНЕНИЯ:\n• Полноэкранное видео в landscape: теперь принудительно включается immersive mode. Status bar и navigation bar при повороте экрана прячутся целиком (через WindowInsetsControllerCompat.hide(statusBars | navigationBars)), а StyledPlayerView получает полный rect окна и сам центрирует кадр. Это убирает чёрную полосу сверху, которую на Samsung One UI не получалось убрать одним только fitsSystemWindows=false.\n• Mute / Unmute в просмотре медиа: в action bar появился пункт «Без звука / Со звуком», который доступен только когда на экране видео. Внутри VideoPlayer добавлен setMuted(boolean) — ExoPlayer.setVolume(0/1).\n• Save As для медиа: даже при DC_DOWNLOAD_DONE Delta core иногда отдаёт MIME=image/jpeg и путь к JPEG-превью для сообщения, которое по ViewType — видео. Теперь сохранение опирается на dcMsg.getType() (а не только на MIME), forcefully приводит MIME к video/mp4 (или audio/mpeg для аудио / голосовых) и копирует байты из dcMsg.getFile(). Это окончательно убивает баг «сохранилось как картинка вместо видео». Дополнительно показывается мгновенный toast «Сохраняем video…» / «Сохраняем audio…» в дополнение к ProgressDialog, чтобы прогресс был виден сразу.\n• Multi-select Save (из чата): применены те же правила (приоритет ViewType над MIME, dcMsg.getFile() как источник, toast «Сохраняем N файлов…»).\n\nПЛАНЫ:\n• Phase 6 шаг 3: глобальный sticker / GIF picker на Desktop + PiP video viewer.\n• Phase 7: порт на iOS."
 }

@@ -76,6 +76,21 @@ public class VideoPlayer extends FrameLayout {
     }
   }
 
+  /**
+   * BMChat 2.49.87: mute/unmute the playback. Used by the «volume off» toggle in
+   * {@link org.thoughtcrime.securesms.MediaPreviewActivity}'s action bar so users can scroll a
+   * conversation full of voice / video without the audio bleeding out into a quiet room.
+   */
+  public void setMuted(boolean muted) {
+    if (this.exoPlayer != null) {
+      this.exoPlayer.setVolume(muted ? 0f : 1f);
+    }
+  }
+
+  public boolean isMuted() {
+    return this.exoPlayer != null && this.exoPlayer.getVolume() == 0f;
+  }
+
   public void cleanup() {
     if (this.exoPlayer != null) {
       this.exoPlayer.release();
