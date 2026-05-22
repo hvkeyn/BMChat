@@ -1,15 +1,15 @@
 {
-  "versionCode": 838,
-  "versionName": "2.49.90",
+  "versionCode": 839,
+  "versionName": "2.49.91",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.90.apk",
-  "sha256": "9aab57319ffc0eb82eabb84f3e947510209e3e5fa406725aa86d404d4f3aaaf4",
-  "size": 77477368,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.91.apk",
+  "sha256": "8e53c119cd20567f16cf6fc0b6185d0587522f82345a4a1c1b2f07d045bd49e6",
+  "size": 77477942,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-22T20:10:00Z",
+  "publishedAt": "2026-05-22T20:30:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.49.90 — полноценная поддержка Telegram-видео из каналов/чатов.\n\nИЗМЕНЕНИЯ:\n• Корневая причина: Telegram Bot API не скачивает файлы >20 МБ. BMChat публикует их как DC_MSG_IMAGE (JPEG-постер) + скрытый BotMediaMarker с URL прокси /tgmedia/…. Обычные видео (<20 МБ) работали, а пересланные из Telegram — нет, потому что UI открывал MediaPreviewActivity (показывал JPEG) вместо TgMediaPlayerActivity (стримит реальное видео).\n• Новый класс TgStreamableMedia + TgMediaSaveTask: единая точка маршрутизации «это TG-видео-постер» → открыть стриминг-плеер / сохранить MP4 с прокси-URL.\n• ConversationItem, AllMediaGallery, MediaPreviewActivity: при обнаружении BotMediaMarker открывается TgMediaPlayerActivity, а не просмотр JPEG.\n• Экспорт (Save / multi-select): для TG-постеров скачивает реальное видео через HTTP-стрим с прокси в Movies/BMChat, а не JPEG-превью.\n• Вкладка «Видео» в «Приложения и медиафайлы»: теперь включает TG-постеры (DC_MSG_IMAGE с маркером). Вкладка «Фото» их скрывает.\n• TelegramMessageDispatcher: документы с MIME video/* теперь классифицируются как DC_MSG_VIDEO (раньше — DC_MSG_FILE без poster-fallback).\n• TgMediaPlayerActivity: переработан layout (VideoView на весь экран без CoordinatorLayout offset), добавлены кнопки Save и Mute в toolbar, усилен immersive mode.\n\nВАЖНО: уже опубликованные в канале сообщения с маркером заработают сразу после обновления. Старые сообщения без маркера (импортированные до poster-fallback) нужно переслать боту заново."
+  "notes": "BMChat 2.49.91 — панель ExoPlayer над nav bar + отмена Save по «Назад».\n\nИЗМЕНЕНИЯ:\n• VideoPlayer (MediaPreviewActivity): paddingBottom по systemBars inset поднимает ExoPlayer controller (scrubber, 1x, fullscreen) над жестовой панелью Samsung — больше не уходит под кнопки «назад/home».\n• TgMediaPlayerActivity: нижняя панель управления тоже получает bottom margin от insets.\n• SaveAttachmentTask + TgMediaSaveTask: диалог «Сохраняем…» теперь cancelable — системная клавиша «Назад» или кнопка «Отмена» прерывает загрузку (AsyncTask.cancel + удаление частичного файла для TG save)."
 }

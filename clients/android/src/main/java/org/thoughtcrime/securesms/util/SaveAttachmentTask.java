@@ -48,6 +48,7 @@ public class SaveAttachmentTask
         context.getResources().getString(R.string.one_moment),
         context.getResources().getString(R.string.one_moment));
     this.contextReference = new WeakReference<>(context);
+    enableCancelOnBack();
   }
 
   @Override
@@ -69,6 +70,7 @@ public class SaveAttachmentTask
       }
 
       for (Attachment attachment : attachments) {
+        if (isCancelled()) return new Pair<>(FAILURE, null);
         if (attachment != null) {
           uri = saveAttachment(context, attachment);
           if (uri == null) return new Pair<>(FAILURE, null);
@@ -407,6 +409,7 @@ public class SaveAttachmentTask
 
   @Override
   protected void onPostExecute(final Pair<Integer, Uri> result) {
+    if (isCancelled()) return;
     super.onPostExecute(result);
     final Context context = contextReference.get();
     if (context == null) return;

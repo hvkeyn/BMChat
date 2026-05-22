@@ -56,6 +56,7 @@ public class TgMediaSaveTask
         context,
         context.getString(R.string.bmchat_save_started, "video"),
         context.getString(R.string.one_moment));
+    enableCancelOnBack();
   }
 
   @Override
@@ -121,6 +122,11 @@ public class TgMediaSaveTask
       int n;
       long total = 0;
       while ((n = in.read(buf)) >= 0) {
+        if (isCancelled()) {
+          ctx.getContentResolver().delete(outUri, null, null);
+          conn.disconnect();
+          return null;
+        }
         if (n > 0) {
           out.write(buf, 0, n);
           total += n;
@@ -144,6 +150,7 @@ public class TgMediaSaveTask
 
   @Override
   protected void onPostExecute(Pair<Integer, Uri> result) {
+    if (isCancelled()) return;
     super.onPostExecute(result);
     Context ctx = getContext();
     if (ctx == null) return;

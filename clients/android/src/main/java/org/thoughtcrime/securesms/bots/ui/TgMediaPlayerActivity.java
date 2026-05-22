@@ -182,6 +182,12 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
 
     wireControls(url);
 
+    // BMChat 2.49.91: keep the custom controls row above the system nav bar.
+    if (controls != null) {
+      org.thoughtcrime.securesms.util.ViewUtil.applyWindowInsetsAsMargin(
+          controls, false, false, false, true);
+    }
+
     spinner.setVisibility(View.VISIBLE);
     videoView.setVideoURI(Uri.parse(url));
   }

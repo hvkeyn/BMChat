@@ -64,6 +64,25 @@ public class VideoPlayer extends FrameLayout {
     inflate(context, R.layout.video_player, this);
 
     this.exoView = ViewUtil.findById(this, R.id.video_view);
+    applyNavigationBarInsetToControls();
+  }
+
+  /**
+   * BMChat 2.49.91: lift ExoPlayer's bottom controller bar above the system
+   * navigation / gesture pill. Without this padding the scrubber and fullscreen
+   * button sit under Samsung's nav bar and become untappable.
+   */
+  private void applyNavigationBarInsetToControls() {
+    if (exoView == null) return;
+    androidx.core.view.ViewCompat.setOnApplyWindowInsetsListener(
+        exoView,
+        (v, insets) -> {
+          int bottom =
+              insets.getInsets(androidx.core.view.WindowInsetsCompat.Type.systemBars()).bottom;
+          v.setPadding(0, 0, 0, bottom);
+          return insets;
+        });
+    exoView.requestApplyInsets();
   }
 
   public void setVideoSource(@NonNull VideoSlide videoSource, boolean autoplay) {

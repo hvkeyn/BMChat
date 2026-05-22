@@ -24,6 +24,23 @@ public abstract class ProgressDialogAsyncTask<Params, Progress, Result>
     this.message = message;
   }
 
+  /** BMChat 2.49.91: wire hardware-back / dialog cancel to {@link #cancel(boolean)}. */
+  protected void enableCancelOnBack() {
+    setCancelable(
+        dialog -> {
+          cancel(true);
+        });
+  }
+
+  @Override
+  protected void onCancelled(@Nullable Result result) {
+    try {
+      if (progress != null) progress.dismiss();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
   public void setCancelable(@Nullable OnCancelListener onCancelListener) {
     this.cancelable = true;
     this.onCancelListener = onCancelListener;
