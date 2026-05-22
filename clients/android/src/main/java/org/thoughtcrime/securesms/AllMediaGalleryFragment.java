@@ -186,6 +186,13 @@ public class AllMediaGalleryFragment extends MessageSelectorFragment
       return;
     }
 
+    // BMChat 2.49.90: Telegram-bot videos published as image posters must
+    // open the streaming player, not MediaPreviewActivity (which would show
+    // the JPEG thumbnail and offer a broken Save).
+    if (org.thoughtcrime.securesms.bots.TgStreamableMedia.openPlayer(context, mediaRecord)) {
+      return;
+    }
+
     Intent intent = new Intent(context, MediaPreviewActivity.class);
     intent.putExtra(MediaPreviewActivity.DC_MSG_ID, mediaRecord.getId());
     intent.putExtra(MediaPreviewActivity.ADDRESS_EXTRA, Address.fromChat(chatId));

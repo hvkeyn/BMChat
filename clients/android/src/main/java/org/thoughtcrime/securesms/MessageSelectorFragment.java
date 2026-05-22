@@ -211,6 +211,12 @@ public abstract class MessageSelectorFragment extends Fragment
     java.util.List<DcMsg> ready = new java.util.ArrayList<>();
     int pending = 0;
     for (DcMsg message : messageRecords) {
+      // BMChat 2.49.90: TG streamable posters always have a local JPEG but
+      // the real bytes live behind the proxy URL — never wait for downloadFullMsg.
+      if (org.thoughtcrime.securesms.bots.TgStreamableMedia.isPoster(message)) {
+        ready.add(message);
+        continue;
+      }
       int state = message.getDownloadState();
       if (state == DcMsg.DC_DOWNLOAD_DONE) {
         ready.add(message);
@@ -234,10 +240,31 @@ public abstract class MessageSelectorFragment extends Fragment
         return;
       }
     }
-    SaveAttachmentTask.Attachment[] attachments =
-        new SaveAttachmentTask.Attachment[ready.size()];
-    int index = 0;
+
+    java.util.List<DcMsg> normalReady = new java.util.ArrayList<>();
     for (DcMsg message : ready) {
+      org.thoughtcrime.securesms.bots.BotMediaMarker.Info tgInfo =
+          org.thoughtcrime.securesms.bots.TgStreamableMedia.info(message);
+      if (tgInfo != null) {
+        org.thoughtcrime.securesms.bots.TgMediaSaveTask tgSave =
+            new org.thoughtcrime.securesms.bots.TgMediaSaveTask(getContext());
+        tgSave.executeOnExecutor(
+            AsyncTask.THREAD_POOL_EXECUTOR,
+            new org.thoughtcrime.securesms.bots.TgMediaSaveTask.Request(
+                tgInfo.url, tgInfo.mime, message.getFilename()));
+      } else {
+        normalReady.add(message);
+      }
+    }
+    if (normalReady.isEmpty()) {
+      if (actionMode != null) actionMode.finish();
+      return;
+    }
+
+    SaveAttachmentTask.Attachment[] attachments =
+        new SaveAttachmentTask.Attachment[normalReady.size()];
+    int index = 0;
+    for (DcMsg message : normalReady) {
       String mime = message.getFilemime();
       String filePath = message.getFile();
       Uri uri =

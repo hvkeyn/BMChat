@@ -14,6 +14,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
@@ -35,6 +36,7 @@ import com.google.android.material.appbar.AppBarLayout;
 
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.bots.TgMediaSaveTask;
 import org.thoughtcrime.securesms.util.DynamicNoActionBarTheme;
 import org.thoughtcrime.securesms.util.IntentUtils;
 
@@ -108,6 +110,9 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
   private boolean isPrepared = false;
   private boolean isFullscreen = false;
   private boolean userSeeking = false;
+  private boolean muted = false;
+  private @Nullable String streamUrl;
+  private @Nullable String streamMime;
 
   private final Handler uiHandler = new Handler(Looper.getMainLooper());
   private final Runnable progressTick = new Runnable() {
@@ -162,6 +167,8 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
     String url = getIntent().getStringExtra(EXTRA_URL);
     String mime = getIntent().getStringExtra(EXTRA_MIME);
     if (TextUtils.isEmpty(url)) { finish(); return; }
+    streamUrl = url;
+    streamMime = mime;
 
     // Hand non-video MIME types straight to the system picker — no
     // point spinning up VideoView for a PDF or an mp3.
@@ -180,11 +187,8 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
   }
 
   private void wireControls(@NonNull String url) {
-    // Tapping the video area toggles the controls overlay. We attach
-    // the click on the stage (the FrameLayout that wraps the video,
-    // the spinner and the controls) so it works even after the
-    // controls have auto-hidden.
-    View stage = findViewById(R.id.tg_player_stage);
+    // Tapping the root toggles the controls overlay.
+    View stage = findViewById(R.id.tg_player_root);
     if (stage != null) {
       stage.setOnClickListener(v -> {
         if (controls.getVisibility() == View.VISIBLE) {
@@ -233,6 +237,7 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
     videoView.setOnPreparedListener((MediaPlayer mp) -> {
       mediaPlayer = mp;
       isPrepared = true;
+      applyMute();
       spinner.setVisibility(View.GONE);
       int dur = videoView.getDuration();
       timeTotalView.setText(dur > 0 ? formatTime(dur) : "0:00");
@@ -324,18 +329,62 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
 
   private void setSystemUiImmersive(boolean immersive) {
     try {
+      View decor = getWindow().getDecorView();
       WindowInsetsControllerCompat ctrl =
-          new WindowInsetsControllerCompat(getWindow(), getWindow().getDecorView());
+          new WindowInsetsControllerCompat(getWindow(), decor);
       if (immersive) {
         ctrl.setSystemBarsBehavior(
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
         ctrl.hide(WindowInsetsCompat.Type.systemBars());
+        decor.setSystemUiVisibility(
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
       } else {
         ctrl.show(WindowInsetsCompat.Type.systemBars());
+        decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
       }
     } catch (Throwable t) {
       Log.w(TAG, "setSystemUiImmersive failed", t);
     }
+  }
+
+  private void applyMute() {
+    if (mediaPlayer == null) return;
+    float vol = muted ? 0f : 1f;
+    mediaPlayer.setVolume(vol, vol);
+  }
+
+  private void toggleMute(@NonNull MenuItem item) {
+    muted = !muted;
+    applyMute();
+    item.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+  }
+
+  private void saveToDisk() {
+    if (TextUtils.isEmpty(streamUrl)) return;
+    TgMediaSaveTask saveTask = new TgMediaSaveTask(this);
+    saveTask.executeOnExecutor(
+        android.os.AsyncTask.THREAD_POOL_EXECUTOR,
+        new TgMediaSaveTask.Request(streamUrl, streamMime, null));
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.tg_media_player, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onPrepareOptionsMenu(Menu menu) {
+    MenuItem mute = menu.findItem(R.id.bmchat_tg_player__mute);
+    if (mute != null) {
+      mute.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+    }
+    return super.onPrepareOptionsMenu(menu);
   }
 
   private void updateProgress() {
@@ -412,7 +461,16 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
+    int id = item.getItemId();
+    if (id == R.id.bmchat_tg_player__mute) {
+      toggleMute(item);
+      return true;
+    }
+    if (id == R.id.bmchat_tg_player__save) {
+      saveToDisk();
+      return true;
+    }
+    if (id == android.R.id.home) {
       // In fullscreen the toolbar is hidden, but the back gesture or
       // hardware back will still come here — fall through to finish.
       if (isFullscreen) {

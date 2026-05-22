@@ -1,152 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Full-screen video player for BMChat Telegram media proxy URLs.
-  VideoView fills the screen; a Telegram-style controls overlay on
-  top exposes play/pause, scrubbing, speed cycling (0.5x .. 2x) and
-  a fullscreen toggle that hides the toolbar / system bars. The
-  spinner sits behind the controls until the first frame is
-  decoded, and a hidden error TextView lets us fall back to a
-  system-picker dialog when the codec is not supported by AOSP
-  MediaPlayer.
+  BMChat 2.49.90: Telegram proxy video player. FrameLayout root (no
+  CoordinatorLayout scrolling behavior) so VideoView fills the entire
+  window and centres correctly in portrait and landscape. Toolbar and
+  controls float as overlays on top of the video.
 -->
-<androidx.coordinatorlayout.widget.CoordinatorLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/tg_player_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000"
-    android:fitsSystemWindows="true">
+    android:fitsSystemWindows="false">
+
+    <VideoView
+        android:id="@+id/tg_player"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center" />
+
+    <ProgressBar
+        android:id="@+id/tg_player_spinner"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:layout_gravity="center"
+        android:indeterminate="true" />
+
+    <TextView
+        android:id="@+id/tg_player_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:textColor="#FFFFFFFF"
+        android:text="@string/bmchat_tg_media_player_error_explain"
+        android:padding="16dp" />
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/tg_player_appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="#99000000">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:minHeight="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
+            android:background="@android:color/transparent"
             app:contentInsetStart="14dp"
             app:contentInsetLeft="14dp"
-            android:elevation="4dp"
-            android:theme="?attr/actionBarStyle" />
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <FrameLayout
-        android:id="@+id/tg_player_stage"
+    <LinearLayout
+        android:id="@+id/tg_player_controls"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:paddingTop="6dp"
+        android:paddingBottom="10dp"
+        android:background="#99000000">
 
-        <VideoView
-            android:id="@+id/tg_player"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center" />
-
-        <ProgressBar
-            android:id="@+id/tg_player_spinner"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_gravity="center"
-            android:indeterminate="true" />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/tg_player_play_pause"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/bmchat_tg_media_player_play_pause"
+            android:src="@drawable/ic_pause_white_36dp"
+            app:tint="#FFFFFFFF" />
 
         <TextView
-            android:id="@+id/tg_player_error"
+            android:id="@+id/tg_player_time_current"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
             android:textColor="#FFFFFFFF"
-            android:text="@string/bmchat_tg_media_player_error_explain"
-            android:padding="16dp" />
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:text="0:00" />
 
-        <!--
-            Telegram-style controls overlay. Sits at the bottom of the
-            video, fades in on tap (handled by Java code) and contains
-            the play/pause button, a scrubber, current/total time and
-            the speed-cycle button. The fullscreen toggle is anchored
-            top-right so it does not collide with the scrubber, since
-            on most clips Telegram puts it in the same spot.
-        -->
-        <LinearLayout
-            android:id="@+id/tg_player_controls"
-            android:layout_width="match_parent"
+        <SeekBar
+            android:id="@+id/tg_player_seek"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingTop="6dp"
-            android:paddingBottom="10dp"
-            android:background="#99000000">
+            android:layout_weight="1"
+            android:max="1000"
+            android:progress="0" />
 
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/tg_player_play_pause"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/bmchat_tg_media_player_play_pause"
-                android:src="@drawable/ic_pause_white_36dp"
-                app:tint="#FFFFFFFF" />
+        <TextView
+            android:id="@+id/tg_player_time_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#CCFFFFFF"
+            android:textSize="12sp"
+            android:fontFamily="monospace"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
+            android:text="0:00" />
 
-            <TextView
-                android:id="@+id/tg_player_time_current"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#FFFFFFFF"
-                android:textSize="12sp"
-                android:fontFamily="monospace"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:text="0:00" />
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/tg_player_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:gravity="center"
+            android:minWidth="48dp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFFFF"
+            android:textSize="13sp"
+            android:padding="6dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:text="1x" />
 
-            <SeekBar
-                android:id="@+id/tg_player_seek"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:max="1000"
-                android:progress="0" />
+        <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/tg_player_fullscreen"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/bmchat_tg_media_player_fullscreen"
+            android:src="@drawable/ic_fullscreen_white_24dp"
+            app:tint="#FFFFFFFF" />
+    </LinearLayout>
 
-            <TextView
-                android:id="@+id/tg_player_time_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#CCFFFFFF"
-                android:textSize="12sp"
-                android:fontFamily="monospace"
-                android:paddingStart="4dp"
-                android:paddingEnd="4dp"
-                android:text="0:00" />
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tg_player_speed"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:gravity="center"
-                android:minWidth="48dp"
-                android:textStyle="bold"
-                android:textColor="#FFFFFFFF"
-                android:textSize="13sp"
-                android:padding="6dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:text="1x" />
-
-            <androidx.appcompat.widget.AppCompatImageButton
-                android:id="@+id/tg_player_fullscreen"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/bmchat_tg_media_player_fullscreen"
-                android:src="@drawable/ic_fullscreen_white_24dp"
-                app:tint="#FFFFFFFF" />
-        </LinearLayout>
-
-    </FrameLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</FrameLayout>

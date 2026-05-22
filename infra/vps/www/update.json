@@ -1,15 +1,15 @@
 {
-  "versionCode": 837,
-  "versionName": "2.49.89",
+  "versionCode": 838,
+  "versionName": "2.49.90",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.89.apk",
-  "sha256": "f619a457f39a380fd6cdcc166ac2f588a4e880974928dc9b77ba240b378f521c",
-  "size": 77473864,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.90.apk",
+  "sha256": "9aab57319ffc0eb82eabb84f3e947510209e3e5fa406725aa86d404d4f3aaaf4",
+  "size": 77477368,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-22T19:45:00Z",
+  "publishedAt": "2026-05-22T20:10:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.49.89 — кардинальный фикс просмотра медиа.\n\nИЗМЕНЕНИЯ:\n• Action bar в MediaPreviewActivity больше не пустой: добавлен явный `onCreateOptionsMenu(...)`. Раньше menu инфлейтился только в `onPrepareOptionsMenu` (вызывается по нажатию overflow ⋮), поэтому пункты с `showAsAction=ifRoom/always` никогда не появлялись как иконки. Теперь Save выведен в action bar как постоянная иконка-скачивание (`showAsAction=always`), Share остаётся, а пункт Mute/Unmute (с иконкой динамика) виден на видео-страницах.\n• Видео больше не «съезжает» вниз. Применена отдельная тема `TextSecure.DarkTheme.MediaPreview` с `windowActionBarOverlay=true` — action bar теперь плавает поверх содержимого, ViewPager растянут на всё окно, и StyledPlayerView центрирует кадр относительно реальной середины экрана. Layout `media_preview_activity.xml` стал `fitsSystemWindows=false`, фон — чёрный. Это работает одинаково и в portrait, и в landscape; immersive mode из 2.49.88 остаётся как дополнительный слой при повороте.\n• Save: если для видео-сообщения у Delta core на диске лежит только thumbnail (файл оканчивается на `.jpg/.jpeg/.png/.webp`), мы больше не пытаемся сохранить эти байты как `.mp4` (получался невоспроизводимый файл, который Android галерея показывала как картинку). Вместо этого вызывается `downloadFullMsg(...)` и показывается toast «Сначала скачайте сообщение…». После того как реальный MP4 окажется в blob-store, повторное Save сохранит уже именно видео.\n• Меню обновляется при свайпе между страницами (mute item корректно прячется для фото).\n\nПЛАНЫ:\n• Параллельно посмотреть почему вкладки Photos / Videos / Audio в шапке канала пустые (отдельный Loader-баг).\n• Phase 6 шаг 3: глобальный sticker / GIF picker + PiP video viewer на Desktop."
+  "notes": "BMChat 2.49.90 — полноценная поддержка Telegram-видео из каналов/чатов.\n\nИЗМЕНЕНИЯ:\n• Корневая причина: Telegram Bot API не скачивает файлы >20 МБ. BMChat публикует их как DC_MSG_IMAGE (JPEG-постер) + скрытый BotMediaMarker с URL прокси /tgmedia/…. Обычные видео (<20 МБ) работали, а пересланные из Telegram — нет, потому что UI открывал MediaPreviewActivity (показывал JPEG) вместо TgMediaPlayerActivity (стримит реальное видео).\n• Новый класс TgStreamableMedia + TgMediaSaveTask: единая точка маршрутизации «это TG-видео-постер» → открыть стриминг-плеер / сохранить MP4 с прокси-URL.\n• ConversationItem, AllMediaGallery, MediaPreviewActivity: при обнаружении BotMediaMarker открывается TgMediaPlayerActivity, а не просмотр JPEG.\n• Экспорт (Save / multi-select): для TG-постеров скачивает реальное видео через HTTP-стрим с прокси в Movies/BMChat, а не JPEG-превью.\n• Вкладка «Видео» в «Приложения и медиафайлы»: теперь включает TG-постеры (DC_MSG_IMAGE с маркером). Вкладка «Фото» их скрывает.\n• TelegramMessageDispatcher: документы с MIME video/* теперь классифицируются как DC_MSG_VIDEO (раньше — DC_MSG_FILE без poster-fallback).\n• TgMediaPlayerActivity: переработан layout (VideoView на весь экран без CoordinatorLayout offset), добавлены кнопки Save и Mute в toolbar, усилен immersive mode.\n\nВАЖНО: уже опубликованные в канале сообщения с маркером заработают сразу после обновления. Старые сообщения без маркера (импортированные до poster-fallback) нужно переслать боту заново."
 }

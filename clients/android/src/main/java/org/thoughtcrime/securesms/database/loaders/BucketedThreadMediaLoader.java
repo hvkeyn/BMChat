@@ -57,9 +57,34 @@ public class BucketedThreadMediaLoader
     BucketedThreadMedia result = new BucketedThreadMedia(getContext());
     DcContext context = DcHelper.getContext(getContext());
     if (chatId != -1 /*0=all, -1=none*/) {
+      boolean videosTabOnly = msgType1 == DcMsg.DC_MSG_VIDEO && msgType2 == 0 && msgType3 == 0;
+      // Photos tab: IMAGE + GIF, viewtype3 left at 0 by AllMediaActivity.
+      boolean photosTabOnly =
+          msgType1 == DcMsg.DC_MSG_IMAGE && msgType2 == DcMsg.DC_MSG_GIF && msgType3 == 0;
+
       int[] messages = context.getChatMedia(chatId, msgType1, msgType2, msgType3);
       for (int nextId : messages) {
-        result.add(context.getMsg(nextId));
+        DcMsg msg = context.getMsg(nextId);
+        // BMChat 2.49.90: TG streamable posters are DC_MSG_IMAGE — keep them
+        // out of the Photos tab (they belong under Videos).
+        if (photosTabOnly
+            && msg.getType() == DcMsg.DC_MSG_IMAGE
+            && org.thoughtcrime.securesms.bots.BotMediaMarker.parse(msg.getText()) != null) {
+          continue;
+        }
+        result.add(msg);
+      }
+
+      // BMChat 2.49.90: those same posters must appear in the Videos tab even
+      // though their viewtype is IMAGE, not VIDEO.
+      if (videosTabOnly) {
+        int[] images = context.getChatMedia(chatId, DcMsg.DC_MSG_IMAGE, 0, 0);
+        for (int nextId : images) {
+          DcMsg msg = context.getMsg(nextId);
+          if (org.thoughtcrime.securesms.bots.BotMediaMarker.parse(msg.getText()) != null) {
+            result.add(msg);
+          }
+        }
       }
     }
 

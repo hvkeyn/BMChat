@@ -418,6 +418,15 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
     }
     leftIsRecent = getIntent().getBooleanExtra(LEFT_IS_RECENT_EXTRA, false);
     restartItem = -1;
+
+    // BMChat 2.49.90: Telegram streamable posters are stored as images. If we
+    // were opened for such a message, hand off to TgMediaPlayerActivity and bail
+    // — MediaPreviewActivity only knows how to show the JPEG thumbnail.
+    if (messageRecord != null
+        && org.thoughtcrime.securesms.bots.TgStreamableMedia.isPoster(messageRecord)) {
+      org.thoughtcrime.securesms.bots.TgStreamableMedia.openPlayer(this, messageRecord);
+      finish();
+    }
   }
 
   private void initializeMedia() {
@@ -519,6 +528,21 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
 
     if (mediaItem.msgId != DcMsg.DC_MSG_NO_ID) {
       DcMsg dcMsg = dcContext.getMsg(mediaItem.msgId);
+
+      // BMChat 2.49.90: stream the real video from the TG proxy instead of
+      // saving the on-disk JPEG poster.
+      org.thoughtcrime.securesms.bots.BotMediaMarker.Info tgInfo =
+          org.thoughtcrime.securesms.bots.TgStreamableMedia.info(dcMsg);
+      if (tgInfo != null) {
+        org.thoughtcrime.securesms.bots.TgMediaSaveTask saveTask =
+            new org.thoughtcrime.securesms.bots.TgMediaSaveTask(this);
+        saveTask.executeOnExecutor(
+            AsyncTask.THREAD_POOL_EXECUTOR,
+            new org.thoughtcrime.securesms.bots.TgMediaSaveTask.Request(
+                tgInfo.url, tgInfo.mime, fileName));
+        return;
+      }
+
       int state = dcMsg.getDownloadState();
       if (state != DcMsg.DC_DOWNLOAD_DONE) {
         // BMChat 2.49.86 + 87: when DC core only has the partial download (thumbnail JPEG for a

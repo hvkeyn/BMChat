@@ -834,7 +834,9 @@ public final class TelegramMessageDispatcher {
   }
 
   private static boolean isStreamableVideo(@NonNull AttachmentInfo a) {
-    return a.viewType == DcMsg.DC_MSG_VIDEO || a.viewType == DcMsg.DC_MSG_GIF;
+    if (a.viewType == DcMsg.DC_MSG_VIDEO || a.viewType == DcMsg.DC_MSG_GIF) return true;
+    // Channel forwards often arrive as a plain document with video/* MIME.
+    return a.mimeType != null && a.mimeType.startsWith("video/");
   }
 
   /**
@@ -1148,12 +1150,24 @@ public final class TelegramMessageDispatcher {
 
     JSONObject document = m.optJSONObject("document");
     if (document != null) {
+      String mime = document.optString("mime_type", "application/octet-stream");
+      String fileName = document.optString("file_name", "document");
+      // BMChat 2.49.90: Telegram channel forwards frequently wrap MP4s as
+      // generic documents. Treat video/* and audio/* documents like native
+      // video/audio so download + poster fallback + proxy streaming work.
+      int viewType = DcMsg.DC_MSG_FILE;
+      if (mime.startsWith("video/")) {
+        viewType = DcMsg.DC_MSG_VIDEO;
+      } else if (mime.startsWith("audio/")) {
+        viewType = DcMsg.DC_MSG_AUDIO;
+      }
       return new AttachmentInfo(
           document.optString("file_id"),
-          document.optString("file_name", "document"),
-          document.optString("mime_type", "application/octet-stream"),
-          DcMsg.DC_MSG_FILE,
-          0, 0, 0, document.optLong("file_size"), "document");
+          fileName,
+          mime,
+          viewType,
+          0, 0, 0, document.optLong("file_size"), "document",
+          pickThumbFileId(document));
     }
 
     return null;

@@ -1471,11 +1471,10 @@ public class ConversationItem extends BaseConversationItem {
       // an image and would otherwise be handed off to the image
       // viewer, which has no idea how to stream a remote video.
       org.thoughtcrime.securesms.bots.BotMediaMarker.Info info =
-          org.thoughtcrime.securesms.bots.BotMediaMarker.parse(messageRecord.getText());
+          org.thoughtcrime.securesms.bots.TgStreamableMedia.info(messageRecord);
       if (info != null) {
-        Intent intent = org.thoughtcrime.securesms.bots.ui.TgMediaPlayerActivity.newIntent(
-            context, info.url, null, info.mime);
-        context.startActivity(intent);
+        context.startActivity(
+            org.thoughtcrime.securesms.bots.TgStreamableMedia.buildPlayerIntent(context, info));
         return;
       }
       if (slide.isWebxdcDocument()) {
