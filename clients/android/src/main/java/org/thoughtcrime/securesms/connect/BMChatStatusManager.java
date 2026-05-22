@@ -80,15 +80,19 @@ public final class BMChatStatusManager {
       return ctx.getString(R.string.bmchat_status_summary, last);
     }
 
-    /** Multi-line body for BigTextStyle. */
+    /**
+     * Multi-line body for BigTextStyle. We deliberately omit the {@link #title(Context)} line
+     * here — the notification {@code contentTitle} is already rendered above the big-text block,
+     * so repeating «BMChat ● Связь есть» on the first body line just wastes the user's screen
+     * real estate. The body now lists only the three rotating statistics.
+     */
     public @NonNull String details(@NonNull Context ctx) {
       StringBuilder sb = new StringBuilder();
-      sb.append(title(ctx)).append('\n');
       String last = lastSyncMs == 0L
           ? ctx.getString(R.string.bmchat_status_no_sync_yet)
           : DateUtils.getRelativeTimeSpanString(lastSyncMs).toString();
-      sb.append(ctx.getString(R.string.bmchat_status_last_sync_line, last)).append('\n');
       sb.append(ctx.getString(R.string.bmchat_status_unread_line, unread)).append('\n');
+      sb.append(ctx.getString(R.string.bmchat_status_last_sync_line, last)).append('\n');
       sb.append(ctx.getString(R.string.bmchat_status_accounts_line, accountsTotal));
       return sb.toString();
     }

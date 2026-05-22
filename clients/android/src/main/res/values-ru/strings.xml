@@ -1556,6 +1556,10 @@
     <string name="bmchat_hide_fg_notification_title">Скрывать значок BMChat в шторке</string>
     <string name="bmchat_hide_fg_notification_summary">Чистая шторка как у Telegram, но на Samsung One UI и MIUI Android может прибить фоновый процесс — сообщения тогда приходят пачкой только после открытия приложения. Если новые письма перестали падать в реальном времени — выключите.</string>
 
+    <!-- BMChat 2.49.86: download-before-save guard. -->
+    <string name="bmchat_save_need_download">Сначала скачайте сообщение, чтобы сохранить оригинал видео/медиа.</string>
+    <string name="bmchat_save_downloading">Скачиваем… попробуйте «Сохранить» ещё раз через несколько секунд.</string>
+
     <!-- BMChat 2.49.85: live status notification. -->
     <string name="bmchat_status_online">BMChat ● Связь есть</string>
     <string name="bmchat_status_working">BMChat ● Подключение…</string>
