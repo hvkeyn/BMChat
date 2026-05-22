@@ -167,6 +167,10 @@ import {
 } from './cleanup_temp_dir.js'
 import { shouldHandleLinkInMainApp } from '@deltachat-desktop/shared/util.js'
 import { scheduleUpdateCheck as scheduleBMChatUpdateCheck } from './bmchat-updater.js'
+import {
+  initScheduler as initBMChatScheduler,
+  flushPendingDeliveries as flushBMChatScheduledDeliveries,
+} from './scheduled-messages.js'
 
 app.ipcReady = false
 app.isQuitting = false
@@ -291,12 +295,21 @@ async function onReady([_appReady, _loadedState, _appx, _webxdc_cleanup]: [
   // BMChat self-update probe. The function debounces internally so it is
   // safe to call once on every launch even if the user immediately quits.
   scheduleBMChatUpdateCheck()
+  // BMChat 2.49.87 (Phase 6 шаг 2): durable scheduler that lives in the
+  // main process. Loads the queue from `bmchat-scheduled-messages.json`,
+  // re-arms a setTimeout for every pending entry and exposes the
+  // `bmchat:scheduled:*` IPC channels the renderer drives.
+  void initBMChatScheduler()
 }
 
 app.once('ipcReady' as any, () => {
   if (!mainWindow.window) {
     throw new Error('window does not exist, this should never happen')
   }
+  // BMChat 2.49.87: replay any scheduled-message timers whose moment has already passed (the
+  // renderer was hidden when the timeout fired). The renderer will receive `bmchat:scheduled-due`
+  // for each entry and call `sendMsg` itself.
+  flushBMChatScheduledDeliveries()
   // eslint-disable-next-line no-console
   console.timeEnd('init')
   if (process.env.NODE_ENV === 'test') {

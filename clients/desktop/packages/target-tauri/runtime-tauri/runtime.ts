@@ -519,6 +519,51 @@ class TauriRuntime implements Runtime {
   getConfigPath(): string {
     throw new Error('Method not implemented.24')
   }
+  // BMChat 2.49.87 (Phase 6 шаг 2): Tauri target does not have a durable scheduler yet — fall
+  // back to the renderer-side localStorage queue managed by the frontend module. These methods
+  // simply forward to localStorage so the API surface stays consistent across targets.
+  private bmchatScheduledKey = 'bmchat.scheduled-messages.v1'
+  private bmchatLoadFallback(): any[] {
+    try {
+      const raw = window.localStorage.getItem(this.bmchatScheduledKey)
+      if (!raw) return []
+      const parsed = JSON.parse(raw)
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
+  private bmchatPersistFallback(items: any[]): void {
+    try {
+      items.sort((a, b) => a.scheduledAtMs - b.scheduledAtMs)
+      window.localStorage.setItem(this.bmchatScheduledKey, JSON.stringify(items))
+    } catch {
+      // ignore
+    }
+  }
+  async bmchatScheduledList(): Promise<any[]> {
+    return this.bmchatLoadFallback()
+  }
+  async bmchatScheduledPut(msg: any): Promise<any[]> {
+    const items = this.bmchatLoadFallback().filter((m: any) => m.id !== msg.id)
+    items.push(msg)
+    this.bmchatPersistFallback(items)
+    return items
+  }
+  async bmchatScheduledRemove(id: string): Promise<any[]> {
+    const items = this.bmchatLoadFallback().filter((m: any) => m.id !== id)
+    this.bmchatPersistFallback(items)
+    return items
+  }
+  async bmchatScheduledAck(id: string): Promise<any[]> {
+    return this.bmchatScheduledRemove(id)
+  }
+  async bmchatScheduledFlush(): Promise<void> {
+    // No out-of-process scheduler in Tauri yet.
+  }
+  onBMChatScheduledDue(_callback: (msg: any) => void): () => void {
+    return () => {}
+  }
   openWebxdc(messageId: number, params: DcOpenWebxdcParameters): void {
     invoke('open_webxdc', {
       messageId,

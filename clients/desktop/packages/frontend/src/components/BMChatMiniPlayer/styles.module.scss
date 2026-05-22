@@ -1,0 +1,95 @@
+/* BMChat 2.49.87 (Phase 6 шаг 2): Telegram-style mini-player overlay. */
+
+.miniplayer {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  background: var(--bgPrimary, #1f1f24);
+  color: var(--textPrimary, #ffffff);
+  border-radius: 28px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.32);
+  min-width: 280px;
+  max-width: 420px;
+  font-family: inherit;
+}
+
+.playPause {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: none;
+  background: var(--colorPrimary, #7b1226);
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playPause:hover {
+  background: var(--colorPrimaryHover, #8f1830);
+}
+
+.body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.title {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--textPrimary, #ffffff);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time {
+  font-variant-numeric: tabular-nums;
+  font-size: 11px;
+  color: var(--textSecondary, #b6b6bb);
+  min-width: 32px;
+}
+
+.seek {
+  flex: 1 1 auto;
+  accent-color: var(--colorPrimary, #7b1226);
+}
+
+.speed,
+.close {
+  background: transparent;
+  border: none;
+  color: var(--textSecondary, #b6b6bb);
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 13px;
+  border-radius: 8px;
+}
+
+.speed:hover,
+.close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--textPrimary, #ffffff);
+}
+
+.speed {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}

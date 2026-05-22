@@ -21,8 +21,10 @@ async function main() {
 
     initSystemIntegration()
     // BMChat 2.49.84 (Phase 6, Phase 4B port): re-arm any pending scheduled messages so they
-    // fire on time even after the renderer was reloaded.
-    bootstrapScheduledMessages()
+    // fire on time even after the renderer was reloaded. As of 2.49.87 the queue is durable —
+    // it lives in the Electron main process, so this just hooks up the IPC delivery channel
+    // and asks the main process to replay any already-due entries.
+    void bootstrapScheduledMessages()
     const domNode = document.querySelector('#root')
     if (!domNode) {
       throw new Error('No element with ID root in the DOM. Cannot continue')

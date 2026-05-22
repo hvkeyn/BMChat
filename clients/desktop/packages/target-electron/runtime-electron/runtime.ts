@@ -560,6 +560,29 @@ class ElectronRuntime implements Runtime {
   getConfigPath(): string {
     return ipcBackend.sendSync('get-config-path')
   }
+  // BMChat 2.49.87 (Phase 6 шаг 2): durable scheduled-message bridge.
+  bmchatScheduledList(): Promise<any[]> {
+    return ipcBackend.invoke('bmchat:scheduled:list')
+  }
+  bmchatScheduledPut(msg: any): Promise<any[]> {
+    return ipcBackend.invoke('bmchat:scheduled:put', msg)
+  }
+  bmchatScheduledRemove(id: string): Promise<any[]> {
+    return ipcBackend.invoke('bmchat:scheduled:remove', id)
+  }
+  bmchatScheduledAck(id: string): Promise<any[]> {
+    return ipcBackend.invoke('bmchat:scheduled:ack', id)
+  }
+  async bmchatScheduledFlush(): Promise<void> {
+    await ipcBackend.invoke('bmchat:scheduled:flush')
+  }
+  onBMChatScheduledDue(callback: (msg: any) => void): () => void {
+    const handler = (_e: any, msg: any) => callback(msg)
+    ipcBackend.on('bmchat:scheduled-due', handler)
+    return () => {
+      ipcBackend.removeListener('bmchat:scheduled-due', handler)
+    }
+  }
   getAutostartState(): Promise<AutostartState> {
     return ipcBackend.invoke('get-autostart-state')
   }
