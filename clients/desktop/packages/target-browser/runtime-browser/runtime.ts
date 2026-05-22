@@ -864,6 +864,53 @@ class BrowserRuntime implements Runtime {
     this.log.warn('getConfigPath method does not exist in browser.')
     return ''
   }
+  // BMChat 2.49.87 (Phase 6 шаг 2): browser/web target keeps the previous renderer-side
+  // localStorage queue. There is no persistent main process to drive timers, so the
+  // scheduler module in the frontend will still arm a setTimeout itself on bootstrap.
+  private bmchatScheduledKey = 'bmchat.scheduled-messages.v1'
+  private bmchatLoadFallback(): any[] {
+    try {
+      const raw = window.localStorage.getItem(this.bmchatScheduledKey)
+      if (!raw) return []
+      const parsed = JSON.parse(raw)
+      return Array.isArray(parsed) ? parsed : []
+    } catch {
+      return []
+    }
+  }
+  private bmchatPersistFallback(items: any[]): void {
+    try {
+      items.sort((a, b) => a.scheduledAtMs - b.scheduledAtMs)
+      window.localStorage.setItem(this.bmchatScheduledKey, JSON.stringify(items))
+    } catch {
+      // ignore
+    }
+  }
+  async bmchatScheduledList(): Promise<any[]> {
+    return this.bmchatLoadFallback()
+  }
+  async bmchatScheduledPut(msg: any): Promise<any[]> {
+    const items = this.bmchatLoadFallback().filter((m: any) => m.id !== msg.id)
+    items.push(msg)
+    this.bmchatPersistFallback(items)
+    return items
+  }
+  async bmchatScheduledRemove(id: string): Promise<any[]> {
+    const items = this.bmchatLoadFallback().filter((m: any) => m.id !== id)
+    this.bmchatPersistFallback(items)
+    return items
+  }
+  async bmchatScheduledAck(id: string): Promise<any[]> {
+    return this.bmchatScheduledRemove(id)
+  }
+  async bmchatScheduledFlush(): Promise<void> {
+    // The frontend layer arms its own timers in this target; nothing to do here.
+  }
+  onBMChatScheduledDue(_callback: (msg: any) => void): () => void {
+    // The browser target does not have an out-of-process scheduler — delivery happens directly
+    // from the frontend setTimeout, so no IPC events are emitted here.
+    return () => {}
+  }
   getAutostartState(): Promise<AutostartState> {
     return Promise.resolve({
       isSupported: false,

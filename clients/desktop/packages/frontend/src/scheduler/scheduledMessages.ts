@@ -1,60 +1,33 @@
-// BMChat 2.49.84 (Phase 6, port of Android Phase 4B): scheduled messages on the desktop.
+// BMChat 2.49.87 (Phase 6 шаг 2): durable scheduled messages on the desktop. The previous
+// 2.49.84 port stored the queue in renderer-side localStorage — that survived a renderer
+// reload but not the user closing the whole app. The persistent queue now lives in the
+// Electron main process (see `target-electron/src/scheduled-messages.ts`) and is reachable
+// through the abstract `Runtime` interface, so the same module works for the web/Tauri
+// targets too (those still keep a localStorage fallback inside their runtime adapter).
 //
-// The runtime keeps a flat array of pending messages in localStorage and re-arms a
-// setTimeout for each entry on startup. When the timeout fires we call BackendRemote.rpc
-// .sendMsg with the saved payload. localStorage survives renderer reloads but not full
-// app exits — for production-grade durability a later patch should move this state into
-// the Electron main process via IPC, but as a first port this matches what users would
-// expect from a desktop messenger that's been left running.
+// On bootstrap we:
+//   1. Migrate any legacy `bmchat.scheduled-messages.v1` localStorage entries into the
+//      main-process queue (one-shot, then we clear the key).
+//   2. Ask the main process to flush deliveries whose timers have already fired while the
+//      renderer was not yet listening.
+//   3. Subscribe to `onBMChatScheduledDue` so any future timer fire triggers a sendMsg.
 
+import { runtime } from '@deltachat-desktop/runtime-interface'
 import { BackendRemote } from '../backend-com'
 import { getLogger } from '../../../shared/logger'
 
 import type { T } from '@deltachat/jsonrpc-client'
+import type { BMChatScheduledMessage } from '@deltachat-desktop/runtime-interface'
 
 const log = getLogger('scheduler/scheduledMessages')
 
-const STORAGE_KEY = 'bmchat.scheduled-messages.v1'
+const LEGACY_STORAGE_KEY = 'bmchat.scheduled-messages.v1'
 
-export type ScheduledMessage = {
-  id: string
-  accountId: number
-  chatId: number
-  scheduledAtMs: number
-  text: string
-  file?: string | null
-  filename?: string | null
-  viewtype?: T.Viewtype | null
-  quotedMessageId?: number | null
-  createdAtMs: number
-}
+export type ScheduledMessage = BMChatScheduledMessage
 
-const timers = new Map<string, ReturnType<typeof setTimeout>>()
 const listeners = new Set<() => void>()
 let bootstrapped = false
-
-function load(): ScheduledMessage[] {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed)) return []
-    return parsed as ScheduledMessage[]
-  } catch (e) {
-    log.warn('Failed to read scheduled messages from storage', e)
-    return []
-  }
-}
-
-function persist(items: ScheduledMessage[]): void {
-  try {
-    items.sort((a, b) => a.scheduledAtMs - b.scheduledAtMs)
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
-  } catch (e) {
-    log.warn('Failed to persist scheduled messages', e)
-  }
-  notify()
-}
+let inflightSendIds = new Set<string>()
 
 function notify(): void {
   for (const listener of listeners) {
@@ -66,15 +39,28 @@ function notify(): void {
   }
 }
 
-export function listAll(): ScheduledMessage[] {
-  return load()
+export function subscribe(listener: () => void): () => void {
+  listeners.add(listener)
+  return () => {
+    listeners.delete(listener)
+  }
 }
 
-export function listByChat(
+export async function listAll(): Promise<ScheduledMessage[]> {
+  try {
+    return await runtime.bmchatScheduledList()
+  } catch (e) {
+    log.warn('Failed to load scheduled messages from runtime', e)
+    return []
+  }
+}
+
+export async function listByChat(
   accountId: number,
   chatId: number
-): ScheduledMessage[] {
-  return load().filter(m => m.accountId === accountId && m.chatId === chatId)
+): Promise<ScheduledMessage[]> {
+  const items = await listAll()
+  return items.filter(m => m.accountId === accountId && m.chatId === chatId)
 }
 
 export function newId(): string {
@@ -84,48 +70,25 @@ export function newId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`
 }
 
-export function schedule(message: ScheduledMessage): void {
-  const all = load()
-  all.push(message)
-  persist(all)
-  armTimer(message)
+export async function schedule(message: ScheduledMessage): Promise<void> {
+  await runtime.bmchatScheduledPut(message)
+  notify()
 }
 
-export function cancel(id: string): void {
-  const all = load().filter(m => m.id !== id)
-  persist(all)
-  const timer = timers.get(id)
-  if (timer != null) {
-    clearTimeout(timer)
-    timers.delete(id)
-  }
-}
-
-export function subscribe(listener: () => void): () => void {
-  listeners.add(listener)
-  return () => {
-    listeners.delete(listener)
-  }
-}
-
-function armTimer(message: ScheduledMessage): void {
-  const existing = timers.get(message.id)
-  if (existing != null) clearTimeout(existing)
-  const delay = Math.max(0, message.scheduledAtMs - Date.now())
-  const handle = setTimeout(() => {
-    void deliver(message)
-  }, delay)
-  timers.set(message.id, handle)
-  log.debug('Armed scheduled message', message.id, 'in', delay, 'ms')
+export async function cancel(id: string): Promise<void> {
+  await runtime.bmchatScheduledRemove(id)
+  notify()
 }
 
 async function deliver(message: ScheduledMessage): Promise<void> {
+  if (inflightSendIds.has(message.id)) return
+  inflightSendIds.add(message.id)
   try {
     log.info('Delivering scheduled message', message.id)
     await BackendRemote.rpc.sendMsg(message.accountId, message.chatId, {
       file: message.file ?? null,
       filename: message.filename ?? null,
-      viewtype: message.viewtype ?? null,
+      viewtype: (message.viewtype ?? null) as T.Viewtype | null,
       html: null,
       location: null,
       overrideSenderName: null,
@@ -133,22 +96,61 @@ async function deliver(message: ScheduledMessage): Promise<void> {
       quotedText: null,
       text: message.text ?? null,
     })
-    cancel(message.id)
+    await runtime.bmchatScheduledAck(message.id)
+    notify()
   } catch (e) {
     log.error('Failed to send scheduled message', message.id, e)
-    // Leave it in the queue so a future restart retries.
+    // Leave the entry in the queue so the next renderer-ready / next timer retries.
+  } finally {
+    inflightSendIds.delete(message.id)
+  }
+}
+
+async function migrateLegacyEntries(): Promise<void> {
+  try {
+    const raw = window.localStorage.getItem(LEGACY_STORAGE_KEY)
+    if (!raw) return
+    const parsed = JSON.parse(raw)
+    if (!Array.isArray(parsed) || parsed.length === 0) {
+      window.localStorage.removeItem(LEGACY_STORAGE_KEY)
+      return
+    }
+    log.info('Migrating', parsed.length, 'legacy localStorage scheduled messages')
+    for (const entry of parsed) {
+      if (!entry || typeof entry.id !== 'string') continue
+      try {
+        await runtime.bmchatScheduledPut(entry as ScheduledMessage)
+      } catch (e) {
+        log.warn('Failed to migrate scheduled message', entry?.id, e)
+      }
+    }
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY)
+  } catch (e) {
+    log.warn('Legacy scheduled-message migration failed', e)
   }
 }
 
 /**
- * Re-arm pending timers. Should be called once after the renderer is ready and the
- * BackendRemote bridge is wired up. Multiple calls are idempotent.
+ * Wire up the renderer side of the scheduler. Idempotent — multiple calls are no-ops.
+ *
+ * Should be invoked once after the BackendRemote bridge is ready (i.e. after
+ * `runtime.initialize(...)` and after the account list has been hydrated). The function:
+ *   - migrates legacy localStorage queue (if any),
+ *   - subscribes to `bmchat:scheduled-due` events,
+ *   - asks the main process to replay any timers whose moment passed while the renderer was
+ *     offline so we deliver them immediately.
  */
-export function bootstrap(): void {
+export async function bootstrap(): Promise<void> {
   if (bootstrapped) return
   bootstrapped = true
-  for (const msg of load()) {
-    armTimer(msg)
+  try {
+    await migrateLegacyEntries()
+    runtime.onBMChatScheduledDue(msg => {
+      void deliver(msg)
+    })
+    await runtime.bmchatScheduledFlush()
+  } catch (e) {
+    log.warn('Scheduler bootstrap failed; will retry lazily', e)
+    bootstrapped = false
   }
-  log.info('Bootstrapped scheduled messages')
 }

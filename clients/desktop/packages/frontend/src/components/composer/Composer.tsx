@@ -306,7 +306,7 @@ const Composer = forwardRef<
       onConfirm: (scheduledAtMs: number) => {
         const preSendDraftState = draftState
         try {
-          scheduleMessage({
+          void scheduleMessage({
             id: newScheduledMessageId(),
             accountId,
             chatId,

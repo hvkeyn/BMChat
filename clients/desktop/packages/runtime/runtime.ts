@@ -30,6 +30,26 @@ export type DropListener = {
 }
 
 /**
+ * BMChat 2.49.87 (Phase 6 шаг 2): payload exchanged with the durable scheduled-message queue
+ * that lives in the Electron main process. Renderer-side adapter `scheduler/scheduledMessages.ts`
+ * encodes/decodes this shape; on the main side `target-electron/src/scheduled-messages.ts`
+ * holds the canonical JSON queue and dispatches `bmchat:scheduled-due` IPC events.
+ */
+export interface BMChatScheduledMessage {
+  id: string
+  accountId: number
+  chatId: number
+  scheduledAtMs: number
+  text: string
+  file?: string | null
+  filename?: string | null
+  viewtype?: string | null
+  quotedMessageId?: number | null
+  createdAtMs: number
+  deliveryPendingSinceMs?: number | null
+}
+
+/**
  * Offers an abstraction Layer to make it easier to capsulate
  * context specific functions (like electron, browser, tauri, etc)
  */
@@ -108,6 +128,18 @@ export interface Runtime {
   /** return value is error (this comes from electron: TODO convert to real error) */
   openPath(path: string): Promise<string>
   getConfigPath(): string // TODO: rename -> this is for app data directory, it should include the scheme - seems to be only used for bg path right now
+
+  // BMChat 2.49.87 (Phase 6 шаг 2): durable scheduled messages.
+  bmchatScheduledList(): Promise<BMChatScheduledMessage[]>
+  bmchatScheduledPut(msg: BMChatScheduledMessage): Promise<BMChatScheduledMessage[]>
+  bmchatScheduledRemove(id: string): Promise<BMChatScheduledMessage[]>
+  bmchatScheduledAck(id: string): Promise<BMChatScheduledMessage[]>
+  /** Called by renderer once it's ready to receive `onBMChatScheduledDue` events. */
+  bmchatScheduledFlush(): Promise<void>
+  /** Subscribe to delivery events emitted by the main process. */
+  onBMChatScheduledDue(
+    callback: (msg: BMChatScheduledMessage) => void
+  ): () => void
 
   // webxdc
   openWebxdc(msgId: number, params: DcOpenWebxdcParameters): void

@@ -25,6 +25,7 @@ import { InstantOnboardingProvider } from './contexts/InstantOnboardingContext'
 import { MediaPlayerMutexProvider } from './contexts/MediaPlayerMutexContext'
 import { SmallScreenModeMacOSTitleBar } from './components/SmallScreenModeMacOSTitleBar'
 import { NextVoiceMessagePlayerProvider } from './contexts/NextVoiceMessagePlayerContext'
+import { BMChatMiniPlayer } from './components/BMChatMiniPlayer'
 
 const log = getLogger('renderer/ScreenController')
 
@@ -405,6 +406,12 @@ export default class ScreenController extends Component {
                             />
                             {this.renderScreen(this.selectedAccountId)}
                           </div>
+                          {/* BMChat 2.49.87 (Phase 6 шаг 2, Phase 2 desktop port):
+                              Telegram-style mini-player that floats above the chat
+                              while voice / audio is playing. The component listens
+                              to the global MediaPlayerMutex audio element so it
+                              survives switching chats and showing dialogs. */}
+                          <BMChatMiniPlayer />
                         </div>
                       </KeybindingsContextProvider>
                     </DialogContextProvider>
