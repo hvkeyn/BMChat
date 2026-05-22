@@ -89,6 +89,13 @@ public class SaveAttachmentTask
 
     if (fileName == null) fileName = generateOutputFileName(contentType, attachment.date);
     fileName = sanitizeOutputFileName(fileName);
+    // BMChat 2.49.86: when an attachment carries an explicit video/audio MIME, force the saved
+    // file to use the corresponding extension instead of whatever the original filename had. We
+    // hit cases where the source file ended in `.jpg` (because DC core only had the thumbnail
+    // cached) yet the MIME was `video/mp4`; MediaStore then routed the bytes into the Pictures
+    // collection and the user saw a photo where a video was expected. Aligning the extension
+    // keeps MIME and routing in sync.
+    fileName = ensureExtensionMatchesMime(fileName, contentType);
 
     Uri outputUri = getMediaStoreContentUriForType(contentType);
     Uri mediaUri = createOutputUri(outputUri, contentType, fileName);
@@ -271,6 +278,37 @@ public class SaveAttachmentTask
 
   private String sanitizeOutputFileName(@NonNull String fileName) {
     return new File(fileName).getName();
+  }
+
+  /**
+   * BMChat 2.49.86 helper: if the caller-supplied filename has the wrong extension for the
+   * declared MIME (e.g. `clip.jpg` for `video/mp4`), append the right one so MediaStore routes
+   * the bytes into the Movies/Music/Pictures collection that matches the MIME. We only act when
+   * the MIME maps to a known extension and the current extension does not match it.
+   */
+  private @NonNull String ensureExtensionMatchesMime(
+      @NonNull String fileName, @NonNull String contentType) {
+    String expected = MediaUtil.getExtensionFromMimeType(contentType);
+    if (expected == null || expected.isEmpty()) return fileName;
+    String[] parts = getFileNameParts(fileName);
+    String currentExt = parts[1] == null ? "" : parts[1].toLowerCase(Locale.ROOT);
+    if (currentExt.equals(expected.toLowerCase(Locale.ROOT))) return fileName;
+    String currentMime =
+        currentExt.isEmpty()
+            ? null
+            : MimeTypeMap.getSingleton().getMimeTypeFromExtension(currentExt);
+    boolean currentMatchesMimeFamily =
+        currentMime != null && bucketOf(currentMime).equals(bucketOf(contentType));
+    if (currentMatchesMimeFamily) return fileName;
+    return parts[0] + "." + expected;
+  }
+
+  /** Coarse MIME family classifier — "video", "audio", "image" or "other". */
+  private @NonNull String bucketOf(@NonNull String mime) {
+    if (mime.startsWith("video/")) return "video";
+    if (mime.startsWith("audio/")) return "audio";
+    if (mime.startsWith("image/")) return "image";
+    return "other";
   }
 
   private @Nullable Uri createOutputUri(

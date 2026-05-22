@@ -203,10 +203,41 @@ public abstract class MessageSelectorFragment extends Fragment
   }
 
   private void performSave(Set<DcMsg> messageRecords) {
-    SaveAttachmentTask.Attachment[] attachments =
-        new SaveAttachmentTask.Attachment[messageRecords.size()];
-    int index = 0;
+    // BMChat 2.49.86: skip messages whose original file is not on disk yet — otherwise we end up
+    // saving the thumbnail JPEG instead of the actual video/audio (the "сохраняет фото вместо
+    // видео" bug). Trigger a full download for every undownloaded record and ask the user to
+    // retry once everything is local.
+    DcContext dcContext = DcHelper.getContext(getContext());
+    java.util.List<DcMsg> ready = new java.util.ArrayList<>();
+    int pending = 0;
     for (DcMsg message : messageRecords) {
+      int state = message.getDownloadState();
+      if (state == DcMsg.DC_DOWNLOAD_DONE) {
+        ready.add(message);
+      } else {
+        pending++;
+        if (state == DcMsg.DC_DOWNLOAD_AVAILABLE) {
+          dcContext.downloadFullMsg(message.getId());
+        }
+      }
+    }
+    if (pending > 0) {
+      Toast.makeText(
+              getContext(),
+              ready.isEmpty()
+                  ? R.string.bmchat_save_need_download
+                  : R.string.bmchat_save_downloading,
+              Toast.LENGTH_LONG)
+          .show();
+      if (ready.isEmpty()) {
+        if (actionMode != null) actionMode.finish();
+        return;
+      }
+    }
+    SaveAttachmentTask.Attachment[] attachments =
+        new SaveAttachmentTask.Attachment[ready.size()];
+    int index = 0;
+    for (DcMsg message : ready) {
       attachments[index] =
           new SaveAttachmentTask.Attachment(
               Uri.fromFile(message.getFileAsFile()),

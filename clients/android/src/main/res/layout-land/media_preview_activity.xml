@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  BMChat 2.49.86: landscape variant of the media preview screen. The portrait layout uses
+  `fitsSystemWindows="true"` so the toolbar and the system navigation bar reserve their own
+  padding, which is fine for photos because ZoomingImageView happily lives inside the inner
+  rectangle. In landscape the same insets become asymmetric (status bar + toolbar on top, nav
+  bar at the bottom on most Samsung devices) and the video frame ends up offset downwards with
+  a black strip on top, which is the exact bug the user reported. Dropping fitsSystemWindows
+  here turns the whole window into the video viewport so StyledPlayerView centres the frame
+  perfectly. The activity is responsible for hiding the action bar in landscape, see
+  MediaPreviewActivity#applyOrientation().
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="false"
+    android:background="@android:color/black">
+
+    <org.thoughtcrime.securesms.components.viewpager.HackyViewPager
+        android:id="@+id/media_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

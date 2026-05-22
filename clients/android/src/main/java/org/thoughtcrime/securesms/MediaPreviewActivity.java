@@ -125,6 +125,7 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
 
     getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     setContentView(R.layout.media_preview_activity);
+    applyOrientation(getResources().getConfiguration());
 
     editAvatarChatId = getIntent().getIntExtra(EDIT_AVATAR_CHAT_ID, 0);
     @Nullable String title = getIntent().getStringExtra(ACTIVITY_TITLE_EXTRA);
@@ -271,6 +272,51 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
     initializeResources();
   }
 
+  @Override
+  public void onConfigurationChanged(@NonNull Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    applyOrientation(newConfig);
+  }
+
+  /**
+   * BMChat 2.49.86: hide the action bar in landscape so the video viewport truly fills the screen
+   * and toggle `fitsSystemWindows` on the root container at the same time. The portrait layout
+   * needs the insets (so the toolbar reserves room and photos don't slide under the status bar)
+   * but in landscape those same insets create asymmetric padding — status bar + toolbar on top,
+   * navigation bar at the bottom — which is what produced the «video offset down + black strip
+   * on top» bug. Because the activity declares `orientation` in `configChanges`, Android does not
+   * recreate us on rotation, so we have to flip these properties at runtime ourselves; the
+   * `res/layout-land/media_preview_activity.xml` variant only covers the initial inflation when
+   * the activity launches directly in landscape.
+   */
+  private void applyOrientation(@NonNull Configuration config) {
+    boolean landscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    View root = findViewById(android.R.id.content);
+    if (root instanceof ViewGroup) {
+      ViewGroup container = (ViewGroup) root;
+      // findViewById on android.R.id.content returns the FrameLayout wrapper Android creates
+      // under the decor view; the actual media_preview_activity root is its only child.
+      View previewRoot = container.getChildCount() > 0 ? container.getChildAt(0) : null;
+      if (previewRoot != null) {
+        previewRoot.setFitsSystemWindows(!landscape);
+        if (landscape) {
+          previewRoot.setPadding(0, 0, 0, 0);
+          previewRoot.setBackgroundColor(0xFF000000);
+        } else {
+          previewRoot.setBackgroundResource(R.color.gray95);
+        }
+        previewRoot.requestApplyInsets();
+      }
+    }
+    if (getSupportActionBar() != null) {
+      if (landscape) {
+        getSupportActionBar().hide();
+      } else {
+        getSupportActionBar().show();
+      }
+    }
+  }
+
   private void initializeViews() {
     mediaPager = findViewById(R.id.media_pager);
     mediaPager.setOffscreenPageLimit(1);
@@ -415,6 +461,27 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
   }
 
   private void performSavetoDisk(@NonNull MediaItem mediaItem) {
+    // BMChat 2.49.86: when a video / media is only partially downloaded, DcMsg.getFileAsFile()
+    // points at the thumbnail JPEG instead of the original mp4. Saving that file produces the
+    // exact "saved a photo instead of a video" report the user described. Trigger a full
+    // download and ask the user to retry once the original is local.
+    if (mediaItem.msgId != DcMsg.DC_MSG_NO_ID) {
+      DcMsg dcMsg = dcContext.getMsg(mediaItem.msgId);
+      int state = dcMsg.getDownloadState();
+      if (state != DcMsg.DC_DOWNLOAD_DONE) {
+        if (state == DcMsg.DC_DOWNLOAD_AVAILABLE) {
+          dcContext.downloadFullMsg(mediaItem.msgId);
+        }
+        android.widget.Toast.makeText(
+                this,
+                state == DcMsg.DC_DOWNLOAD_IN_PROGRESS
+                    ? R.string.bmchat_save_downloading
+                    : R.string.bmchat_save_need_download,
+                android.widget.Toast.LENGTH_LONG)
+            .show();
+        return;
+      }
+    }
     SaveAttachmentTask saveTask = new SaveAttachmentTask(MediaPreviewActivity.this);
     long saveDate = (mediaItem.date > 0) ? mediaItem.date : System.currentTimeMillis();
     saveTask.executeOnExecutor(
