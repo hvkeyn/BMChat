@@ -279,20 +279,25 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
   }
 
   /**
-   * BMChat 2.49.87: in landscape we go fully immersive — both the status bar AND the navigation
-   * bar are hidden and the activity content stretches across the whole screen. Toggling
-   * `fitsSystemWindows` alone wasn't enough on Samsung One UI: the OS kept reserving padding for
-   * the action bar / status bar even after we set the flag to false, so the video viewport
-   * still ended up off-centre with a black strip on top. With the system bars hidden the
-   * StyledPlayerView simply receives the full window rect and centres the frame automatically.
+   * BMChat 2.49.88: belt-and-suspenders landscape immersive mode. We hit a Samsung One UI quirk
+   * where the new {@code WindowInsetsControllerCompat.hide(systemBars())} call from 2.49.87 was
+   * silently ignored by the OS — status bar + action bar stayed visible and the video kept
+   * sliding down. Now we cover three Android generations at once: (1) the modern AndroidX
+   * inset controller; (2) the pre-30 legacy {@code setSystemUiVisibility} flag combo that One UI
+   * still honours; (3) the cutout layout mode so we get the whole screen even on devices with a
+   * notch. The flag set matches Telegram's video viewer almost verbatim — `IMMERSIVE_STICKY`
+   * means the system bars peek transiently on swipe-from-edge and auto-hide again.
    *
-   * <p>In portrait we restore the system bars and the action bar — photo preview still benefits
-   * from the toolbar (Save / Share / overflow) and the bottom navigation gesture pill.
+   * <p>We also run the same hide on the activity action bar and on the inflated layout root
+   * (background to black, no padding, no insets) — that part has been there since 2.49.87 and
+   * by itself wasn't enough but stays as a safety net so the StyledPlayerView background never
+   * shows grey 16dp gutters in landscape.
    */
   private void applyOrientation(@NonNull Configuration config) {
     boolean landscape = config.orientation == Configuration.ORIENTATION_LANDSCAPE;
     Window window = getWindow();
     if (window != null) {
+      // Modern AndroidX path (API 30+ properly, AndroidX backport for older).
       androidx.core.view.WindowCompat.setDecorFitsSystemWindows(window, !landscape);
       androidx.core.view.WindowInsetsControllerCompat controller =
           androidx.core.view.WindowCompat.getInsetsController(window, window.getDecorView());
@@ -300,14 +305,40 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
         if (landscape) {
           controller.setSystemBarsBehavior(
               androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
-          controller.hide(
-              androidx.core.view.WindowInsetsCompat.Type.statusBars()
-                  | androidx.core.view.WindowInsetsCompat.Type.navigationBars());
+          controller.hide(androidx.core.view.WindowInsetsCompat.Type.systemBars());
         } else {
-          controller.show(
-              androidx.core.view.WindowInsetsCompat.Type.statusBars()
-                  | androidx.core.view.WindowInsetsCompat.Type.navigationBars());
+          controller.show(androidx.core.view.WindowInsetsCompat.Type.systemBars());
         }
+      }
+
+      // Legacy systemUiVisibility flag combo — One UI / MIUI still listen to this even on API 33.
+      // We post() so the changes survive the immediate post-onConfigurationChanged layout pass
+      // and Samsung's status-bar restorer doesn't undo them.
+      View decor = window.getDecorView();
+      if (landscape) {
+        Runnable apply =
+            () ->
+                decor.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        apply.run();
+        decor.post(apply);
+      } else {
+        decor.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+      }
+
+      // Cutout / notch: in landscape let the content extend under the cutout.
+      if (Build.VERSION.SDK_INT >= 28) {
+        WindowManager.LayoutParams params = window.getAttributes();
+        params.layoutInDisplayCutoutMode =
+            landscape
+                ? WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+                : WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_DEFAULT;
+        window.setAttributes(params);
       }
     }
     View root = findViewById(android.R.id.content);
@@ -748,6 +779,9 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
         if (item.recipient != null) item.recipient.addListener(MediaPreviewActivity.this);
 
         initializeActionBar();
+        // BMChat 2.49.88: refresh the action bar menu so the mute toggle hides itself on
+        // image pages and reappears when the user swipes to the next video.
+        invalidateOptionsMenu();
       }
     }
 

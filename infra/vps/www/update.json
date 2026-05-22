@@ -1,15 +1,15 @@
 {
-  "versionCode": 835,
-  "versionName": "2.49.87",
+  "versionCode": 836,
+  "versionName": "2.49.88",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.87.apk",
-  "sha256": "f1c13041bec5ecbd6995a6d06aa450493d298c16cd96ae150a7f1531fb89dcfd",
-  "size": 77473395,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.49.88.apk",
+  "sha256": "c1cdc24f504c5de18a2bad43a2383d1d97bc63e4df29ed222271e6b8f647a02a",
+  "size": 77473537,
   "minSdkVersion": 21,
-  "publishedAt": "2026-05-22T18:55:00Z",
+  "publishedAt": "2026-05-22T19:20:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.49.87 — повторный заход на три проблемы из 2.49.86.\n\nИЗМЕНЕНИЯ:\n• Полноэкранное видео в landscape: теперь принудительно включается immersive mode. Status bar и navigation bar при повороте экрана прячутся целиком (через WindowInsetsControllerCompat.hide(statusBars | navigationBars)), а StyledPlayerView получает полный rect окна и сам центрирует кадр. Это убирает чёрную полосу сверху, которую на Samsung One UI не получалось убрать одним только fitsSystemWindows=false.\n• Mute / Unmute в просмотре медиа: в action bar появился пункт «Без звука / Со звуком», который доступен только когда на экране видео. Внутри VideoPlayer добавлен setMuted(boolean) — ExoPlayer.setVolume(0/1).\n• Save As для медиа: даже при DC_DOWNLOAD_DONE Delta core иногда отдаёт MIME=image/jpeg и путь к JPEG-превью для сообщения, которое по ViewType — видео. Теперь сохранение опирается на dcMsg.getType() (а не только на MIME), forcefully приводит MIME к video/mp4 (или audio/mpeg для аудио / голосовых) и копирует байты из dcMsg.getFile(). Это окончательно убивает баг «сохранилось как картинка вместо видео». Дополнительно показывается мгновенный toast «Сохраняем video…» / «Сохраняем audio…» в дополнение к ProgressDialog, чтобы прогресс был виден сразу.\n• Multi-select Save (из чата): применены те же правила (приоритет ViewType над MIME, dcMsg.getFile() как источник, toast «Сохраняем N файлов…»).\n\nПЛАНЫ:\n• Phase 6 шаг 3: глобальный sticker / GIF picker на Desktop + PiP video viewer.\n• Phase 7: порт на iOS."
+  "notes": "BMChat 2.49.88 — усиленный landscape immersive + invalidate menu при свайпе.\n\nИЗМЕНЕНИЯ:\n• Полноэкранное видео в landscape: на Samsung One UI новый WindowInsetsControllerCompat.hide(systemBars()) из 2.49.87 тихо игнорировался — status bar и action bar оставались видимыми и видео по-прежнему уезжало вниз. Теперь applyOrientation() устанавливает immersive через три механизма параллельно: (а) AndroidX WindowCompat + WindowInsetsControllerCompat; (б) legacy decor.setSystemUiVisibility со связкой LAYOUT_STABLE | LAYOUT_HIDE_NAVIGATION | LAYOUT_FULLSCREEN | HIDE_NAVIGATION | FULLSCREEN | IMMERSIVE_STICKY (One UI и MIUI до сих пор подчиняются именно этим флагам); (в) layoutInDisplayCutoutMode = SHORT_EDGES на API28+, чтобы видео ушло под notch. Флаги переустанавливаются и через decor.post(...), чтобы Samsung'овский post-rotation restorer не откатил их. Background activity content view принудительно ставится в чёрный и обнуляется padding.\n• Mute toggle: при свайпе на следующее медиа теперь вызывается invalidateOptionsMenu(), поэтому пункт «Без звука / Со звуком» корректно прячется на изображениях и снова появляется на видео.\n• Все остальные фиксы из 2.49.87 (Save As через ViewType + dcMsg.getFile(), мгновенный toast «Сохраняем …», multi-select Save с тем же правилом) сохраняются.\n\nПЛАНЫ:\n• Phase 6 шаг 3: глобальный sticker / GIF picker + PiP video viewer на Desktop.\n• Phase 7: iOS port."
 }
