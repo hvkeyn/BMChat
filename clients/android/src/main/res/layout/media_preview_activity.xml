@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- BMChat 2.49.89: fitsSystemWindows is intentionally false. We pair this layout with
+     `TextSecure.DarkTheme.MediaPreview` (windowActionBarOverlay=true) so the action bar
+     floats over the StyledPlayerView. The pager therefore covers the full window and the
+     video centres against the real screen midpoint instead of the area below the toolbar. -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:background="@color/gray95">
+    android:fitsSystemWindows="false"
+    android:background="@android:color/black">
 
     <org.thoughtcrime.securesms.components.viewpager.HackyViewPager
         android:id="@+id/media_pager"

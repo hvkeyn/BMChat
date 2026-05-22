@@ -107,7 +107,11 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
     dynamicTheme =
         new DynamicTheme() {
           public void onCreate(Activity activity) {
-            activity.setTheme(R.style.TextSecure_DarkTheme); // force dark theme
+            // BMChat 2.49.89: use the MediaPreview-specific dark theme. windowActionBarOverlay=true
+            // is the only way to get the StyledPlayerView to centre against the whole window
+            // rect — otherwise the action bar permanently steals a fixed-height stripe at the
+            // top and the video appears to "slide" downwards on every device.
+            activity.setTheme(R.style.TextSecure_DarkTheme_MediaPreview);
           }
 
           public void onResume(Activity activity) {}
@@ -533,19 +537,33 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
         return;
       }
 
-      // BMChat 2.49.87: even with DC_DOWNLOAD_DONE the MIME and the on-disk file Delta core
-      // hands back can be out of sync for media that the sender embedded as a thumbnail (e.g.
-      // forwarded videos where the receiver only ever sees the auto-generated JPEG preview).
-      // In that case `getFilemime()` returns `image/jpeg` and `getFileAsFile()` points at the
-      // preview JPEG, so SaveAttachmentTask would dutifully drop a JPEG into Pictures with a
-      // .jpg extension — exactly the «saved a picture instead of the video» bug the user kept
-      // reporting. Trust the ViewType (which always reflects the original intent of the
-      // message), force a video/audio MIME and copy bytes from `dcMsg.getFile()` directly so
-      // routing into Movies/Music is unambiguous.
+      // BMChat 2.49.87: trust the ViewType — DC core sometimes hands back image/jpeg + a
+      // thumbnail path even when downloadState == DONE (especially for forwarded videos where
+      // the receiver only ever had access to the embedded preview). Force video/audio MIME.
       int viewType = dcMsg.getType();
       String dcFile = dcMsg.getFile();
       if (dcFile != null && !dcFile.isEmpty()) {
         sourceUri = Uri.fromFile(new java.io.File(dcFile));
+      }
+      // BMChat 2.49.89: if the on-disk file Delta core gives us has an image extension while
+      // ViewType is VIDEO, the blob storage only has the thumbnail — saving would write JPEG
+      // bytes into a .mp4 container and the file would refuse to play. Force a download and
+      // bail with an explanatory toast so the user can retry once the real MP4 lands.
+      if (viewType == DcMsg.DC_MSG_VIDEO && dcFile != null) {
+        String lower = dcFile.toLowerCase(java.util.Locale.ROOT);
+        if (lower.endsWith(".jpg")
+            || lower.endsWith(".jpeg")
+            || lower.endsWith(".png")
+            || lower.endsWith(".webp")) {
+          Log.w(TAG, "Save: VIDEO viewtype but on-disk file is " + lower + " (thumbnail-only). Requesting full download.");
+          dcContext.downloadFullMsg(mediaItem.msgId);
+          android.widget.Toast.makeText(
+                  this,
+                  R.string.bmchat_save_need_download,
+                  android.widget.Toast.LENGTH_LONG)
+              .show();
+          return;
+        }
       }
       if (viewType == DcMsg.DC_MSG_VIDEO && (contentType == null || !contentType.startsWith("video/"))) {
         Log.w(TAG, "Save: VIDEO viewtype but MIME=" + contentType + "; coercing to video/mp4");
@@ -637,6 +655,18 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
       AlertDialog dialog = builder.show();
       Util.redPositiveButton(dialog);
     }
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    // BMChat 2.49.89: explicitly inflate the menu here. Previously we only did it in
+    // onPrepareOptionsMenu — that fires when the user actually opens the overflow ⋮ menu, so
+    // any items with showAsAction="ifRoom"/"always" were never shown as icons in the action
+    // bar (users reported the toolbar looking completely empty — no Save, no Share, no mute
+    // toggle). Returning true here makes the platform display the menu in the toolbar.
+    super.onCreateOptionsMenu(menu);
+    getMenuInflater().inflate(R.menu.media_preview, menu);
+    return true;
   }
 
   @Override

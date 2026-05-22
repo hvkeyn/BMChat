@@ -263,6 +263,20 @@
         <item name="search_background">@color/black</item>
     </style>
 
+    <!-- BMChat 2.49.89: MediaPreview-specific dark theme. windowActionBarOverlay=true makes
+         the action bar float over the content area so the StyledPlayerView gets the full
+         window rect (top of the screen is no longer "stolen" by a fixed-height action bar).
+         Background is hard black to match Telegram's preview look. Everything else inherits
+         from the regular TextSecure.DarkTheme. -->
+    <style
+        name="TextSecure.DarkTheme.MediaPreview"
+        parent="@style/TextSecure.DarkTheme">
+        <item name="windowActionBarOverlay">true</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:colorBackground">@android:color/black</item>
+    </style>
+
     <style
         name="TextSecure.ScribbleTheme"
         parent="TextSecure.DarkNoActionBar">
