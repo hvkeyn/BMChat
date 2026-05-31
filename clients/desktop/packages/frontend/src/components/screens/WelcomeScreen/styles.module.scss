@@ -11,28 +11,67 @@
   flex-direction: column;
   align-items: center;
   margin-bottom: 30px;
+  text-align: center;
+
+  /* The source asset has a wide red gradient with the logo + tagline
+     parked roughly in the central 70% of the canvas. Wrapping the
+     <img> in an overflow-hidden container lets us scale the image up
+     so the brand mark fills the welcome card properly instead of
+     swimming in dead space. */
+  .welcomeScreenImageFrame {
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1 / 1;
+    border-radius: 22px;
+    overflow: hidden;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+    background: var(--colorPrimary, #2a030d);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   .welcomeScreenImage {
     width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    /* Crop the surrounding empty gradient so the actual logo dominates. */
+    transform: scale(1.32);
+    transform-origin: center;
+    display: block;
   }
 
   .welcomeScreenTitle {
     color: var(--colorNone);
     font-size: x-large;
     margin-bottom: 0px;
-    margin-top: 10px;
+    margin-top: 14px;
+    text-align: center;
+    line-height: 1.25;
+    max-width: 320px;
   }
 
   @media (max-height: 720px) {
     margin-bottom: 15px;
 
-    .welcomeScreenImage {
-      width: 30vh;
+    .welcomeScreenImageFrame {
+      width: 28vh;
+      max-width: 28vh;
     }
     .welcomeScreenTitle {
       margin-top: 8px;
     }
   }
+}
+
+/* BMChat: center the dialog title inside the welcome dialog so the
+   "Добро пожаловать в BMChat" header reads as a hero label rather
+   than a left-anchored caption. Scoped via :global so we can target
+   the shared <DialogHeading> (an <h4>) without forking the component. */
+.welcomeScreenHeader :global(h4) {
+  justify-content: center;
+  text-align: center;
 }
 
 .welcomeScreenButtonGroup {

@@ -29,6 +29,7 @@ import useDialog from '../../hooks/dialog/useDialog'
 import type { DialogProps } from '../../contexts/DialogContext'
 import useAlertDialog from '../../hooks/dialog/useAlertDialog'
 import QrCodeCopyConfirmationDialog from './QrCodeCopyConfirmationDialog'
+import InviteByEmailDialog from './InviteByEmailDialog'
 import { useRpcFetch } from '../../hooks/useFetch'
 import { SCAN_CONTEXT_TYPE } from '../../hooks/useProcessQr'
 import {
@@ -233,6 +234,14 @@ export function QrCodeShowQrInner({
           <FooterActionButton data-testid='copy-qr-code' onClick={onCopy}>
             <div className='copy-link-icon'></div>
             {tx('menu_copy_link_to_clipboard')}
+          </FooterActionButton>
+          <FooterActionButton
+            data-testid='invite-by-email'
+            onClick={() =>
+              openDialog(InviteByEmailDialog, { inviteLink: sharedInviteLink })
+            }
+          >
+            {tx('bmchat_invite_by_email')}
           </FooterActionButton>
           {onClose && (
             <FooterActionButton onClick={onClose} data-testid='close'>

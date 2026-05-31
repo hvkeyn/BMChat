@@ -3,11 +3,11 @@ export function getHelpMenu() {
   console.info(`Options:
 
 Flag
---                              indicates the end of DeltaChat options
--h, --help                      Print DeltaChat command line options (currently set).
---minimized                     Start deltachat in minimized mode with trayicon (trayicon will be activated
+--                              indicates the end of BMChat options
+-h, --help                      Print BMChat command line options (currently set).
+--minimized                     Start BMChat in minimized mode with trayicon (trayicon will be activated
                                 for this session regardless whether it's disabled)
--v, --version                   Prints DeltaChat version.
+-v, --version                   Prints BMChat version.
 
 Development Options
 --translation-watch             enable auto-reload for _locales/_untranslated_en.json

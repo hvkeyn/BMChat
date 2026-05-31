@@ -6,7 +6,7 @@
 /// so don't forget to reset afterwards with `pnpm -w run reset:node_modules`
 
 import { readFile, mkdir, copyFile, readdir, stat } from 'fs/promises'
-import { existsSync } from 'fs'
+import { existsSync, readdirSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { dirname, isAbsolute, join } from 'path'
 import { parse } from 'yaml'
@@ -125,21 +125,40 @@ if (!destination) {
       .replace(/\//g, '+')
       .replace(/\(|\)/g, '_')
       .replace(/_$/, '')
-    const source = join(
-      pnpmStore,
-      folderInStoreName,
-      'node_modules',
-      name
-    )
+    let source = join(pnpmStore, folderInStoreName, 'node_modules', name)
     const dest = join(destination, name)
     await mkdir(dest, { recursive: true })
     // console.log(source, dest)
 
     if (!existsSync(source)) {
+      // pnpm shortens overly long virtual-store directory names (those with
+      // many peer-dependency suffixes) into a hash, e.g.
+      //   @deltachat+stdio-rpc-server@2.49.0_@deltachat+jsonrpc-client@2.49.0_ws@7.5.10
+      // becomes
+      //   @deltachat+stdio-rpc-server@2.49.0_@d_<hash>
+      // so the name we computed above no longer matches the folder on disk.
+      // Fall back to a prefix match against the actual store contents using
+      // the stable "<pkg>@<version>" head (everything before the first peer
+      // suffix), which is unique per resolved version.
+      const headMatch = folderInStoreName.match(/^(.*?@[^_]+)/)
+      const head = headMatch ? headMatch[1] : folderInStoreName
+      const candidate = readdirSync(pnpmStore).find(entry =>
+        entry.startsWith(head + '_')
+      )
+      if (candidate) {
+        const fallback = join(pnpmStore, candidate, 'node_modules', name)
+        if (existsSync(fallback)) {
+          source = fallback
+        }
+      }
+    }
+
+    if (!existsSync(source)) {
       console.warn(
         `${yellow(
           'WARN:'
-        )} ${folderInStoreName} not found in pnpm store, skipped`, {name}
+        )} ${folderInStoreName} not found in pnpm store, skipped`,
+        { name }
       )
       continue
     }

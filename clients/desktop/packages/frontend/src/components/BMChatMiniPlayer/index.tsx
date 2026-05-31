@@ -85,6 +85,8 @@ export function BMChatMiniPlayer() {
   // Apply persisted speed any time the source changes (new track = new <audio> internally on
   // many sites, but here the global audio element survives, so we restore the rate manually).
   useEffect(() => {
+    // `audio` is a shared DOM element from context; mutating it is intended.
+    // eslint-disable-next-line react-hooks/immutability
     audio.playbackRate = speed
   }, [audio, speed, currentSrc])
 
@@ -117,6 +119,7 @@ export function BMChatMiniPlayer() {
 
   const stop = () => {
     audio.pause()
+    // eslint-disable-next-line react-hooks/immutability
     audio.src = ''
     ctx.stop()
   }
@@ -133,6 +136,7 @@ export function BMChatMiniPlayer() {
     seekingRef.current = false
     const target = e.target as HTMLInputElement
     const t = Number(target.value)
+    // eslint-disable-next-line react-hooks/immutability
     if (isFinite(t)) audio.currentTime = t
   }
 

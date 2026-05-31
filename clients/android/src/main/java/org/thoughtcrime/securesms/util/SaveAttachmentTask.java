@@ -114,8 +114,21 @@ public class SaveAttachmentTask
         return null;
       }
 
+      byte[] header = new byte[16];
+      int headerLen = readAtLeast(inputStream, header);
+      if (contentType.startsWith("video/") && looksLikeImage(header, headerLen)) {
+        Log.w(
+            TAG,
+            "Refusing to save image/thumbnail bytes as video: "
+                + attachment.uri
+                + " mime="
+                + contentType);
+        return null;
+      }
+
       if (Util.equals(outputUri.getScheme(), ContentResolver.SCHEME_FILE)) {
         try (OutputStream outputStream = new FileOutputStream(mediaUri.getPath())) {
+          if (headerLen > 0) outputStream.write(header, 0, headerLen);
           StreamUtil.copy(inputStream, outputStream);
           MediaScannerConnection.scanFile(
               context, new String[] {mediaUri.getPath()}, new String[] {contentType}, null);
@@ -123,7 +136,9 @@ public class SaveAttachmentTask
       } else {
         try (OutputStream outputStream =
             context.getContentResolver().openOutputStream(mediaUri, "w")) {
-          long total = StreamUtil.copy(inputStream, outputStream);
+          long total = headerLen;
+          if (headerLen > 0) outputStream.write(header, 0, headerLen);
+          total += StreamUtil.copy(inputStream, outputStream);
           if (total > 0) {
             updateValues.put(MediaStore.MediaColumns.SIZE, total);
           }
@@ -329,6 +344,9 @@ public class SaveAttachmentTask
               + "] instead.");
       mimeType = contentType;
     }
+    if (contentType.startsWith("video/") || contentType.startsWith("audio/")) {
+      mimeType = contentType;
+    }
 
     ContentValues contentValues = new ContentValues();
     contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, fileName);
@@ -405,6 +423,34 @@ public class SaveAttachmentTask
     else result[1] = "";
 
     return result;
+  }
+
+  /** BMChat 2.49.93: refuse thumbnail JPEG/PNG when caller expects a video file. */
+  private static boolean looksLikeImage(@NonNull byte[] buf, int len) {
+    if (len >= 3 && (buf[0] & 0xFF) == 0xFF && (buf[1] & 0xFF) == 0xD8 && (buf[2] & 0xFF) == 0xFF) {
+      return true;
+    }
+    if (len >= 8
+        && buf[0] == 'P'
+        && buf[1] == 'N'
+        && buf[2] == 'G'
+        && buf[3] == 13
+        && buf[4] == 10
+        && buf[5] == 26
+        && buf[6] == 10) {
+      return true;
+    }
+    return false;
+  }
+
+  private static int readAtLeast(@NonNull InputStream in, @NonNull byte[] buf) throws IOException {
+    int read = 0;
+    while (read < buf.length) {
+      int n = in.read(buf, read, buf.length - read);
+      if (n < 0) break;
+      read += n;
+    }
+    return read;
   }
 
   @Override

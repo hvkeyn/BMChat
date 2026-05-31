@@ -58,8 +58,24 @@ PRIM_SSH "set -e
   chown -R www-data:www-data ${PRIM_ROOT}/index.html ${PRIM_ROOT}/i.html ${PRIM_ROOT}/update.json ${PRIM_ROOT}/desktop-update.json ${PRIM_ROOT}/static
 "
 
-echo "==[ 2/5 ] primary: latest APK already in /var/www/bmchat/apk/ =="
-PRIM_SSH "ls -la ${PRIM_ROOT}/apk/ | tail -5"
+echo "==[ 2/5 ] primary: recent APKs + latest alias ==================="
+LATEST_APKS=$(ls -1t "${LOCAL_ROOT}/apk/"BMChat-foss-debug-*.apk 2>/dev/null | head -n ${MIRROR_KEEP_LAST})
+if [ -z "${LATEST_APKS}" ]; then
+  echo "[primary] WARNING: no APKs in ${LOCAL_ROOT}/apk/, primary won't have any builds"
+else
+  echo "[primary] pushing $(echo "${LATEST_APKS}" | wc -l) APK(s):"
+  echo "${LATEST_APKS}"
+  PRIM_SSH "mkdir -p ${PRIM_ROOT}/apk"
+  sshpass -p "${PRIM_PASS}" rsync "${PRIM_RSYNC_OPTS[@]}" ${LATEST_APKS} \
+    "${PRIM_USER}@${PRIM_HOST}:${PRIM_ROOT}/apk/"
+  NEWEST=$(basename "$(echo "${LATEST_APKS}" | head -n 1)")
+  PRIM_SSH "set -e
+    cd ${PRIM_ROOT}/apk
+    ln -sfn ${NEWEST} BMChat-foss-debug-latest.apk
+    chown -R www-data:www-data ${PRIM_ROOT}/apk
+    ls -la ${PRIM_ROOT}/apk/ | tail -8
+  "
+fi
 
 echo "==[ 3/5 ] primary: desktop binaries + stable aliases ==========="
 if [ -d "${LOCAL_ROOT}/desktop" ] && [ -n "$(ls -A "${LOCAL_ROOT}/desktop" 2>/dev/null)" ]; then

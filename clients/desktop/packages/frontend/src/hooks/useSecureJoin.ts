@@ -3,6 +3,7 @@ import { useCallback } from 'react'
 import useConfirmationDialog from './dialog/useConfirmationDialog'
 import useTranslationFunction from './useTranslationFunction'
 import { BackendRemote } from '../backend-com'
+import { inviteLinkToQrText } from '@deltachat-desktop/shared/util'
 
 import type { T } from '@deltachat/jsonrpc-client'
 import type {
@@ -80,7 +81,12 @@ export default function useSecureJoin() {
         })())
 
       if (userConfirmed) {
-        return await BackendRemote.rpc.secureJoin(accountId, url)
+        // Normalise BMChat/legacy invite hyperlinks so the bundled upstream
+        // core can run the secure-join handshake on them.
+        return await BackendRemote.rpc.secureJoin(
+          accountId,
+          inviteLinkToQrText(url)
+        )
       }
 
       return null

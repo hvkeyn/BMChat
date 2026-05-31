@@ -66,6 +66,18 @@ export default async context => {
     '/app.asar.unpacked/node_modules/@deltachat'
   )
 
+  // ensure the native core prebuild for the target platform is present
+  // ---------------------------------------------------------------------------------
+  // electron-builder's dependency collection / smartUnpack does not reliably
+  // include the `@deltachat/stdio-rpc-server-<platform>-<arch>` package across
+  // all host package-manager setups (with pnpm on Windows the binary ended up
+  // missing entirely, producing an app with no backend). We defensively copy
+  // the matching prebuild out of the source node_modules into the unpacked
+  // ASAR directory before electron-builder assembles the final installer.
+  if (!env['NO_ASAR']) {
+    await ensureCorePrebuildPresent(prebuild_dir, source_dir, context)
+  }
+
   // delete not needed prebuilds
   // ---------------------------------------------------------------------------------
   if (!env['NO_ASAR'] && existsSync(prebuild_dir)) {
@@ -132,6 +144,31 @@ async function copyMapXdc(resources_dir, source_dir, asar) {
     console.log('failed to create dir', destination, error)
   }
   await cp(join(source_dir, 'html-dist/xdcs'), destination, { recursive: true })
+}
+
+async function ensureCorePrebuildPresent(prebuild_dir, source_dir, context) {
+  const platform =
+    context.electronPlatformName === 'mas'
+      ? 'darwin'
+      : context.electronPlatformName
+  const arch = convertArch(context.arch)
+  const pkgName = `stdio-rpc-server-${platform}-${arch}`
+  const src = join(source_dir, 'node_modules/@deltachat', pkgName)
+  const dest = join(prebuild_dir, pkgName)
+
+  if (existsSync(dest)) {
+    // electron-builder already unpacked it; nothing to do.
+    return
+  }
+  if (!existsSync(src)) {
+    console.warn(
+      `afterPack: core prebuild source not found, cannot ensure presence: ${src}`
+    )
+    return
+  }
+  console.log(`afterPack: copying core prebuild ${pkgName} into unpacked ASAR`)
+  await mkdir(prebuild_dir, { recursive: true })
+  await cp(src, dest, { recursive: true })
 }
 
 async function deleteNotNeededPrebuildsFromUnpackedASAR(

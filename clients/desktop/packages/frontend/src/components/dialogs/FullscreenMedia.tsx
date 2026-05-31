@@ -16,6 +16,11 @@ import useTranslationFunction from '../../hooks/useTranslationFunction'
 import { useContextMenuWithActiveState } from '../ContextMenu'
 import useMessage from '../../hooks/chat/useMessage'
 import { useZoomKeyboardShortcuts } from '../../hooks/useZoomKeyboardShortcuts'
+import {
+  parseTgVideoMarker,
+  tgVideoFileName,
+  type TgVideoInfo,
+} from '../attachment/tgVideoMarker'
 
 import type { DialogProps } from '../../contexts/DialogContext'
 
@@ -41,6 +46,7 @@ export enum NeighboringMediaMode {
 type Props = {
   msg: Type.Message
   neighboringMedia: NeighboringMediaMode
+  tgVideo?: TgVideoInfo
 }
 
 export default function FullscreenMedia(props: Props & DialogProps) {
@@ -50,6 +56,7 @@ export default function FullscreenMedia(props: Props & DialogProps) {
   const { onClose } = props
 
   const [msg, setMsg] = useState(props.msg)
+  const [muted, setMuted] = useState(false)
   const { zoomInRef, zoomOutRef, zoomResetRef } = useZoomKeyboardShortcuts()
   const previousNextMessageId = useRef<[number | null, number | null]>([
     null,
@@ -94,6 +101,7 @@ export default function FullscreenMedia(props: Props & DialogProps) {
   }, [props.msg, props.neighboringMedia, accountId])
 
   const { file, fileMime } = msg
+  const tgVideo = props.tgVideo ?? parseTgVideoMarker(msg.text)
 
   if (!file) {
     log.error('file attribute not set in message', msg)
@@ -109,7 +117,9 @@ export default function FullscreenMedia(props: Props & DialogProps) {
     },
     {
       label: tx('menu_export_attachment'),
-      action: onDownload.bind(null, msg),
+      action: tgVideo
+        ? () => runtime.downloadUrl(tgVideo.url, tgVideoFileName(tgVideo, msg.fileName || undefined))
+        : onDownload.bind(null, msg),
     },
     {
       label: tx('show_in_chat'),
@@ -128,7 +138,55 @@ export default function FullscreenMedia(props: Props & DialogProps) {
 
   let elm = null
 
-  if (isImage(fileMime)) {
+  // App-level mute toggle, matching the mobile player. The browser controls
+  // already expose a volume slider, but a dedicated, always-visible mute
+  // button is what users expect from the Android client.
+  const muteButton = (
+    <button
+      type='button'
+      className='fullscreen-mute-btn'
+      title={muted ? tx('bmchat_unmute_audio') : tx('bmchat_mute_audio')}
+      aria-label={muted ? tx('bmchat_unmute_audio') : tx('bmchat_mute_audio')}
+      onClick={() => setMuted(m => !m)}
+      style={{
+        position: 'absolute',
+        top: '12px',
+        right: '12px',
+        zIndex: 3,
+        border: 'none',
+        borderRadius: '50%',
+        width: '40px',
+        height: '40px',
+        cursor: 'pointer',
+        background: 'rgba(0, 0, 0, 0.55)',
+        color: 'white',
+        fontSize: '20px',
+        lineHeight: '40px',
+        textAlign: 'center',
+      }}
+    >
+      {muted ? '\uD83D\uDD07' : '\uD83D\uDD0A'}
+    </button>
+  )
+
+  if (tgVideo) {
+    elm = (
+      <div
+        className='video-with-mute'
+        style={{ position: 'relative', display: 'inline-block' }}
+      >
+        <video
+          className='tg-video-fullscreen'
+          src={tgVideo.url}
+          poster={runtime.transformBlobURL(file)}
+          muted={muted}
+          controls
+          autoPlay
+        />
+        {muteButton}
+      </div>
+    )
+  } else if (isImage(fileMime)) {
     const imageHeight =
       msg.dimensionsHeight < 300 ? 2 * msg.dimensionsHeight : ''
     elm = (
@@ -181,7 +239,20 @@ export default function FullscreenMedia(props: Props & DialogProps) {
   } else if (isAudio(fileMime)) {
     elm = <audio src={runtime.transformBlobURL(file)} controls />
   } else if (isVideo(fileMime)) {
-    elm = <video src={runtime.transformBlobURL(file)} controls autoPlay />
+    elm = (
+      <div
+        className='video-with-mute'
+        style={{ position: 'relative', display: 'inline-block' }}
+      >
+        <video
+          src={runtime.transformBlobURL(file)}
+          muted={muted}
+          controls
+          autoPlay
+        />
+        {muteButton}
+      </div>
+    )
   } else if (!fileMime) {
     // no file mime
     elm = (
@@ -300,7 +371,11 @@ export default function FullscreenMedia(props: Props & DialogProps) {
       {elm && (
         <div className='btn-wrapper' data-no-drag-region>
           <IconButton
-            onClick={onDownload.bind(null, msg)}
+            onClick={
+              tgVideo
+                ? () => runtime.downloadUrl(tgVideo.url, tgVideoFileName(tgVideo, msg.fileName || undefined))
+                : onDownload.bind(null, msg)
+            }
             icon='download'
             size={32}
             coloring='fullscreenControls'

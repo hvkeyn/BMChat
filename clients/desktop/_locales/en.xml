@@ -189,6 +189,7 @@
     <string name="ask_delete_sticker">Delete this sticker?</string>
     <string name="sticker_picker_empty_hint">Tap a sticker to add it here.</string>
     <string name="images">Images</string>
+    <string name="links">Links</string>
     <!-- a noun, used for "Music" and other "Audio" files -->
     <string name="audio">Audio</string>
     <string name="voice_message">Voice Message</string>
@@ -307,6 +308,11 @@
     <string name="invite_friends">Invite Friends</string>
     <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...") -->
     <string name="invite_friends_text">Contact me on BMChat:\n%1$s</string>
+    <string name="bmchat_invite_by_email">Invite by email</string>
+    <string name="bmchat_invite_by_email_explain">Enter an email address. We will start a chat and send your invitation link there, so the person can add you with one click.</string>
+    <string name="bmchat_invite_by_email_sent">Invitation sent</string>
+    <string name="bmchat_mute_audio">Mute audio</string>
+    <string name="bmchat_unmute_audio">Unmute audio</string>
     <string name="menu_copy_selection_to_clipboard">Copy Selection</string>
     <string name="menu_copy_link_to_clipboard">Copy Link</string>
     <string name="menu_copy_text_to_clipboard">Copy Text</string>
@@ -591,6 +597,22 @@
     <string name="multidevice_qr_subtitle">Scan to set up second device for %1$s</string>
     <string name="multidevice_receiver_title">Add as Second Device</string>
     <string name="multidevice_open_settings_on_other_device">On the first device, start BMChat, go to “Settings / Add Second Device“ and scan the code shown there</string>
+    <!-- BMChat: alternative QR-helper flow when desktop camera does not work or is missing -->
+    <string name="bmchat_multidevice_show_helper_qr_button">Use mobile camera instead</string>
+    <string name="bmchat_multidevice_back_to_camera_button">Sign in via another BMChat</string>
+    <string name="bmchat_multidevice_helper_qr_title">Scan with your mobile</string>
+    <string name="bmchat_multidevice_helper_qr_intro">Open the BMChat camera (Settings → Scan QR) on your phone and scan this code. BMChat will jump to “Settings → Add Second Device” and show you the code to scan back here.</string>
+    <string name="bmchat_multidevice_helper_qr_step1">On mobile BMChat scan the code below — it will open “Add Second Device” automatically.</string>
+    <string name="bmchat_multidevice_helper_qr_step2">When mobile shows its QR — press “Paste code” (if you copied the QR text on the phone) or “Load QR from image” (if you took a screenshot).</string>
+    <string name="bmchat_multidevice_helper_qr_paste_button">Paste code from clipboard</string>
+    <string name="bmchat_multidevice_helper_qr_file_button">Load QR from image file</string>
+    <string name="bmchat_multidevice_helper_qr_no_lan_hint">Tip: if both devices are not on the same Wi-Fi network — close this dialog, click “I already have a profile” and choose “Restore from backup file”. On the phone go to Settings → Chats and Media → Export Backup, send the resulting .tar file by any means (Telegram, e-mail, USB drive) and open it here — that path works without a local network.</string>
+    <string name="bmchat_multidevice_helper_qr_paste_empty">Clipboard is empty: no code or image found. Copy the QR from the phone and try again.</string>
+    <string name="bmchat_multidevice_relay_waiting">Waiting for the phone to upload the encrypted profile to the BMChat server…</string>
+    <string name="bmchat_multidevice_relay_uploaded">Profile uploaded. Enter the 6-digit code shown on the phone.</string>
+    <string name="bmchat_multidevice_relay_import_button">Connect</string>
+    <string name="bmchat_multidevice_relay_code_wrong">The code does not match. Check the 6 digits on the phone and try again.</string>
+    <string name="bmchat_media_links_empty_hint">There are no links in this chat yet.</string>
     <string name="multidevice_receiver_scanning_ask">Copy the profile from the other device to this device?</string>
     <string name="multidevice_receiver_needs_update">The profile you want to import is from a newer BMChat version.\n\nTo continue setting up second device, please update this device to the latest version of BMChat.</string>
     <string name="multidevice_abort">Abort setting up second device?</string>

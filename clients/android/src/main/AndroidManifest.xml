@@ -561,6 +561,43 @@
             android:theme="@style/TextSecure.LightTheme"
             android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
 
+        <!-- BMChat 2.49.97: deep-link entry for the desktop "Add as Second
+             Device" helper QR. The desktop encodes "bmchat://second-device"
+             and the user scans it with the mobile camera; we route the
+             intent to a tiny trampoline activity that brings up
+             BackupTransferActivity in SENDER_SHOW_QR mode. -->
+        <activity
+            android:name=".bmchat.SecondDeviceDeepLinkActivity"
+            android:theme="@android:style/Theme.NoDisplay"
+            android:excludeFromRecents="true"
+            android:noHistory="true"
+            android:exported="true"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- scheme matcher is case sensitive, cover the obvious variants -->
+                <data
+                    android:scheme="bmchat"
+                    android:host="second-device" />
+                <data
+                    android:scheme="BMChat"
+                    android:host="second-device"
+                    tools:ignore="AppLinkUrlError" />
+                <data
+                    android:scheme="BMCHAT"
+                    android:host="second-device"
+                    tools:ignore="AppLinkUrlError" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".bmchat.RelaySecondDeviceActivity"
+            android:theme="@style/TextSecure.LightTheme"
+            android:exported="false"
+            android:configChanges="touchscreen|keyboard|keyboardHidden|orientation|screenLayout|screenSize" />
+
         <activity
             android:name=".preferences.ChatBackgroundActivity"
             android:theme="@style/TextSecure.LightTheme"

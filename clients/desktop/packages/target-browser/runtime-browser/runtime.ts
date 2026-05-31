@@ -562,6 +562,9 @@ class BrowserRuntime implements Runtime {
       )
     }
   }
+  async downloadUrl(url: string, _filename: string): Promise<void> {
+    window.open(url, '_blank')?.focus()
+  }
   readClipboardText(): Promise<string> {
     return navigator.clipboard.readText()
   }

@@ -30,6 +30,7 @@ import { selectedAccountId } from '../../ScreenController'
 import { BackendRemote } from '../../backend-com'
 import { useRpcFetch } from '../../hooks/useFetch'
 import { useHasChanged2 } from '../../hooks/useHasChanged'
+import { parseTgVideoMarker } from './tgVideoMarker'
 
 type AttachmentProps = {
   text?: string
@@ -76,6 +77,7 @@ export default function Attachment({
   }
 
   const maxStickerSize = 200
+  const tgVideo = parseTgVideoMarker(message.text)
 
   /**
    * height has to be calculated before images are loaded to enable
@@ -141,6 +143,38 @@ export default function Attachment({
   const withCaption = Boolean(text)
   // For attachments which aren't full-frame
   const withContentBelow = withCaption
+  if (tgVideo && isImage(message.fileMime)) {
+    return (
+      <button
+        type='button'
+        onClick={ev => {
+          ev.stopPropagation()
+          openDialog(FullscreenMedia, {
+            msg: message,
+            neighboringMedia: NeighboringMediaMode.Chat,
+            tgVideo,
+          })
+        }}
+        tabIndex={tabindexForInteractiveContents}
+        className={classNames(
+          'message-attachment-media',
+          'bmchat-tg-video-poster',
+          withCaption ? 'content-below' : null
+        )}
+      >
+        <img
+          className={classNames(
+            'attachment-content',
+            isPortrait(message) ? 'portrait' : null
+          )}
+          src={runtime.transformBlobURL(message.file)}
+          height={calculateHeight(message)}
+        />
+        <span className='bmchat-tg-video-play' aria-hidden='true' />
+      </button>
+    )
+  }
+
   if (isImage(message.fileMime) || message.viewType === 'Sticker') {
     if (!message.file) {
       return (

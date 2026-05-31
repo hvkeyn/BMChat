@@ -21,6 +21,7 @@ import ProxyConfiguration from '../components/dialogs/ProxyConfiguration'
 import { useSettingsStore } from '../stores/settings'
 import TransportsDialog from '../components/dialogs/Transports'
 import useAddTransportDialog from './dialog/useAddTransportDialog'
+import { inviteLinkToQrText } from '@deltachat-desktop/shared/util'
 
 const ALLOWED_QR_CODES_ON_WELCOME_SCREEN: T.Qr['kind'][] = [
   'account',
@@ -204,10 +205,17 @@ export default function useProcessQR() {
   return useCallback(
     async (
       accountId: number,
-      url: string,
+      rawUrl: string,
       scanContext: SCAN_CONTEXT_TYPE,
       callback?: () => void
     ): Promise<void> => {
+      // Normalise BMChat/legacy invite hyperlinks into the raw `OPENPGP4FPR:`
+      // payload. The desktop client bundles the upstream core which only knows
+      // the `i.delta.chat` invite host, so a pasted/scanned BMChat invite link
+      // (`http://5.187.4.132/i#…`) would otherwise be treated as a plain URL
+      // and never add the contact / join the chat.
+      const url = inviteLinkToQrText(rawUrl)
+
       // Check if given string is a valid DeltaChat URI-Scheme and return
       // parsed object, otherwise show an error to the user
       let qr: T.Qr

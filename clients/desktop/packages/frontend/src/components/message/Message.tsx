@@ -26,6 +26,11 @@ import {
 } from './messageFunctions'
 import Attachment from '../attachment/messageAttachment'
 import { isGenericAttachment, isImage, isVideo } from '../attachment/Attachment'
+import {
+  parseTgVideoMarker,
+  stripTgVideoMarker,
+  tgVideoFileName,
+} from '../attachment/tgVideoMarker'
 import { runtime } from '@deltachat-desktop/runtime-interface'
 import { ConversationType } from './MessageList'
 import { getDirection } from '../../utils/getDirection'
@@ -290,6 +295,7 @@ function buildContextMenu(
 
   const showAttachmentOptions = !!message.file
   const showCopyImage = !!message.file && message.viewType === 'Image'
+  const tgVideo = parseTgVideoMarker(message.text)
   const showResend =
     message.sender.id === C.DC_CONTACT_ID_SELF && message.viewType !== 'Call'
 
@@ -369,7 +375,13 @@ function buildContextMenu(
     // Save attachment as
     showAttachmentOptions && {
       label: tx('menu_export_attachment'),
-      action: onDownload.bind(null, message),
+      action: tgVideo
+        ? () =>
+            runtime.downloadUrl(
+              tgVideo.url,
+              tgVideoFileName(tgVideo, message.fileName || undefined)
+            )
+        : onDownload.bind(null, message),
     },
     // copy link
     link !== '' &&
@@ -813,11 +825,13 @@ export default function Message(props: {
     ? true
     : !!message.savedMessageId
 
+  const visibleText = stripTgVideoMarker(text)
+
   let content = (
     <div dir='auto' className='text'>
-      {text !== null ? (
+      {visibleText !== null ? (
         <MessageBody
-          text={text}
+          text={visibleText}
           tabindexForInteractiveContents={tabindexForInteractiveContents}
         />
       ) : null}
@@ -836,7 +850,7 @@ export default function Message(props: {
   if (downloadState !== 'Done') {
     content = (
       <div className={'download'}>
-        {text} {'- '}
+        {visibleText} {'- '}
         {downloadState == 'Failure' && (
           <span key='fail' className={'failed'}>
             {tx('download_failed')}
@@ -867,7 +881,7 @@ export default function Message(props: {
     message?.originalMsgId ||
     chat.isSelfTalk
 
-  const hasText = text !== null && text !== ''
+  const hasText = visibleText !== null && visibleText !== ''
   const fileMime = message.fileMime || null
   const isWithoutText = isMediaWithoutText(fileMime, hasText, message.viewType)
   const showAttachment = (message: T.Message) =>
@@ -952,7 +966,7 @@ export default function Message(props: {
           )}
           {showAttachment(message) && (
             <Attachment
-              text={text || undefined}
+              text={visibleText || undefined}
               message={message}
               tabindexForInteractiveContents={tabindexForInteractiveContents}
             />

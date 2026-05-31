@@ -251,7 +251,7 @@ public abstract class MessageSelectorFragment extends Fragment
         tgSave.executeOnExecutor(
             AsyncTask.THREAD_POOL_EXECUTOR,
             new org.thoughtcrime.securesms.bots.TgMediaSaveTask.Request(
-                tgInfo.url, tgInfo.mime, message.getFilename()));
+                tgInfo.url, tgInfo.mime, message.getFilename(), tgInfo.sizeBytes));
       } else {
         normalReady.add(message);
       }

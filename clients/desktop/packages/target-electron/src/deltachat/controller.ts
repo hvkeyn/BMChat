@@ -1,4 +1,6 @@
 import { app as rawApp, ipcMain } from 'electron'
+import { existsSync } from 'fs'
+import { join } from 'path'
 import {
   yerpc,
   BaseDeltaChat,
@@ -23,6 +25,43 @@ import {
 const app = rawApp as ExtendedAppMainProcess
 const log = getLogger('main/deltachat')
 const logCoreEvent = getLogger('core/event')
+
+/**
+ * Deterministically locates the native deltachat-rpc-server binary that the
+ * afterPack hook copies into `app.asar.unpacked`.
+ *
+ * This is a robustness fallback: on some platforms (observed with pnpm on
+ * Windows) electron-builder fails to add the platform-specific
+ * `@deltachat/stdio-rpc-server-<platform>-<arch>` package to the asar index,
+ * so the package's own `require.resolve`-based lookup throws even though the
+ * prebuilt binary is physically present in `app.asar.unpacked`.
+ */
+function resolveBundledRpcServer(): string | undefined {
+  try {
+    const resourcesPath = process.resourcesPath
+    if (!resourcesPath) {
+      return undefined
+    }
+    const platform = process.platform
+    const arch = process.arch
+    const binName =
+      platform === 'win32' ? 'deltachat-rpc-server.exe' : 'deltachat-rpc-server'
+    const candidate = join(
+      resourcesPath,
+      'app.asar.unpacked',
+      'node_modules',
+      '@deltachat',
+      `stdio-rpc-server-${platform}-${arch}`,
+      binName
+    )
+    if (existsSync(candidate)) {
+      return candidate
+    }
+  } catch (_error) {
+    // ignore – we simply have no bundled fallback in this environment
+  }
+  return undefined
+}
 
 class ElectronMainTransport extends yerpc.BaseTransport {
   constructor(private sender: (message: yerpc.Message) => void) {
@@ -73,6 +112,13 @@ export default class DeltaChatController {
   }
 
   async init() {
+    // Make sure the migration step (which honours DELTA_CHAT_RPC_SERVER) can
+    // also find the core if electron-builder failed to index the prebuild.
+    const bundledRpcServer = resolveBundledRpcServer()
+    if (bundledRpcServer && !process.env['DELTA_CHAT_RPC_SERVER']) {
+      process.env['DELTA_CHAT_RPC_SERVER'] = bundledRpcServer
+    }
+
     log.debug('Check if legacy accounts need migration')
     if (await migrateAccountsIfNeeded(this.cwd, getLogger('migration'))) {
       // Clear some settings that we can't migrate
@@ -84,10 +130,28 @@ export default class DeltaChatController {
     }
 
     log.debug('Initiating DeltaChatNode')
-    let serverPath = await getRPCServerPath({
-      // desktop should only use prebuilds normally
-      disableEnvPath: !rc_config['allow-unsafe-core-replacement'],
-    })
+    let serverPath: string
+    try {
+      serverPath = await getRPCServerPath({
+        // desktop should only use prebuilds normally
+        disableEnvPath: !rc_config['allow-unsafe-core-replacement'],
+      })
+    } catch (error) {
+      // electron-builder sometimes fails to add the platform-specific
+      // stdio-rpc-server package to the asar index (seen with pnpm on
+      // Windows), which makes the package's require.resolve lookup throw.
+      // Fall back to the prebuild that the afterPack hook unpacked.
+      if (bundledRpcServer) {
+        log.warn(
+          'getRPCServerPath failed, using bundled fallback',
+          bundledRpcServer,
+          error
+        )
+        serverPath = bundledRpcServer
+      } else {
+        throw error
+      }
+    }
     if (serverPath.includes('app.asar')) {
       // probably inside of electron build
       serverPath = serverPath.replace('app.asar', 'app.asar.unpacked')

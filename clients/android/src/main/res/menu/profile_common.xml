@@ -10,6 +10,11 @@
         app:showAsAction="never" />
 
     <item
+        android:title="@string/bmchat_share_contact_code"
+        android:id="@+id/menu_bmchat_contact_code"
+        app:showAsAction="never" />
+
+    <item
         android:title="@string/global_menu_edit_desktop"
         android:id="@+id/edit_name"
         android:icon="@drawable/ic_create_white_24dp"

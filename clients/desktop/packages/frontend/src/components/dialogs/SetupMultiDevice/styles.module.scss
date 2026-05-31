@@ -66,6 +66,132 @@
   padding: 4px 22px;
 }
 
+/* BMChat: helper-QR fallback screen for the "Add as Second Device" dialog */
+.helperQrContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 22px 12px;
+}
+
+.helperQrImage {
+  width: 240px;
+  height: 240px;
+  margin: 8px 0 12px;
+  background: #fff;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.helperQrSteps {
+  counter-reset: helper-counter;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  align-self: stretch;
+
+  > li {
+    counter-increment: helper-counter;
+    display: flex;
+    margin-bottom: 8px;
+    font-size: 0.95em;
+
+    &::before {
+      align-items: center;
+      background: var(--colorPrimary, #7b1226);
+      border-radius: 50%;
+      color: #fff;
+      content: counter(helper-counter);
+      display: flex;
+      flex: none;
+      height: 22px;
+      width: 22px;
+      justify-content: center;
+      margin-inline-end: 10px;
+      font-weight: 600;
+    }
+  }
+}
+
+.helperQrInputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-self: stretch;
+  margin-top: 6px;
+  justify-content: center;
+}
+
+.relayStatusBox {
+  align-self: stretch;
+  margin: 8px 0 10px;
+  padding: 10px 12px;
+  border: 1px solid rgba(123, 18, 38, 0.18);
+  border-radius: 10px;
+  background: rgba(123, 18, 38, 0.05);
+  text-align: center;
+  font-weight: 600;
+}
+
+.relayCodeRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.relayCodeInput {
+  width: 96px;
+  padding: 8px 10px;
+  border: 1px solid var(--colorPrimary, #7b1226);
+  border-radius: 8px;
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.helperQrInputButton {
+  padding: 8px 14px;
+  border: 1px solid var(--colorPrimary, #7b1226);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--colorPrimary, #7b1226);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+
+  &:hover {
+    background: rgba(123, 18, 38, 0.08);
+  }
+
+  &:active {
+    background: rgba(123, 18, 38, 0.18);
+  }
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: default;
+  }
+}
+
+.helperQrFallbackHint {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  color: var(--colorNone, #555);
+  background: rgba(123, 18, 38, 0.06);
+  border-left: 3px solid var(--colorPrimary, #7b1226);
+  border-radius: 4px;
+  align-self: stretch;
+}
+
 @media (max-height: 600px) {
   .qrCode {
     max-height: 60vh;

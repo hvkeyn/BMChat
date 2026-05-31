@@ -48,6 +48,10 @@ public final class TgStreamableMedia {
 
   public static @NonNull Intent buildPlayerIntent(
       @NonNull Context context, @NonNull BotMediaMarker.Info info) {
-    return TgMediaPlayerActivity.newIntent(context, info.url, null, info.mime);
+    Intent i = TgMediaPlayerActivity.newIntent(context, info.url, null, info.mime);
+    if (info.sizeBytes > 0) {
+      i.putExtra(TgMediaPlayerActivity.EXTRA_SIZE_BYTES, info.sizeBytes);
+    }
+    return i;
   }
 }

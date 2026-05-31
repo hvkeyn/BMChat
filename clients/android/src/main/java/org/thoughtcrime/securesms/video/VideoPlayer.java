@@ -49,6 +49,7 @@ public class VideoPlayer extends FrameLayout {
 
   @Nullable private SimpleExoPlayer exoPlayer;
   @Nullable private Window window;
+  private boolean muted;
 
   public VideoPlayer(Context context) {
     this(context, null);
@@ -101,13 +102,14 @@ public class VideoPlayer extends FrameLayout {
    * conversation full of voice / video without the audio bleeding out into a quiet room.
    */
   public void setMuted(boolean muted) {
+    this.muted = muted;
     if (this.exoPlayer != null) {
       this.exoPlayer.setVolume(muted ? 0f : 1f);
     }
   }
 
   public boolean isMuted() {
-    return this.exoPlayer != null && this.exoPlayer.getVolume() == 0f;
+    return muted;
   }
 
   public void cleanup() {
@@ -131,6 +133,7 @@ public class VideoPlayer extends FrameLayout {
             .setBandwidthMeter(bandwidthMeter)
             .setLoadControl(loadControl)
             .build();
+    exoPlayer.setVolume(muted ? 0f : 1f);
     exoPlayer.addListener(new ExoPlayerListener(window));
     //noinspection ConstantConditions
     exoView.setPlayer(exoPlayer);

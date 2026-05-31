@@ -72,7 +72,15 @@ build['fileAssociations'] = [
 ]
 
 build['files'] = files
-build['asarUnpack'] = [] // ['./node_modules/@deltachat/stdio-rpc-server']
+// The native core (`deltachat-rpc-server[.exe]`) ships inside the
+// `@deltachat/stdio-rpc-server-<platform>-<arch>` packages and MUST live
+// outside the asar archive so it can be spawned at runtime. electron-builder's
+// `smartUnpack` heuristic does not reliably detect these binaries across all
+// host platforms (it worked for Linux but left Windows packed inside the
+// asar), which produced installers without a working backend. We pin the
+// unpacking explicitly; `afterPackHook` then prunes the prebuilds for the
+// architectures we are not shipping.
+build['asarUnpack'] = ['**/node_modules/@deltachat/stdio-rpc-server-*/**']
 // 'html-dist/xdcs/' should be in 'asarUnpack', but that had "file already exists" errors in the ci
 // see https://github.com/deltachat/deltachat-desktop/pull/3876, so we now do it "manually" in the afterPackHook
 

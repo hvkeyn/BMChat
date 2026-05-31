@@ -204,6 +204,7 @@
     <string name="ask_delete_sticker">Удалить этот стикер?</string>
     <string name="sticker_picker_empty_hint">Нажмите на стикер, чтобы добавить его сюда.</string>
     <string name="images">Изображения</string>
+    <string name="links">Ссылки</string>
     <!-- a noun, used for "Music" and other "Audio" files -->
     <string name="audio">Аудио</string>
     <string name="voice_message">Голосовое сообщение</string>
@@ -324,6 +325,11 @@
     <string name="invite_friends">Пригласить друзей</string>
     <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...") -->
     <string name="invite_friends_text">Свяжитесь со мной через BMChat:\n%1$s</string>
+    <string name="bmchat_invite_by_email">Пригласить по e-mail</string>
+    <string name="bmchat_invite_by_email_explain">Введите адрес электронной почты. Мы создадим чат и отправим туда вашу ссылку-приглашение, чтобы человек мог добавить вас в один клик.</string>
+    <string name="bmchat_invite_by_email_sent">Приглашение отправлено</string>
+    <string name="bmchat_mute_audio">Выключить звук</string>
+    <string name="bmchat_unmute_audio">Включить звук</string>
     <string name="menu_copy_selection_to_clipboard">Копировать выделенное</string>
     <string name="menu_copy_link_to_clipboard">Копировать ссылку</string>
     <string name="menu_copy_text_to_clipboard">Копировать текст</string>
@@ -613,6 +619,22 @@
     <string name="multidevice_qr_subtitle">Отсканируйте, чтобы настроить второе устройство для %1$s</string>
     <string name="multidevice_receiver_title">Добавить как второе устройство</string>
     <string name="multidevice_open_settings_on_other_device">На первом устройстве запустите BMChat, перейдите в \"Настройки / Добавить второе устройство\" и отсканируйте показанный там код</string>
+    <!-- BMChat: альтернативный сценарий с QR-помощником, если веб-камера на десктопе не работает -->
+    <string name="bmchat_multidevice_show_helper_qr_button">Использовать камеру телефона</string>
+    <string name="bmchat_multidevice_back_to_camera_button">Войти через другой BMChat</string>
+    <string name="bmchat_multidevice_helper_qr_title">Отсканируйте на телефоне</string>
+    <string name="bmchat_multidevice_helper_qr_intro">На телефоне откройте BMChat → Настройки → Сканировать QR и наведите камеру на код ниже. BMChat сам перейдёт в \"Настройки → Добавить второе устройство\" и покажет код, который нужно вернуть сюда.</string>
+    <string name="bmchat_multidevice_helper_qr_step1">На мобильном BMChat отсканируйте код ниже — откроется \"Добавить второе устройство\".</string>
+    <string name="bmchat_multidevice_helper_qr_step2">Когда телефон покажет свой QR — нажмите \"Вставить код\" (если скопировали текст с телефона) или \"Загрузить QR из файла\" (если сделали скриншот).</string>
+    <string name="bmchat_multidevice_helper_qr_paste_button">Вставить код из буфера</string>
+    <string name="bmchat_multidevice_helper_qr_file_button">Загрузить QR из файла</string>
+    <string name="bmchat_multidevice_helper_qr_no_lan_hint">Совет: если оба устройства не в одной Wi-Fi сети — закройте этот диалог, нажмите \"У меня уже есть профиль\" и выберите \"Восстановить из файла бэкапа\". Тогда на телефоне сделайте Настройки → Чаты и Медиа → Экспорт бэкапа, передайте файл .tar любым способом (Telegram, e-mail, флешка) и откройте его здесь — это работает без локальной сети.</string>
+    <string name="bmchat_multidevice_helper_qr_paste_empty">В буфере обмена нет ни кода, ни картинки. Скопируйте QR с телефона и попробуйте ещё раз.</string>
+    <string name="bmchat_multidevice_relay_waiting">Ждём, пока телефон загрузит зашифрованный профиль на сервер BMChat…</string>
+    <string name="bmchat_multidevice_relay_uploaded">Профиль загружен. Введите 6-значный код, который показан на телефоне.</string>
+    <string name="bmchat_multidevice_relay_import_button">Подключить</string>
+    <string name="bmchat_multidevice_relay_code_wrong">Код не совпал. Проверьте 6 цифр на телефоне и попробуйте снова.</string>
+    <string name="bmchat_media_links_empty_hint">В этом чате пока нет ссылок.</string>
     <string name="multidevice_receiver_scanning_ask">Скопировать профиль с другого устройства на это устройство?</string>
     <string name="multidevice_receiver_needs_update">Профиль, который вы хотите импортировать, создан в более новой версии BMChat.\n\nЧтобы продолжить настройку второго устройства, пожалуйста, обновите это устройство до последней версии BMChat.</string>
     <string name="multidevice_abort">Прервать настройку второго устройства?</string>

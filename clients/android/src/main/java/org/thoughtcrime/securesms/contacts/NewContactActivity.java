@@ -19,6 +19,7 @@ import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.qr.QrCodeHandler;
+import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 
 public class NewContactActivity extends PassphraseRequiredActionBarActivity {
@@ -50,11 +51,25 @@ public class NewContactActivity extends PassphraseRequiredActionBarActivity {
     addrInput.setText(getIntent().getStringExtra(ADDR_EXTRA));
     addrInput.setOnFocusChangeListener(
         (view, focused) -> {
-          String addr = addrInput.getText() == null ? "" : addrInput.getText().toString();
-          if (!focused && !dcContext.mayBeValidAddr(addr)) {
+          String addr = addrInput.getText() == null ? "" : addrInput.getText().toString().trim();
+          // Only e-mail addresses are validated here; invite links and contact
+          // codes are accepted as-is and handled when the user taps "Create".
+          if (!focused
+              && !addr.isEmpty()
+              && !dcContext.mayBeValidAddr(addr)
+              && !isInviteLink(addr)
+              && !ContactTransferCode.looksLikeCode(addr)) {
             addrInput.setError(getString(R.string.login_error_mail));
+          } else {
+            addrInput.setError(null);
           }
         });
+  }
+
+  private static boolean isInviteLink(String s) {
+    if (s == null) return false;
+    String lower = s.trim().toLowerCase();
+    return lower.startsWith("openpgp4fpr:") || Util.isInviteURL(s.trim());
   }
 
   @Override
@@ -73,10 +88,39 @@ public class NewContactActivity extends PassphraseRequiredActionBarActivity {
     if (itemId == android.R.id.home) {
       finish();
       return true;
+    } else if (itemId == R.id.menu_paste_contact) {
+      String clip = Util.getTextFromClipboard(this);
+      if (clip != null && !clip.trim().isEmpty()) {
+        addrInput.setText(clip.trim());
+        addrInput.setError(null);
+      }
+      return true;
     } else if (itemId == R.id.menu_create_contact) {
-      String addr = addrInput.getText() == null ? "" : addrInput.getText().toString();
+      String addr = addrInput.getText() == null ? "" : addrInput.getText().toString().trim();
       String name = nameInput.getText() == null ? "" : nameInput.getText().toString();
       if (name.isEmpty()) name = null;
+
+      // 1) BMChat invite link / OPENPGP4FPR -> SecureJoin flow.
+      if (isInviteLink(addr)) {
+        new QrCodeHandler(this).handleOnlySecureJoinQr(
+            addr, SecurejoinSource.Clipboard, SecurejoinUiPath.NewContact);
+        finish();
+        return true;
+      }
+
+      // 2) BMChat contact transfer code -> decode to an address and continue.
+      if (ContactTransferCode.looksLikeCode(addr)) {
+        ContactTransferCode.Decoded decoded = ContactTransferCode.decode(addr);
+        if (decoded == null) {
+          Toast.makeText(this, getString(R.string.bmchat_invalid_contact_code), Toast.LENGTH_LONG).show();
+          return true;
+        }
+        addr = decoded.addr;
+        if (name == null && decoded.name != null && !decoded.name.isEmpty()) {
+          name = decoded.name;
+        }
+      }
+
       int contactId = dcContext.mayBeValidAddr(addr) ? dcContext.lookupContactIdByAddr(addr) : 0;
       if (contactId == 0 && dcContext.mayBeValidAddr(addr)) {
         contactId = dcContext.createContact(name, addr);

@@ -16,19 +16,17 @@
         android:title="@string/menu_share"
         android:icon="@drawable/ic_share_white_24dp"
         app:showAsAction="ifRoom" />
-    <!-- BMChat 2.49.89: Save promoted to a permanent toolbar icon so users
-         can export media in one tap and so the action bar is never empty. -->
+    <!-- BMChat 2.49.96: mute always visible for video — same white icon style as Save. -->
     <item
         android:id="@+id/save"
         android:title="@string/menu_export_attachments"
         android:icon="@drawable/ic_file_download_white_24dp"
         app:showAsAction="always" />
-    <!-- BMChat 2.49.87: mute / unmute toggle while watching a video inline. -->
     <item
         android:id="@+id/bmchat_media_preview__mute"
         android:title="@string/bmchat_mute_audio"
-        android:icon="@drawable/ic_volume_up"
-        app:showAsAction="ifRoom" />
+        android:icon="@drawable/ic_volume_up_white_24dp"
+        app:showAsAction="always" />
     <item
         android:id="@+id/media_preview__overview"
         android:title="@string/tab_gallery"

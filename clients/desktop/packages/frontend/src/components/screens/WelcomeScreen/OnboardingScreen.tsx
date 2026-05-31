@@ -40,6 +40,7 @@ export default function OnboardingScreen(props: Props) {
   return (
     <>
       <DialogHeader
+        className={styles.welcomeScreenHeader}
         onClose={props.hasConfiguredAccounts ? props.onClose : undefined}
         title={
           props.hasConfiguredAccounts
@@ -51,10 +52,16 @@ export default function OnboardingScreen(props: Props) {
         <DialogContent>
           <form onSubmit={onSubmit}>
             <div className={styles.welcomeScreenSection}>
-              <img
-                className={styles.welcomeScreenImage}
-                src='./images/intro1.png'
-              />
+              {/* BMChat: clean hero card — overflow:hidden frame +
+                  scale-up on the source jpeg crops the empty gradient
+                  so the brand mark fills the card properly. */}
+              <div className={styles.welcomeScreenImageFrame}>
+                <img
+                  className={styles.welcomeScreenImage}
+                  src='./images/bmchat-welcome.jpg'
+                  alt='BMChat'
+                />
+              </div>
               <p className={styles.welcomeScreenTitle}>
                 {tx('welcome_chat_over_email')}
               </p>

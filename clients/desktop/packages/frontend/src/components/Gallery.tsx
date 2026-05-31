@@ -17,6 +17,7 @@ import {
   VideoAttachment,
   WebxdcAttachment,
 } from './attachment/galleryAttachment'
+import { parseTgVideoMarker } from './attachment/tgVideoMarker'
 import { getLogger } from '../../../shared/logger'
 import { BackendRemote, onDCEvent, Type } from '../backend-com'
 import { selectedAccountId } from '../ScreenController'
@@ -31,12 +32,31 @@ import {
   useRovingTabindex,
 } from '../contexts/RovingTabindex'
 import InfiniteLoader from 'react-window-infinite-loader'
-import { T } from '@deltachat/jsonrpc-client'
+import { T, C } from '@deltachat/jsonrpc-client'
 import { useTranslationWritingDirection } from '../hooks/useTranslationFunction'
+import { runtime } from '@deltachat-desktop/runtime-interface'
+import useMessage from '../hooks/chat/useMessage'
 
 const log = getLogger('renderer/Gallery')
 
-type MediaTabKey = 'webxdc_apps' | 'images' | 'video' | 'audio' | 'files'
+type MediaTabKey =
+  | 'webxdc_apps'
+  | 'images'
+  | 'video'
+  | 'audio'
+  | 'files'
+  | 'links'
+
+type LinkEntry = {
+  key: string
+  url: string
+  label: string
+  msgId: number
+  chatId: number
+  timestamp: number
+  senderName: string
+  preview: string
+}
 
 type GalleryElement = (
   props: GalleryAttachmentElementProps & {
@@ -45,7 +65,7 @@ type GalleryElement = (
 ) => React.ReactElement
 
 const MediaTabs: Readonly<{
-  [key in MediaTabKey]: {
+  [key in Exclude<MediaTabKey, 'links'>]: {
     values: Type.Viewtype[]
     element: GalleryElement
   }
@@ -71,6 +91,19 @@ const MediaTabs: Readonly<{
     element: FileAttachmentRow,
   },
 }
+
+const GalleryTabOrder: readonly MediaTabKey[] = [
+  'images',
+  'video',
+  'audio',
+  'files',
+  'links',
+  'webxdc_apps',
+]
+
+const URL_RE =
+  /\b((?:https?:\/\/|www\.)[^\s<>()]+|(?:[a-z0-9-]+\.)+[a-z]{2,}(?:\/[^\s<>()]*)?)/gi
+const TRAILING_URL_PUNCTUATION = /[.,;:!?)]$/
 
 type Props = { chatId: number | 'all' }
 
@@ -98,6 +131,90 @@ const getCurrentDocumentVerticalScrollbarWidth = () => {
   return outerWidth - innerWidth
 }
 
+function normalizeLink(raw: string): string {
+  let cleaned = raw.trim()
+  while (TRAILING_URL_PUNCTUATION.test(cleaned)) {
+    cleaned = cleaned.slice(0, -1)
+  }
+  return /^https?:\/\//i.test(cleaned) ? cleaned : `https://${cleaned}`
+}
+
+function extractLinks(message: T.Message): LinkEntry[] {
+  const text = message.text || ''
+  if (!text) return []
+  const out: LinkEntry[] = []
+  URL_RE.lastIndex = 0
+  let match: RegExpExecArray | null
+  while ((match = URL_RE.exec(text))) {
+    const start = match.index
+    if (start > 0 && text[start - 1] === '@') continue
+    const label = match[1]
+    const url = normalizeLink(label)
+    out.push({
+      key: `${message.id}:${out.length}:${url}`,
+      url,
+      label,
+      msgId: message.id,
+      chatId: message.chatId,
+      timestamp: message.timestamp,
+      senderName: message.sender.displayName || message.sender.address || '',
+      preview: text.replace(/\s+/g, ' ').trim(),
+    })
+  }
+  return out
+}
+
+async function getLinkMessageIds(
+  accountId: number,
+  chatId: number | 'all'
+): Promise<number[]> {
+  if (chatId !== 'all') {
+    return BackendRemote.rpc.getMessageIds(accountId, chatId, false, false)
+  }
+
+  const chatIds = await BackendRemote.rpc.getChatlistEntries(
+    accountId,
+    null,
+    null,
+    null
+  )
+  const chunks = await Promise.all(
+    chatIds
+      .filter(id => id !== C.DC_CHAT_ID_TRASH)
+      .map(id =>
+        BackendRemote.rpc
+          .getMessageIds(accountId, id, false, false)
+          .catch(err => {
+            log.warn('Failed loading link message ids for chat', id, err)
+            return []
+          })
+      )
+  )
+  return chunks.flat()
+}
+
+async function loadLinkEntries(
+  accountId: number,
+  chatId: number | 'all'
+): Promise<LinkEntry[]> {
+  const ids = await getLinkMessageIds(accountId, chatId)
+  const uniqueIds = [...new Set(ids)].reverse()
+  const links: LinkEntry[] = []
+  const chunkSize = 80
+  for (let i = 0; i < uniqueIds.length; i += chunkSize) {
+    const messages = await BackendRemote.rpc.getMessages(
+      accountId,
+      uniqueIds.slice(i, i + chunkSize)
+    )
+    for (const result of Object.values(messages)) {
+      if (result?.kind === 'message') {
+        links.push(...extractLinks(result))
+      }
+    }
+  }
+  return links
+}
+
 export default class Gallery extends Component<
   Props,
   {
@@ -106,6 +223,7 @@ export default class Gallery extends Component<
     element: GalleryElement
     mediaMessageIds: number[]
     mediaLoadResult: Record<number, Type.MessageLoadResult>
+    linkEntries: LinkEntry[]
     loading: boolean
     queryText: string
     galleryImageKeepAspectRatio?: boolean
@@ -123,11 +241,12 @@ export default class Gallery extends Component<
     super(props)
 
     this.state = {
-      currentTab: 'webxdc_apps',
-      msgTypes: MediaTabs.webxdc_apps.values,
-      element: WebxdcAttachment,
+      currentTab: 'images',
+      msgTypes: MediaTabs.images.values,
+      element: ImageAttachment,
       mediaMessageIds: [],
       mediaLoadResult: {},
+      linkEntries: [],
       loading: true,
       queryText: '',
       galleryImageKeepAspectRatio: false,
@@ -138,11 +257,12 @@ export default class Gallery extends Component<
 
   reset() {
     this.setState({
-      currentTab: 'webxdc_apps',
-      msgTypes: MediaTabs.webxdc_apps.values,
-      element: WebxdcAttachment,
+      currentTab: 'images',
+      msgTypes: MediaTabs.images.values,
+      element: ImageAttachment,
       mediaMessageIds: [],
       mediaLoadResult: {},
+      linkEntries: [],
       loading: true,
       queryText: '',
     })
@@ -211,11 +331,85 @@ export default class Gallery extends Component<
     if (!this.props.chatId) {
       throw new Error('chat id missing')
     }
+    const accountId = selectedAccountId()
+    if (tab === 'links') {
+      this.setState({ loading: true })
+      loadLinkEntries(accountId, this.props.chatId)
+        .then(linkEntries => {
+          this.setState({
+            currentTab: tab,
+            msgTypes: [],
+            mediaMessageIds: [],
+            mediaLoadResult: {},
+            linkEntries,
+            loading: false,
+          })
+        })
+        .catch(err => {
+          log.error('Failed loading links tab', err)
+          this.setState({ loading: false })
+        })
+      return
+    }
     const msgTypes = MediaTabs[tab].values
     const newElement = MediaTabs[tab].element
-    const accountId = selectedAccountId()
     const chatId = this.props.chatId !== 'all' ? this.props.chatId : null
     this.setState({ loading: true })
+
+    if (tab === 'images' || tab === 'video') {
+      // BMChat Telegram-video posters are DC_MSG_IMAGE messages carrying a
+      // `[bmchat:tgvideo]` marker. To match the mobile client we keep them out
+      // of "Images" and show them under "Video" instead, which requires
+      // inspecting the message bodies.
+      ;(async () => {
+        try {
+          const imageIds = await BackendRemote.rpc.getChatMedia(
+            accountId,
+            chatId,
+            'Image',
+            'Gif',
+            null
+          )
+          const videoIds = await BackendRemote.rpc.getChatMedia(
+            accountId,
+            chatId,
+            'Video',
+            null,
+            null
+          )
+          const imageMessages = await BackendRemote.rpc.getMessages(
+            accountId,
+            imageIds
+          )
+          const isPoster = (id: number) => {
+            const m = imageMessages[id]
+            return m && m.kind === 'message' && !!parseTgVideoMarker(m.text)
+          }
+          let ids: number[]
+          if (tab === 'images') {
+            ids = imageIds.filter(id => !isPoster(id))
+          } else {
+            ids = [...videoIds, ...imageIds.filter(id => isPoster(id))]
+            ids.sort((a, b) => a - b)
+          }
+          ids.reverse() // newest first
+          this.setState({
+            currentTab: tab,
+            msgTypes,
+            element: newElement,
+            mediaMessageIds: ids,
+            mediaLoadResult: {},
+            linkEntries: [],
+            loading: false,
+          })
+          this.forceUpdate()
+        } catch (err) {
+          log.error('Failed loading media tab', err)
+          this.setState({ loading: false })
+        }
+      })()
+      return
+    }
 
     BackendRemote.rpc
       .getChatMedia(accountId, chatId, msgTypes[0], msgTypes[1], null)
@@ -232,6 +426,7 @@ export default class Gallery extends Component<
           element: newElement,
           mediaMessageIds: media_ids,
           mediaLoadResult,
+          linkEntries: [],
           loading: false,
         })
         this.forceUpdate()
@@ -264,6 +459,9 @@ export default class Gallery extends Component<
           ? tx('all_apps_empty_hint')
           : tx('tab_webxdc_empty_hint')
       case 'files':
+        return allMedia ? tx('all_files_empty_hint') : tx('tab_docs_empty_hint')
+      case 'links':
+        return tx('bmchat_media_links_empty_hint')
       default:
         return allMedia ? tx('all_files_empty_hint') : tx('tab_docs_empty_hint')
     }
@@ -297,6 +495,7 @@ export default class Gallery extends Component<
       queryText,
       galleryImageKeepAspectRatio,
       msgTypes,
+      linkEntries,
     } = this.state
     const tx = window.static_translate // static because dynamic isn't too important here
     const emptyTabMessage = this.emptyTabMessage(currentTab)
@@ -315,7 +514,9 @@ export default class Gallery extends Component<
           })
 
     const showDateHeader =
-      currentTab !== 'files' && currentTab !== 'webxdc_apps'
+      currentTab !== 'files' &&
+      currentTab !== 'links' &&
+      currentTab !== 'webxdc_apps'
 
     return (
       <div className='media-view'>
@@ -324,8 +525,7 @@ export default class Gallery extends Component<
             wrapperElementRef={this.tabListRef}
             direction='horizontal'
           >
-            {Object.keys(MediaTabs).map(realId => {
-              const tabId = realId as MediaTabKey
+            {GalleryTabOrder.map(tabId => {
               return (
                 <li key={tabId}>
                   <GalleryTab
@@ -353,11 +553,16 @@ export default class Gallery extends Component<
               </div>
             </>
           )}
-          {currentTab === 'webxdc_apps' && <div style={{ flexGrow: 1 }}></div>}
+          {(currentTab === 'webxdc_apps' || currentTab === 'links') && (
+            <div style={{ flexGrow: 1 }}></div>
+          )}
         </ul>
         <div
           role='tabpanel'
-          key={msgTypes.join('.') + String(this.props.chatId)}
+          key={
+            (currentTab === 'links' ? 'links' : msgTypes.join('.')) +
+            String(this.props.chatId)
+          }
           // TODO a11y: is it fine to only render one `tabpanel`
           // instead of rendering all and applying the `hidden` attribute
           // to the inactive ones?
@@ -372,7 +577,10 @@ export default class Gallery extends Component<
               galleryImageKeepAspectRatio ? 'contain' : 'cover'
             }`}
           >
-            {mediaMessageIds.length < 1 && !loading && (
+            {(currentTab === 'links'
+              ? linkEntries.length < 1
+              : mediaMessageIds.length < 1) &&
+              !loading && (
               <div className='empty-screen'>
                 {/* IDEA: when we have someone doing illustrations this would be a great place to add some */}
                 <p className='no-media-message'>{emptyTabMessage}</p>
@@ -407,7 +615,24 @@ export default class Gallery extends Component<
               </>
             )}
 
-            {currentTab !== 'files' && (
+            {currentTab === 'links' && (
+              <AutoSizer disableWidth>
+                {({ height }) => (
+                  <RovingTabindexProvider
+                    wrapperElementRef={this.galleryItemsRef}
+                    direction='vertical'
+                  >
+                    <LinksTable
+                      width='100%'
+                      height={height}
+                      links={linkEntries}
+                    />
+                  </RovingTabindexProvider>
+                )}
+              </AutoSizer>
+            )}
+
+            {currentTab !== 'files' && currentTab !== 'links' && (
               <GridGallery
                 currentTab={currentTab}
                 element={this.state.element}
@@ -650,6 +875,96 @@ function GalleryTab(props: {
     >
       {tx(tabId)}
     </button>
+  )
+}
+
+function LinksTable({
+  width,
+  height,
+  links,
+}: {
+  width: number | string
+  height: number
+  links: LinkEntry[]
+}) {
+  const writingDirection = useTranslationWritingDirection()
+  return (
+    <FixedSizeList
+      innerElementType='ol'
+      className='react-window-list-reset'
+      width={width}
+      height={height}
+      itemSize={74}
+      itemCount={links.length}
+      overscanCount={10}
+      itemData={{ links }}
+      direction={writingDirection}
+      itemKey={(index, data) => data.links[index].key}
+    >
+      {LinkRow}
+    </FixedSizeList>
+  )
+}
+
+function LinkRow({
+  index,
+  style,
+  data,
+}: {
+  index: number
+  style: React.CSSProperties
+  data: { links: LinkEntry[] }
+}) {
+  const link = data.links[index]
+  const { jumpToMessage } = useMessage()
+  const accountId = selectedAccountId()
+  const ref = useRef<HTMLLIElement>(null)
+  const rovingTabindex = useRovingTabindex(ref)
+  const tx = window.static_translate
+
+  return (
+    <li
+      ref={ref}
+      style={style}
+      className={`media-attachment-link ${rovingTabindex.className}`}
+      tabIndex={rovingTabindex.tabIndex}
+      onFocus={rovingTabindex.setAsActiveElement}
+      onKeyDown={rovingTabindex.onKeydown}
+    >
+      <button
+        type='button'
+        className='link-open'
+        title={link.url}
+        onClick={() => runtime.openLink(link.url)}
+      >
+        <span className='link-title'>{link.label}</span>
+        <span className='link-preview'>{link.preview}</span>
+      </button>
+      <span className='link-meta'>
+        {link.senderName}
+        {' · '}
+        {moment(link.timestamp * 1000).format('L')}
+      </span>
+      <div className='link-actions'>
+        <button type='button' onClick={() => runtime.writeClipboardText(link.url)}>
+          {tx('copy')}
+        </button>
+        <button
+          type='button'
+          onClick={() =>
+            jumpToMessage({
+              accountId,
+              msgId: link.msgId,
+              msgChatId: link.chatId,
+              focus: true,
+              scrollIntoViewArg: { block: 'center' },
+            })
+          }
+        >
+          {tx('show_in_chat')}
+        </button>
+      </div>
+    </li>
   )
 }
 

@@ -443,6 +443,9 @@ class TauriRuntime implements Runtime {
   async downloadFile(pathToSource: string, filename: string): Promise<void> {
     await invoke('download_file', { pathToSource, filename })
   }
+  async downloadUrl(url: string, filename: string): Promise<void> {
+    await invoke('download_file', { pathToSource: url, filename })
+  }
   transformBlobURL(blob_path: string): string {
     const matches = blob_path.match(/.*(:?\\|\/)(.+?)\1dc.db-blobs\1(.*)/)
     // this.log.info({ transformBlobURL: blob_path, matches })

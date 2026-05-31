@@ -87,6 +87,14 @@ public class ProgressDialog extends AlertDialog {
     }
   }
 
+  /** BMChat 2.49.93: switch to a determinate bar for long downloads (Save video). */
+  public void setDeterminateProgress(int max, int progress) {
+    if (progressBar == null) return;
+    setIndeterminate(false);
+    progressBar.setMax(Math.max(1, max));
+    progressBar.setProgress(Math.min(progress, progressBar.getMax()));
+  }
+
   // Source:
   // https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/app/ProgressDialog.java
   public static ProgressDialog show(

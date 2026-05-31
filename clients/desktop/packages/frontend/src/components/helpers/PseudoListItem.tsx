@@ -10,6 +10,7 @@ import { ContactListItem } from '../contact/ContactListItem'
 import { useRovingTabindex } from '../../contexts/RovingTabindex'
 import { useRpcFetch } from '../../hooks/useFetch'
 import { SCAN_CONTEXT_TYPE } from '../../hooks/useProcessQr'
+import { inviteLinkToQrText } from '@deltachat-desktop/shared/util'
 
 export function PseudoListItem(
   props: PropsWithChildren<{
@@ -140,11 +141,14 @@ export const PseudoListItemAddContactOrGroupFromInviteLink = ({
 }) => {
   const tx = useTranslationFunction()
   const processQr = useProcessQR()
-  const inviteLinkTrimmed = inviteLink.trim()
+  // Convert BMChat/legacy invite hyperlinks into the raw `OPENPGP4FPR:` payload
+  // so the bundled upstream core recognises them as a contact/group invite
+  // instead of a plain URL.
+  const inviteLinkTrimmed = inviteLinkToQrText(inviteLink.trim())
 
   const parsedQrFetch = useRpcFetch(BackendRemote.rpc.checkQr, [
     accountId,
-    inviteLink,
+    inviteLinkTrimmed,
   ])
   const parsedQr = parsedQrFetch.result?.ok ? parsedQrFetch.result.value : null
   const contactFetch = useRpcFetch(

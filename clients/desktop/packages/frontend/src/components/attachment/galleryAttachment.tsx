@@ -35,6 +35,10 @@ import { useRovingTabindex } from '../../contexts/RovingTabindex'
 import ConfirmDeleteMessageDialog from '../dialogs/ConfirmDeleteMessage'
 import { BackendRemote } from '../../backend-com'
 import { useRpcFetch } from '../../hooks/useFetch'
+import {
+  parseTgVideoMarker,
+  tgVideoFileName,
+} from './tgVideoMarker'
 
 const log = getLogger('mediaAttachment')
 
@@ -54,6 +58,7 @@ const contextMenuFactory = (
   jumpToMessage: JumpToMessage
 ) => {
   const showCopyImage = message.viewType === 'Image'
+  const tgVideo = parseTgVideoMarker(message.text)
   const tx = window.static_translate
   const { id: msgId, viewType } = message
   return [
@@ -67,7 +72,13 @@ const contextMenuFactory = (
     },
     {
       label: tx('menu_export_attachment'),
-      action: onDownload.bind(null, message),
+      action: tgVideo
+        ? () =>
+            runtime.downloadUrl(
+              tgVideo.url,
+              tgVideoFileName(tgVideo, message.fileName || undefined)
+            )
+        : onDownload.bind(null, message),
     },
     showCopyImage && {
       label: tx('menu_copy_image_to_clipboard'),
@@ -237,6 +248,7 @@ export function ImageAttachment({
     const { file, fileMime } = message
     const hasSupportedFormat = isImage(fileMime)
     const isBroken = !file || !hasSupportedFormat
+    const tgVideo = parseTgVideoMarker(message.text)
 
     return (
       <button
@@ -259,11 +271,18 @@ export function ImageAttachment({
         {isBroken ? (
           squareBrokenMediaContent(hasSupportedFormat, fileMime)
         ) : (
-          <img
-            className='attachment-content'
-            src={runtime.transformBlobURL(file)}
-            loading='lazy'
-          />
+          <>
+            <img
+              className='attachment-content'
+              src={runtime.transformBlobURL(file)}
+              loading='lazy'
+            />
+            {tgVideo && (
+              <div className='video-play-btn'>
+                <div className='video-play-btn-icon' />
+              </div>
+            )}
+          </>
         )}
       </button>
     )
@@ -324,7 +343,8 @@ export function VideoAttachment({
       accountId
     )
     const { file, fileMime } = message
-    const hasSupportedFormat = isVideo(fileMime)
+    const tgVideo = parseTgVideoMarker(message.text)
+    const hasSupportedFormat = Boolean(tgVideo) || isVideo(fileMime)
     const isBroken = !file || !hasSupportedFormat
     return (
       <button
@@ -344,11 +364,18 @@ export function VideoAttachment({
           squareBrokenMediaContent(hasSupportedFormat, fileMime || '')
         ) : (
           <>
-            <video
-              className='attachment-content'
-              src={runtime.transformBlobURL(file)}
-              controls={false}
-            />
+            {tgVideo ? (
+              <img
+                className='attachment-content'
+                src={runtime.transformBlobURL(file)}
+              />
+            ) : (
+              <video
+                className='attachment-content'
+                src={runtime.transformBlobURL(file)}
+                controls={false}
+              />
+            )}
             <div className='video-play-btn'>
               <div className='video-play-btn-icon' />
             </div>

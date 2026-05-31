@@ -1564,6 +1564,24 @@
     <string name="bmchat_mute_audio">Без звука</string>
     <string name="bmchat_unmute_audio">Со звуком</string>
     <string name="bmchat_save_started">Сохраняем %1$s…</string>
+    <string name="bmchat_save_progress">Загрузка: %1$d%%</string>
+    <string name="bmchat_save_not_video">Не удалось сохранить видео — доступно только превью-картинка. Дождитесь загрузки или откройте сообщение заново.</string>
+    <!-- BMChat 2.50.2: добавление контактов по e-mail, ссылке-приглашению или коду контакта. -->
+    <string name="bmchat_email_or_link_or_code">E-mail, ссылка-приглашение или код контакта</string>
+    <string name="bmchat_new_contact_explain">Введите адрес e-mail, вставьте ссылку-приглашение BMChat или вставьте код контакта, которым с вами поделились.</string>
+    <string name="bmchat_paste">Вставить</string>
+    <string name="bmchat_share_contact_code">Поделиться кодом контакта</string>
+    <string name="bmchat_contact_code_title">Код контакта</string>
+    <string name="bmchat_contact_code_explain">Отправьте этот код другому пользователю BMChat. Он сможет добавить контакт в разделе «Новый контакт» без ввода e-mail.</string>
+    <string name="bmchat_invalid_contact_code">Неверный код контакта.</string>
+    <string name="bmchat_contact_code_failed">Не удалось создать код контакта.</string>
+    <!-- BMChat 2.49.97: тост при сканировании QR \"второе устройство\", если профиль ещё не настроен -->
+    <string name="bmchat_multidevice_helper_qr_need_profile">Сначала настройте профиль BMChat на этом устройстве, затем попробуйте снова.</string>
+    <string name="bmchat_multidevice_relay_bad_link">Некорректная ссылка подключения второго устройства.</string>
+    <string name="bmchat_multidevice_relay_exporting">Готовим зашифрованную копию профиля для десктопа…</string>
+    <string name="bmchat_multidevice_relay_uploading">Загружаем зашифрованный профиль на сервер BMChat…</string>
+    <string name="bmchat_multidevice_relay_done">Введите этот код на десктопе для подтверждения подключения:</string>
+    <string name="bmchat_multidevice_relay_mobile_hint">Не закрывайте этот экран, пока десктоп не завершит импорт профиля.</string>
     <string name="bmchat_save_succeeded">Сохранено в %1$s</string>
 
     <!-- BMChat 2.49.85: live status notification. -->

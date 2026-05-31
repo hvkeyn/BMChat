@@ -1670,6 +1670,24 @@
     <string name="bmchat_unmute_audio">Unmute audio</string>
     <!-- BMChat 2.49.87: explicit progress toast for Save As. -->
     <string name="bmchat_save_started">Saving %1$s…</string>
+    <string name="bmchat_save_progress">Downloading: %1$d%%</string>
+    <string name="bmchat_save_not_video">Could not save video — only a preview image is available. Wait for download or reopen the message.</string>
+    <!-- BMChat 2.50.2: add contacts by e-mail, invite link or transfer code. -->
+    <string name="bmchat_email_or_link_or_code">E-mail, invite link or contact code</string>
+    <string name="bmchat_new_contact_explain">Enter an e-mail address, paste a BMChat invite link, or paste a contact code somebody shared with you.</string>
+    <string name="bmchat_paste">Paste</string>
+    <string name="bmchat_share_contact_code">Share contact code</string>
+    <string name="bmchat_contact_code_title">Contact code</string>
+    <string name="bmchat_contact_code_explain">Send this code to another BMChat user. They can add this contact from “New contact” without typing the e-mail address.</string>
+    <string name="bmchat_invalid_contact_code">Invalid contact code.</string>
+    <string name="bmchat_contact_code_failed">Could not create the contact code.</string>
+    <!-- BMChat 2.49.97: toast shown if the user scans the "second-device" deep-link QR before any account is configured on this device. -->
+    <string name="bmchat_multidevice_helper_qr_need_profile">Set up your BMChat profile here first, then try again.</string>
+    <string name="bmchat_multidevice_relay_bad_link">Invalid second-device connection link.</string>
+    <string name="bmchat_multidevice_relay_exporting">Preparing an encrypted profile copy for desktop…</string>
+    <string name="bmchat_multidevice_relay_uploading">Uploading the encrypted profile to the BMChat server…</string>
+    <string name="bmchat_multidevice_relay_done">Enter this code on desktop to confirm connection:</string>
+    <string name="bmchat_multidevice_relay_mobile_hint">Keep this screen open until desktop finishes importing the profile.</string>
     <string name="bmchat_save_succeeded">Saved to %1$s</string>
 
     <!-- BMChat 2.49.85: live status surface that replaces the static FGS notification. -->

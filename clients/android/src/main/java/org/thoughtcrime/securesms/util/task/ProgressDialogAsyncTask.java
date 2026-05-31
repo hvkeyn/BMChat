@@ -11,7 +11,7 @@ public abstract class ProgressDialogAsyncTask<Params, Progress, Result>
     extends AsyncTask<Params, Progress, Result> {
 
   private final WeakReference<Context> contextReference;
-  private ProgressDialog progress;
+  protected ProgressDialog progress;
   private final String title;
   private final String message;
   private boolean cancelable;
@@ -65,5 +65,14 @@ public abstract class ProgressDialogAsyncTask<Params, Progress, Result>
 
   protected Context getContext() {
     return contextReference.get();
+  }
+
+  /** BMChat 2.49.93: update the visible save/download progress bar (0…max). */
+  protected void updateDialogProgress(int current, int max, @Nullable CharSequence detail) {
+    if (progress == null) return;
+    progress.setDeterminateProgress(max, current);
+    if (detail != null && !detail.toString().isEmpty()) {
+      progress.setMessage(detail);
+    }
   }
 }

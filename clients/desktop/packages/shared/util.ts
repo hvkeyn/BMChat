@@ -52,6 +52,42 @@ export function isInviteLink(url: string) {
 }
 
 /**
+ * Converts a BMChat/legacy invite hyperlink into the raw `OPENPGP4FPR:` QR
+ * payload that *every* Delta Chat core (including the upstream prebuilt core
+ * bundled with the desktop client) understands.
+ *
+ * The BMChat-patched mobile core knows how to decode the canonical
+ * `http://5.187.4.132/i#…` host directly, but the desktop client ships the
+ * unpatched upstream `@deltachat/stdio-rpc-server`, which only recognises the
+ * `https://i.delta.chat/#…` host. Without this normalisation a pasted/scanned
+ * BMChat invite link is misinterpreted as a plain `Qr::Url` and never adds the
+ * contact. We mirror the core's `decode_ideltachat` transformation here:
+ *   1. replace the invite-link prefix with `OPENPGP4FPR:`
+ *   2. replace the first `&` (separating fingerprint from params) with `#`
+ *
+ * Non-invite strings (mailto:, DCACCOUNT:, plain text, already-`OPENPGP4FPR:`
+ * payloads, …) are returned unchanged so this is safe to call on any input.
+ */
+export function inviteLinkToQrText(url: string): string {
+  if (!url) return url
+  const trimmed = url.trim()
+  const lower = trimmed.toLowerCase()
+  const prefixes = [
+    ...bmchatPrefixes(),
+    ...LEGACY_INVITE_HOSTS.flatMap(host => legacyPrefixes(host)),
+  ]
+  for (const prefix of prefixes) {
+    if (lower.startsWith(prefix.toLowerCase())) {
+      const fragment = trimmed.slice(prefix.length)
+      // `String.replace` with a string argument only replaces the first match,
+      // matching the core's `replacen('&', "#", 1)` behaviour.
+      return 'OPENPGP4FPR:' + fragment.replace('&', '#')
+    }
+  }
+  return trimmed
+}
+
+/**
  * Rewrites any legacy/upstream invite URL to the canonical BMChat link
  * `http://5.187.4.132/i#…`. The cryptographic payload lives in the URL
  * fragment and never reaches the server.

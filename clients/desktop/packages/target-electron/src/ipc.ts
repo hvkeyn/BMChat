@@ -20,9 +20,10 @@ import path, {
 } from 'path'
 import { inspect } from 'util'
 import { platform } from 'os'
-import { existsSync, copyFileSync, mkdirSync, linkSync } from 'fs'
+import { existsSync, copyFileSync, mkdirSync, linkSync, createWriteStream } from 'fs'
 import { versions } from 'process'
 import { fileURLToPath } from 'url'
+import { pipeline } from 'stream/promises'
 
 import { getLogger } from '@deltachat-desktop/shared/logger.js'
 import {
@@ -299,6 +300,33 @@ export async function init(cwd: string, logHandler: LogHandler) {
       }
     }
   )
+
+  ipcMain.handle('saveUrl', async (_ev, url: string, filename: string) => {
+    if (!mainWindow.window) {
+      throw new Error('window does not exist, this should never happen')
+    }
+
+    let base_path = lastSaveDialogLocation || app.getPath('downloads')
+    if (!existsSync(base_path)) {
+      base_path = app.getPath('downloads')
+    }
+
+    const { canceled, filePath } = await dialog.showSaveDialog(
+      mainWindow.window,
+      {
+        defaultPath: join(base_path, filename),
+      }
+    )
+
+    if (!canceled && filePath) {
+      const response = await fetch(url)
+      if (!response.ok || !response.body) {
+        throw new Error(`Cannot download file. HTTP ${response.status}`)
+      }
+      await pipeline(response.body as any, createWriteStream(filePath))
+      lastSaveDialogLocation = path.dirname(filePath)
+    }
+  })
 
   ipcMain.handle('get-desktop-settings', async _ev => {
     return DesktopSettings.state

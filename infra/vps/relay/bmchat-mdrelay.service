@@ -1,0 +1,24 @@
+[Unit]
+Description=BMChat multi-device relay
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+Environment=BMCHAT_MDRELAY_HOST=127.0.0.1
+Environment=BMCHAT_MDRELAY_PORT=8091
+Environment=BMCHAT_MDRELAY_STORE=/var/lib/bmchat-mdrelay
+Environment=BMCHAT_MDRELAY_TTL_S=1800
+Environment=BMCHAT_MDRELAY_MAX_BYTES=2147483648
+ExecStart=/usr/bin/python3 /opt/bmchat/bmchat_multidevice_relay.py
+Restart=on-failure
+RestartSec=2s
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/bmchat-mdrelay
+
+[Install]
+WantedBy=multi-user.target

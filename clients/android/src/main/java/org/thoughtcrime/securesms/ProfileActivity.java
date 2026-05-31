@@ -27,6 +27,7 @@ import com.b44t.messenger.DcEvent;
 import java.io.File;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.connect.DcHelper;
+import org.thoughtcrime.securesms.contacts.ContactTransferCode;
 import org.thoughtcrime.securesms.util.DynamicNoActionBarTheme;
 import org.thoughtcrime.securesms.util.Prefs;
 import org.thoughtcrime.securesms.util.ShareUtil;
@@ -141,6 +142,10 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
       if (!isContactProfile() || chatIsDeviceTalk) {
         menu.findItem(R.id.block_contact).setVisible(false);
       }
+
+      // "Share contact code" only makes sense for a single contact's profile.
+      menu.findItem(R.id.menu_bmchat_contact_code)
+          .setVisible(isContactProfile() && !chatIsDeviceTalk && contactId != 0);
     }
 
     super.onCreateOptionsMenu(menu);
@@ -245,6 +250,8 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
       onEditName();
     } else if (itemId == R.id.share) {
       onShare();
+    } else if (itemId == R.id.menu_bmchat_contact_code) {
+      onShareContactCode();
     } else if (itemId == R.id.show_encr_info) {
       onEncrInfo();
     } else if (itemId == R.id.block_contact) {
@@ -409,6 +416,33 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
     DcContact dcContact = dcContext.getContact(contactId);
     Util.writeTextToClipboard(this, dcContact.getAddr());
     Toast.makeText(this, getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
+  }
+
+  private void onShareContactCode() {
+    DcContact dcContact = dcContext.getContact(contactId);
+    if (dcContact == null) {
+      return;
+    }
+    final String code = ContactTransferCode.encode(dcContact.getAddr(), dcContact.getDisplayName());
+    if (code == null) {
+      Toast.makeText(this, getString(R.string.bmchat_contact_code_failed), Toast.LENGTH_LONG).show();
+      return;
+    }
+    new AlertDialog.Builder(this)
+        .setTitle(R.string.bmchat_contact_code_title)
+        .setMessage(getString(R.string.bmchat_contact_code_explain) + "\n\n" + code)
+        .setPositiveButton(R.string.menu_share, (d, w) -> {
+          Intent sendIntent = new Intent(Intent.ACTION_SEND);
+          sendIntent.setType("text/plain");
+          sendIntent.putExtra(Intent.EXTRA_TEXT, code);
+          startActivity(Intent.createChooser(sendIntent, getString(R.string.bmchat_share_contact_code)));
+        })
+        .setNeutralButton(R.string.menu_copy_to_clipboard, (d, w) -> {
+          Util.writeTextToClipboard(this, code);
+          Toast.makeText(this, getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT).show();
+        })
+        .setNegativeButton(R.string.cancel, null)
+        .show();
   }
 
   private void onEncrInfo() {

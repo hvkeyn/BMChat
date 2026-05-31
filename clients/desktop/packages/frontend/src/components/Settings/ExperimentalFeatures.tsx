@@ -36,7 +36,7 @@ export function ExperimentalFeatures() {
         message =
           'Thanks for helping to debug "Calls"!\n\n' +
           '• You can now debug calls using the "phone" icon in one-to-one-chats' +
-          "\n\n• The experiment is about making decentralised calls work and reliable at all, not about options or UI. We're happy about focused feedback at support.delta.chat"
+          "\n\n• The experiment is about making decentralised calls work and reliable at all, not about options or UI. We're happy about focused feedback at http://5.187.4.132/"
         break
       case 'enableBroadcastLists':
         message =

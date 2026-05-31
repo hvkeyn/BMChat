@@ -539,7 +539,7 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
         saveTask.executeOnExecutor(
             AsyncTask.THREAD_POOL_EXECUTOR,
             new org.thoughtcrime.securesms.bots.TgMediaSaveTask.Request(
-                tgInfo.url, tgInfo.mime, fileName));
+                tgInfo.url, tgInfo.mime, fileName, tgInfo.sizeBytes));
         return;
       }
 
@@ -723,11 +723,23 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
         MediaItemAdapter adapter = (MediaItemAdapter) mediaPager.getAdapter();
         MediaView mv = adapter == null ? null : adapter.getMediaViewFor(mediaPager.getCurrentItem());
         boolean muted = mv != null && mv.isVideoMuted();
-        muteItem.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+        updateMuteMenuItem(this, muteItem, muted);
       }
     }
 
     return true;
+  }
+
+  private static void updateMuteMenuItem(
+      @NonNull android.content.Context context, @NonNull MenuItem item, boolean muted) {
+    item.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+    android.graphics.drawable.Drawable icon =
+        androidx.appcompat.content.res.AppCompatResources.getDrawable(
+            context,
+            muted ? R.drawable.ic_volume_off_white_24dp : R.drawable.ic_volume_up_white_24dp);
+    if (icon != null) {
+      item.setIcon(icon.mutate());
+    }
   }
 
   /**
@@ -742,7 +754,8 @@ public class MediaPreviewActivity extends PassphraseRequiredActionBarActivity
     if (mv == null) return;
     boolean nextMuted = !mv.isVideoMuted();
     mv.setMuted(nextMuted);
-    item.setTitle(nextMuted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+    updateMuteMenuItem(this, item, nextMuted);
+    invalidateOptionsMenu();
   }
 
   @Override

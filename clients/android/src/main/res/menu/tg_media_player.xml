@@ -3,13 +3,13 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/bmchat_tg_player__mute"
-        android:title="@string/bmchat_mute_audio"
-        android:icon="@drawable/ic_volume_up"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/bmchat_tg_player__save"
         android:title="@string/menu_export_attachments"
         android:icon="@drawable/ic_file_download_white_24dp"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/bmchat_tg_player__mute"
+        android:title="@string/bmchat_mute_audio"
+        android:icon="@drawable/ic_volume_up_white_24dp"
         app:showAsAction="always" />
 </menu>

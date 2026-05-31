@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   BMChat: by default we still REQUIRE TLS for any host (cleartextTrafficPermitted=false).
-  The single exception is the BMChat distribution VPS at 5.187.4.132, which serves the
-  invite landing page, the auto-update manifest (/update.json), and the APK itself over
-  plain HTTP. This is acceptable because:
+  The exceptions are BMChat distribution hosts, which serve the invite landing page,
+  the auto-update manifest (/update.json), and APK files over plain HTTP. This is
+  acceptable because:
     * the invite payload is in the URL fragment and never reaches the server,
     * the update manifest pins a SHA-256 of the APK and the app verifies that hash
       after download,
@@ -18,5 +18,8 @@
     </base-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">5.187.4.132</domain>
+    </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">158.160.104.107</domain>
     </domain-config>
 </network-security-config>

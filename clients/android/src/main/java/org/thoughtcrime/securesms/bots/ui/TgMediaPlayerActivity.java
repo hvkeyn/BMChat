@@ -1,5 +1,6 @@
 package org.thoughtcrime.securesms.bots.ui;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,8 @@ import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.bots.TgMediaSaveTask;
 import org.thoughtcrime.securesms.util.DynamicNoActionBarTheme;
 import org.thoughtcrime.securesms.util.IntentUtils;
+import org.thoughtcrime.securesms.util.StorageUtil;
+import org.thoughtcrime.securesms.permissions.Permissions;
 
 import java.util.Locale;
 
@@ -72,6 +75,7 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
   public static final String EXTRA_URL = "url";
   public static final String EXTRA_TITLE = "title";
   public static final String EXTRA_MIME = "mime";
+  public static final String EXTRA_SIZE_BYTES = "size_bytes";
 
   // Speeds the user can cycle through by tapping the "1x" badge. Order
   // matches Telegram's: half, normal, fast, faster, double.
@@ -113,6 +117,8 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
   private boolean muted = false;
   private @Nullable String streamUrl;
   private @Nullable String streamMime;
+  private long streamSizeBytes;
+  private @Nullable TgMediaSaveTask activeSaveTask;
 
   private final Handler uiHandler = new Handler(Looper.getMainLooper());
   private final Runnable progressTick = new Runnable() {
@@ -169,6 +175,7 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
     if (TextUtils.isEmpty(url)) { finish(); return; }
     streamUrl = url;
     streamMime = mime;
+    streamSizeBytes = getIntent().getLongExtra(EXTRA_SIZE_BYTES, 0L);
 
     // Hand non-video MIME types straight to the system picker — no
     // point spinning up VideoView for a PDF or an mp3.
@@ -364,18 +371,49 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
     mediaPlayer.setVolume(vol, vol);
   }
 
+  private void updateMuteMenuItem(@NonNull MenuItem item, boolean muted) {
+    item.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+    android.graphics.drawable.Drawable icon =
+        androidx.appcompat.content.res.AppCompatResources.getDrawable(
+            this,
+            muted ? R.drawable.ic_volume_off_white_24dp : R.drawable.ic_volume_up_white_24dp);
+    if (icon != null) {
+      item.setIcon(icon.mutate());
+    }
+  }
+
   private void toggleMute(@NonNull MenuItem item) {
     muted = !muted;
     applyMute();
-    item.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+    updateMuteMenuItem(item, muted);
+    invalidateOptionsMenu();
   }
 
   private void saveToDisk() {
     if (TextUtils.isEmpty(streamUrl)) return;
-    TgMediaSaveTask saveTask = new TgMediaSaveTask(this);
-    saveTask.executeOnExecutor(
-        android.os.AsyncTask.THREAD_POOL_EXECUTOR,
-        new TgMediaSaveTask.Request(streamUrl, streamMime, null));
+    if (activeSaveTask != null && activeSaveTask.getStatus() == android.os.AsyncTask.Status.RUNNING) {
+      return;
+    }
+    Runnable startSave =
+        () -> {
+          activeSaveTask =
+              new TgMediaSaveTask(TgMediaPlayerActivity.this, streamSizeBytes);
+          activeSaveTask.executeOnExecutor(
+              android.os.AsyncTask.THREAD_POOL_EXECUTOR,
+              new TgMediaSaveTask.Request(
+                  streamUrl, streamMime, null, streamSizeBytes));
+        };
+    if (StorageUtil.canWriteToMediaStore(this)) {
+      startSave.run();
+      return;
+    }
+    Permissions.with(this)
+        .request(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        .alwaysGrantOnSdk30()
+        .ifNecessary()
+        .withPermanentDenialDialog(getString(R.string.perm_explain_access_to_storage_denied))
+        .onAllGranted(startSave)
+        .execute();
   }
 
   @Override
@@ -388,7 +426,7 @@ public class TgMediaPlayerActivity extends PassphraseRequiredActionBarActivity {
   public boolean onPrepareOptionsMenu(Menu menu) {
     MenuItem mute = menu.findItem(R.id.bmchat_tg_player__mute);
     if (mute != null) {
-      mute.setTitle(muted ? R.string.bmchat_unmute_audio : R.string.bmchat_mute_audio);
+      updateMuteMenuItem(mute, muted);
     }
     return super.onPrepareOptionsMenu(menu);
   }

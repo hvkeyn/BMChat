@@ -27,7 +27,7 @@ export type ScheduledMessage = BMChatScheduledMessage
 
 const listeners = new Set<() => void>()
 let bootstrapped = false
-let inflightSendIds = new Set<string>()
+const inflightSendIds = new Set<string>()
 
 function notify(): void {
   for (const listener of listeners) {

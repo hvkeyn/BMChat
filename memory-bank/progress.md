@@ -97,6 +97,20 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Latest Completed
 
+- Built and deployed corrected Android `2.50.1` (`versionCode 847`) after the updater screenshot showed `Cleartext HTTP traffic to 158.160.104...`:
+  - diagnosed the failed 2.50.0 rollout as a deployment bug: `update.json` had moved to 2.50.0 but the APK was missing from `/apk/` on both primary and mirror, so the old updater fell through to the mirror host;
+  - added `158.160.104.107` to Android `network_security_config.xml` cleartext exceptions so future mirror fallback is allowed;
+  - fixed `infra/vps/deploy-site-and-mirror.sh` to upload recent APKs to the primary server as well as mirror and maintain `BMChat-foss-debug-latest.apk`;
+  - rebuilt `BMChat-foss-debug-2.50.1.apk` (77,493,614 bytes, SHA-256 `343ae1b955b954f980816aecb060ee237015cd3df29713e97b97fb808c6e41da`) and deployed to both servers;
+  - verified primary and mirror `/update.json` advertise 2.50.1 and both `/apk/BMChat-foss-debug-2.50.1.apk` URLs return `200` with `Content-Length: 77493614`.
+- Built and deployed Desktop `2.50.0` release artifacts:
+  - Windows setup + portable were built and signed; electron-builder ended with the known `GH_TOKEN` publish warning after artifacts were created;
+  - Linux `AppImage` and `.deb` were built in WSL and added to `desktop-update.json`;
+  - primary and mirror stable aliases (`BMChat-Setup-x64.exe`, `BMChat-portable-x64.exe`, `BMChat-x86_64.AppImage`, `bmchat-amd64.deb`) return `200`.
+- Completed Desktop shared media browser links tab:
+  - `Gallery.tsx` now has Photos / Videos / Audio / Files / Links / Apps order;
+  - Links tab extracts URLs from messages, supports current chat and all chats, and provides open/copy/show-in-chat actions;
+  - RU/EN locales and gallery SCSS were updated; desktop build passed.
 - Built and deployed Android `2.49.74` (`versionCode 822`) — Storage Management lower placement hotfix:
   - increased `StorageManagementActivity` root top padding from `48dp` to `96dp`, creating a visible gap under the toolbar and showing the white card's rounded top corners;
   - verified on the connected device that the donut and centre value are fully inside the card and the form is easier to read;
