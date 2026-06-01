@@ -2,7 +2,7 @@
   "private": "true",
   "name": "bmchat-desktop",
   "type": "module",
-  "version": "2.50.2",
+  "version": "2.50.3",
   "scripts": {
     "preinstall": "node ./bin/check-nodejs-version.js",
     "check": "pnpm check:types && pnpm check:lint && pnpm check:format && pnpm check:target-versions",

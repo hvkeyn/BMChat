@@ -17,6 +17,8 @@ import ProxyConfiguration from '../dialogs/ProxyConfiguration'
 import { selectedAccountId } from '../../ScreenController'
 import TransportsDialog from '../dialogs/Transports'
 import { LogDialog } from '../dialogs/Log'
+import TelegramBots from '../dialogs/TelegramBots'
+import EmailBots from '../dialogs/EmailBots'
 import { DialogProps } from '../../contexts/DialogContext'
 import { getLogger } from '../../../../shared/logger'
 
@@ -65,11 +67,47 @@ export default function Advanced({ onClose, settingsStore }: Props) {
     onClose()
   }
 
+  const checkForUpdates = async () => {
+    try {
+      await runtime.bmchatCheckForUpdates()
+    } catch (err) {
+      log.warn('Manual update check failed', err)
+    }
+  }
+
   return (
     <>
+      {runtime.getRuntimeInfo().target === 'electron' && (
+        <SettingsButton
+          onClick={checkForUpdates}
+          dataTestid='bmchat-check-for-updates'
+        >
+          {tx('bmchat_check_for_updates')}
+        </SettingsButton>
+      )}
+
       <SettingsButton onClick={() => viewLog()}>
         {tx('pref_view_log')}
       </SettingsButton>
+
+      {runtime.getRuntimeInfo().target === 'electron' && (
+        <>
+          <SettingsSeparator />
+          <SettingsHeading>{tx('bmchat_bots_section')}</SettingsHeading>
+          <SettingsButton
+            onClick={() => openDialog(TelegramBots)}
+            dataTestid='open-telegram-bots'
+          >
+            {tx('bmchat_bots_title')}
+          </SettingsButton>
+          <SettingsButton
+            onClick={() => openDialog(EmailBots)}
+            dataTestid='open-email-bots'
+          >
+            {tx('bmchat_email_bots_title')}
+          </SettingsButton>
+        </>
+      )}
 
       <SettingsSeparator />
       <SettingsHeading>{tx('pref_server')}</SettingsHeading>

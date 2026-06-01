@@ -142,6 +142,22 @@ export interface Runtime {
     callback: (msg: BMChatScheduledMessage) => void
   ): () => void
 
+  /**
+   * BMChat manual update check (Settings → Advanced → "Check for updates").
+   * Triggers the main-process self-updater immediately and shows a native
+   * dialog with the result (update available / already up to date / error).
+   */
+  bmchatCheckForUpdates(): Promise<void>
+
+  /**
+   * Generic bridge for BMChat bot IPC channels (Telegram bots + email
+   * bots) that live in the main process. The channel must start with
+   * `bmchat:` and is invoked with a single optional payload argument.
+   * Returns whatever the main-process handler resolves with, or throws
+   * on non-electron targets where there is no backend.
+   */
+  bmchatBotsInvoke(channel: string, payload?: any): Promise<any>
+
   // webxdc
   openWebxdc(msgId: number, params: DcOpenWebxdcParameters): void
   getWebxdcIconURL(accountId: number, msgId: number): string

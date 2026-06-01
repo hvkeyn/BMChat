@@ -27,7 +27,7 @@
 //     code-signed by the user's electron-builder cert chain, which the
 //     OS verifies during install.
 
-import { app, BrowserWindow, dialog, shell } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, shell } from 'electron'
 import * as crypto from 'crypto'
 import * as fs from 'fs'
 import * as http from 'http'
@@ -68,6 +68,72 @@ export function scheduleUpdateCheck(): void {
   setTimeout(() => {
     runCheck().catch(err => log.warn('update check failed', err))
   }, FOREGROUND_DELAY_MS)
+}
+
+/**
+ * Wire the manual "Check for updates" button (Settings → Advanced).
+ * The renderer calls `runtime.bmchatCheckForUpdates()` which invokes this.
+ */
+export function registerUpdaterIpc(): void {
+  ipcMain.handle('bmchat:check-for-updates', async () => {
+    await checkForUpdatesNow()
+  })
+}
+
+/**
+ * Manual update check triggered from the UI. Unlike `runCheck`, it ignores
+ * the 12h debounce and always gives the user explicit feedback: a native
+ * dialog telling them either that an update is available (reusing the normal
+ * download/install flow) or that they are already on the latest version.
+ */
+async function checkForUpdatesNow(): Promise<void> {
+  if (inFlight) return
+  inFlight = true
+  try {
+    lastCheckedAt = Date.now()
+    const manifest = await fetchManifest()
+    if (!app.isReady()) await app.whenReady()
+    if (!manifest) {
+      await dialog.showMessageBox({
+        type: 'warning',
+        title: 'BMChat',
+        message: 'Не удалось проверить обновления',
+        detail:
+          'Сервер обновлений недоступен. Проверьте подключение к интернету и попробуйте позже.',
+        buttons: ['ОК'],
+        noLink: true,
+      })
+      return
+    }
+    if (compareVersions(manifest.version, BuildInfo.VERSION) <= 0) {
+      await dialog.showMessageBox({
+        type: 'info',
+        title: 'BMChat',
+        message: 'У вас установлена последняя версия',
+        detail: `Текущая версия: ${BuildInfo.VERSION}`,
+        buttons: ['ОК'],
+        noLink: true,
+      })
+      return
+    }
+    const variant = pickVariantForCurrentPlatform(manifest)
+    if (!variant) {
+      await dialog.showMessageBox({
+        type: 'info',
+        title: 'BMChat',
+        message: `Доступна новая версия BMChat ${manifest.version}`,
+        detail: `Для вашей платформы пока нет готового установщика. Откройте сайт BMChat, чтобы скачать вручную.\n\nТекущая версия: ${BuildInfo.VERSION}`,
+        buttons: ['ОК'],
+        noLink: true,
+      })
+      return
+    }
+    await promptUser(manifest, variant)
+  } catch (err) {
+    log.warn('manual update check failed', err)
+  } finally {
+    inFlight = false
+  }
 }
 
 async function runCheck(): Promise<void> {

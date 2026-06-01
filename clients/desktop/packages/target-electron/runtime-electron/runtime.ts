@@ -586,6 +586,15 @@ class ElectronRuntime implements Runtime {
       ipcBackend.removeListener('bmchat:scheduled-due', handler)
     }
   }
+  async bmchatCheckForUpdates(): Promise<void> {
+    await ipcBackend.invoke('bmchat:check-for-updates')
+  }
+  async bmchatBotsInvoke(channel: string, payload?: any): Promise<any> {
+    if (!channel.startsWith('bmchat:')) {
+      throw new Error('invalid bot channel: ' + channel)
+    }
+    return ipcBackend.invoke(channel, payload)
+  }
   getAutostartState(): Promise<AutostartState> {
     return ipcBackend.invoke('get-autostart-state')
   }

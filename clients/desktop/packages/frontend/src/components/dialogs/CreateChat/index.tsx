@@ -59,6 +59,11 @@ import ImageCropper from '../../ImageCropper'
 import { RovingTabindexProvider } from '../../../contexts/RovingTabindex'
 import ViewProfile from '../ViewProfile'
 import { isInviteLink } from '@deltachat-desktop/shared/util'
+import {
+  looksLikeContactCode,
+  decodeContactCode,
+  type DecodedContactCode,
+} from '../../contacts/contactTransferCode'
 import { copyToBlobDir } from '../../../utils/copyToBlobDir'
 import { useRpcFetch } from '../../../hooks/useFetch'
 import { I18nContext } from '../../../contexts/I18nContext'
@@ -228,8 +233,30 @@ function CreateChatMain(props: CreateChatMainProps) {
   )
   const showPseudoListItemAddContactFromInviteLink =
     queryStr && isInviteLink(queryStr)
+
+  // BMChat contact transfer code (BMCC1:...). Decoding is async (Web Crypto),
+  // so we resolve it in an effect and surface a dedicated pseudo-list item.
+  const [decodedCode, setDecodedCode] = useState<DecodedContactCode | null>(
+    null
+  )
+  useEffect(() => {
+    let cancelled = false
+    if (looksLikeContactCode(queryStr)) {
+      decodeContactCode(queryStr)
+        .then(d => !cancelled && setDecodedCode(d))
+        .catch(() => !cancelled && setDecodedCode(null))
+    } else {
+      setDecodedCode(null)
+    }
+    return () => {
+      cancelled = true
+    }
+  }, [queryStr])
+  const showContactCode = !!decodedCode
+
   const contactsAndExtraItems = useMemo(
     () => [
+      ...(showContactCode ? [CreateChatExtraItemType.CONTACT_CODE] : []),
       ...(showPseudoListItemAddContactFromInviteLink
         ? [CreateChatExtraItemType.INVITE_LINK]
         : []),
@@ -252,8 +279,31 @@ function CreateChatMain(props: CreateChatMainProps) {
       showAddGroup,
       showNewEmail,
       showPseudoListItemAddContactFromInviteLink,
+      showContactCode,
     ]
   )
+
+  const addContactFromCodeOnClick = async () => {
+    if (!decodedCode) return
+    try {
+      const contactId =
+        (await BackendRemote.rpc.lookupContactIdByAddr(
+          accountId,
+          decodedCode.addr
+        )) ??
+        (await BackendRemote.rpc.createContact(
+          accountId,
+          decodedCode.addr,
+          decodedCode.name || null
+        ))
+      await createChatByContactId(accountId, contactId)
+      onClose()
+    } catch (error: any) {
+      openDialog(AlertDialog, {
+        message: tx('error_x', unknownErrorToString(error)),
+      })
+    }
+  }
 
   const openQRScan = async () => {
     const [qrCode, qrCodeSVG] =
@@ -410,6 +460,8 @@ function CreateChatMain(props: CreateChatMainProps) {
                       contactCache,
                       onContactClick: chooseContact,
                       addContactOnClick,
+                      addContactFromCodeOnClick,
+                      decodedCode,
                       onContactContextMenu,
                       setViewMode,
                       openQRScan,
@@ -459,6 +511,8 @@ function CreateChatMainRow({
     contactCache: ReturnType<typeof useLazyLoadedContacts>['contactCache']
     onContactClick: (contact: Type.Contact) => void
     addContactOnClick: () => void
+    addContactFromCodeOnClick: () => void
+    decodedCode: DecodedContactCode | null
     onContactContextMenu: (contact: Type.Contact, ev: MouseEvent) => void
     setViewMode: (viewMode: ViewMode) => void
     openQRScan: () => Promise<void>
@@ -472,6 +526,8 @@ function CreateChatMainRow({
     contactCache,
     onContactClick,
     addContactOnClick,
+    addContactFromCodeOnClick,
+    decodedCode,
     onContactContextMenu,
     setViewMode,
     openQRScan,
@@ -545,6 +601,17 @@ function CreateChatMainRow({
           />
         )
       }
+      case CreateChatExtraItemType.CONTACT_CODE: {
+        return (
+          <PseudoListItem
+            id='addcontactfromcode'
+            cutoff='+'
+            text={tx('bmchat_add_contact_from_code')}
+            subText={decodedCode?.addr}
+            onClick={addContactFromCodeOnClick}
+          />
+        )
+      }
       default: {
         const contact: Type.Contact | undefined = contactCache[item]
         if (!contact) {
@@ -581,6 +648,7 @@ const enum CreateChatExtraItemType {
   NEW_EMAIL,
   ADD_CONTACT,
   INVITE_LINK,
+  CONTACT_CODE,
 }
 
 type CreateGroupProps = {

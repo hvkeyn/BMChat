@@ -567,6 +567,13 @@ class TauriRuntime implements Runtime {
   onBMChatScheduledDue(_callback: (msg: any) => void): () => void {
     return () => {}
   }
+  async bmchatCheckForUpdates(): Promise<void> {
+    // No self-updater in the Tauri target yet.
+  }
+  async bmchatBotsInvoke(_channel: string, _payload?: any): Promise<any> {
+    // No bot backend in the Tauri target yet.
+    throw new Error('bots are not supported in the tauri target')
+  }
   openWebxdc(messageId: number, params: DcOpenWebxdcParameters): void {
     invoke('open_webxdc', {
       messageId,

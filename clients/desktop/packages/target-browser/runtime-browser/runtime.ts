@@ -914,6 +914,13 @@ class BrowserRuntime implements Runtime {
     // from the frontend setTimeout, so no IPC events are emitted here.
     return () => {}
   }
+  async bmchatCheckForUpdates(): Promise<void> {
+    // The browser target is served, not installed, so there is no self-updater.
+  }
+  async bmchatBotsInvoke(_channel: string, _payload?: any): Promise<any> {
+    // No main-process bot backend in the browser target.
+    throw new Error('bots are not supported in the browser target')
+  }
   getAutostartState(): Promise<AutostartState> {
     return Promise.resolve({
       isSupported: false,

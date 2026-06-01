@@ -25,6 +25,7 @@ import { throttle } from '@deltachat-desktop/shared/util'
 import useCreateDraftMessage from '../../../hooks/chat/useCreateDraftMesssage'
 import { runtime } from '@deltachat-desktop/runtime-interface'
 import SelectChat from '../SelectChat'
+import { encodeContactCode } from '../../contacts/contactTransferCode'
 
 export default function useViewProfileMenu(
   contact: T.Contact,
@@ -93,6 +94,10 @@ export default function useViewProfileMenu(
     })
   }
 
+  const onClickShareContactCode = () => {
+    openDialog(ContactCodeDialog, { contact })
+  }
+
   const menu: (ContextMenuItem | false)[] = [
     // we show Edit Name option every time since this menu
     // is only accessible from ViewProfile which you can edit name for
@@ -105,6 +110,11 @@ export default function useViewProfileMenu(
       label: tx('menu_share'),
       action: onClickShareContact,
       dataTestid: 'share-contact',
+    },
+    {
+      label: tx('bmchat_share_contact_code'),
+      action: onClickShareContactCode,
+      dataTestid: 'share-contact-code',
     },
     {
       type: 'separator',
@@ -244,5 +254,67 @@ function ShareProfileDialog(
       listFlags={C.DC_GCL_FOR_FORWARDING | C.DC_GCL_NO_SPECIALS}
       enableAccountSwitch
     />
+  )
+}
+
+function ContactCodeDialog(props: { contact: T.Contact } & DialogProps) {
+  const { onClose, contact } = props
+  const tx = useTranslationFunction()
+
+  const [code, setCode] = useState<string | null>(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    encodeContactCode(contact.address, contact.displayName)
+      .then(c => {
+        if (cancelled) return
+        if (c) {
+          setCode(c)
+        } else {
+          setFailed(true)
+        }
+      })
+      .catch(() => !cancelled && setFailed(true))
+    return () => {
+      cancelled = true
+    }
+  }, [contact.address, contact.displayName])
+
+  const onCopy = async () => {
+    if (code) {
+      await runtime.writeClipboardText(code)
+    }
+    onClose()
+  }
+
+  return (
+    <Dialog onClose={onClose} fixed>
+      <DialogHeader title={tx('bmchat_contact_code_title')} />
+      <DialogBody>
+        <DialogContent>
+          <p>{tx('bmchat_contact_code_explain')}</p>
+          {failed ? (
+            <p style={{ color: 'var(--colorDanger, #d9534f)' }}>
+              {tx('bmchat_contact_code_failed')}
+            </p>
+          ) : (
+            <DeltaInput
+              key='contactcode'
+              id='contactcode'
+              value={code ?? '…'}
+              onChange={() => {}}
+            />
+          )}
+        </DialogContent>
+      </DialogBody>
+      <OkCancelFooterAction
+        cancelLabel={tx('close')}
+        onCancel={onClose}
+        confirmLabel={tx('menu_copy_to_clipboard')}
+        onOk={onCopy}
+        disableOK={!code}
+      />
+    </Dialog>
   )
 }
