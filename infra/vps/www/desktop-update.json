@@ -1,6 +1,6 @@
 {
-  "version": "2.50.2",
-  "publishedAt": "2026-05-31T22:30:00Z",
+  "version": "2.50.3",
+  "publishedAt": "2026-06-02T02:40:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,31 +10,31 @@
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.2-Setup.x64.exe",
-      "size": 127812309,
-      "sha256": "841d7b459ff35acfbd6a3fda013cd907522c5b50d52f2dcf540ea7598ea9d891"
+      "versionedFile": "BMChat-2.50.3-Setup.x64.exe",
+      "size": 126087576,
+      "sha256": "664d7967debaa9c55ac59815e78dc7b0f1151528fb64f87d8214909a8e3f6b23"
     },
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.2-Portable.x64.exe",
-      "size": 127495882,
-      "sha256": "b567e4795749dcbde023ae443d17e0c43f40d0b3bc6c8824c5b8d81049488a06"
+      "versionedFile": "BMChat-2.50.3-Portable.x64.exe",
+      "size": 125771128,
+      "sha256": "c8357b05f010d2138fc7c3ff659c588dcc2ce75f30929e99ed0d9416800cf403"
     },
     "linux-x64-appimage": {
       "label": "Linux x64 AppImage",
       "url": "http://5.187.4.132/desktop/BMChat-x86_64.AppImage",
-      "versionedFile": "BMChat-2.50.2-x86_64.AppImage",
-      "size": 154666278,
-      "sha256": "4b6a55c5c6c4ebf06b6c9f45746f785aafe75b5d20a353a050b2ad9d1fcc4cf6"
+      "versionedFile": "BMChat-2.50.3-x86_64.AppImage",
+      "size": 152255097,
+      "sha256": "ad336c5ce4ea55be9736e4da25349511da5846a7d7ed9998df206af10a05240d"
     },
     "linux-x64-deb": {
       "label": "Linux x64 .deb",
       "url": "http://5.187.4.132/desktop/bmchat-amd64.deb",
-      "versionedFile": "bmchat-desktop_2.50.2_amd64.deb",
-      "size": 123159176,
-      "sha256": "440c32687a75d27104925e1b9f5fb27d3bf67eda919c1c50a70dc16a9b96cf51"
+      "versionedFile": "bmchat-desktop_2.50.3_amd64.deb",
+      "size": 121402592,
+      "sha256": "4ba56772fa3654725ab6635ca17d215bddd125cb7ff111bf003d64c66d1e4f57"
     }
   },
-  "notes": "BMChat Desktop 2.50.2 — паритет медиа с мобильной версией и брендинг BMChat.\n\nИЗМЕНЕНИЯ:\n• Видео из Telegram и обычные видео теперь правильно раскладываются по вкладкам: постеры TG-видео показываются в «Видео», а не в «Фото» (как в Android).\n• В полноэкранном просмотре видео добавлена отдельная кнопка отключения/включения звука (mute), как в мобильном плеере.\n• Telegram-видео: стриминг, «Сохранить как», скачивание и mute работают в десктопе.\n• Завершена замена брендинга DeltaChat → BMChat в интерфейсе, справке и CLI.\n• Доступны установщики Windows (Setup/Portable) и Linux (AppImage/.deb)."
+  "notes": "BMChat Desktop 2.50.3 — паритет с мобильной версией: обновления и боты.\n\nИЗМЕНЕНИЯ:\n• Настройки → Дополнительно: кнопка «Проверить обновления» с нативным диалогом результата.\n• Telegram-боты: добавление по токену, опрос через прокси BMChat, публикация в выбранный чат, ручная модерация и очередь публикации.\n• Email-боты: автоответы по командам и через webhook поверх вашей почты, редактор бота.\n• Код передачи контакта (BMCC1, AES-GCM): поделиться контактом из профиля и принять его при создании чата — совместимо с Android.\n• Установщики Windows (Setup/Portable) и Linux (AppImage/.deb)."
 }
