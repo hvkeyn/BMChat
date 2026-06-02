@@ -152,8 +152,14 @@ export default class DeltaChatController {
         throw error
       }
     }
-    if (serverPath.includes('app.asar')) {
-      // probably inside of electron build
+    if (
+      serverPath.includes('app.asar') &&
+      !serverPath.includes('app.asar.unpacked')
+    ) {
+      // probably inside of electron build. Guard against double-applying the
+      // suffix: the `resolveBundledRpcServer` fallback already returns a path
+      // inside `app.asar.unpacked`, and replacing again would produce a
+      // non-existent `app.asar.unpacked.unpacked` path (ENOENT on launch).
       serverPath = serverPath.replace('app.asar', 'app.asar.unpacked')
     }
 
