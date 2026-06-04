@@ -1,6 +1,3 @@
-import { C } from '@deltachat/jsonrpc-client'
-
-import { BackendRemote } from '../backend-com'
 import { runtime } from '@deltachat-desktop/runtime-interface'
 
 export interface EmailBotPublic {
@@ -8,6 +5,7 @@ export interface EmailBotPublic {
   name: string
   displayName?: string | null
   enabled: boolean
+  botChatId?: number
 }
 
 export async function listEmailBots(): Promise<EmailBotPublic[]> {
@@ -15,8 +13,17 @@ export async function listEmailBots(): Promise<EmailBotPublic[]> {
     return []
   }
   try {
-    const bots = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
-    return Array.isArray(bots) ? bots : []
+    const bots =
+      (await runtime.bmchatBotsInvoke('bmchat:emailbots:list-search')) ??
+      (await runtime.bmchatBotsInvoke('bmchat:emailbots:list'))
+    if (!Array.isArray(bots)) return []
+    return bots.map((b: EmailBotPublic) => ({
+      id: b.id,
+      name: b.name,
+      displayName: b.displayName ?? null,
+      enabled: b.enabled !== false,
+      botChatId: b.botChatId,
+    }))
   } catch {
     return []
   }
@@ -38,39 +45,41 @@ export function matchEmailBots(
   })
 }
 
-export async function findSavedMessagesChatId(
-  accountId: number
+async function resolveBotChatId(
+  accountId: number,
+  botName: string,
+  knownChatId?: number
 ): Promise<number | null> {
-  const entries = await BackendRemote.rpc.getChatlistEntries(
-    accountId,
-    C.DC_GCL_NO_SPECIALS,
-    null,
-    null
-  )
-  for (const entry of entries) {
-    const info = await BackendRemote.rpc.getBasicChatInfo(accountId, entry.id)
-    if (info.isSelfTalk) {
-      return entry.id
-    }
+  if (knownChatId && knownChatId > 0) {
+    return knownChatId
   }
-  return null
+  try {
+    const res = await runtime.bmchatBotsInvoke('bmchat:emailbots:open-chat', {
+      accountId,
+      botName,
+    })
+    const chatId = Number(res?.chatId)
+    return chatId > 0 ? chatId : null
+  } catch {
+    return null
+  }
 }
 
-/** Open «Сохранённые сообщения» with a prefilled @bot /start command. */
+/** Open the bot's dedicated 1:1 chat (pseudo-contact) with /start prefilled. */
 export async function openEmailBotChat(
   accountId: number,
   botName: string,
-  selectChat: (chatId: number) => void
+  selectChat: (chatId: number) => void,
+  knownChatId?: number
 ): Promise<boolean> {
-  const chatId = await findSavedMessagesChatId(accountId)
+  const chatId = await resolveBotChatId(accountId, botName, knownChatId)
   if (!chatId) {
     return false
   }
-  const text = `@${botName} /start`
   window.__setDraftRequest = {
     accountId,
     chatId,
-    text,
+    text: '/start',
   }
   selectChat(chatId)
   window.__checkSetDraftRequest?.()

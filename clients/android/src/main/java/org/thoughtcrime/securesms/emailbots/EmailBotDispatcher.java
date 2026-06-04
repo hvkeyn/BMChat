@@ -59,6 +59,7 @@ import java.util.concurrent.Executors;
 public final class EmailBotDispatcher {
 
   private static final String TAG = "EmailBotDispatcher";
+  private static final String BOT_OUT_MARKER = "\u2060";
 
   /** Don't block the JNI event-loop with network calls or SMTP sends. */
   private final ExecutorService io =
@@ -70,10 +71,12 @@ public final class EmailBotDispatcher {
 
   private final Context appContext;
   private final EmailBotStore store;
+  private final EmailBotDirectory directory;
 
   public EmailBotDispatcher(@NonNull Context context) {
     this.appContext = context.getApplicationContext();
     this.store = new EmailBotStore(appContext);
+    this.directory = new EmailBotDirectory(appContext);
   }
 
   /**
@@ -95,24 +98,37 @@ public final class EmailBotDispatcher {
 
   @WorkerThread
   private void handle(int accountId, int chatId, int msgId) {
-    if (store.getForAccount(accountId).isEmpty()) return; // hot path
-
     DcContext dcContext = ApplicationContext.getDcAccounts().getAccount(accountId);
     if (dcContext == null) return;
 
     DcMsg msg = dcContext.getMsg(msgId);
     if (msg == null) return;
-    if (msg.getFromId() == DcContact.DC_CONTACT_ID_SELF) {
-      return;
-    }
+
+    // Catalog ingest must run even when this account has no local bots yet.
+    if (EmailBotSync.tryIngest(appContext, accountId, msg, store)) return;
+
+    if (directory.tryIngest(accountId, msg)) return;
+
+    if (store.getForAccount(accountId).isEmpty()) return;
 
     DcChat chat = dcContext.getChat(chatId);
     if (chat == null) return;
+
+    boolean isSelf = msg.getFromId() == DcContact.DC_CONTACT_ID_SELF;
+    EmailBotConfig activeBot = findBotForChat(accountId, chatId);
+    boolean inHomeChat = activeBot != null && activeBot.botChatId > 0
+        && activeBot.botChatId == chatId;
 
     DcContact senderContact = dcContext.getContact(msg.getFromId());
     String senderEmail = senderContact != null
         ? senderContact.getAddr().toLowerCase(Locale.ROOT)
         : "";
+    if (isSelf) {
+      try {
+        DcContact self = dcContext.getContact(DcContact.DC_CONTACT_ID_SELF);
+        if (self != null) senderEmail = self.getAddr().toLowerCase(Locale.ROOT);
+      } catch (Throwable ignored) {}
+    }
 
     // 1) If this looks like a reply from a registered bot's developer,
     //    short-circuit out of the user-message path and dispatch the
@@ -121,14 +137,27 @@ public final class EmailBotDispatcher {
 
     String body = msg.getText();
     if (TextUtils.isEmpty(body)) return;
+    if (isBotEchoMessage(body)) return;
 
-    // 2) User-side path: parse "@botname /cmd args" or, when there is
-    //    only a single bot for the account, "/cmd args".
-    Invocation inv = parseInvocation(body, accountId);
+    if (isSelf && inHomeChat) {
+      String t = body.trim();
+      if (!t.startsWith("/") && !t.startsWith("@")) return;
+    }
+
+    // 2) User-side path: parse "@botname /cmd args" or "/cmd" in home chat.
+    Invocation inv;
+    if (inHomeChat && activeBot != null) {
+      inv = parseInvocationInBotChat(body, accountId, activeBot);
+    } else {
+      inv = parseInvocation(body, accountId);
+    }
     if (inv == null) return;
 
     EmailBotConfig bot = inv.bot;
     if (bot == null || !bot.enabled) return;
+
+    boolean ownerInHomeChat = isSelf && inHomeChat && activeBot != null
+        && activeBot.id.equals(bot.id);
 
     // 3) /start gate. Until the user explicitly opts in the bot stays
     //    silent — mirrors Telegram's "user must press Start" rule.
@@ -164,7 +193,7 @@ public final class EmailBotDispatcher {
       return;
     }
 
-    if (!bot.isSubscribed(senderEmail)) {
+    if (!ownerInHomeChat && !bot.isSubscribed(senderEmail)) {
       // Silent drop. Telegram bots do the same — they ignore unknown
       // users until /start has been issued.
       Log.d(TAG, "drop unsubscribed sender for bot " + bot.name);
@@ -232,8 +261,10 @@ public final class EmailBotDispatcher {
     try {
       // Tag with @botname so it's obvious which bot answered in
       // multi-bot groups — same convention Telegram bots use.
-      String tagged = "@" + bot.name + ": " + reply;
-      dcContext.sendTextMsg(chatId, tagged);
+      int targetChatId = bot.botChatId > 0 ? bot.botChatId : chatId;
+      boolean home = bot.botChatId > 0 && bot.botChatId == targetChatId;
+      String visible = home ? reply : "@" + bot.name + ": " + reply;
+      dcContext.sendTextMsg(targetChatId, BOT_OUT_MARKER + visible);
       EmailBotConfig updated = bot.withReplySent(System.currentTimeMillis());
       store.upsert(updated);
     } catch (Throwable t) {
@@ -323,9 +354,7 @@ public final class EmailBotDispatcher {
         command = rest.substring(1, sp).toLowerCase(Locale.ROOT);
         argument = rest.substring(sp + 1).trim();
       }
-    } else if (botName != null) {
-      // @botname free text — treat the entire remainder as the
-      // argument to the synthetic "default" command.
+    } else if (botName != null && !rest.isEmpty()) {
       command = "default";
       argument = rest;
     } else {
@@ -343,6 +372,37 @@ public final class EmailBotDispatcher {
     }
     if (bot == null) return null;
     return new Invocation(bot, command, argument);
+  }
+
+  @Nullable
+  private EmailBotConfig findBotForChat(int accountId, int chatId) {
+    for (EmailBotConfig b : store.getForAccount(accountId)) {
+      if (!b.enabled) continue;
+      if (b.botChatId > 0 && b.botChatId == chatId) return b;
+    }
+    return null;
+  }
+
+  @Nullable
+  private Invocation parseInvocationInBotChat(@NonNull String body,
+                                              int accountId,
+                                              @NonNull EmailBotConfig homeBot) {
+    Invocation inv = parseInvocation(body, accountId);
+    if (inv != null) return inv;
+    String trimmed = body.trim();
+    if (!trimmed.startsWith("/")) return null;
+    int sp = indexOfWhitespace(trimmed);
+    String command = sp < 0
+        ? trimmed.substring(1).toLowerCase(Locale.ROOT)
+        : trimmed.substring(1, sp).toLowerCase(Locale.ROOT);
+    String argument = sp < 0 ? "" : trimmed.substring(sp + 1).trim();
+    return new Invocation(homeBot, command, argument);
+  }
+
+  private static boolean isBotEchoMessage(@NonNull String body) {
+    String t = body.trim();
+    if (t.startsWith(BOT_OUT_MARKER)) return true;
+    return t.startsWith("@") && t.matches("^@[A-Za-z0-9_]+:\\s.*");
   }
 
   private static int indexOfWhitespace(@NonNull String s) {

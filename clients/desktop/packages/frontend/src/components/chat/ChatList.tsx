@@ -681,9 +681,12 @@ function ContactAndMessageSearchResults({
     }
   }, [messageResultIds, messageCache, queryStr, queryChatId])
 
-  const openBot = async (botName: string) => {
-    const ok = await openEmailBotChat(accountId, botName, chatId =>
-      selectChat(accountId, chatId)
+  const openBot = async (bot: (typeof matchedEmailBots)[number]) => {
+    const ok = await openEmailBotChat(
+      accountId,
+      bot.name,
+      chatId => selectChat(accountId, chatId),
+      bot.botChatId
     )
     if (ok) {
       onExitSearch?.()
@@ -712,7 +715,7 @@ function ContactAndMessageSearchResults({
               cutoff='@'
               text={`@${bot.name}`}
               subText={tx('bmchat_email_bot_search_subtitle')}
-              onClick={() => void openBot(bot.name)}
+              onClick={() => void openBot(bot)}
             />
           ))}
         </>

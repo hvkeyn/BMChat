@@ -10,8 +10,8 @@ BMChat — самостоятельный мессенджер на базе д�
 
 | Путь | Платформа | Статус |
 | --- | --- | --- |
-| `clients/android` | Android 5.0+ | основной фокус, релизный канал debug |
-| `clients/desktop` | Windows / Linux / macOS | **2.50.7**, авто-обновлятор через `infra/vps/www/desktop-update.json` |
+| `clients/android` | Android 5.0+ | **2.50.10**, релизный канал debug, `infra/vps/www/update.json` |
+| `clients/desktop` | Windows / Linux / macOS | **2.50.10**, авто-обновлятор через `infra/vps/www/desktop-update.json` |
 | `clients/ios` | iOS | сборки требуют macOS + Xcode |
 
 ## Реализованные функции
@@ -40,11 +40,12 @@ BMChat — самостоятельный мессенджер на базе д�
 - Desktop: `bmchat-updater.ts` в Electron main делает то же для десктоп-сборок.
 - Релизы публикуются BMChat-командой; конечные эндпоинты конфигурируются на этапе сборки и в публичный код не попадают.
 
-### Email-боты и десктоп (2.50.5–2.50.6)
+### Email-боты и десктоп (2.50.5–2.50.10)
 - **Email-боты** — не отдельные контакты в адресной книге; команды (`/start`, `/help`, …) отправляются в **«Сохранённые сообщения»** как `@имя_бота /команда` (например `@newsbot /start`).
 - Настройка: **Настройки → Дополнительно → Email-боты** — команды, webhook (`X-BMChat-Bot-Token`), e-mail разработчика (транспорт `BMCHAT-BOT-UPDATE` / `BMCHAT-BOT-REPLY`).
 - **2.50.6:** в боковом поиске по `@newsbot` показываются настроенные боты; кнопка **«Написать боту»** открывает чат с черновиком `@бот /start`.
 - **2.50.6:** окно **«Соединение»** — статистика сообщений/чатов как на Android; при недоступности реле BMChat — проверка **IMAP/SMTP** (TCP) ваших почтовых серверов.
+- **2.50.9–2.50.10:** синхронизация ботов Android ↔ Desktop (`ui.bmchat.email_bots`, каталог `ui.bmchat.bot_directory`); шифрование секретов на диске и через self-chat (`BMCHAT-BOT-SYNC v1`); исправлено пустое окно «Соединение» на десктопе.
 - Пример PHP-бота: `infra/php-bot-example/` (токен из настроек BMChat обязателен в `config.php`).
 
 ### Брендинг
@@ -101,9 +102,11 @@ pnpm -w start:electron
 cd packages/target-electron
 pnpm build && pnpm pack:win && pnpm pack:linux
 # Деплой на VPS (после копирования в infra/vps/desktop/ и обновления sha256 в манифесте):
-# bash infra/vps/deploy-desktop-2.50.6.sh
+# bash infra/vps/deploy-desktop-2.50.10.sh
+# APK + сайт + зеркало:
+# bash infra/vps/deploy-site-and-mirror.sh
 # Зеркало Yandex (ключ из whiteBlade):
-# BMCHAT_DESKTOP_VERSION=2.50.7 bash infra/vps/deploy-desktop-2.50.6-mirror.sh
+# BMCHAT_DESKTOP_VERSION=2.50.10 bash infra/vps/deploy-desktop-2.50.6-mirror.sh
 # (ключ: chmod 600 — иначе SSH отклонит; на зеркале нужно место на диске)
 # SSH: ssh -i E:/PPROJECTS/whiteBlade/artifacts/deploy/ssh/yc_whiteblade dante@158.160.104.107
 ```
@@ -142,5 +145,5 @@ open deltachat-ios.xcworkspace
 | Phase 3 | 2.49.80 | Shared Media browser (Photos/Videos/Audio/Files/Links) | завершено |
 | Phase 4 | 2.49.81 | Chat UX: PiP-video, swipe-to-reply, jump-to-date | завершено |
 | Phase 5 | 2.49.82 | Круглые видео-сообщения (video notes) | в работе |
-| Phase 6 | 2.50.x | Desktop: email/TG-боты, соединение, поиск ботов, updater | в работе (2.50.7) |
+| Phase 6 | 2.50.x | Desktop/Android: email-боты, соединение, шифрование, updater | завершено (2.50.10) |
 | Phase 7 | — | iOS порт фишек Phase 1–5 | планируется |

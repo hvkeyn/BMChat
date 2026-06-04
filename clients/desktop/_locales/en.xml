@@ -343,7 +343,7 @@
     <string name="bmchat_bots_queue_publish_all">Publish all</string>
     <string name="bmchat_bots_queue_clear">Clear queue</string>
     <string name="bmchat_email_bots_title">Email bots</string>
-    <string name="bmchat_email_bots_explain">Email bots are not contacts in search. Open Saved Messages and send @botname /start (e.g. @newsbot /start). You can also use «Write to bot» in Settings → Advanced → Email bots.</string>
+    <string name="bmchat_email_bots_explain">Each email bot appears in your chat list as its own contact. Find it via search (@botname) or tap «Write to bot», then send /start or a command (e.g. /help).</string>
     <string name="bmchat_email_bots_empty">No email bots yet.</string>
     <string name="bmchat_email_bots_add">Create bot</string>
     <string name="bmchat_email_bot_replies">Replies sent: %1$s</string>
@@ -370,11 +370,14 @@
         <item quantity="one">%d BOT</item>
         <item quantity="other">%d BOTS</item>
     </plurals>
-    <string name="bmchat_email_bot_search_subtitle">Email bot — write in Saved Messages</string>
+    <string name="bmchat_email_bot_search_subtitle">Email bot — dedicated chat</string>
     <string name="bmchat_email_bot_write">Write to bot</string>
-    <string name="bmchat_email_bot_open_failed">Could not open Saved Messages. Create or select that chat first.</string>
+    <string name="bmchat_email_bot_attach_chat">Add bot to chat…</string>
+    <string name="bmchat_email_bot_attached_chats">Attached chats: %1$s</string>
+    <string name="bmchat_email_bot_open_failed">Could not open the bot chat. Restart the app or re-save the bot in settings.</string>
     <string name="bmchat_connectivity_stats_title">BMChat statistics</string>
     <string name="bmchat_connectivity_stats_hint">Local summary for this profile. Nothing is sent to a BMChat server.</string>
+    <string name="bmchat_connectivity_stats_loading">Loading statistics…</string>
     <string name="bmchat_stats_contacts">Contacts</string>
     <string name="bmchat_stats_contacts_hint">Contacts in the BMChat address book</string>
     <string name="bmchat_stats_verified_contacts">Verified</string>

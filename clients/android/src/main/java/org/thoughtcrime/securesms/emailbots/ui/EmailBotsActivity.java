@@ -100,6 +100,7 @@ public class EmailBotsActivity extends PassphraseRequiredActionBarActivity {
   }
 
   private void refresh() {
+    store.reloadFromUiConfig();
     int accountId = DcHelper.getContext(this).getAccountId();
     List<EmailBotConfig> bots = store.getForAccount(accountId);
     adapter.setData(bots);

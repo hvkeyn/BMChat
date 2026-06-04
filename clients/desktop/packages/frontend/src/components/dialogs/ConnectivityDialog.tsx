@@ -9,11 +9,11 @@ import useTranslationFunction from '../../hooks/useTranslationFunction'
 import type { DialogProps } from '../../contexts/DialogContext'
 import { runtime } from '@deltachat-desktop/runtime-interface'
 import {
-  BMCHAT_MAIL_PROBE_CSS,
-  BMCHAT_STATS_CSS,
   buildBmchatStatisticsHtml,
   buildMailProbeHtml,
+  injectConnectivityStyles,
   sanitizeConnectivityHtml,
+  wrapConnectivityDocument,
   type MailProbeResult,
 } from '../../bmchat/connectivityStats'
 
@@ -36,6 +36,8 @@ function ConnectivityDialogInner() {
   const accountId = selectedAccountId()
   const [connectivityHTML, setConnectivityHTML] = useState('')
   const [mailProbeBusy, setMailProbeBusy] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [statsLoading, setStatsLoading] = useState(false)
 
   const style = window.getComputedStyle(document.body)
   const bgColor = style.getPropertyValue('--bgPrimary')
@@ -47,37 +49,71 @@ function ConnectivityDialogInner() {
 
   const updateConnectivity = useMemo(
     () =>
-      debounceWithInit(async () => {
-        const cHTML = await getConnectivityHTML(
-          accountId,
-          canInjectStyles ? stylesToInject : undefined,
-          isElectron
-        )
-        setConnectivityHTML(cHTML)
+      debounceWithInit(async (forceMailProbe = false) => {
+        setLoading(true)
+        try {
+          let cHTML = await BackendRemote.rpc.getConnectivityHtml(accountId)
+          cHTML = sanitizeConnectivityHtml(cHTML)
+          if (canInjectStyles) {
+            cHTML = injectConnectivityStyles(cHTML, `${stylesToInject}${OverwrittenStyles}`)
+          } else {
+            cHTML = injectConnectivityStyles(cHTML)
+          }
+          setConnectivityHTML(wrapConnectivityDocument(cHTML))
+          setLoading(false)
+
+          setStatsLoading(true)
+          try {
+            const withExtras = await appendConnectivityExtras(
+              accountId,
+              cHTML,
+              isElectron,
+              forceMailProbe,
+              canInjectStyles ? stylesToInject : undefined
+            )
+            setConnectivityHTML(wrapConnectivityDocument(withExtras))
+          } finally {
+            setStatsLoading(false)
+          }
+        } catch (e) {
+          const msg =
+            e instanceof Error ? e.message : String(e ?? 'unknown error')
+          setConnectivityHTML(
+            wrapConnectivityDocument(
+              `<p><b>${tx('error')}</b></p><p>${msg}</p>`,
+              canInjectStyles ? stylesToInject : undefined
+            )
+          )
+          setLoading(false)
+          setStatsLoading(false)
+        }
       }, 240),
-    [accountId, canInjectStyles, stylesToInject, isElectron]
+    [accountId, canInjectStyles, stylesToInject, isElectron, tx]
   )
 
   useEffect(() => {
-    updateConnectivity()
-    return onDCEvent(accountId, 'ConnectivityChanged', updateConnectivity)
+    updateConnectivity(false)
+    return onDCEvent(accountId, 'ConnectivityChanged', () =>
+      updateConnectivity(false)
+    )
   }, [accountId, updateConnectivity])
 
   const runMailProbe = async () => {
     if (!isElectron) return
     setMailProbeBusy(true)
     try {
-      const cHTML = await getConnectivityHTML(
-        accountId,
-        canInjectStyles ? stylesToInject : undefined,
-        true,
-        true
-      )
-      setConnectivityHTML(cHTML)
+      await updateConnectivity(true)
     } finally {
       setMailProbeBusy(false)
     }
   }
+
+  const iframeDoc =
+    connectivityHTML ||
+    wrapConnectivityDocument(
+      `<p>${loading ? tx('connectivity_connecting') : '…'}</p>`,
+      canInjectStyles ? stylesToInject : undefined
+    )
 
   return (
     <DialogBody>
@@ -91,15 +127,21 @@ function ConnectivityDialogInner() {
             backgroundColor: bgColor,
             color: textColor,
           }}
-          srcDoc={connectivityHTML}
+          srcDoc={iframeDoc}
           sandbox={''}
+          title={tx('connectivity')}
         />
+        {statsLoading && (
+          <p style={{ marginTop: 8, opacity: 0.75, fontSize: '0.9rem' }}>
+            {tx('bmchat_connectivity_stats_loading')}
+          </p>
+        )}
         {isElectron && (
           <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
             <button
               type='button'
               className='delta-button-round'
-              disabled={mailProbeBusy}
+              disabled={mailProbeBusy || loading}
               onClick={runMailProbe}
             >
               {mailProbeBusy
@@ -113,25 +155,14 @@ function ConnectivityDialogInner() {
   )
 }
 
-async function getConnectivityHTML(
+async function appendConnectivityExtras(
   accountId: number,
-  stylesToInject?: string | undefined,
-  isElectron = false,
-  forceMailProbe = false
+  cHTML: string,
+  isElectron: boolean,
+  forceMailProbe: boolean,
+  _stylesToInject?: string
 ): Promise<string> {
   const tx = window.static_translate
-  let cHTML = await BackendRemote.rpc.getConnectivityHtml(accountId)
-  cHTML = sanitizeConnectivityHtml(cHTML)
-
-  const extraCss = BMCHAT_STATS_CSS + BMCHAT_MAIL_PROBE_CSS
-  if (stylesToInject) {
-    cHTML = cHTML.replace(
-      '</style>',
-      `</style><style> html {${stylesToInject}${OverwrittenStyles}}${extraCss}</style>`
-    )
-  } else {
-    cHTML = cHTML.replace('</style>', `</style><style>${extraCss}</style>`)
-  }
 
   const statsHtml = await buildBmchatStatisticsHtml(accountId, {
     title: tx('bmchat_connectivity_stats_title'),
@@ -183,8 +214,7 @@ async function getConnectivityHTML(
 
   let mailProbeHtml = ''
   if (isElectron) {
-    const shouldProbe =
-      forceMailProbe || connectivityLooksDegraded(cHTML)
+    const shouldProbe = forceMailProbe || connectivityLooksDegraded(cHTML)
     if (shouldProbe) {
       try {
         const probe = (await runtime.bmchatBotsInvoke(

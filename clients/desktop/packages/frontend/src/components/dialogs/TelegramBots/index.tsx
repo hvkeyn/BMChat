@@ -137,7 +137,7 @@ export default function TelegramBots({ onClose }: DialogProps) {
               : tx('bmchat_bots_invalid_token')
           )
         }
-      } catch (err) {
+      } catch (_err) {
         setError(tx('bmchat_bots_invalid_token'))
       } finally {
         setBusy(false)
@@ -157,7 +157,7 @@ export default function TelegramBots({ onClose }: DialogProps) {
         ])
       )
       await refresh()
-    } catch (err) {
+    } catch (_err) {
       setStatus(null)
     }
   }

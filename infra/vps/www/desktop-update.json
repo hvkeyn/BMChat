@@ -1,40 +1,40 @@
 {
-  "version": "2.50.7",
-  "publishedAt": "2026-06-04T04:30:00Z",
+  "version": "2.50.10",
+  "publishedAt": "2026-06-05T00:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
   "platforms": {
-    "win-x64-installer": {
-      "label": "Setup x64 (.exe)",
-      "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.7-Setup.x64.exe",
-      "size": 126383515,
-      "sha256": "8e06720814536b601eb294b77d11f09b64a742c344d2545755091218c1013745"
-    },
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.7-Portable.x64.exe",
-      "size": 126067063,
-      "sha256": "995f55f27df940d5355192f0a07dfe42eb28b5ff4ed346db87d984a60a15a7d5"
+      "versionedFile": "BMChat-2.50.10-Portable.x64.exe",
+      "size": 126019426,
+      "sha256": "cf1e8b0d706693c44554e9247750c3a25a36792fd9b96894d48792e19fbb9282"
+    },
+    "win-x64-installer": {
+      "label": "Setup x64 (.exe)",
+      "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
+      "versionedFile": "BMChat-2.50.10-Setup.x64.exe",
+      "size": 126335925,
+      "sha256": "e43bb62703197bed1852d82f5568394a8f5da885150b7fb4c62c5a9afc893263"
     },
     "linux-x64-appimage": {
-      "label": "Linux x64 AppImage",
+      "label": "AppImage x86_64",
       "url": "http://5.187.4.132/desktop/BMChat-x86_64.AppImage",
-      "versionedFile": "BMChat-2.50.7-x86_64.AppImage",
-      "size": 153095869,
-      "sha256": "a1816f16d5c7674457896b73e1b1ffd4cc2d4974c14f7020900745d8a11a2d24"
+      "versionedFile": "BMChat-2.50.10-x86_64.AppImage",
+      "size": 150376917,
+      "sha256": "2315872165acd3eb5f79747b80e183adce8d0fb90f50b259abe0d073dc73fac3"
     },
     "linux-x64-deb": {
-      "label": "Linux x64 .deb",
+      "label": ".deb (amd64)",
       "url": "http://5.187.4.132/desktop/bmchat-amd64.deb",
-      "versionedFile": "bmchat-desktop_2.50.7_amd64.deb",
-      "size": 121785100,
-      "sha256": "692ee2505a0404b7e189240286cf5240652533aa9768541da48c9d0c47cebc6c"
+      "versionedFile": "bmchat-desktop_2.50.10_amd64.deb",
+      "size": 119743732,
+      "sha256": "1746b0726431831f6ef11fee29110f459ac998778598d2cd48a72fa02732db86"
     }
   },
-  "notes": "BMChat Desktop 2.50.7 — исправлен белый экран при запуске, полная пересборка UI.\n\nИСПРАВЛЕНО:\n• Белый экран: пересобран frontend с фичами 2.50.6, улучшена загрузка локали.\n\nНОВОЕ (из 2.50.6):\n• Поиск email-ботов (@newsbot), кнопка «Написать боту».\n• Статистика в «Соединении» + проверка IMAP/SMTP при проблемах с реле."
+  "notes": "BMChat Desktop 2.50.10 — шифрование email-ботов, исправлено окно «Соединение», синхронизация ботов с Android.\n\nИСПРАВЛЕНО:\n• «Соединение» сразу показывает HTML ядра; статистика подгружается отдельно.\n• Android видит ботов с Desktop через ui-config и зашифрованный self-chat sync.\n\nНОВОЕ:\n• Секреты ботов шифруются на диске (store v2); каталог BMCHAT-BOT-CATALOG v1."
 }

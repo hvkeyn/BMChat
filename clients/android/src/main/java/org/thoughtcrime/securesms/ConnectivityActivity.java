@@ -60,9 +60,7 @@ public class ConnectivityActivity extends WebViewActivity implements DcEventCent
             // After the bullet is gone an empty <h3>Storage on Server</h3>
             // would still take a slot — drop any header followed only by
             // whitespace and the next header.
-            .replaceAll(
-                "(?si)<h3[^>]*>[^<]*</h3>\\s*(?=<h3|</body)",
-                "");
+            .replaceAll("(?si)<h3[^>]*>[^<]*</h3>\\s*(?=<h3)", "");
     html =
         html.replace(
             "</style>",

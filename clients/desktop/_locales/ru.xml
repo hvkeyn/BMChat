@@ -360,7 +360,7 @@
     <string name="bmchat_bots_queue_publish_all">Опубликовать все</string>
     <string name="bmchat_bots_queue_clear">Очистить очередь</string>
     <string name="bmchat_email_bots_title">Email-боты</string>
-    <string name="bmchat_email_bots_explain">Email-боты не отображаются в поиске как контакты. Откройте «Сохранённые сообщения» и отправьте @имя_бота /start (например @newsbot /start). Или нажмите «Написать боту» в Настройки → Дополнительно → Email-боты.</string>
+    <string name="bmchat_email_bots_explain">Каждый email-бот — отдельный контакт в списке чатов. Настройки синхронизируются между вашими устройствами (multidevice). В домашнем чате бота пишите только команды (/start, /help). В группах — @имя_бота /команда. Кнопка «Добавить бота в чат…» подключает бота к каналу или группе.</string>
     <string name="bmchat_email_bots_empty">Email-ботов пока нет.</string>
     <string name="bmchat_email_bots_add">Создать бота</string>
     <string name="bmchat_email_bot_replies">Отправлено ответов: %1$s</string>
@@ -389,11 +389,14 @@
         <item quantity="many">%d БОТОВ</item>
         <item quantity="other">%d БОТА</item>
     </plurals>
-    <string name="bmchat_email_bot_search_subtitle">Email-бот — пишите в «Сохранённые сообщения»</string>
+    <string name="bmchat_email_bot_search_subtitle">Email-бот — отдельный чат</string>
     <string name="bmchat_email_bot_write">Написать боту</string>
-    <string name="bmchat_email_bot_open_failed">Не удалось открыть «Сохранённые сообщения». Сначала создайте или выберите этот чат.</string>
+    <string name="bmchat_email_bot_attach_chat">Добавить бота в чат…</string>
+    <string name="bmchat_email_bot_attached_chats">Подключено чатов: %1$s</string>
+    <string name="bmchat_email_bot_open_failed">Не удалось открыть чат с ботом. Перезапустите приложение или пересохраните бота в настройках.</string>
     <string name="bmchat_connectivity_stats_title">Статистика BMChat</string>
     <string name="bmchat_connectivity_stats_hint">Локальная сводка по этому профилю. Данные не отправляются на сервер BMChat.</string>
+    <string name="bmchat_connectivity_stats_loading">Загрузка статистики…</string>
     <string name="bmchat_stats_contacts">Контакты</string>
     <string name="bmchat_stats_contacts_hint">Контакты в адресной книге BMChat</string>
     <string name="bmchat_stats_verified_contacts">Проверенные</string>

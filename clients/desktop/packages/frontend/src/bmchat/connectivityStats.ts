@@ -49,7 +49,8 @@ async function collectChatStats(
   accountId: number,
   flag: number,
   stats: Stats,
-  seen: Set<number>
+  seen: Set<number>,
+  maxChats: number
 ): Promise<void> {
   const entries = await BackendRemote.rpc.getChatlistEntries(
     accountId,
@@ -58,6 +59,7 @@ async function collectChatStats(
     null
   )
   for (const entry of entries) {
+    if (seen.size >= maxChats) return
     const chatId = entry.id
     if (chatId <= C.DC_CHAT_ID_LAST_SPECIAL || seen.has(chatId)) continue
     seen.add(chatId)
@@ -187,13 +189,22 @@ export async function buildBmchatStatisticsHtml(
     attachments: 0,
   }
   const seen = new Set<number>()
-  await collectChatStats(accountId, C.DC_GCL_NO_SPECIALS, stats, seen)
   await collectChatStats(
     accountId,
-    C.DC_GCL_ARCHIVED_ONLY | C.DC_GCL_NO_SPECIALS,
+    C.DC_GCL_NO_SPECIALS,
     stats,
-    seen
+    seen,
+    MAX_CHATS_FOR_MESSAGE_STATS
   )
+  if (seen.size < MAX_CHATS_FOR_MESSAGE_STATS) {
+    await collectChatStats(
+      accountId,
+      C.DC_GCL_ARCHIVED_ONLY | C.DC_GCL_NO_SPECIALS,
+      stats,
+      seen,
+      MAX_CHATS_FOR_MESSAGE_STATS
+    )
+  }
   stats.contacts = await countRealContacts(accountId, 0)
   stats.verifiedContacts = await countRealContacts(
     accountId,
@@ -235,6 +246,7 @@ export async function buildBmchatStatisticsHtml(
 
 /** Strip misleading IMAP-only provider line (ported from Android). */
 export function sanitizeConnectivityHtml(html: string): string {
+  if (!html || !html.trim()) return ''
   return html
     .replace(
       /<[^>]*>\s*Не поддерживается вашим провайдером\.?\s*<\/[^>]*>/gis,
@@ -244,7 +256,49 @@ export function sanitizeConnectivityHtml(html: string): string {
       /<[^>]*>\s*Not supported by your provider\.?\s*<\/[^>]*>/gis,
       ''
     )
-    .replace(/<h3[^>]*>[^<]*<\/h3>\s*(?=<h3|\/body)/gis, '')
+    // Drop empty section headers only when another <h3> follows (not before </body>).
+    .replace(/<h3[^>]*>[^<]*<\/h3>\s*(?=<h3)/gis, '')
+}
+
+/** Ensure iframe srcDoc is a full HTML document. */
+export function wrapConnectivityDocument(
+  bodyHtml: string,
+  extraHeadStyle = ''
+): string {
+  const inner = bodyHtml.trim()
+  if (!inner) {
+    return (
+      '<!DOCTYPE html><html><head><meta charset="UTF-8"/>' +
+      `<style>body{padding:1em;opacity:.7}${extraHeadStyle}</style></head>` +
+      '<body><p>…</p></body></html>'
+    )
+  }
+  if (/<html[\s>]/i.test(inner)) return inner
+  return (
+    '<!DOCTYPE html><html><head><meta charset="UTF-8"/>' +
+    `<style>body{padding:.5em 1em}${extraHeadStyle}</style></head>` +
+    `<body>${inner}</body></html>`
+  )
+}
+
+const MAX_CHATS_FOR_MESSAGE_STATS = 100
+
+export function injectConnectivityStyles(
+  html: string,
+  stylesToInject?: string
+): string {
+  const extraCss = BMCHAT_STATS_CSS + BMCHAT_MAIL_PROBE_CSS
+  const inject =
+    stylesToInject != null
+      ? ` html {${stylesToInject}}${extraCss}`
+      : extraCss
+  if (html.includes('</style>')) {
+    return html.replace('</style>', `</style><style>${inject}</style>`)
+  }
+  return html.replace(
+    /<body[^>]*>/i,
+    m => `${m}<style>${inject}</style>`
+  )
 }
 
 export interface MailProbeResult {

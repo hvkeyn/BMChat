@@ -13,8 +13,11 @@ import useTranslationFunction from '../../../hooks/useTranslationFunction'
 import useConfirmationDialog from '../../../hooks/dialog/useConfirmationDialog'
 import { selectedAccountId } from '../../../ScreenController'
 import useChat from '../../../hooks/chat/useChat'
+import { C } from '@deltachat/jsonrpc-client'
 import { openEmailBotChat } from '../../../bmchat/emailBots'
 import { getLogger } from '../../../../../shared/logger'
+import useDialog from '../../../hooks/dialog/useDialog'
+import SelectChat from '../SelectChat'
 
 import type { DialogProps } from '../../../contexts/DialogContext'
 
@@ -40,6 +43,8 @@ interface EmailBot {
   createdAtMs: number
   lastReplyAtMs: number
   totalReplies: number
+  botChatId?: number
+  attachedChatIds?: number[]
 }
 
 const EB = {
@@ -51,13 +56,25 @@ const EB = {
     runtime.bmchatBotsInvoke('bmchat:emailbots:remove', id),
   setEnabled: (id: string, enabled: boolean) =>
     runtime.bmchatBotsInvoke('bmchat:emailbots:set-enabled', { id, enabled }),
+  attachChat: (id: string, chatId: number) =>
+    runtime.bmchatBotsInvoke('bmchat:emailbots:attach-chat', { id, chatId }),
 }
 
 export default function EmailBots({ onClose }: DialogProps) {
   const tx = useTranslationFunction()
   const openConfirmationDialog = useConfirmationDialog()
+  const openDialog = useDialog()
   const { selectChat } = useChat()
   const accountId = selectedAccountId()
+
+  const pickChat = (headerTitle: string, onPick: (chatId: number) => void) => {
+    openDialog(SelectChat, {
+      headerTitle,
+      listFlags: C.DC_GCL_NO_SPECIALS,
+      enableAccountSwitch: false,
+      onChatClick: ({ chatId }: { chatId: number }) => onPick(chatId),
+    })
+  }
 
   const [bots, setBots] = useState<EmailBot[]>([])
   const [editing, setEditing] = useState<Partial<EmailBot> | null>(null)
@@ -129,6 +146,9 @@ export default function EmailBots({ onClose }: DialogProps) {
                 )}
                 <div style={{ fontSize: 12, opacity: 0.6, marginTop: 4 }}>
                   {tx('bmchat_email_bot_replies', String(bot.totalReplies))}
+                  {(bot.attachedChatIds?.length ?? 0) > 0
+                    ? ` · ${tx('bmchat_email_bot_attached_chats', String(bot.attachedChatIds!.length))}`
+                    : ''}
                 </div>
                 <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
                   <button
@@ -138,7 +158,8 @@ export default function EmailBots({ onClose }: DialogProps) {
                       const ok = await openEmailBotChat(
                         accountId,
                         bot.name,
-                        chatId => selectChat(accountId, chatId)
+                        chatId => selectChat(accountId, chatId),
+                        (bot as { botChatId?: number }).botChatId
                       )
                       if (ok) {
                         onClose()
@@ -151,6 +172,20 @@ export default function EmailBots({ onClose }: DialogProps) {
                     }}
                   >
                     {tx('bmchat_email_bot_write')}
+                  </button>
+                  <button
+                    className='delta-button-round'
+                    onClick={() =>
+                      pickChat(
+                        tx('bmchat_email_bot_attach_chat'),
+                        async chatId => {
+                          await EB.attachChat(bot.id, chatId)
+                          await refresh()
+                        }
+                      )
+                    }
+                  >
+                    {tx('bmchat_email_bot_attach_chat')}
                   </button>
                   <button
                     className='delta-button-round'

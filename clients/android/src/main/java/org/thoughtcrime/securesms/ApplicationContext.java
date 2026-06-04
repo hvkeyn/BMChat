@@ -468,6 +468,15 @@ public class ApplicationContext extends MultiDexApplication {
             ExistingPeriodicWorkPolicy.KEEP,
             webxdcGarbageCollectionRequest);
 
+    // Pull email-bot definitions from ui.bmchat.email_bots (multidevice) early.
+    new Thread(() -> {
+      try {
+        new org.thoughtcrime.securesms.emailbots.EmailBotStore(this).reloadFromUiConfig();
+      } catch (Throwable t) {
+        Log.w("BMChat", "email bots ui-config preload failed", t);
+      }
+    }, "emailbot-ui-preload").start();
+
     Log.i("BMChat", "+++++++++++ ApplicationContext.onCreate() finished ++++++++++");
   }
 
