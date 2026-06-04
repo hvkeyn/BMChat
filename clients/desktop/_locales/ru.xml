@@ -368,6 +368,13 @@
     <string name="bmchat_email_bot_field_displayname">Отображаемое имя</string>
     <string name="bmchat_email_bot_field_description">Описание</string>
     <string name="bmchat_email_bot_field_webhook">URL webhook (необязательно)</string>
+    <string name="bmchat_email_bot_field_webhook_hint">BMChat шлёт сюда POST с JSON (заголовок X-BMChat-Bot-Token). Работает в десктопе Windows, Linux и macOS.</string>
+    <string name="bmchat_email_bot_field_developer_email">E-mail разработчика (необязательно)</string>
+    <string name="bmchat_email_bot_field_developer_email_hint">Почтовый канал: каждое сообщение пользователя уходит письмом BMCHAT-BOT-UPDATE; ответьте письмом BMCHAT-BOT-REPLY или обработайте через cron/IMAP.</string>
+    <string name="bmchat_email_bot_token_label">Токен API (для webhook)</string>
+    <string name="bmchat_email_bot_token_copy">Скопировать токен</string>
+    <string name="bmchat_email_bot_token_copied">Токен скопирован</string>
+    <string name="bmchat_email_bot_token_hint">Вставьте в backend бота (например config.php). Появляется после первого сохранения.</string>
     <string name="bmchat_email_bot_field_commands">Команды</string>
     <string name="bmchat_email_bot_command_key">команда</string>
     <string name="bmchat_email_bot_command_value">шаблон ответа</string>

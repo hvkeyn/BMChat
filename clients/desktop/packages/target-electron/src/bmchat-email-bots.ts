@@ -247,13 +247,14 @@ function defaultWelcome(bot: EmailBot): string {
 //  webhook (main process has network)
 // ---------------------------------------------------------------------------
 
-function postWebhook(
+async function postWebhook(
   bot: EmailBot,
   inv: { command: string; argument: string },
   senderEmail: string,
   body: string,
   chatId: number,
-  msgId: number
+  msgId: number,
+  accountId: number
 ): Promise<string | null> {
   return new Promise(resolve => {
     if (!bot.webhookUrl) {
@@ -271,22 +272,35 @@ function postWebhook(
       resolve(null)
       return
     }
-    const payload = JSON.stringify({
-      update_id: msgId,
-      message: {
-        message_id: msgId,
-        chat: { id: chatId, type: 'private' },
-        from: { email: senderEmail },
-        text: body,
-        date: Math.floor(Date.now() / 1000),
-      },
-      bmchat: {
+    void (async () => {
+      let replyTo = ''
+      try {
+        const self: any = await getDCJsonrpcRemote().rpc.getContact(
+          accountId,
+          DC_CONTACT_ID_SELF
+        )
+        replyTo = (self?.address || '').toLowerCase()
+      } catch {
+        /* optional hint for PHP mailer mode */
+      }
+      const bmchat: Record<string, string> = {
         bot: bot.name,
         token_suffix: bot.token,
         command: inv.command,
         argument: inv.argument,
-      },
-    })
+      }
+      if (replyTo) bmchat.reply_to = replyTo
+      const payload = JSON.stringify({
+        update_id: msgId,
+        message: {
+          message_id: msgId,
+          chat: { id: chatId, type: 'private' },
+          from: { email: senderEmail },
+          text: body,
+          date: Math.floor(Date.now() / 1000),
+        },
+        bmchat,
+      })
     const lib = url.protocol === 'https:' ? https : http
     let settled = false
     const finish = (v: string | null) => {
@@ -345,7 +359,175 @@ function postWebhook(
     } catch {
       finish(null)
     }
+    })()
   })
+}
+
+// ---------------------------------------------------------------------------
+//  email transport (developer mailbox — mirrors Android EmailBotMailer)
+// ---------------------------------------------------------------------------
+
+const MARKER_UPDATE = 'BMCHAT-BOT-UPDATE v1'
+const MARKER_REPLY = 'BMCHAT-BOT-REPLY v1'
+const REPLY_PATTERN =
+  /BMCHAT-BOT-REPLY v1 @?([a-zA-Z0-9_]+) chat=(\d+) in_reply_to=(\d+)/
+
+function tryParseReplyMarker(
+  line: string
+): { botSlug: string; originChatId: number; originMsgId: number } | null {
+  const m = REPLY_PATTERN.exec(line.trim())
+  if (!m) return null
+  return {
+    botSlug: m[1],
+    originChatId: parseInt(m[2], 10),
+    originMsgId: parseInt(m[3], 10),
+  }
+}
+
+function parseReplyBody(body: string): {
+  text?: string
+  reply_markup?: { inline_keyboard?: unknown }
+} | null {
+  const norm = body.replace(/\r\n/g, '\n')
+  let sep = norm.indexOf('\n---\n')
+  let json = sep >= 0 ? norm.slice(sep + 5).trim() : ''
+  if (!json && norm.trim().startsWith('{')) json = norm.trim()
+  if (!json || json[0] !== '{') return null
+  try {
+    return JSON.parse(json)
+  } catch {
+    return null
+  }
+}
+
+async function sendDeveloperUpdate(
+  accountId: number,
+  bot: EmailBot,
+  originChatId: number,
+  originMsgId: number,
+  senderEmail: string,
+  body: string,
+  command: string,
+  argument: string
+): Promise<boolean> {
+  if (!bot.developerEmail) return false
+  try {
+    const rpc = getDCJsonrpcRemote().rpc
+    let replyTo = ''
+    try {
+      const self: any = await rpc.getContact(accountId, DC_CONTACT_ID_SELF)
+      replyTo = (self?.address || '').toLowerCase()
+    } catch {
+      /* ignore */
+    }
+    const update = {
+      update_id: originMsgId,
+      message: {
+        message_id: originMsgId,
+        chat: { id: originChatId, type: 'private' },
+        from: { email: senderEmail },
+        text: body,
+        date: Math.floor(Date.now() / 1000),
+      },
+      bmchat: {
+        bot: bot.name,
+        token_suffix: bot.token,
+        command,
+        argument,
+        ...(replyTo ? { reply_to: replyTo } : {}),
+      },
+    }
+    const header = `${MARKER_UPDATE} @${bot.name} chat=${originChatId} message=${originMsgId} from=${senderEmail}`
+    const mailBody = header + '\n---\n' + JSON.stringify(update, null, 2)
+    const contactId = await rpc.createContact(
+      accountId,
+      bot.developerEmail,
+      null
+    )
+    const devChatId = await rpc.createChatByContactId(accountId, contactId)
+    await rpc.miscSendTextMessage(accountId, devChatId, mailBody)
+    return true
+  } catch (e) {
+    log.warn('sendDeveloperUpdate failed for %s', bot.name, e)
+    return false
+  }
+}
+
+async function handleDeveloperReply(
+  accountId: number,
+  msg: { text?: string },
+  senderEmail: string
+): Promise<boolean> {
+  const body = msg.text || ''
+  if (!body) return false
+  const firstLine = body.split(/\r?\n/)[0] || ''
+  let env = tryParseReplyMarker(firstLine)
+  if (!env) env = tryParseReplyMarker(body.slice(0, 200))
+  if (!env) return false
+
+  const bot = findByName(accountId, env.botSlug)
+  if (!bot || !bot.developerEmail) return false
+  if (bot.developerEmail !== senderEmail.toLowerCase()) {
+    log.warn(
+      'developer reply for %s from %s, expected %s',
+      env.botSlug,
+      senderEmail,
+      bot.developerEmail
+    )
+    return false
+  }
+  const payload = parseReplyBody(body)
+  if (!payload) return true
+  let text: string | undefined = payload.text
+  if (!text && typeof (payload as any).reply === 'string') {
+    text = (payload as any).reply
+  }
+  if (!text) return true
+  const keyboard = renderInlineKeyboard(
+    bot,
+    payload.reply_markup?.inline_keyboard
+  )
+  if (keyboard) text = text + '\n\n' + keyboard
+  await sendBotReply(accountId, env.originChatId, bot, text)
+  return true
+}
+
+async function resolveOutgoingReply(
+  accountId: number,
+  bot: EmailBot,
+  inv: Invocation,
+  senderEmail: string,
+  body: string,
+  chatId: number,
+  msgId: number
+): Promise<{ reply: string | null; forwarded: boolean }> {
+  let reply = resolveReply(bot, inv.command, inv.argument, senderEmail)
+  if (bot.webhookUrl) {
+    const webhookReply = await postWebhook(
+      bot,
+      inv,
+      senderEmail,
+      body,
+      chatId,
+      msgId,
+      accountId
+    )
+    if (webhookReply) reply = webhookReply
+  }
+  let forwarded = false
+  if (bot.developerEmail) {
+    forwarded = await sendDeveloperUpdate(
+      accountId,
+      bot,
+      chatId,
+      msgId,
+      senderEmail,
+      body,
+      inv.command,
+      inv.argument
+    )
+  }
+  return { reply, forwarded }
 }
 
 function renderInlineKeyboard(bot: EmailBot, rows: any): string | null {
@@ -405,19 +587,34 @@ async function handleIncoming(
     const rpc = getDCJsonrpcRemote().rpc
     const msg: any = await rpc.getMessage(accountId, msgId)
     if (!msg) return
+
+    let senderEmail = ''
+    if (msg.fromId !== DC_CONTACT_ID_SELF) {
+      try {
+        const contact: any = await rpc.getContact(accountId, msg.fromId)
+        senderEmail = (contact?.address || '').toLowerCase()
+      } catch {
+        /* ignore */
+      }
+    } else {
+      try {
+        const self: any = await rpc.getContact(accountId, DC_CONTACT_ID_SELF)
+        senderEmail = (self?.address || '').toLowerCase()
+      } catch {
+        /* ignore */
+      }
+    }
+
+    // Developer SMTP reply (BMCHAT-BOT-REPLY) — before user-command parsing.
+    if (await handleDeveloperReply(accountId, msg, senderEmail)) return
+
     if (msg.fromId === DC_CONTACT_ID_SELF) return
     const body: string = msg.text || ''
     if (!body) return
 
-    let senderEmail = ''
-    try {
-      const contact: any = await rpc.getContact(accountId, msg.fromId)
-      senderEmail = (contact?.address || '').toLowerCase()
-    } catch {}
-
     const inv = parseInvocation(body, accountId)
     if (!inv) return
-    let bot = inv.bot
+    const bot = inv.bot
     if (!bot.enabled) return
 
     if (inv.command === 'start') {
@@ -425,20 +622,11 @@ async function handleIncoming(
         bot.subscribedUsers.push(senderEmail)
         await saveStore()
       }
-      let welcome = resolveReply(bot, 'start', inv.argument, senderEmail)
-      if (!welcome) welcome = defaultWelcome(bot)
-      await sendBotReply(accountId, chatId, bot, welcome)
-      return
-    }
-
-    if (senderEmail && !bot.subscribedUsers.includes(senderEmail)) {
-      // Drop unsubscribed senders until they /start.
-      return
-    }
-
-    let reply = resolveReply(bot, inv.command, inv.argument, senderEmail)
-    if (bot.webhookUrl) {
-      const webhookReply = await postWebhook(
+      let welcome =
+        resolveReply(bot, 'start', inv.argument, senderEmail) ??
+        defaultWelcome(bot)
+      const { reply, forwarded } = await resolveOutgoingReply(
+        accountId,
         bot,
         inv,
         senderEmail,
@@ -446,9 +634,32 @@ async function handleIncoming(
         chatId,
         msgId
       )
-      if (webhookReply) reply = webhookReply
+      const outgoing = reply ?? welcome
+      if (outgoing) {
+        await sendBotReply(accountId, chatId, bot, outgoing)
+      } else if (!forwarded) {
+        log.warn('email bot %s: /start produced no reply', bot.name)
+      }
+      return
     }
-    if (!reply) return
+
+    if (senderEmail && !bot.subscribedUsers.includes(senderEmail)) {
+      return
+    }
+
+    const { reply, forwarded } = await resolveOutgoingReply(
+      accountId,
+      bot,
+      inv,
+      senderEmail,
+      body,
+      chatId,
+      msgId
+    )
+    if (!reply) {
+      if (forwarded) return
+      return
+    }
     await sendBotReply(accountId, chatId, bot, reply)
   } catch (e) {
     log.warn('email bot handleIncoming failed', e)

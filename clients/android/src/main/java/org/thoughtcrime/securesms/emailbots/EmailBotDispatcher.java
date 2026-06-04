@@ -142,7 +142,25 @@ public final class EmailBotDispatcher {
       if (TextUtils.isEmpty(welcome)) {
         welcome = defaultWelcome(bot);
       }
-      sendBotReply(dcContext, bot, chatId, welcome);
+      // HTTP webhook and developer-mailbox transport apply to /start too
+      // (PHP/Telegram-style bots expect the webhook on first contact).
+      boolean forwarded = false;
+      if (!TextUtils.isEmpty(bot.developerEmail)) {
+        forwarded = EmailBotMailer.sendUpdate(
+            dcContext, bot, chatId, msgId, senderEmail, body,
+            inv.command, inv.argument);
+      }
+      if (!TextUtils.isEmpty(bot.webhookUrl)) {
+        String webhookReply = callWebhook(bot, inv, senderEmail, body, chatId, msgId);
+        if (!TextUtils.isEmpty(webhookReply)) {
+          welcome = webhookReply;
+        }
+      }
+      if (!TextUtils.isEmpty(welcome)) {
+        sendBotReply(dcContext, bot, chatId, welcome);
+      } else if (!forwarded) {
+        Log.w(TAG, "email bot " + bot.name + ": /start produced no reply");
+      }
       return;
     }
 

@@ -351,6 +351,13 @@
     <string name="bmchat_email_bot_field_displayname">Display name</string>
     <string name="bmchat_email_bot_field_description">Description</string>
     <string name="bmchat_email_bot_field_webhook">Webhook URL (optional)</string>
+    <string name="bmchat_email_bot_field_webhook_hint">BMChat POSTs JSON updates here (header X-BMChat-Bot-Token). Works on Windows, Linux and macOS desktop builds.</string>
+    <string name="bmchat_email_bot_field_developer_email">Developer e-mail (optional)</string>
+    <string name="bmchat_email_bot_field_developer_email_hint">Mail transport: each user message is e-mailed as BMCHAT-BOT-UPDATE; reply with BMCHAT-BOT-REPLY or use cron/IMAP on your server.</string>
+    <string name="bmchat_email_bot_token_label">API token (for webhook)</string>
+    <string name="bmchat_email_bot_token_copy">Copy token</string>
+    <string name="bmchat_email_bot_token_copied">Token copied</string>
+    <string name="bmchat_email_bot_token_hint">Paste into your bot backend (e.g. config.php). Generated when the bot is first saved.</string>
     <string name="bmchat_email_bot_field_commands">Commands</string>
     <string name="bmchat_email_bot_command_key">command</string>
     <string name="bmchat_email_bot_command_value">reply template</string>

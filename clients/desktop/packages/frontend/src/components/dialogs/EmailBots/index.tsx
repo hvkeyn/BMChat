@@ -203,6 +203,9 @@ function EmailBotEditor({
   const [commands, setCommands] = useState<CommandEntry[]>(
     initial.commands ?? []
   )
+  const [botId, setBotId] = useState(initial.id)
+  const [apiToken, setApiToken] = useState(initial.token ?? '')
+  const [tokenCopied, setTokenCopied] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -216,9 +219,10 @@ function EmailBotEditor({
     if (busy) return
     setBusy(true)
     setError(null)
+    const isFirstSave = !botId
     try {
       const res = await EB.save({
-        id: initial.id,
+        id: botId,
         name: name.trim(),
         displayName: displayName.trim() || null,
         description: description.trim() || null,
@@ -236,6 +240,11 @@ function EmailBotEditor({
         totalReplies: initial.totalReplies,
       })
       if (res?.ok) {
+        if (res.bot?.id) setBotId(res.bot.id)
+        if (res.bot?.token) setApiToken(res.bot.token)
+        if (isFirstSave && res.bot?.token) {
+          return
+        }
         onBack()
       } else if (res?.error === 'invalid_name') {
         setError(tx('bmchat_email_bot_name_rule'))
@@ -260,7 +269,7 @@ function EmailBotEditor({
   return (
     <Dialog onClose={onClose} dataTestid='email-bot-editor-dialog'>
       <DialogHeader
-        title={initial.id ? tx('menu_edit_name') : tx('bmchat_email_bots_add')}
+        title={botId ? tx('menu_edit_name') : tx('bmchat_email_bots_add')}
       />
       <DialogBody>
         <DialogContent>
@@ -296,6 +305,57 @@ function EmailBotEditor({
             value={webhookUrl}
             onChange={e => setWebhookUrl(e.target.value)}
           />
+          <p style={{ fontSize: 12, opacity: 0.7, marginTop: -6, marginBottom: 10 }}>
+            {tx('bmchat_email_bot_field_webhook_hint')}
+          </p>
+
+          <label>{tx('bmchat_email_bot_field_developer_email')}</label>
+          <input
+            className='search-input'
+            style={inputStyle}
+            spellCheck={false}
+            placeholder='developer@example.com'
+            value={developerEmail}
+            onChange={e => setDeveloperEmail(e.target.value)}
+          />
+          <p style={{ fontSize: 12, opacity: 0.7, marginTop: -6, marginBottom: 10 }}>
+            {tx('bmchat_email_bot_field_developer_email_hint')}
+          </p>
+
+          {apiToken ? (
+            <div style={{ marginBottom: 12 }}>
+              <label>{tx('bmchat_email_bot_token_label')}</label>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <input
+                  className='search-input'
+                  style={{ flex: 1, fontFamily: 'monospace', fontSize: 12 }}
+                  readOnly
+                  value={apiToken}
+                  onChange={() => {}}
+                />
+                <button
+                  type='button'
+                  className='delta-button-round'
+                  onClick={async () => {
+                    await runtime.writeClipboardText(apiToken)
+                    setTokenCopied(true)
+                    setTimeout(() => setTokenCopied(false), 2000)
+                  }}
+                >
+                  {tokenCopied
+                    ? tx('bmchat_email_bot_token_copied')
+                    : tx('bmchat_email_bot_token_copy')}
+                </button>
+              </div>
+              <p style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>
+                {tx('bmchat_email_bot_token_hint')}
+              </p>
+            </div>
+          ) : (
+            <p style={{ fontSize: 12, opacity: 0.7, marginBottom: 12 }}>
+              {tx('bmchat_email_bot_token_hint')}
+            </p>
+          )}
 
           <div style={{ fontWeight: 600, margin: '12px 0 6px' }}>
             {tx('bmchat_email_bot_field_commands')}
