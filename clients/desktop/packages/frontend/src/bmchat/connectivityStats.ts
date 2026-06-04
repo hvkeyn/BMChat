@@ -237,14 +237,14 @@ export async function buildBmchatStatisticsHtml(
 export function sanitizeConnectivityHtml(html: string): string {
   return html
     .replace(
-      /(?si)<[^>]*>\s*Не поддерживается вашим провайдером\.?\s*<\/[^>]*>/g,
+      /<[^>]*>\s*Не поддерживается вашим провайдером\.?\s*<\/[^>]*>/gis,
       ''
     )
     .replace(
-      /(?si)<[^>]*>\s*Not supported by your provider\.?\s*<\/[^>]*>/g,
+      /<[^>]*>\s*Not supported by your provider\.?\s*<\/[^>]*>/gis,
       ''
     )
-    .replace(/(?si)<h3[^>]*>[^<]*<\/h3>\s*(?=<h3|\/body)/g, '')
+    .replace(/<h3[^>]*>[^<]*<\/h3>\s*(?=<h3|\/body)/gis, '')
 }
 
 export interface MailProbeResult {

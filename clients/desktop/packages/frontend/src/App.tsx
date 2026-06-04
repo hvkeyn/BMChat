@@ -61,20 +61,29 @@ export default function App(_props: any) {
 
 function I18nContextWrapper({ children }: { children: React.ReactElement }) {
   const [localeData, setLocaleData] = useState<LocaleData | null>(null)
+  const [localeError, setLocaleError] = useState<string | null>(null)
 
   async function reloadLocaleData(locale: string) {
     const localeData = await runtime.getLocaleData(locale)
     window.localeData = localeData
     window.static_translate = translate(localeData.locale, localeData.messages)
     setLocaleData(localeData)
+    setLocaleError(null)
     moment.locale(localeData.locale)
     updateCoreStrings()
   }
 
   useLayoutEffect(() => {
     ;(async () => {
-      const desktop_settings = await runtime.getDesktopSettings()
-      await reloadLocaleData(desktop_settings.locale || 'en')
+      try {
+        const desktop_settings = await runtime.getDesktopSettings()
+        await reloadLocaleData(desktop_settings.locale || 'en')
+      } catch (err) {
+        log.error('Failed to load locale data', err)
+        setLocaleError(
+          err instanceof Error ? err.message : 'Failed to load translations'
+        )
+      }
     })()
   }, [])
 
@@ -85,7 +94,30 @@ function I18nContextWrapper({ children }: { children: React.ReactElement }) {
     }
   }, [localeData])
 
-  if (!localeData) return null
+  if (!localeData) {
+    return (
+      <div
+        className='startup-loading'
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100vh',
+          padding: 24,
+          textAlign: 'center',
+        }}
+      >
+        {localeError ? (
+          <div>
+            <p>BMChat — ошибка загрузки интерфейса</p>
+            <p style={{ opacity: 0.75, marginTop: 8 }}>{localeError}</p>
+          </div>
+        ) : (
+          <p>BMChat…</p>
+        )}
+      </div>
+    )
+  }
   return (
     <I18nContext.Provider
       value={{

@@ -11,7 +11,7 @@ BMChat — самостоятельный мессенджер на базе д�
 | Путь | Платформа | Статус |
 | --- | --- | --- |
 | `clients/android` | Android 5.0+ | основной фокус, релизный канал debug |
-| `clients/desktop` | Windows / Linux / macOS | **2.50.6**, авто-обновлятор через `infra/vps/www/desktop-update.json` |
+| `clients/desktop` | Windows / Linux / macOS | **2.50.7**, авто-обновлятор через `infra/vps/www/desktop-update.json` |
 | `clients/ios` | iOS | сборки требуют macOS + Xcode |
 
 ## Реализованные функции
@@ -102,6 +102,10 @@ cd packages/target-electron
 pnpm build && pnpm pack:win && pnpm pack:linux
 # Деплой на VPS (после копирования в infra/vps/desktop/ и обновления sha256 в манифесте):
 # bash infra/vps/deploy-desktop-2.50.6.sh
+# Зеркало Yandex (ключ из whiteBlade):
+# BMCHAT_DESKTOP_VERSION=2.50.7 bash infra/vps/deploy-desktop-2.50.6-mirror.sh
+# (ключ: chmod 600 — иначе SSH отклонит; на зеркале нужно место на диске)
+# SSH: ssh -i E:/PPROJECTS/whiteBlade/artifacts/deploy/ssh/yc_whiteblade dante@158.160.104.107
 ```
 
 ### iOS
@@ -138,5 +142,5 @@ open deltachat-ios.xcworkspace
 | Phase 3 | 2.49.80 | Shared Media browser (Photos/Videos/Audio/Files/Links) | завершено |
 | Phase 4 | 2.49.81 | Chat UX: PiP-video, swipe-to-reply, jump-to-date | завершено |
 | Phase 5 | 2.49.82 | Круглые видео-сообщения (video notes) | в работе |
-| Phase 6 | 2.50.x | Desktop: email/TG-боты, соединение, поиск ботов, updater | в работе (2.50.6) |
+| Phase 6 | 2.50.x | Desktop: email/TG-боты, соединение, поиск ботов, updater | в работе (2.50.7) |
 | Phase 7 | — | iOS порт фишек Phase 1–5 | планируется |

@@ -1,7 +1,7 @@
 {
   "name": "@deltachat-desktop/target-tauri",
   "private": true,
-  "version": "2.50.6",
+  "version": "2.50.7",
   "type": "module",
   "license": "GPL-3.0-or-later",
   "scripts": {
