@@ -176,6 +176,7 @@ import {
 } from './scheduled-messages.js'
 import { initTelegramBots as initBMChatTelegramBots } from './bmchat-telegram-bots.js'
 import { initEmailBots as initBMChatEmailBots } from './bmchat-email-bots.js'
+import { registerMailProbeIpc } from './bmchat-mail-probe.js'
 
 app.ipcReady = false
 app.isQuitting = false
@@ -312,6 +313,7 @@ async function onReady([_appReady, _loadedState, _appx, _webxdc_cleanup]: [
   // running while the window is hidden and can reach the network.
   void initBMChatTelegramBots()
   void initBMChatEmailBots()
+  registerMailProbeIpc()
 }
 
 app.once('ipcReady' as any, () => {

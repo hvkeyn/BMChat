@@ -12,6 +12,8 @@ import { runtime } from '@deltachat-desktop/runtime-interface'
 import useTranslationFunction from '../../../hooks/useTranslationFunction'
 import useConfirmationDialog from '../../../hooks/dialog/useConfirmationDialog'
 import { selectedAccountId } from '../../../ScreenController'
+import useChat from '../../../hooks/chat/useChat'
+import { openEmailBotChat } from '../../../bmchat/emailBots'
 import { getLogger } from '../../../../../shared/logger'
 
 import type { DialogProps } from '../../../contexts/DialogContext'
@@ -54,6 +56,8 @@ const EB = {
 export default function EmailBots({ onClose }: DialogProps) {
   const tx = useTranslationFunction()
   const openConfirmationDialog = useConfirmationDialog()
+  const { selectChat } = useChat()
+  const accountId = selectedAccountId()
 
   const [bots, setBots] = useState<EmailBot[]>([])
   const [editing, setEditing] = useState<Partial<EmailBot> | null>(null)
@@ -126,7 +130,28 @@ export default function EmailBots({ onClose }: DialogProps) {
                 <div style={{ fontSize: 12, opacity: 0.6, marginTop: 4 }}>
                   {tx('bmchat_email_bot_replies', String(bot.totalReplies))}
                 </div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 8 }}>
+                <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
+                  <button
+                    className='delta-button-round'
+                    disabled={!bot.enabled}
+                    onClick={async () => {
+                      const ok = await openEmailBotChat(
+                        accountId,
+                        bot.name,
+                        chatId => selectChat(accountId, chatId)
+                      )
+                      if (ok) {
+                        onClose()
+                      } else {
+                        window.__userFeedback?.({
+                          type: 'error',
+                          text: tx('bmchat_email_bot_open_failed'),
+                        })
+                      }
+                    }}
+                  >
+                    {tx('bmchat_email_bot_write')}
+                  </button>
                   <button
                     className='delta-button-round'
                     onClick={() => setEditing(bot)}

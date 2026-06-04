@@ -11,7 +11,7 @@ BMChat — самостоятельный мессенджер на базе д�
 | Путь | Платформа | Статус |
 | --- | --- | --- |
 | `clients/android` | Android 5.0+ | основной фокус, релизный канал debug |
-| `clients/desktop` | Windows / Linux / macOS | работает, авто-обновлятор через `desktop-update.json` |
+| `clients/desktop` | Windows / Linux / macOS | **2.50.6**, авто-обновлятор через `infra/vps/www/desktop-update.json` |
 | `clients/ios` | iOS | сборки требуют macOS + Xcode |
 
 ## Реализованные функции
@@ -39,6 +39,13 @@ BMChat — самостоятельный мессенджер на базе д�
 - Android: `BMChatUpdater` (foreground/manual/background через `WorkManager`) тянет манифест обновлений, проверяет SHA-256 APK и ставит через `PackageInstaller`.
 - Desktop: `bmchat-updater.ts` в Electron main делает то же для десктоп-сборок.
 - Релизы публикуются BMChat-командой; конечные эндпоинты конфигурируются на этапе сборки и в публичный код не попадают.
+
+### Email-боты и десктоп (2.50.5–2.50.6)
+- **Email-боты** — не отдельные контакты в адресной книге; команды (`/start`, `/help`, …) отправляются в **«Сохранённые сообщения»** как `@имя_бота /команда` (например `@newsbot /start`).
+- Настройка: **Настройки → Дополнительно → Email-боты** — команды, webhook (`X-BMChat-Bot-Token`), e-mail разработчика (транспорт `BMCHAT-BOT-UPDATE` / `BMCHAT-BOT-REPLY`).
+- **2.50.6:** в боковом поиске по `@newsbot` показываются настроенные боты; кнопка **«Написать боту»** открывает чат с черновиком `@бот /start`.
+- **2.50.6:** окно **«Соединение»** — статистика сообщений/чатов как на Android; при недоступности реле BMChat — проверка **IMAP/SMTP** (TCP) ваших почтовых серверов.
+- Пример PHP-бота: `infra/php-bot-example/` (токен из настроек BMChat обязателен в `config.php`).
 
 ### Брендинг
 - `app_name`, цвета, иконки, темы, локализации (RU + EN), help-страницы и Fastlane-метаданные — везде **BMChat**. Все упоминания Delta Chat в пользовательском UI вычищены (`scripts/rebrand_strings.ps1`, `scripts/rebrand_java_logtags.ps1`).
@@ -90,6 +97,11 @@ cd clients/desktop
 pnpm install
 pnpm -w build:electron
 pnpm -w start:electron
+# Релизные артефакты (Windows + Linux), из WSL с wine32 для NSIS:
+cd packages/target-electron
+pnpm build && pnpm pack:win && pnpm pack:linux
+# Деплой на VPS (после копирования в infra/vps/desktop/ и обновления sha256 в манифесте):
+# bash infra/vps/deploy-desktop-2.50.6.sh
 ```
 
 ### iOS
@@ -126,5 +138,5 @@ open deltachat-ios.xcworkspace
 | Phase 3 | 2.49.80 | Shared Media browser (Photos/Videos/Audio/Files/Links) | завершено |
 | Phase 4 | 2.49.81 | Chat UX: PiP-video, swipe-to-reply, jump-to-date | завершено |
 | Phase 5 | 2.49.82 | Круглые видео-сообщения (video notes) | в работе |
-| Phase 6 | — | Desktop порт фишек Phase 1–5 | планируется |
+| Phase 6 | 2.50.x | Desktop: email/TG-боты, соединение, поиск ботов, updater | в работе (2.50.6) |
 | Phase 7 | — | iOS порт фишек Phase 1–5 | планируется |

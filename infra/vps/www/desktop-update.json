@@ -1,6 +1,6 @@
 {
-  "version": "2.50.5",
-  "publishedAt": "2026-06-04T03:50:00Z",
+  "version": "2.50.6",
+  "publishedAt": "2026-06-04T04:15:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,31 +10,31 @@
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.5-Setup.x64.exe",
-      "size": 126090967,
-      "sha256": "c2cdb7e9b66b6fc10d4e48d5e364eb291b0c62697d79b14dff5d05a010e2c236"
+      "versionedFile": "BMChat-2.50.6-Setup.x64.exe",
+      "size": 127824889,
+      "sha256": "8f4a8ebf2ce22bd3438e6bbf4ff1a16db19f3fa935901b4adef86a94d74bcf1a"
     },
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.5-Portable.x64.exe",
-      "size": 125774420,
-      "sha256": "59e48d0ad32ff07654a042b2dc7992c1687a3175aebe6b4b045d47c95de1d6b2"
+      "versionedFile": "BMChat-2.50.6-Portable.x64.exe",
+      "size": 127508446,
+      "sha256": "cd369f8c32955268cf522eef0c7709ca487ac52a1728650e0c7b0f154518b589"
     },
     "linux-x64-appimage": {
       "label": "Linux x64 AppImage",
       "url": "http://5.187.4.132/desktop/BMChat-x86_64.AppImage",
-      "versionedFile": "BMChat-2.50.5-x86_64.AppImage",
-      "size": 152250942,
-      "sha256": "f27c0ed50c1cbc7e875653d930c4d68ba54dbafb884fbbf608af192cabc6c53b"
+      "versionedFile": "BMChat-2.50.6-x86_64.AppImage",
+      "size": 154728063,
+      "sha256": "bbda40df98fe38831d540b3480ccc0f2c881a110ab1b21790c340db7aa419f75"
     },
     "linux-x64-deb": {
       "label": "Linux x64 .deb",
       "url": "http://5.187.4.132/desktop/bmchat-amd64.deb",
-      "versionedFile": "bmchat-desktop_2.50.5_amd64.deb",
-      "size": 121407012,
-      "sha256": "18b35051e4d5a76d29592a707ed87a1686ea354464e0d10acbb6ccfd1c0e6a74"
+      "versionedFile": "bmchat-desktop_2.50.6_amd64.deb",
+      "size": 123216816,
+      "sha256": "9a3c6103736a7414426ef137c85b95b17729352ce5ee4d370138e1486af050ed"
     }
   },
-  "notes": "BMChat Desktop 2.50.5 — email-боты: полный паритет с Android.\n\nИСПРАВЛЕНО:\n• Webhook вызывается и на /start (PHP-боты получают приветствие).\n• Почтовый канал BMCHAT-BOT-UPDATE / BMCHAT-BOT-REPLY (e-mail разработчика).\n• В редакторе Email-ботов: токен API с копированием, поле e-mail разработчика, подсказки.\n\nРанее в 2.50.4: исправлен запуск Windows (Core Library Missing)."
+  "notes": "BMChat Desktop 2.50.6 — поиск email-ботов, статистика соединения, проверка IMAP/SMTP.\n\nНОВОЕ:\n• В поиске (@newsbot) показываются настроенные email-боты; кнопка «Написать боту» открывает «Сохранённые сообщения» с @бот /start.\n• Окно «Соединение»: статистика сообщений/чатов как на Android; убрана лишняя строка про провайдера.\n• При проблемах с реле BMChat — автоматическая и ручная проверка доступности ваших IMAP/SMTP серверов."
 }

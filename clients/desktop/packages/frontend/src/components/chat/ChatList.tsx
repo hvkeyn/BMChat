@@ -27,9 +27,15 @@ import {
   ChatListItemRowMessage,
 } from './ChatListItemRow'
 import {
+  PseudoListItem,
   PseudoListItemAddContact,
   PseudoListItemAddContactOrGroupFromInviteLink,
 } from '../helpers/PseudoListItem'
+import {
+  listEmailBots,
+  matchEmailBots,
+  openEmailBotChat,
+} from '../../bmchat/emailBots'
 import { KeybindAction } from '../../keybindings'
 import { useThemeCssVar } from '../../ThemeManager'
 import { BackendRemote, onDCEvent, Type } from '../../backend-com'
@@ -579,6 +585,25 @@ function ContactAndMessageSearchResults({
   DIVIDER_HEIGHT: number
 }) {
   const accountId = selectedAccountId()
+  const tx = useTranslationFunction()
+  const { selectChat } = useChat()
+
+  const [emailBots, setEmailBots] = useState<Awaited<
+    ReturnType<typeof listEmailBots>
+  >>([])
+  useEffect(() => {
+    let cancelled = false
+    void listEmailBots().then(bots => {
+      if (!cancelled) setEmailBots(bots)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+  const matchedEmailBots = useMemo(
+    () => matchEmailBots(queryStr, emailBots),
+    [queryStr, emailBots]
+  )
 
   const queryChatId = null
   const { messageResultIds, isMessageLoaded, loadMessages, messageCache } =
@@ -613,6 +638,10 @@ function ContactAndMessageSearchResults({
 
   // divider height ------------
 
+  const emailBotsBlockHeight =
+    (matchedEmailBots.length > 0 ? DIVIDER_HEIGHT : 0) +
+    matchedEmailBots.length * CHATLISTITEM_CONTACT_HEIGHT
+
   const contactsHeight = (height: number) =>
     Math.min(
       height / 3 - DIVIDER_HEIGHT,
@@ -621,11 +650,14 @@ function ContactAndMessageSearchResults({
 
   const showPseudoListItemAddContactFromInviteLink =
     queryStr && isInviteLink(queryStr)
+  const dividerCount =
+    3 + (matchedEmailBots.length > 0 ? 1 : 0)
   const messagesHeight = (height: number) =>
     height -
-    (DIVIDER_HEIGHT * 3 +
+    (DIVIDER_HEIGHT * dividerCount +
       chatsHeight(height) +
       contactsHeight(height) +
+      emailBotsBlockHeight +
       (chatListSearchResultsIsEmpty && queryStrIsValidEmail
         ? CHATLISTITEM_MESSAGE_HEIGHT
         : 0) +
@@ -649,8 +681,42 @@ function ContactAndMessageSearchResults({
     }
   }, [messageResultIds, messageCache, queryStr, queryChatId])
 
+  const openBot = async (botName: string) => {
+    const ok = await openEmailBotChat(accountId, botName, chatId =>
+      selectChat(accountId, chatId)
+    )
+    if (ok) {
+      onExitSearch?.()
+    } else {
+      window.__userFeedback?.({
+        type: 'error',
+        text: tx('bmchat_email_bot_open_failed'),
+      })
+    }
+  }
+
   return (
     <>
+      {matchedEmailBots.length > 0 && (
+        <>
+          <div
+            id='search-result-divider-bots'
+            className='search-result-divider'
+          >
+            {translate_n('bmchat_n_email_bots', matchedEmailBots.length)}
+          </div>
+          {matchedEmailBots.map(bot => (
+            <PseudoListItem
+              key={bot.id}
+              id={`emailbot-${bot.id}`}
+              cutoff='@'
+              text={`@${bot.name}`}
+              subText={tx('bmchat_email_bot_search_subtitle')}
+              onClick={() => void openBot(bot.name)}
+            />
+          ))}
+        </>
+      )}
       <div
         id='search-result-divider-contacts'
         className='search-result-divider'
