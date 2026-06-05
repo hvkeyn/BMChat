@@ -6,6 +6,10 @@ import '../../utils/linkify/plugin-bot-command/index.js'
 
 import { Link } from './Link.js'
 import { parseElements } from '../../utils/linkify/parseElements.js'
+import {
+  messageLikelyFormatted,
+  parseFormattedMessage,
+} from '../../utils/messageMarkdown.js'
 import { getLogger } from '@deltachat-desktop/shared/logger'
 import { ActionEmitter, KeybindAction } from '../../keybindings'
 import { BackendRemote } from '../../backend-com'
@@ -14,8 +18,28 @@ import { MessagesDisplayContext } from '../../contexts/MessagesDisplayContext'
 import useChat from '../../hooks/chat/useChat'
 import useCreateChatByEmail from '../../hooks/chat/useCreateChatByEmail'
 import useDialog from '../../hooks/dialog/useDialog'
+import useMessage from '../../hooks/chat/useMessage'
+import { runtime } from '@deltachat-desktop/runtime-interface'
 
 const log = getLogger('renderer/message-parser')
+
+async function isEmailBotChat(
+  accountId: number,
+  chatId: number
+): Promise<boolean> {
+  try {
+    const chat = await BackendRemote.rpc.getBasicChatInfo(accountId, chatId)
+    if (chat.chatType !== 'Single' || chat.contactIds.length < 1) return false
+    const contact = await BackendRemote.rpc.getContact(
+      accountId,
+      chat.contactIds[0]
+    )
+    const addr = (contact.address || '').toLowerCase()
+    return contact.isBot || addr.endsWith('@bots.bmchat.local')
+  } catch {
+    return false
+  }
+}
 
 function renderElement(
   elm: linkify.MultiToken,
@@ -140,6 +164,68 @@ export function parseAndRenderMessage(
     return <div className='truncated'>{message}</div>
   }
   try {
+    if (messageLikelyFormatted(message)) {
+      return (
+        <>
+          {parseFormattedMessage(message).map((seg, index) => {
+            if (seg.type === 'link' && seg.href) {
+              if (seg.href.startsWith('bmchat-bot://')) {
+                return (
+                  <BmchatBotLink
+                    key={index}
+                    label={seg.value}
+                    url={seg.href}
+                    tabIndex={tabindexForInteractiveContents}
+                  />
+                )
+              }
+              if (
+                seg.href.startsWith('http://') ||
+                seg.href.startsWith('https://')
+              ) {
+                let hostname: string | null = null
+                try {
+                  hostname = new URL(seg.href).hostname
+                } catch {
+                  /* ignore */
+                }
+                return (
+                  <Link
+                    key={index}
+                    destination={{
+                      target: seg.href,
+                      hostname,
+                      punycode: null,
+                      scheme: seg.href.startsWith('https') ? 'https' : 'http',
+                      linkText: seg.value,
+                    }}
+                    tabIndex={tabindexForInteractiveContents}
+                  />
+                )
+              }
+              return (
+                <a
+                  key={index}
+                  href={seg.href}
+                  tabIndex={tabindexForInteractiveContents}
+                  onClick={ev => {
+                    ev.preventDefault()
+                    ev.stopPropagation()
+                    window.open(seg.href, '_blank', 'noopener')
+                  }}
+                >
+                  {seg.value}
+                </a>
+              )
+            }
+            const elements = parseElements(seg.value)
+            return elements.map((el, i) =>
+              renderElement(el, tabindexForInteractiveContents, index * 1000 + i)
+            )
+          })}
+        </>
+      )
+    }
     const elements = parseElements(message)
     return (
       <>
@@ -207,6 +293,63 @@ function TagLink({ tag, tabIndex }: { tag: string; tabIndex: -1 | 0 }) {
   )
 }
 
+function BmchatBotLink({
+  label,
+  url,
+  tabIndex,
+}: {
+  label: string
+  url: string
+  tabIndex: -1 | 0
+}) {
+  const accountId = selectedAccountId()
+  const messageDisplay = useContext(MessagesDisplayContext)
+  const chatId =
+    messageDisplay?.context === 'chat_messagelist'
+      ? messageDisplay.chatId
+      : undefined
+
+  const onClick: React.MouseEventHandler<HTMLAnchorElement> = async ev => {
+    ev.preventDefault()
+    ev.stopPropagation()
+    if (runtime.getRuntimeInfo().target !== 'electron') return
+    try {
+      await runtime.bmchatBotsInvoke('bmchat:emailbots:callback', {
+        accountId,
+        url,
+        chatId,
+      })
+    } catch {
+      window.__userFeedback?.({
+        type: 'error',
+        text: window.static_translate('bmchat_email_bot_cb_no_reply'),
+      })
+    }
+  }
+
+  return (
+    <a
+      href={url}
+      x-not-a-link='bmchat-bot'
+      className='bmchat-bot-inline-btn'
+      onClick={onClick}
+      tabIndex={tabIndex}
+      style={{
+        display: 'inline-block',
+        margin: '2px 4px 2px 0',
+        padding: '4px 10px',
+        borderRadius: 14,
+        background: 'var(--colorPrimary, #4a90d9)',
+        color: '#fff',
+        textDecoration: 'none',
+        fontSize: '0.92em',
+      }}
+    >
+      {label.replace(/^🔘\s*/, '')}
+    </a>
+  )
+}
+
 function BotCommandSuggestion({
   suggestion,
   tabIndex,
@@ -217,8 +360,11 @@ function BotCommandSuggestion({
   const messageDisplay = useContext(MessagesDisplayContext)
   const accountId = selectedAccountId()
   const { selectChat } = useChat()
+  const { sendMessage } = useMessage()
 
-  const applySuggestion = async () => {
+  const applySuggestion = async (ev: React.MouseEvent) => {
+    ev.preventDefault()
+    ev.stopPropagation()
     if (!messageDisplay) {
       return
     }
@@ -234,7 +380,6 @@ function BotCommandSuggestion({
       selectChat(accountId, chatId)
       messageDisplay.closeProfileDialog()
     } else if (messageDisplay.context == 'chat_messagelist') {
-      // nothing special to do
       chatId = messageDisplay.chatId
     } else {
       log.error(
@@ -242,6 +387,12 @@ function BotCommandSuggestion({
         //@ts-ignore
         messageDisplay.type
       )
+      return
+    }
+
+    const cmd = suggestion.trim()
+    if (cmd && (await isEmailBotChat(accountId, chatId))) {
+      await sendMessage(accountId, chatId, { text: cmd })
       return
     }
 

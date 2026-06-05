@@ -41,8 +41,30 @@ async function countRealContacts(
   accountId: number,
   flags: number
 ): Promise<number> {
-  const ids = await BackendRemote.rpc.getContacts(accountId, flags, null)
+  const ids = await BackendRemote.rpc.getContactIds(
+    accountId,
+    flags,
+    null
+  )
   return ids.filter(id => id > C.DC_CONTACT_ID_LAST_SPECIAL).length
+}
+
+/** Load core connectivity HTML; tolerates RPC naming / transient errors. */
+export async function fetchConnectivityHtml(accountId: number): Promise<string> {
+  const rpc = BackendRemote.rpc as {
+    getConnectivityHtml?: (id: number) => Promise<unknown>
+    get_connectivity_html?: (id: number) => Promise<unknown>
+  }
+  for (const fn of [rpc.getConnectivityHtml, rpc.get_connectivity_html]) {
+    if (typeof fn !== 'function') continue
+    try {
+      const html = await fn.call(BackendRemote.rpc, accountId)
+      if (typeof html === 'string') return html
+    } catch {
+      /* try next */
+    }
+  }
+  return ''
 }
 
 async function collectChatStats(
@@ -52,75 +74,79 @@ async function collectChatStats(
   seen: Set<number>,
   maxChats: number
 ): Promise<void> {
-  const entries = await BackendRemote.rpc.getChatlistEntries(
+  const chatIds = await BackendRemote.rpc.getChatlistEntries(
     accountId,
     flag,
     null,
     null
   )
-  for (const entry of entries) {
+  for (const rawId of chatIds) {
     if (seen.size >= maxChats) return
-    const chatId = entry.id
-    if (chatId <= C.DC_CHAT_ID_LAST_SPECIAL || seen.has(chatId)) continue
+    const chatId = typeof rawId === 'number' ? rawId : (rawId as { id?: number }).id
+    if (chatId == null || chatId <= C.DC_CHAT_ID_LAST_SPECIAL || seen.has(chatId)) {
+      continue
+    }
     seen.add(chatId)
-    const chat = await BackendRemote.rpc.getBasicChatInfo(accountId, chatId)
-    stats.chats++
-    if (chat.isEncrypted) stats.encryptedChats++
-    if (chat.isMuted) stats.mutedChats++
-    if (chat.isContactRequest) stats.contactRequests++
-    if (chat.visibility === C.DC_CHAT_VISIBILITY_PINNED) stats.pinnedChats++
-    if (chat.visibility === C.DC_CHAT_VISIBILITY_ARCHIVED) {
-      stats.archivedChats++
-    }
-    switch (chat.chatType) {
-      case 'Group':
-        stats.groups++
-        break
-      case 'Mailinglist':
-        stats.mailingLists++
-        break
-      case 'Broadcast':
-        stats.channels++
-        break
-      default:
-        stats.singleChats++
-    }
-    const listItems = await BackendRemote.rpc.getMessageListItems(
-      accountId,
-      chatId,
-      false,
-      false
-    )
-    for (const item of listItems) {
-      if (item.kind !== 'message') continue
-      const msgId = item.msg_id
-      if (msgId <= C.DC_MSG_ID_DAYMARKER) continue
-      const msg = await BackendRemote.rpc.getMessage(accountId, msgId)
-      if (!msg) continue
-      if (msg.isInfo) continue
-      stats.messages++
-      if (msg.fromId === C.DC_CONTACT_ID_SELF) {
-        stats.outgoing++
-      } else {
-        stats.incoming++
+    try {
+      const chat = await BackendRemote.rpc.getBasicChatInfo(accountId, chatId)
+      stats.chats++
+      if (chat.isEncrypted) stats.encryptedChats++
+      if (chat.isMuted) stats.mutedChats++
+      if (chat.isContactRequest) stats.contactRequests++
+      if (chat.visibility === C.DC_CHAT_VISIBILITY_PINNED) stats.pinnedChats++
+      if (chat.visibility === C.DC_CHAT_VISIBILITY_ARCHIVED) {
+        stats.archivedChats++
       }
-      if (msg.file) stats.attachments++
-      switch (msg.state) {
-        case 'OutDelivered':
-          stats.delivered++
+      switch (chat.chatType) {
+        case 'Group':
+          stats.groups++
           break
-        case 'OutMdnRcvd':
-          stats.read++
+        case 'Mailinglist':
+          stats.mailingLists++
           break
-        case 'OutFailed':
-          stats.failed++
+        case 'Broadcast':
+          stats.channels++
           break
-        case 'OutPending':
-        case 'OutPreparing':
-        case 'OutDraft':
-          stats.pending++
-          break
+        default:
+          stats.singleChats++
       }
+      const msgIds = await BackendRemote.rpc.getMessageIds(
+        accountId,
+        chatId,
+        false,
+        false
+      )
+      for (const msgId of msgIds) {
+        if (msgId <= C.DC_MSG_ID_DAYMARKER) continue
+        const msg = await BackendRemote.rpc.getMessage(accountId, msgId)
+        if (!msg) continue
+        if (msg.isInfo) continue
+        stats.messages++
+        if (msg.fromId === C.DC_CONTACT_ID_SELF) {
+          stats.outgoing++
+        } else {
+          stats.incoming++
+        }
+        if (msg.file) stats.attachments++
+        switch (msg.state) {
+          case 'OutDelivered':
+            stats.delivered++
+            break
+          case 'OutMdnRcvd':
+            stats.read++
+            break
+          case 'OutFailed':
+            stats.failed++
+            break
+          case 'OutPending':
+          case 'OutPreparing':
+          case 'OutDraft':
+            stats.pending++
+            break
+        }
+      }
+    } catch {
+      /* skip chats that fail to load */
     }
   }
 }

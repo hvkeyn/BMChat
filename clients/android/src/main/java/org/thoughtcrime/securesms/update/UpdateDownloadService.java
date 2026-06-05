@@ -248,6 +248,34 @@ public final class UpdateDownloadService extends Service {
         try {
             apk = doDownload(this, m);
         } catch (Throwable t) {
+            if (!CANCEL.get() && isShaMismatchError(t)) {
+                Log.w(TAG, "sha-256 mismatch — clearing peer manifest and retrying once");
+                BMChatUpdater.Manifest fresh =
+                        BMChatUpdater.refetchOfficialManifest(getApplicationContext());
+                if (fresh != null && fresh.versionCode == m.versionCode
+                        && fresh.sha256 != null && !fresh.sha256.isEmpty()) {
+                    Manifest retry = new Manifest(
+                            fresh.versionCode, fresh.versionName, fresh.url,
+                            fresh.sha256, fresh.size, fresh.mirrors);
+                    CURRENT = retry;
+                    VERSION_NAME = retry.versionName;
+                    TOTAL = retry.size;
+                    try {
+                        apk = doDownload(this, retry);
+                        stopForeground(true);
+                        NotificationManagerCompat.from(this).cancel(NOTIF_PROGRESS_ID);
+                        showReadyNotification(this, retry, apk);
+                        STATE = State.READY;
+                        PROGRESS = 100;
+                        READY_APK_PATH = apk.getAbsolutePath();
+                        broadcastProgress(this);
+                        stopSelf(startId);
+                        return;
+                    } catch (Throwable retryErr) {
+                        t = retryErr;
+                    }
+                }
+            }
             Log.w(TAG, "background update download failed", t);
             if (!CANCEL.get()) {
                 showErrorNotification(this, m, t);
@@ -329,6 +357,11 @@ public final class UpdateDownloadService extends Service {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .build();
         NotificationManagerCompat.from(ctx).notify(NOTIF_PROGRESS_ID, n);
+    }
+
+    private static boolean isShaMismatchError(@NonNull Throwable t) {
+        String msg = t.getMessage();
+        return msg != null && msg.toLowerCase(Locale.US).contains("sha-256 mismatch");
     }
 
     private File doDownload(@NonNull Context ctx, @NonNull Manifest m) throws Exception {

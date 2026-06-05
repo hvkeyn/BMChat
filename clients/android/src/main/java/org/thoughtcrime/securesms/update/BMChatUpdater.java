@@ -978,6 +978,28 @@ public final class BMChatUpdater {
         return s;
     }
 
+    /** Drop any peer-relayed {@code update.json} snapshot so the next
+     *  {@link #fetchManifest(Context)} probe hits the official servers. */
+    @AnyThread
+    public static void clearCachedPeerManifest(@NonNull Context ctx) {
+        try {
+            ctx.getSharedPreferences(UpdateBroadcast.PREFS_NAME, Context.MODE_PRIVATE)
+                    .edit()
+                    .remove(UpdateBroadcast.KEY_PEER_MANIFEST_JSON)
+                    .remove(UpdateBroadcast.KEY_PEER_MANIFEST_AT_MS)
+                    .apply();
+        } catch (Throwable t) {
+            android.util.Log.w(TAG, "clearCachedPeerManifest failed", t);
+        }
+    }
+
+    /** Re-download {@code update.json} from official mirrors only. */
+    @AnyThread
+    public static @Nullable Manifest refetchOfficialManifest(@NonNull Context ctx) {
+        clearCachedPeerManifest(ctx);
+        return fetchManifest(ctx);
+    }
+
     /** Stash the just-fetched server manifest into the shared
      *  {@link UpdateBroadcast} prefs slot so subsequent outgoing
      *  messages can relay it to peers. */

@@ -100,6 +100,15 @@ public final class EmailBotStore {
     return null;
   }
 
+  @Nullable
+  public synchronized EmailBotConfig findByChatId(int accountId, int chatId) {
+    if (chatId <= 0) return null;
+    for (EmailBotConfig b : getAll()) {
+      if (b.ownerAccountId == accountId && b.botChatId == chatId) return b;
+    }
+    return null;
+  }
+
   public synchronized void saveAll(@NonNull List<EmailBotConfig> bots) {
     writePrefs(bots);
     persistUiConfig(bots, true);

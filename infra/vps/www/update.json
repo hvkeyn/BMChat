@@ -1,15 +1,15 @@
 {
-  "versionCode": 849,
-  "versionName": "2.50.10",
+  "versionCode": 851,
+  "versionName": "2.50.12",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.10.apk",
-  "sha256": "2e2bdebb88c2ca1fefdd777b663088135252a970554a5b44449da72ef8f9a60f6",
-  "size": 77507389,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.12.apk",
+  "sha256": "c28aaf64b997d0bab4fae577b7eb125846cfbf9d4b21498f0f3f1787f5f47c57",
+  "size": 77508318,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-05T00:00:00Z",
+  "publishedAt": "2026-06-05T18:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.10 — email-боты на Android, шифрование настроек ботов, общий каталог.\n\nИЗМЕНЕНИЯ:\n• Синхронизация своих ботов и каталога между Android и Desktop (ui-config + self-chat).\n• Шифрование секретов ботов на диске (AES-256-GCM) и в синхронизации.\n• Каталог ботов BMCHAT-BOT-CATALOG v1; gossip по контактам выключен по умолчанию.\n• Поиск ботов в боковой панели, «Написать боту»."
+  "notes": "BMChat 2.50.12 — кнопки ботов, статистика в «Соединении», исправления обновления.\n\nИСПРАВЛЕНО:\n• Клики по кнопкам bmchat-bot:// и /командам в чате бота (Android + Desktop).\n• Desktop «Соединение»: статистика сообщений/чатов как на Android (invalid null/u32).\n• Android: повтор загрузки APK при sha-256 mismatch.\n\nНОВОЕ:\n• Email-боты: callback на webhook, отправка команд без диалога черновика."
 }

@@ -45,6 +45,9 @@ public class EmailBotCallbackActivity extends Activity {
 
   private static final String TAG = "EmailBotCallback";
 
+  /** Optional 1:1 bot chat to post the webhook reply into. */
+  public static final String EXTRA_CHAT_ID = "bmchat_email_bot_cb_chat_id";
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -80,11 +83,15 @@ public class EmailBotCallbackActivity extends Activity {
 
     final String fBotName = botName;
     final String fData = callbackData;
-    new Thread(() -> runCallback(fBotName, fData), "emailbot-callback").start();
+    final int originChatId =
+        getIntent() != null ? getIntent().getIntExtra(EXTRA_CHAT_ID, 0) : 0;
+    new Thread(() -> runCallback(fBotName, fData, originChatId), "emailbot-callback")
+        .start();
   }
 
   private void runCallback(@androidx.annotation.NonNull String botName,
-                           @androidx.annotation.NonNull String callbackData) {
+                           @androidx.annotation.NonNull String callbackData,
+                           int originChatId) {
     try {
       EmailBotStore store = new EmailBotStore(getApplicationContext());
       DcContext dcContext = DcHelper.getContext(this);
@@ -106,16 +113,22 @@ public class EmailBotCallbackActivity extends Activity {
         return;
       }
 
-      // For now we send the bot's answer to the user's own self-talk
-      // (Saved Messages-equivalent) — we don't have a stable per-button
-      // chat id yet because Android intent filters strip query params.
-      // Users still see the answer in their primary BMChat list.
-      int selfChat = dcContext.getChatIdByContactId(com.b44t.messenger.DcContact.DC_CONTACT_ID_SELF);
-      if (selfChat <= 0) {
-        selfChat = dcContext.createChatByContactId(com.b44t.messenger.DcContact.DC_CONTACT_ID_SELF);
+      int targetChat =
+          originChatId > 0
+              ? originChatId
+              : bot.botChatId > 0 ? bot.botChatId : 0;
+      if (targetChat <= 0) {
+        targetChat =
+            dcContext.getChatIdByContactId(com.b44t.messenger.DcContact.DC_CONTACT_ID_SELF);
+        if (targetChat <= 0) {
+          targetChat =
+              dcContext.createChatByContactId(com.b44t.messenger.DcContact.DC_CONTACT_ID_SELF);
+        }
       }
-      if (selfChat > 0) {
-        dcContext.sendTextMsg(selfChat, "@" + bot.name + ": " + reply);
+      if (targetChat > 0) {
+        boolean home = bot.botChatId > 0 && bot.botChatId == targetChat;
+        String visible = home ? reply : "@" + bot.name + ": " + reply;
+        dcContext.sendTextMsg(targetChat, visible);
         store.upsert(bot.withReplySent(System.currentTimeMillis()));
       }
     } catch (Throwable t) {

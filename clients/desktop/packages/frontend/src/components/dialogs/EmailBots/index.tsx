@@ -14,7 +14,7 @@ import useConfirmationDialog from '../../../hooks/dialog/useConfirmationDialog'
 import { selectedAccountId } from '../../../ScreenController'
 import useChat from '../../../hooks/chat/useChat'
 import { C } from '@deltachat/jsonrpc-client'
-import { openEmailBotChat } from '../../../bmchat/emailBots'
+import { ensureEmailBotContact, openEmailBotChat } from '../../../bmchat/emailBots'
 import { getLogger } from '../../../../../shared/logger'
 import useDialog from '../../../hooks/dialog/useDialog'
 import SelectChat from '../SelectChat'
@@ -155,11 +155,15 @@ export default function EmailBots({ onClose }: DialogProps) {
                     className='delta-button-round'
                     disabled={!bot.enabled}
                     onClick={async () => {
+                      const ensured = await ensureEmailBotContact(
+                        accountId,
+                        bot.id
+                      )
                       const ok = await openEmailBotChat(
                         accountId,
                         bot.name,
                         chatId => selectChat(accountId, chatId),
-                        (bot as { botChatId?: number }).botChatId
+                        ensured?.chatId ?? (bot as { botChatId?: number }).botChatId
                       )
                       if (ok) {
                         onClose()
@@ -175,11 +179,38 @@ export default function EmailBots({ onClose }: DialogProps) {
                   </button>
                   <button
                     className='delta-button-round'
+                    disabled={!bot.enabled}
+                    onClick={async () => {
+                      const res = await ensureEmailBotContact(accountId, bot.id)
+                      if (res?.chatId) {
+                        window.__userFeedback?.({
+                          type: 'success',
+                          text: tx('bmchat_email_bot_add_contact_done'),
+                        })
+                        await refresh()
+                      } else {
+                        window.__userFeedback?.({
+                          type: 'error',
+                          text: tx('bmchat_email_bot_add_contact_failed'),
+                        })
+                      }
+                    }}
+                  >
+                    {tx('bmchat_email_bot_add_contact')}
+                  </button>
+                  <button
+                    className='delta-button-round'
                     onClick={() =>
                       pickChat(
                         tx('bmchat_email_bot_attach_chat'),
                         async chatId => {
-                          await EB.attachChat(bot.id, chatId)
+                          const res = await EB.attachChat(bot.id, chatId)
+                          if (res?.ok === false) {
+                            window.__userFeedback?.({
+                              type: 'error',
+                              text: tx('bmchat_email_bot_attach_failed'),
+                            })
+                          }
                           await refresh()
                         }
                       )

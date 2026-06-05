@@ -65,6 +65,27 @@ async function resolveBotChatId(
   }
 }
 
+/** Create pseudo-contact + 1:1 chat (Telegram-style «Add bot»). */
+export async function ensureEmailBotContact(
+  accountId: number,
+  botId: string
+): Promise<{ contactId: number; chatId: number } | null> {
+  if (runtime.getRuntimeInfo().target !== 'electron') return null
+  try {
+    const res = await runtime.bmchatBotsInvoke('bmchat:emailbots:ensure-contact', {
+      accountId,
+      botId,
+    })
+    if (!res?.ok) return null
+    return {
+      contactId: Number(res.contactId) || 0,
+      chatId: Number(res.chatId) || 0,
+    }
+  } catch {
+    return null
+  }
+}
+
 /** Open the bot's dedicated 1:1 chat (pseudo-contact) with /start prefilled. */
 export async function openEmailBotChat(
   accountId: number,

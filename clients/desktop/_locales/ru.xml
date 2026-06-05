@@ -391,6 +391,11 @@
     </plurals>
     <string name="bmchat_email_bot_search_subtitle">Email-бот — отдельный чат</string>
     <string name="bmchat_email_bot_write">Написать боту</string>
+    <string name="bmchat_email_bot_add_contact">Добавить в контакты</string>
+    <string name="bmchat_email_bot_add_contact_done">Бот добавлен как контакт — ищите в чатах и поиске.</string>
+    <string name="bmchat_email_bot_add_contact_failed">Не удалось добавить бота в контакты.</string>
+    <string name="bmchat_email_bot_attach_failed">Не удалось добавить бота в этот чат (нужна группа или канал).</string>
+    <string name="bmchat_email_bot_cb_no_reply">Бот не ответил на нажатие кнопки.</string>
     <string name="bmchat_email_bot_attach_chat">Добавить бота в чат…</string>
     <string name="bmchat_email_bot_attached_chats">Подключено чатов: %1$s</string>
     <string name="bmchat_email_bot_open_failed">Не удалось открыть чат с ботом. Перезапустите приложение или пересохраните бота в настройках.</string>

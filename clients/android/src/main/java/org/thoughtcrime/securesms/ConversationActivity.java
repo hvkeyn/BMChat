@@ -802,6 +802,30 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     composeText.setSelection(composeText.getText().length());
   }
 
+  /** Active conversation id (for bot inline-button callbacks). */
+  public int getOpenChatId() {
+    return chatId;
+  }
+
+  /**
+   * In a dedicated email-bot 1:1 chat, send {@code /command} immediately
+   * instead of only filling the composer (avoids draft-replace UX).
+   */
+  public boolean trySendEmailBotCommand(@androidx.annotation.NonNull String cmd) {
+    if (chatId <= 0 || cmd.isEmpty()) return false;
+    try {
+      DcContext dcContext = DcHelper.getContext(this);
+      org.thoughtcrime.securesms.emailbots.EmailBotConfig bot =
+          new org.thoughtcrime.securesms.emailbots.EmailBotStore(getApplicationContext())
+              .findByChatId(dcContext.getAccountId(), chatId);
+      if (bot == null || !bot.enabled) return false;
+      dcContext.sendTextMsg(chatId, cmd);
+      return true;
+    } catch (Throwable t) {
+      return false;
+    }
+  }
+
   public void hideSoftKeyboard() {
     container.hideCurrentInput(composeText);
   }

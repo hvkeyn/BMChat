@@ -1,16 +1,18 @@
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { debounceWithInit } from '../chat/ChatListHelpers'
-import { BackendRemote, onDCEvent } from '../../backend-com'
+import { onDCEvent } from '../../backend-com'
 import { selectedAccountId } from '../../ScreenController'
 import Dialog, { DialogBody, DialogContent, DialogHeader } from '../Dialog'
 import useTranslationFunction from '../../hooks/useTranslationFunction'
+import { formatRpcError } from '../../utils/formatRpcError'
 
 import type { DialogProps } from '../../contexts/DialogContext'
 import { runtime } from '@deltachat-desktop/runtime-interface'
 import {
   buildBmchatStatisticsHtml,
   buildMailProbeHtml,
+  fetchConnectivityHtml,
   injectConnectivityStyles,
   sanitizeConnectivityHtml,
   wrapConnectivityDocument,
@@ -38,6 +40,7 @@ function ConnectivityDialogInner() {
   const [mailProbeBusy, setMailProbeBusy] = useState(false)
   const [loading, setLoading] = useState(true)
   const [statsLoading, setStatsLoading] = useState(false)
+  const [coreError, setCoreError] = useState<string | null>(null)
 
   const style = window.getComputedStyle(document.body)
   const bgColor = style.getPropertyValue('--bgPrimary')
@@ -51,41 +54,59 @@ function ConnectivityDialogInner() {
     () =>
       debounceWithInit(async (forceMailProbe = false) => {
         setLoading(true)
+        setCoreError(null)
+        let cHTML = ''
+        let fetchErr: string | null = null
         try {
-          let cHTML = await BackendRemote.rpc.getConnectivityHtml(accountId)
+          cHTML = await fetchConnectivityHtml(accountId)
           cHTML = sanitizeConnectivityHtml(cHTML)
           if (canInjectStyles) {
-            cHTML = injectConnectivityStyles(cHTML, `${stylesToInject}${OverwrittenStyles}`)
+            cHTML = injectConnectivityStyles(
+              cHTML,
+              `${stylesToInject}${OverwrittenStyles}`
+            )
           } else {
             cHTML = injectConnectivityStyles(cHTML)
           }
-          setConnectivityHTML(wrapConnectivityDocument(cHTML))
-          setLoading(false)
-
-          setStatsLoading(true)
-          try {
-            const withExtras = await appendConnectivityExtras(
-              accountId,
-              cHTML,
-              isElectron,
-              forceMailProbe,
-              canInjectStyles ? stylesToInject : undefined
-            )
-            setConnectivityHTML(wrapConnectivityDocument(withExtras))
-          } finally {
-            setStatsLoading(false)
-          }
         } catch (e) {
-          const msg =
-            e instanceof Error ? e.message : String(e ?? 'unknown error')
+          fetchErr = formatRpcError(e)
+          setCoreError(fetchErr)
+        }
+
+        if (!cHTML.trim()) {
+          cHTML = `<p>${tx('connectivity_connecting')}</p>`
+          if (fetchErr) {
+            cHTML += `<p><b>${tx('error')}</b></p><p>${fetchErr}</p>`
+          } else {
+            cHTML += `<p style="opacity:.75">${tx('bmchat_connectivity_stats_hint')}</p>`
+          }
+        }
+
+        setStatsLoading(true)
+        try {
+          const withExtras = await appendConnectivityExtras(
+            accountId,
+            cHTML,
+            isElectron,
+            forceMailProbe
+          )
           setConnectivityHTML(
             wrapConnectivityDocument(
-              `<p><b>${tx('error')}</b></p><p>${msg}</p>`,
+              withExtras,
               canInjectStyles ? stylesToInject : undefined
             )
           )
-          setLoading(false)
+        } catch (e) {
+          const errBlock = `<p><b>${tx('error')}</b></p><p>${formatRpcError(e)}</p>`
+          setConnectivityHTML(
+            wrapConnectivityDocument(
+              cHTML + errBlock,
+              canInjectStyles ? stylesToInject : undefined
+            )
+          )
+        } finally {
           setStatsLoading(false)
+          setLoading(false)
         }
       }, 240),
     [accountId, canInjectStyles, stylesToInject, isElectron, tx]
@@ -111,7 +132,10 @@ function ConnectivityDialogInner() {
   const iframeDoc =
     connectivityHTML ||
     wrapConnectivityDocument(
-      `<p>${loading ? tx('connectivity_connecting') : '…'}</p>`,
+      `<p>${loading ? tx('connectivity_connecting') : '…'}</p>` +
+        (coreError
+          ? `<p><b>${tx('error')}</b></p><p>${coreError}</p>`
+          : ''),
       canInjectStyles ? stylesToInject : undefined
     )
 
@@ -159,8 +183,7 @@ async function appendConnectivityExtras(
   accountId: number,
   cHTML: string,
   isElectron: boolean,
-  forceMailProbe: boolean,
-  _stylesToInject?: string
+  forceMailProbe: boolean
 ): Promise<string> {
   const tx = window.static_translate
 

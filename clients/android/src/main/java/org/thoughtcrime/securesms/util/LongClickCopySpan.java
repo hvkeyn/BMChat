@@ -15,6 +15,7 @@ import com.b44t.messenger.DcContext;
 import org.thoughtcrime.securesms.ConversationActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.DcHelper;
+import org.thoughtcrime.securesms.emailbots.ui.EmailBotCallbackActivity;
 import org.thoughtcrime.securesms.qr.QrCodeHandler;
 
 public class LongClickCopySpan extends ClickableSpan {
@@ -42,11 +43,30 @@ public class LongClickCopySpan extends ClickableSpan {
 
   @Override
   public void onClick(View widget) {
-    if (url.startsWith(PREFIX_CMD)) {
+    if (url.startsWith("bmchat-bot://")) {
       try {
-        String cmd = url.substring(PREFIX_CMD.length());
-        ConversationActivity activity = (ConversationActivity) widget.getContext();
-        activity.setDraftText(cmd + " ");
+        Activity activity = (Activity) widget.getContext();
+        Intent intent = new Intent(activity, EmailBotCallbackActivity.class);
+        intent.setData(android.net.Uri.parse(url));
+        if (activity instanceof ConversationActivity) {
+          intent.putExtra(
+              EmailBotCallbackActivity.EXTRA_CHAT_ID,
+              ((ConversationActivity) activity).getOpenChatId());
+        }
+        activity.startActivity(intent);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    } else if (url.startsWith(PREFIX_CMD)) {
+      try {
+        String cmd = url.substring(PREFIX_CMD.length()).trim();
+        if (widget.getContext() instanceof ConversationActivity) {
+          ConversationActivity activity = (ConversationActivity) widget.getContext();
+          if (activity.trySendEmailBotCommand(cmd)) {
+            return;
+          }
+          activity.setDraftText(cmd + " ");
+        }
       } catch (Exception e) {
         e.printStackTrace();
       }

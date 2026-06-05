@@ -97,9 +97,9 @@ public final class MessageMarkdown {
   /** Spoiler: ||foo|| */
   private static final Pattern SPOILER = Pattern.compile(
       "\\|\\|(\\S(?:[^|\\n]*\\S)?)\\|\\|");
-  /** Inline link: [label](url) — url must look like a URL, not a free string. */
+  /** Inline link: [label](url) — http(s), bmchat-bot://, mailto:, cmd: */
   private static final Pattern LINK = Pattern.compile(
-      "\\[([^\\]\\n]+)\\]\\((https?://[^)\\s]+)\\)");
+      "\\[([^\\]\\n]+)\\]\\(((?:https?://|bmchat-bot://|mailto:|cmd:)[^)\\s]+)\\)");
   /** Blockquote line starting with "> ". */
   private static final Pattern QUOTE_LINE = Pattern.compile(
       "(?m)^> ?(.*)$");

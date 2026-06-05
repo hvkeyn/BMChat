@@ -1,6 +1,6 @@
 {
-  "version": "2.50.10",
-  "publishedAt": "2026-06-05T00:00:00Z",
+  "version": "2.50.12",
+  "publishedAt": "2026-06-05T18:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.10-Portable.x64.exe",
-      "size": 126019426,
-      "sha256": "cf1e8b0d706693c44554e9247750c3a25a36792fd9b96894d48792e19fbb9282"
+      "versionedFile": "BMChat-2.50.12-Portable.x64.exe",
+      "size": 126022476,
+      "sha256": "c98ab52a15082de372b57ee1ae457a6f96bce96079de0446c28c2a21818be34c"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.10-Setup.x64.exe",
-      "size": 126335925,
-      "sha256": "e43bb62703197bed1852d82f5568394a8f5da885150b7fb4c62c5a9afc893263"
+      "versionedFile": "BMChat-2.50.12-Setup.x64.exe",
+      "size": 126338871,
+      "sha256": "a6d68249c9f95e56e90206c1eb0e3d5077f669be788090dbe86d28edea372df5"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "1746b0726431831f6ef11fee29110f459ac998778598d2cd48a72fa02732db86"
     }
   },
-  "notes": "BMChat Desktop 2.50.10 — шифрование email-ботов, исправлено окно «Соединение», синхронизация ботов с Android.\n\nИСПРАВЛЕНО:\n• «Соединение» сразу показывает HTML ядра; статистика подгружается отдельно.\n• Android видит ботов с Desktop через ui-config и зашифрованный self-chat sync.\n\nНОВОЕ:\n• Секреты ботов шифруются на диске (store v2); каталог BMCHAT-BOT-CATALOG v1."
+  "notes": "BMChat Desktop 2.50.12 — боты, «Соединение» со статистикой.\n\nИСПРАВЛЕНО:\n• Кнопки bmchat-bot:// и /команды в чате email-бота.\n• «Соединение»: блок «Статистика BMChat» (контакты, чаты, сообщения, доставка).\n• IPC bmchat:emailbots:callback для inline-кнопок."
 }
