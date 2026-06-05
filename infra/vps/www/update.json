@@ -1,15 +1,15 @@
 {
-  "versionCode": 851,
-  "versionName": "2.50.12",
+  "versionCode": 852,
+  "versionName": "2.50.14",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.12.apk",
-  "sha256": "c28aaf64b997d0bab4fae577b7eb125846cfbf9d4b21498f0f3f1787f5f47c57",
-  "size": 77508318,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.14.apk",
+  "sha256": "d3fb852950c7418f6c40339396f430a5a4740e38e7080df88c1ccfffd55b6008",
+  "size": 77509696,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-05T18:00:00Z",
+  "publishedAt": "2026-06-05T22:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.12 — кнопки ботов, статистика в «Соединении», исправления обновления.\n\nИСПРАВЛЕНО:\n• Клики по кнопкам bmchat-bot:// и /командам в чате бота (Android + Desktop).\n• Desktop «Соединение»: статистика сообщений/чатов как на Android (invalid null/u32).\n• Android: повтор загрузки APK при sha-256 mismatch.\n\nНОВОЕ:\n• Email-боты: callback на webhook, отправка команд без диалога черновика."
+  "notes": "BMChat 2.50.14 — email-боты не пропадают, кнопки и команды работают.\n\nИСПРАВЛЕНО:\n• Android/Desktop: настройки ботов в ui.bmchat.email_bots + синхронизация BMCHAT-BOT-SYNC.\n• Кнопки bmchat-bot:// и /команды находят бота по чату emailbot.*@bots.bmchat.local.\n• Desktop: боты из профиля не теряются при пустом ui-config.\n• Desktop 2.50.13+: «Соединение» без ошибки invalid null/u32."
 }

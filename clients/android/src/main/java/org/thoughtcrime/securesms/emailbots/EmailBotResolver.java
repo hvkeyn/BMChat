@@ -46,7 +46,11 @@ public final class EmailBotResolver {
     }
 
     if (!hint.isEmpty()) {
-      return store.findByName(accountId, hint);
+      EmailBotConfig byName = store.findByName(accountId, hint);
+      if (byName != null) return byName;
+      for (EmailBotConfig b : store.getAll()) {
+        if (b.enabled && b.name.equalsIgnoreCase(hint)) return b;
+      }
     }
     return null;
   }

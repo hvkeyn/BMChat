@@ -95,6 +95,7 @@ public class EmailBotCallbackActivity extends Activity {
                            int originChatId) {
     try {
       EmailBotStore store = new EmailBotStore(getApplicationContext());
+      store.reloadFromUiConfig();
       DcContext dcContext = DcHelper.getContext(this);
       int accountId = dcContext.getAccountId();
 
@@ -109,7 +110,7 @@ public class EmailBotCallbackActivity extends Activity {
         return;
       }
 
-      String reply = postCallback(bot, callbackData);
+      String reply = postCallback(bot, callbackData, originChatId);
       if (TextUtils.isEmpty(reply)) {
         toastOnUi(getString(R.string.bmchat_email_bot_cb_no_reply));
         return;
@@ -140,7 +141,8 @@ public class EmailBotCallbackActivity extends Activity {
 
   @Nullable
   private String postCallback(@androidx.annotation.NonNull EmailBotConfig bot,
-                              @androidx.annotation.NonNull String callbackData) {
+                              @androidx.annotation.NonNull String callbackData,
+                              int originChatId) {
     HttpURLConnection conn = null;
     try {
       Uri u = Uri.parse(bot.webhookUrl);

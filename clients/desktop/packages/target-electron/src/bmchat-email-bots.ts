@@ -34,11 +34,16 @@ import { randomUUID } from 'crypto'
 import { getConfigPath } from './application-constants.js'
 import { getLogger } from '../../shared/logger.js'
 import { getDCJsonrpcRemote, DCJsonrpcRemoteInitializedP } from './ipc.js'
+import { openJson, sealJson } from './bmchat-email-bot-crypto.js'
 
 const log = getLogger('main/bmchat-email-bots')
 
 const STORE_FILE = 'bmchat-email-bots.json'
+const UI_CONFIG_KEY = 'ui.bmchat.email_bots'
+const SYNC_MARKER = 'BMCHAT-BOT-SYNC v1'
 const DC_CONTACT_ID_SELF = 1
+const MIN_SYNC_PUBLISH_MS = 8_000
+let lastSyncPublishMs = 0
 
 interface CommandEntry {
   k: string
@@ -76,18 +81,166 @@ async function loadStore(): Promise<void> {
   try {
     const raw = await fs.readFile(storePath(), 'utf8')
     const parsed = JSON.parse(raw)
-    bots = Array.isArray(parsed?.bots) ? parsed.bots : []
+    const arr = Array.isArray(parsed?.bots) ? parsed.bots : []
+    bots = arr
+      .map((b: unknown) => sanitizeBot(b))
+      .filter((b): b is EmailBot => b != null)
   } catch (e: any) {
     if (e?.code !== 'ENOENT') log.warn('Failed to read email bots store', e)
     bots = []
   }
 }
 
-async function saveStore(): Promise<void> {
+async function readUiConfigForAccount(accountId: number): Promise<EmailBot[]> {
+  try {
+    const raw = await getDCJsonrpcRemote().rpc.getConfig(
+      accountId,
+      UI_CONFIG_KEY
+    )
+    const opened = await openJson(accountId, raw)
+    if (!opened) return []
+    const root = JSON.parse(opened)
+    const arr = root?.bots
+    if (!Array.isArray(arr)) return []
+    return arr
+      .map((b: unknown) => sanitizeBot(b))
+      .filter((b): b is EmailBot => b != null)
+  } catch (e) {
+    log.warn('readUiConfigForAccount failed account=%s', accountId, e)
+    return []
+  }
+}
+
+/** Merge local JSON cache + encrypted ui-config on every account. */
+async function reloadStoreMerged(): Promise<void> {
+  await loadStore()
+  const merged = new Map<string, EmailBot>()
+  for (const b of bots) merged.set(b.id, b)
+  try {
+    await DCJsonrpcRemoteInitializedP
+    const accountIds = await getDCJsonrpcRemote().rpc.getAllAccountIds()
+    for (const accountId of accountIds) {
+      for (const b of await readUiConfigForAccount(accountId)) {
+        merged.set(b.id, b)
+      }
+    }
+  } catch (e) {
+    log.warn('reloadStoreMerged: ui-config read failed', e)
+  }
+  bots = Array.from(merged.values())
+}
+
+async function persistUiConfigForAccount(
+  accountId: number,
+  publishSync: boolean
+): Promise<void> {
+  const accountBots = bots.filter(b => b.ownerAccountId === accountId)
+  const wrapper = {
+    bots: accountBots,
+    updatedAtMs: Date.now(),
+  }
+  const sealed = await sealJson(accountId, JSON.stringify(wrapper))
+  await getDCJsonrpcRemote().rpc.setConfig(accountId, UI_CONFIG_KEY, sealed)
+  if (publishSync) {
+    await publishBotSync(accountId, JSON.stringify(wrapper))
+  }
+}
+
+async function persistAllUiConfig(publishSync: boolean): Promise<void> {
+  await DCJsonrpcRemoteInitializedP
+  const accountIds = new Set<number>(
+    await getDCJsonrpcRemote().rpc.getAllAccountIds()
+  )
+  for (const b of bots) {
+    if (b.ownerAccountId > 0) accountIds.add(b.ownerAccountId)
+  }
+  for (const accountId of accountIds) {
+    if (accountId > 0) {
+      await persistUiConfigForAccount(accountId, publishSync)
+    }
+  }
+}
+
+async function publishBotSync(
+  accountId: number,
+  plainJson: string
+): Promise<void> {
+  const now = Date.now()
+  if (now - lastSyncPublishMs < MIN_SYNC_PUBLISH_MS) return
+  lastSyncPublishMs = now
+  try {
+    const rpc = getDCJsonrpcRemote().rpc
+    let selfChat = await rpc.getChatIdByContactId(
+      accountId,
+      DC_CONTACT_ID_SELF
+    )
+    if (!selfChat || selfChat <= 0) {
+      selfChat = await rpc.createChatByContactId(
+        accountId,
+        DC_CONTACT_ID_SELF
+      )
+    }
+    if (!selfChat || selfChat <= 0) return
+    const sealed = await sealJson(accountId, plainJson)
+    const body = `${SYNC_MARKER} account=${accountId}\n${sealed}`
+    await rpc.miscSendTextMessage(accountId, selfChat, body)
+  } catch (e) {
+    log.warn('publishBotSync failed', e)
+  }
+}
+
+async function tryIngestBotSync(
+  accountId: number,
+  body: string
+): Promise<boolean> {
+  const first = body.split(/\r?\n/, 1)[0]?.trim() || ''
+  if (!first.startsWith(SYNC_MARKER)) return false
+  let srcAccount = accountId
+  const accIdx = first.indexOf('account=')
+  if (accIdx >= 0) {
+    const tail = first.slice(accIdx + 8).trim().split(/\s+/)[0]
+    const n = parseInt(tail, 10)
+    if (Number.isFinite(n) && n > 0) srcAccount = n
+  }
+  const payload = body.includes('\n')
+    ? body.slice(body.indexOf('\n') + 1).trim()
+    : ''
+  if (!payload) return true
+  try {
+    const json = await openJson(srcAccount, payload)
+    if (!json) return true
+    const root = JSON.parse(json)
+    const arr = root?.bots
+    if (!Array.isArray(arr)) return true
+    const merged = new Map<string, EmailBot>()
+    for (const b of bots) {
+      if (b.ownerAccountId === srcAccount) continue
+      merged.set(b.id, b)
+    }
+    for (const raw of arr) {
+      const b = sanitizeBot(raw)
+      if (b && b.ownerAccountId === srcAccount) merged.set(b.id, b)
+    }
+    bots = Array.from(merged.values())
+    await saveStore({ publishSync: false })
+    await persistUiConfigForAccount(srcAccount, false)
+    return true
+  } catch (e) {
+    log.warn('tryIngestBotSync failed', e)
+    return true
+  }
+}
+
+async function saveStore(opts?: { publishSync?: boolean }): Promise<void> {
   try {
     await fs.writeFile(storePath(), JSON.stringify({ bots }, null, 2), 'utf8')
   } catch (e) {
     log.warn('Failed to persist email bots store', e)
+  }
+  try {
+    await persistAllUiConfig(!!opts?.publishSync)
+  } catch (e) {
+    log.warn('Failed to persist email bots ui-config', e)
   }
 }
 
@@ -238,8 +391,24 @@ async function resolveEmailBot(
       }
     }
   }
-  if (hint) return findByName(accountId, hint)
-  return null
+  if (hint) {
+    const byName = findByName(accountId, hint)
+    if (byName) return byName
+    return (
+      bots.find(b => b.enabled && b.name.toLowerCase() === hint.toLowerCase()) ??
+      null
+    )
+  }
+  return findBotByChatIdAny(openChatId)
+}
+
+function findBotByChatIdAny(chatId: number): EmailBot | null {
+  if (chatId <= 0) return null
+  return (
+    bots.find(
+      b => b.enabled && b.botChatId != null && b.botChatId > 0 && b.botChatId === chatId
+    ) ?? null
+  )
 }
 
 function findBotByChatId(accountId: number, chatId: number): EmailBot | null {
@@ -910,11 +1079,22 @@ async function handleIncoming(
     const body: string = msg.text || ''
     if (!body) return
 
+    if (await tryIngestBotSync(accountId, body)) {
+      await reloadStoreMerged()
+      return
+    }
+
     const isSelf = msg.fromId === DC_CONTACT_ID_SELF
-    let homeBot = findBotByChatId(accountId, chatId)
+    let homeBot =
+      findBotByChatId(accountId, chatId) ?? findBotByChatIdAny(chatId)
     if (!homeBot) {
       const slug = await slugFromBotHomeChat(accountId, chatId)
-      if (slug) homeBot = findByName(accountId, slug)
+      if (slug) {
+        homeBot =
+          findByName(accountId, slug) ??
+          bots.find(b => b.enabled && b.name.toLowerCase() === slug.toLowerCase()) ??
+          null
+      }
     }
     if (botsForAccount(accountId).length === 0 && !homeBot) return
 
@@ -1003,7 +1183,7 @@ export async function initEmailBots(): Promise<void> {
   initialised = true
 
   await app.whenReady()
-  await loadStore()
+  await reloadStoreMerged()
   log.info('Loaded email bots store (%d bots)', bots.length)
 
   DCJsonrpcRemoteInitializedP.then(remote => {
@@ -1022,7 +1202,9 @@ export async function initEmailBots(): Promise<void> {
         const chatId = event?.chatId ?? event?.chat_id
         const msgId = event?.msgId ?? event?.msg_id
         if (!chatId || !msgId) return
-        if (!findBotByChatId(accountId, chatId)) return
+        if (!findBotByChatId(accountId, chatId) && !findBotByChatIdAny(chatId)) {
+          return
+        }
         void (async () => {
           try {
             const msg: any = await getDCJsonrpcRemote().rpc.getMessage(
@@ -1042,7 +1224,10 @@ export async function initEmailBots(): Promise<void> {
     void migrateBotContacts()
   }).catch(() => {})
 
-  ipcMain.handle('bmchat:emailbots:list', () => bots)
+  ipcMain.handle('bmchat:emailbots:list', async () => {
+    await reloadStoreMerged()
+    return bots
+  })
 
   ipcMain.handle(
     'bmchat:emailbots:open-chat',
@@ -1086,7 +1271,7 @@ export async function initEmailBots(): Promise<void> {
     } catch (e) {
       log.warn('ensureBotContact on save failed for %s', bot.name, e)
     }
-    await saveStore()
+    await saveStore({ publishSync: true })
     return { ok: true, bot }
   })
 
@@ -1103,7 +1288,7 @@ export async function initEmailBots(): Promise<void> {
         log.warn('deleteContact for bot %s failed', removed.name, e)
       }
     }
-    await saveStore()
+    await saveStore({ publishSync: true })
     return bots
   })
 
@@ -1113,7 +1298,7 @@ export async function initEmailBots(): Promise<void> {
       const bot = bots.find(b => b.id === args.id)
       if (bot) {
         bot.enabled = !!args.enabled
-        await saveStore()
+        await saveStore({ publishSync: true })
       }
       return bots
     }
@@ -1125,6 +1310,7 @@ export async function initEmailBots(): Promise<void> {
       _e,
       args: { accountId?: number; url?: string; chatId?: number }
     ) => {
+      await reloadStoreMerged()
       const accountId = Number(args?.accountId) || 0
       const parsed = parseBotCallbackUrl(String(args?.url || ''))
       if (!parsed) return { ok: false, error: 'invalid_url' }
@@ -1135,6 +1321,7 @@ export async function initEmailBots(): Promise<void> {
       )
       if (!bot || !bot.enabled) return { ok: false, error: 'no_bot' }
       if (!bot.webhookUrl) return { ok: false, error: 'no_webhook' }
+      const ownerId = bot.ownerAccountId > 0 ? bot.ownerAccountId : accountId
       const reply = await postBotCallback(
         bot,
         parsed.data,
@@ -1148,7 +1335,7 @@ export async function initEmailBots(): Promise<void> {
             ? bot.botChatId
             : 0
       if (chatId > 0) {
-        await sendBotReply(accountId, chatId, bot, reply)
+        await sendBotReply(ownerId, chatId, bot, reply)
       }
       return { ok: true }
     }

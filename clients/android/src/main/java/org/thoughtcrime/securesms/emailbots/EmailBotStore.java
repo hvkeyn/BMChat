@@ -51,16 +51,14 @@ public final class EmailBotStore {
    */
   public synchronized void reloadFromUiConfig() {
     Map<String, EmailBotConfig> merged = new LinkedHashMap<>();
+    // Keep local prefs first so an empty ui-config blob cannot wipe bots.
+    for (EmailBotConfig b : readPrefs()) {
+      merged.put(b.id, b);
+    }
     for (int accountId : DcHelper.getAccounts(appContext).getAll()) {
       DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
       if (ctx == null || !ctx.isOk()) continue;
       for (EmailBotConfig b : readUiConfigForAccount(ctx.getAccountId(), ctx)) {
-        merged.put(b.id, b);
-      }
-    }
-    if (merged.isEmpty()) {
-      // Fallback: keep local prefs if multidevice has not synced yet.
-      for (EmailBotConfig b : readPrefs()) {
         merged.put(b.id, b);
       }
     }
