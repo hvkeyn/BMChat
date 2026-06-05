@@ -833,17 +833,64 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
         }
         return false;
       }
-      if (android.text.TextUtils.isEmpty(bot.webhookUrl)) {
+      // A bot is usable as long as it has *any* transport: an HTTP webhook,
+      // a developer mailbox, or built-in static command replies. Only warn
+      // when none of these are configured.
+      boolean hasTransport = !android.text.TextUtils.isEmpty(bot.webhookUrl)
+          || !android.text.TextUtils.isEmpty(bot.developerEmail)
+          || (bot.commands != null && !bot.commands.isEmpty());
+      if (!hasTransport) {
         android.widget.Toast.makeText(
                 this, R.string.bmchat_email_bot_cb_no_webhook, android.widget.Toast.LENGTH_LONG)
             .show();
         return false;
       }
-      dcContext.sendTextMsg(chatId, cmd);
+      int msgId = dcContext.sendTextMsg(chatId, cmd);
+      // Dispatch right away instead of waiting for the bcc_self IMAP round
+      // trip, so the bot answers immediately like a Telegram bot.
+      if (msgId > 0) {
+        final int accountId = dcContext.getAccountId();
+        final int homeChatId = chatId;
+        final int sentMsgId = msgId;
+        new Thread(() -> {
+          try {
+            org.thoughtcrime.securesms.emailbots.EmailBotIntegration.get(getApplicationContext())
+                .getDispatcher()
+                .onIncomingMessage(accountId, homeChatId, sentMsgId);
+          } catch (Throwable ignored) {}
+        }, "emailbot-cmd-dispatch").start();
+      }
       return true;
     } catch (Throwable t) {
       return false;
     }
+  }
+
+  /**
+   * When the user posts into a local bot home chat (a self-only broadcast),
+   * hand the just-sent message straight to the e-mail-bot dispatcher so the
+   * bot reacts immediately instead of waiting for the bcc_self IMAP round
+   * trip. No-op for ordinary chats.
+   */
+  private void maybeDispatchEmailBotCommand(@androidx.annotation.NonNull DcContext dcContext,
+                                            int sentChatId, int sentMsgId) {
+    if (sentChatId <= 0 || sentMsgId <= 0) return;
+    try {
+      if (!org.thoughtcrime.securesms.emailbots.EmailBotContactHelper.isLocalBotChat(
+              dcContext, sentChatId)) {
+        return;
+      }
+    } catch (Throwable ignored) {
+      return;
+    }
+    final int accountId = dcContext.getAccountId();
+    new Thread(() -> {
+      try {
+        org.thoughtcrime.securesms.emailbots.EmailBotIntegration.get(getApplicationContext())
+            .getDispatcher()
+            .onIncomingMessage(accountId, sentChatId, sentMsgId);
+      } catch (Throwable ignored) {}
+    }, "emailbot-cmd-dispatch").start();
   }
 
   public void hideSoftKeyboard() {
@@ -1765,7 +1812,8 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
               }
 
               if (doSend) {
-                if (dcContext.sendMsg(currentChatId, msg) == 0) {
+                int sentMsgId = dcContext.sendMsg(currentChatId, msg);
+                if (sentMsgId == 0) {
                   String lastError = dcContext.getLastError();
                   if (!"".equals(lastError)) {
                     Util.runOnMain(
@@ -1776,6 +1824,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
                   future.set(currentChatId);
                   return;
                 }
+                maybeDispatchEmailBotCommand(dcContext, currentChatId, sentMsgId);
               }
 
               if (currentChatId == this.chatId) {

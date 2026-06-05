@@ -1,15 +1,15 @@
 {
-  "versionCode": 852,
-  "versionName": "2.50.14",
+  "versionCode": 854,
+  "versionName": "2.50.16",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.14.apk",
-  "sha256": "d3fb852950c7418f6c40339396f430a5a4740e38e7080df88c1ccfffd55b6008",
-  "size": 77509696,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.16.apk",
+  "sha256": "0b18ed760d9a74d9f51752fcb49eb378865861788b39588a2ca7d9bbabb60dbe",
+  "size": 77512701,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-05T22:00:00Z",
+  "publishedAt": "2026-06-06T12:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.14 — email-боты не пропадают, кнопки и команды работают.\n\nИСПРАВЛЕНО:\n• Android/Desktop: настройки ботов в ui.bmchat.email_bots + синхронизация BMCHAT-BOT-SYNC.\n• Кнопки bmchat-bot:// и /команды находят бота по чату emailbot.*@bots.bmchat.local.\n• Desktop: боты из профиля не теряются при пустом ui-config.\n• Desktop 2.50.13+: «Соединение» без ошибки invalid null/u32."
+  "notes": "BMChat 2.50.16 — боты, markdown и синхронизация.\n\nИСПРАВЛЕНО:\n• «0 получателей» у локального канала бота — теперь минимум 1 (вы сами).\n• Markdown в ответах бота: *жирный*, списки, кнопки — как в Telegram.\n• Синхронизация email- и Telegram-ботов между устройствами аккаунта (ui-config + self-chat sync).\n• «Соединение»: исправлена ошибка invalid type: null, expected u32 в статистике.\n• После sync на Android автоматически создаётся локальный чат бота."
 }

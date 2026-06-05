@@ -65,6 +65,23 @@ public final class EmailBotStore {
     writePrefs(new ArrayList<>(merged.values()));
   }
 
+  /**
+   * Ensures every stored bot owns a <em>local</em> self-only broadcast home
+   * chat, migrating legacy 1:1 {@code @bots.bmchat.local} chats that bounced
+   * over SMTP. Safe to call repeatedly; only patches ids when something
+   * actually changed. Uses {@link #readPrefs()} directly to avoid the
+   * reload recursion baked into {@link #getAll()}.
+   */
+  public synchronized void ensureLocalBotChats() {
+    for (EmailBotConfig b : readPrefs()) {
+      try {
+        EmailBotContactHelper.ensureBotContact(appContext, this, b);
+      } catch (Throwable t) {
+        Log.w(TAG, "ensureLocalBotChats failed for " + b.id, t);
+      }
+    }
+  }
+
   @NonNull
   public synchronized List<EmailBotConfig> getAll() {
     reloadFromUiConfig();
@@ -312,5 +329,6 @@ public final class EmailBotStore {
     all.addAll(merged.values());
     writePrefs(all);
     persistUiConfig(all, false);
+    ensureLocalBotChats();
   }
 }

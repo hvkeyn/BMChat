@@ -67,10 +67,11 @@ public class ConversationTitleView extends RelativeLayout {
     } else if (dcChat.isInBroadcast()) {
       subtitleStr = context.getString(R.string.channel);
     } else if (dcChat.isOutBroadcast()) {
+      int recipients = Math.max(1, chatContacts.length);
       subtitleStr =
           context
               .getResources()
-              .getQuantityString(R.plurals.n_recipients, chatContacts.length, chatContacts.length);
+              .getQuantityString(R.plurals.n_recipients, recipients, recipients);
     } else if (dcChat.isMultiUser()) {
       if (chatContacts.length > 1 || Util.contains(chatContacts, DcContact.DC_CONTACT_ID_SELF)) {
         subtitleStr =

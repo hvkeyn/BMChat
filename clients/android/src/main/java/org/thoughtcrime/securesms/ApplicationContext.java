@@ -471,9 +471,19 @@ public class ApplicationContext extends MultiDexApplication {
     // Pull email-bot definitions from ui.bmchat.email_bots (multidevice) early.
     new Thread(() -> {
       try {
-        new org.thoughtcrime.securesms.emailbots.EmailBotStore(this).reloadFromUiConfig();
+        org.thoughtcrime.securesms.emailbots.EmailBotStore botStore =
+            new org.thoughtcrime.securesms.emailbots.EmailBotStore(this);
+        botStore.reloadFromUiConfig();
+        // Migrate legacy 1:1 @bots.bmchat.local home chats (which bounced over
+        // SMTP as spam) to local self-only broadcast channels.
+        botStore.ensureLocalBotChats();
       } catch (Throwable t) {
         Log.w("BMChat", "email bots ui-config preload failed", t);
+      }
+      try {
+        new org.thoughtcrime.securesms.bots.BotStore(this).reloadFromUiConfig();
+      } catch (Throwable t) {
+        Log.w("BMChat", "telegram bots ui-config preload failed", t);
       }
     }, "emailbot-ui-preload").start();
 

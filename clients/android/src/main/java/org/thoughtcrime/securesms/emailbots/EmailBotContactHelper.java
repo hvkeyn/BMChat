@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.WorkerThread;
 
+import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
 
@@ -15,8 +16,22 @@ import org.thoughtcrime.securesms.connect.DcHelper;
 import java.util.Locale;
 
 /**
- * Ensures each email bot has a pseudo-contact and 1:1 home chat
- * ({@code emailbot.name@bots.bmchat.local}), matching desktop behaviour.
+ * Ensures each email bot has a <em>local</em> home chat that never leaves
+ * the device over SMTP.
+ *
+ * <p>Historically the home chat was a 1:1 conversation with a
+ * non-deliverable {@code emailbot.name@bots.bmchat.local} pseudo-contact.
+ * That turned out to be harmful: every command the user typed (and every
+ * bot reply) was queued to the owner's real SMTP server addressed to the
+ * fake {@code .local} domain, which providers such as Yandex reject with
+ * {@code 5.7.1 Message rejected under suspicion of SPAM}.
+ *
+ * <p>The home chat is therefore a self-only <strong>outgoing broadcast</strong>
+ * (a "channel" with no external recipients). Posting into it never produces
+ * a message addressed to {@code @bots.bmchat.local}; at most it is mirrored
+ * to the owner's own mailbox via {@code bcc_self} (which is normal mail to
+ * oneself, never flagged as spam). The actual bot logic still travels over
+ * the developer-mailbox transport / HTTP webhook.
  */
 public final class EmailBotContactHelper {
 
@@ -60,6 +75,20 @@ public final class EmailBotContactHelper {
     return "";
   }
 
+  /**
+   * Returns {@code true} when {@code chatId} is a local bot home chat,
+   * i.e. a self-only outgoing broadcast that never sends over SMTP.
+   */
+  public static boolean isLocalBotChat(@NonNull DcContext dc, int chatId) {
+    if (chatId <= 0) return false;
+    try {
+      DcChat chat = dc.getChat(chatId);
+      return chat != null && chat.getType() == DcChat.DC_CHAT_TYPE_OUT_BROADCAST;
+    } catch (Throwable t) {
+      return false;
+    }
+  }
+
   @WorkerThread
   public static void ensureBotContact(@NonNull Context context,
                                       @NonNull EmailBotStore store,
@@ -71,6 +100,9 @@ public final class EmailBotContactHelper {
     String displayName = bot.displayName != null && !bot.displayName.isEmpty()
         ? bot.displayName : "@" + bot.name;
 
+    // The pseudo-contact is kept only so the bot can still be added to real
+    // groups/broadcasts as a labelled member; it is NEVER used as the home
+    // chat recipient anymore (that is what produced the SMTP spam bounce).
     int contactId = bot.botContactId;
     if (contactId <= 0) {
       contactId = dc.lookupContactIdByAddr(email);
@@ -78,21 +110,67 @@ public final class EmailBotContactHelper {
     if (contactId <= 0) {
       contactId = dc.createContact(displayName, email);
     }
-    if (contactId <= 0) {
-      Log.w(TAG, "createContact failed for " + bot.name);
-      return;
-    }
 
+    // Resolve / migrate to a local self-only broadcast home chat.
     int chatId = bot.botChatId;
-    if (chatId <= 0) {
-      chatId = dc.getChatIdByContactId(contactId);
+    boolean haveLocal = false;
+    if (chatId > 0) {
+      try {
+        DcChat chat = dc.getChat(chatId);
+        if (chat != null && chat.getType() == DcChat.DC_CHAT_TYPE_OUT_BROADCAST) {
+          haveLocal = true;
+        } else if (chat != null) {
+          // Old-style deliverable 1:1 (or any non-broadcast) chat → migrate
+          // to a local broadcast and drop the old chat so the user can no
+          // longer type into a conversation that bounces over SMTP.
+          int migrated = createLocalBotChat(dc, displayName, bot.avatarPath);
+          if (migrated > 0) {
+            try { dc.deleteChat(chatId); } catch (Throwable ignored) {}
+            chatId = migrated;
+            haveLocal = true;
+          }
+        }
+      } catch (Throwable t) {
+        Log.w(TAG, "home-chat inspection failed for " + bot.name, t);
+      }
     }
-    if (chatId <= 0) {
-      chatId = dc.createChatByContactId(contactId);
+    if (!haveLocal) {
+      int created = createLocalBotChat(dc, displayName, bot.avatarPath);
+      if (created > 0) {
+        chatId = created;
+        haveLocal = true;
+      }
+    }
+    if (!haveLocal || chatId <= 0) {
+      Log.w(TAG, "could not ensure local home chat for " + bot.name);
+      return;
     }
 
     if (contactId != bot.botContactId || chatId != bot.botChatId) {
       store.patchContactIds(bot.id, contactId, chatId);
+    }
+  }
+
+  /**
+   * Creates a self-only outgoing broadcast to host a bot's conversation
+   * locally. No contacts are added, so the core never has an external
+   * recipient to send to.
+   */
+  @WorkerThread
+  private static int createLocalBotChat(@NonNull DcContext dc,
+                                        @NonNull String name,
+                                        @Nullable String avatarPath) {
+    try {
+      int chatId = dc.createBroadcastList();
+      if (chatId <= 0) return 0;
+      try { dc.setChatName(chatId, name); } catch (Throwable ignored) {}
+      if (avatarPath != null && !avatarPath.isEmpty()) {
+        try { dc.setChatProfileImage(chatId, avatarPath); } catch (Throwable ignored) {}
+      }
+      return chatId;
+    } catch (Throwable t) {
+      Log.w(TAG, "createBroadcastList failed", t);
+      return 0;
     }
   }
 }

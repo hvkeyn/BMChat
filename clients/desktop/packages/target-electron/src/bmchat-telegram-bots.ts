@@ -33,6 +33,7 @@ import { randomUUID } from 'crypto'
 import { getConfigPath } from './application-constants.js'
 import { getLogger } from '../../shared/logger.js'
 import { getDCJsonrpcRemote, DCJsonrpcRemoteInitializedP } from './ipc.js'
+import { openJson, sealJson } from './bmchat-email-bot-crypto.js'
 
 const log = getLogger('main/bmchat-telegram-bots')
 
@@ -47,6 +48,11 @@ const PROXY_SECRET =
 
 const STORE_FILE = 'bmchat-telegram-bots.json'
 const PENDING_FILE = 'bmchat-telegram-pending.json'
+const UI_CONFIG_KEY = 'ui.bmchat.telegram_bots'
+const SYNC_MARKER = 'BMCHAT-TG-BOT-SYNC v1'
+const DC_CONTACT_ID_SELF = 1
+const MIN_SYNC_PUBLISH_MS = 8_000
+let lastSyncPublishMs = 0
 const POLL_INTERVAL_MS = 90_000
 const MAX_ATTACHMENT_BYTES = 50 * 1024 * 1024 // 50 MB, matches Android
 const REQUEST_TIMEOUT_MS = 35_000 // getUpdates(timeout=0) returns fast, but allow slack
@@ -155,11 +161,141 @@ async function loadStore(): Promise<void> {
   }
 }
 
-async function saveStore(): Promise<void> {
+async function readUiConfigForAccount(accountId: number): Promise<Bot[]> {
+  try {
+    const raw = await getDCJsonrpcRemote().rpc.getConfig(accountId, UI_CONFIG_KEY)
+    const opened = await openJson(accountId, raw)
+    if (!opened) return []
+    const root = JSON.parse(opened)
+    const arr = root?.bots
+    if (!Array.isArray(arr)) return []
+    return arr.filter((b: unknown) => b && typeof b === 'object') as Bot[]
+  } catch (e) {
+    log.warn('readUiConfigForAccount failed account=%s', accountId, e)
+    return []
+  }
+}
+
+async function reloadStoreMerged(): Promise<void> {
+  await loadStore()
+  const merged = new Map<string, Bot>()
+  for (const b of bots) merged.set(b.id, b)
+  try {
+    await DCJsonrpcRemoteInitializedP
+    const accountIds = await getDCJsonrpcRemote().rpc.getAllAccountIds()
+    for (const accountId of accountIds) {
+      for (const b of await readUiConfigForAccount(accountId)) {
+        if (b.id) merged.set(b.id, b)
+      }
+    }
+  } catch (e) {
+    log.warn('reloadStoreMerged: ui-config read failed', e)
+  }
+  bots = Array.from(merged.values())
+}
+
+async function persistUiConfigForAccount(
+  accountId: number,
+  publishSync: boolean
+): Promise<void> {
+  const accountBots = bots.filter(b => b.accountId === accountId)
+  const wrapper = { bots: accountBots, updatedAtMs: Date.now() }
+  const sealed = await sealJson(accountId, JSON.stringify(wrapper))
+  await getDCJsonrpcRemote().rpc.setConfig(accountId, UI_CONFIG_KEY, sealed)
+  if (publishSync) {
+    await publishBotSync(accountId, JSON.stringify(wrapper))
+  }
+}
+
+async function persistAllUiConfig(publishSync: boolean): Promise<void> {
+  await DCJsonrpcRemoteInitializedP
+  const accountIds = new Set<number>(
+    await getDCJsonrpcRemote().rpc.getAllAccountIds()
+  )
+  for (const b of bots) {
+    if (b.accountId > 0) accountIds.add(b.accountId)
+  }
+  for (const accountId of accountIds) {
+    if (accountId > 0) {
+      await persistUiConfigForAccount(accountId, publishSync)
+    }
+  }
+}
+
+async function publishBotSync(
+  accountId: number,
+  plainJson: string
+): Promise<void> {
+  const now = Date.now()
+  if (now - lastSyncPublishMs < MIN_SYNC_PUBLISH_MS) return
+  lastSyncPublishMs = now
+  try {
+    const rpc = getDCJsonrpcRemote().rpc
+    let selfChat = await rpc.getChatIdByContactId(accountId, DC_CONTACT_ID_SELF)
+    if (!selfChat || selfChat <= 0) {
+      selfChat = await rpc.createChatByContactId(accountId, DC_CONTACT_ID_SELF)
+    }
+    if (!selfChat || selfChat <= 0) return
+    const sealed = await sealJson(accountId, plainJson)
+    const body = `${SYNC_MARKER} account=${accountId}\n${sealed}`
+    await rpc.miscSendTextMessage(accountId, selfChat, body)
+  } catch (e) {
+    log.warn('publishBotSync failed', e)
+  }
+}
+
+export async function tryIngestTelegramBotSync(
+  accountId: number,
+  body: string
+): Promise<boolean> {
+  const first = body.split(/\r?\n/, 1)[0]?.trim() || ''
+  if (!first.startsWith(SYNC_MARKER)) return false
+  let srcAccount = accountId
+  const accIdx = first.indexOf('account=')
+  if (accIdx >= 0) {
+    const tail = first.slice(accIdx + 8).trim().split(/\s+/)[0]
+    const n = parseInt(tail, 10)
+    if (Number.isFinite(n) && n > 0) srcAccount = n
+  }
+  const payload = body.includes('\n')
+    ? body.slice(body.indexOf('\n') + 1).trim()
+    : ''
+  if (!payload) return true
+  try {
+    const json = await openJson(srcAccount, payload)
+    if (!json) return true
+    const root = JSON.parse(json)
+    const arr = root?.bots
+    if (!Array.isArray(arr)) return true
+    const merged = new Map<string, Bot>()
+    for (const b of bots) {
+      if (b.accountId === srcAccount) continue
+      merged.set(b.id, b)
+    }
+    for (const raw of arr) {
+      const b = raw as Bot
+      if (b?.id && b.accountId === srcAccount) merged.set(b.id, b)
+    }
+    bots = Array.from(merged.values())
+    await saveStore({ publishSync: false })
+    await persistUiConfigForAccount(srcAccount, false)
+    return true
+  } catch (e) {
+    log.warn('tryIngestTelegramBotSync failed', e)
+    return true
+  }
+}
+
+async function saveStore(opts?: { publishSync?: boolean }): Promise<void> {
   try {
     await fs.writeFile(storePath(), JSON.stringify({ bots }, null, 2), 'utf8')
   } catch (e) {
     log.warn('Failed to persist bots store', e)
+  }
+  try {
+    await persistAllUiConfig(!!opts?.publishSync)
+  } catch (e) {
+    log.warn('Failed to persist telegram bots ui-config', e)
   }
 }
 
@@ -907,7 +1043,7 @@ export async function initTelegramBots(): Promise<void> {
   initialised = true
 
   await app.whenReady()
-  await loadStore()
+  await reloadStoreMerged()
   log.info('Loaded Telegram bots store (%d bots, %d pending)', bots.length, pending.length)
 
   // Defer polling until the core JSON-RPC remote is ready, otherwise
@@ -961,7 +1097,7 @@ export async function initTelegramBots(): Promise<void> {
         manualReview: false,
       }
       bots.push(bot)
-      await saveStore()
+      await saveStore({ publishSync: true })
       // Kick an immediate poll for fast feedback.
       pollAll().catch(() => {})
       return { ok: true, bot: toPublic(bot) }
@@ -990,7 +1126,7 @@ export async function initTelegramBots(): Promise<void> {
       const bot = bots.find(b => b.id === args.id)
       if (bot) {
         bot.paused = !!args.paused
-        await saveStore()
+        await saveStore({ publishSync: true })
       }
       return bots.map(toPublic)
     }
@@ -1002,7 +1138,7 @@ export async function initTelegramBots(): Promise<void> {
       const bot = bots.find(b => b.id === args.id)
       if (bot) {
         bot.manualReview = !!args.manualReview
-        await saveStore()
+        await saveStore({ publishSync: true })
       }
       return bots.map(toPublic)
     }
@@ -1015,7 +1151,7 @@ export async function initTelegramBots(): Promise<void> {
       if (bot) {
         bot.accountId = args.accountId
         bot.targetChatId = args.chatId
-        await saveStore()
+        await saveStore({ publishSync: true })
       }
       return bots.map(toPublic)
     }

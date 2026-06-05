@@ -367,8 +367,9 @@ function chatSubtitle(chat: Type.FullChat, firstContact: T.Contact | null) {
     } else if (chat.chatType === 'InBroadcast') {
       return tx('channel')
     } else if (chat.chatType === 'OutBroadcast') {
-      return tx('n_recipients', [String(chat.contactIds.length)], {
-        quantity: chat.contactIds.length,
+      const recipients = Math.max(1, chat.contactIds.length)
+      return tx('n_recipients', [String(recipients)], {
+        quantity: recipients,
       })
     } else if (chat.contactIds.length >= 1) {
       if (chat.isSelfTalk) {

@@ -57,11 +57,16 @@ async function countRealContacts(
   accountId: number,
   flags: number
 ): Promise<number> {
-  const ids = await BackendRemote.rpc.getContactIds(accountId, flags)
-  return ids
-    .map(id => asU32(id))
-    .filter((id): id is number => id != null && id > C.DC_CONTACT_ID_LAST_SPECIAL)
-    .length
+  try {
+    const ids = await BackendRemote.rpc.getContactIds(accountId, flags)
+    if (!Array.isArray(ids)) return 0
+    return ids
+      .map(id => asU32(id))
+      .filter((id): id is number => id != null && id > C.DC_CONTACT_ID_LAST_SPECIAL)
+      .length
+  } catch {
+    return 0
+  }
 }
 
 /** Load core connectivity HTML; tolerates RPC naming / transient errors. */
@@ -92,12 +97,12 @@ async function collectChatStats(
   const chatIds = await BackendRemote.rpc.getChatlistEntries(
     accountId,
     flag,
-    null,
-    null
+    '',
+    0
   )
   for (const rawId of chatIds) {
     if (seen.size >= maxChats) return
-    const chatId = typeof rawId === 'number' ? rawId : (rawId as { id?: number }).id
+    const chatId = asU32(rawId)
     if (chatId == null || chatId <= C.DC_CHAT_ID_LAST_SPECIAL || seen.has(chatId)) {
       continue
     }
@@ -120,6 +125,8 @@ async function collectChatStats(
           stats.mailingLists++
           break
         case 'Broadcast':
+        case 'OutBroadcast':
+        case 'InBroadcast':
           stats.channels++
           break
         default:

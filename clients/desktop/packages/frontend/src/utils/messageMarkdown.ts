@@ -38,6 +38,14 @@ export function normalizeParseMode(
   return undefined
 }
 
+/** Convert Telegram *bold* / _italic_ to BMChat **bold** / __italic__. */
+export function telegramMarkdownToMarkdown(text: string): string {
+  let s = text
+  s = s.replace(/(?<!\*)\*(?!\*)(\S(?:[^*\n]*\S)?)(?<!\*)\*(?!\*)/g, '**$1**')
+  s = s.replace(/(?<!_)_(?!_)(\S(?:[^_\n]*\S)?)(?<!_)_(?!_)/g, '__$1__')
+  return s
+}
+
 /** Convert Telegram MarkdownV2 escapes to BMChat markdown subset. */
 export function telegramMarkdownV2ToMarkdown(text: string): string {
   let s = text
@@ -88,6 +96,8 @@ export function formatMessageForDisplay(
     text = stripHtmlToMarkdown(text)
   } else if (parseMode === 'MarkdownV2') {
     text = telegramMarkdownV2ToMarkdown(text)
+  } else if (parseMode === 'Markdown' || parseMode === undefined) {
+    text = telegramMarkdownToMarkdown(text)
   }
   text = applyMarkdownToPlain(text)
   const links: Array<{ start: number; end: number; label: string; url: string }> = []
@@ -111,7 +121,47 @@ export function applyMarkdownToPlain(input: string): string {
   return text
 }
 
-/** Split message into renderable parts (text runs + links). */
+/** Split plain text runs into styled inline segments (bold, italic, …). */
+export function parseInlineMarkdownSegments(input: string): FormattedSegment[] {
+  if (!input) return [{ type: 'text', value: '' }]
+  const patterns: Array<{ type: FormattedSegment['type']; re: RegExp }> = [
+    { type: 'bold', re: /\*\*(\S(?:[^*\n]*\S)?)\*\*/ },
+    { type: 'italic', re: /__(\S(?:[^_\n]*\S)?)__/ },
+    { type: 'strike', re: /~~(\S(?:[^~\n]*\S)?)~~/ },
+    { type: 'underline', re: /\+\+(\S(?:[^+\n]*\S)?)\+\+/ },
+    { type: 'code', re: /`([^`\n]+)`/ },
+    { type: 'spoiler', re: /\|\|(\S(?:[^|\n]*\S)?)\|\|/ },
+  ]
+  const out: FormattedSegment[] = []
+  let rest = input
+  while (rest.length > 0) {
+    let best: {
+      index: number
+      len: number
+      type: FormattedSegment['type']
+      value: string
+    } | null = null
+    for (const p of patterns) {
+      const m = p.re.exec(rest)
+      if (!m) continue
+      if (!best || m.index < best.index) {
+        best = { index: m.index, len: m[0].length, type: p.type, value: m[1] }
+      }
+    }
+    if (!best) {
+      out.push({ type: 'text', value: rest })
+      break
+    }
+    if (best.index > 0) {
+      out.push({ type: 'text', value: rest.slice(0, best.index) })
+    }
+    out.push({ type: best.type, value: best.value })
+    rest = rest.slice(best.index + best.len)
+  }
+  return out.length ? out : [{ type: 'text', value: input }]
+}
+
+/** Split message into renderable parts (text runs + links + inline styles). */
 export function parseFormattedMessage(
   raw: string,
   parseMode?: BotParseMode
@@ -121,6 +171,8 @@ export function parseFormattedMessage(
     text = stripHtmlToMarkdown(text)
   } else if (parseMode === 'MarkdownV2') {
     text = telegramMarkdownV2ToMarkdown(text)
+  } else if (parseMode === 'Markdown' || parseMode === undefined) {
+    text = telegramMarkdownToMarkdown(text)
   }
 
   const segments: FormattedSegment[] = []
@@ -129,10 +181,7 @@ export function parseFormattedMessage(
   let m: RegExpExecArray | null
   while ((m = linkRe.exec(text)) !== null) {
     if (m.index > last) {
-      segments.push({
-        type: 'text',
-        value: applyMarkdownToPlain(text.slice(last, m.index)),
-      })
+      segments.push(...parseInlineMarkdownSegments(text.slice(last, m.index)))
     }
     segments.push({
       type: 'link',
@@ -142,10 +191,10 @@ export function parseFormattedMessage(
     last = m.index + m[0].length
   }
   if (last < text.length) {
-    segments.push({ type: 'text', value: applyMarkdownToPlain(text.slice(last)) })
+    segments.push(...parseInlineMarkdownSegments(text.slice(last)))
   }
   if (segments.length === 0) {
-    segments.push({ type: 'text', value: applyMarkdownToPlain(text) })
+    segments.push(...parseInlineMarkdownSegments(text))
   }
   return segments
 }
@@ -156,6 +205,7 @@ export function messageLikelyFormatted(text: string): boolean {
   return (
     /\[[^\]]+\]\([^)]+\)/.test(text) ||
     /\*\*[^*]+\*\*/.test(text) ||
+    /(?<!\*)\*(?!\*)[^*\n]+\*(?!\*)/.test(text) ||
     /__[^_]+__/.test(text) ||
     /~~[^~]+~~/.test(text) ||
     /🔘\s*\[/.test(text) ||

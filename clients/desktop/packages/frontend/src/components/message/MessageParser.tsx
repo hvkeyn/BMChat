@@ -7,8 +7,10 @@ import '../../utils/linkify/plugin-bot-command/index.js'
 import { Link } from './Link.js'
 import { parseElements } from '../../utils/linkify/parseElements.js'
 import {
+  applyMarkdownToPlain,
   messageLikelyFormatted,
   parseFormattedMessage,
+  telegramMarkdownToMarkdown,
 } from '../../utils/messageMarkdown.js'
 import { getLogger } from '@deltachat-desktop/shared/logger'
 import { ActionEmitter, KeybindAction } from '../../keybindings'
@@ -161,7 +163,10 @@ export function parseAndRenderMessage(
   tabindexForInteractiveContents: -1 | 0
 ): React.ReactElement {
   if (preview) {
-    return <div className='truncated'>{message}</div>
+    const plain = messageLikelyFormatted(message)
+      ? applyMarkdownToPlain(telegramMarkdownToMarkdown(message))
+      : message
+    return <div className='truncated'>{plain}</div>
   }
   try {
     if (messageLikelyFormatted(message)) {
@@ -216,6 +221,32 @@ export function parseAndRenderMessage(
                 >
                   {seg.value}
                 </a>
+              )
+            }
+            if (seg.type === 'bold') {
+              return <strong key={index}>{seg.value}</strong>
+            }
+            if (seg.type === 'italic') {
+              return <em key={index}>{seg.value}</em>
+            }
+            if (seg.type === 'strike') {
+              return <s key={index}>{seg.value}</s>
+            }
+            if (seg.type === 'underline') {
+              return <u key={index}>{seg.value}</u>
+            }
+            if (seg.type === 'code') {
+              return (
+                <code key={index} className='message-inline-code'>
+                  {seg.value}
+                </code>
+              )
+            }
+            if (seg.type === 'spoiler') {
+              return (
+                <span key={index} className='message-spoiler'>
+                  {seg.value}
+                </span>
               )
             }
             const elements = parseElements(seg.value)

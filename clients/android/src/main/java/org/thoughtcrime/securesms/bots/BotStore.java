@@ -8,8 +8,12 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.b44t.messenger.DcContext;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.thoughtcrime.securesms.connect.DcHelper;
+import org.thoughtcrime.securesms.emailbots.EmailBotCrypto;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,6 +38,8 @@ public final class BotStore {
   private static final String TAG = "BotStore";
   private static final String PREFS = "bmchat-bots";
   private static final String KEY_LIST = "bots";
+  /** Must match desktop {@code UI_CONFIG_KEY}. */
+  public static final String UI_CONFIG_KEY = "ui.bmchat.telegram_bots";
 
   // 32 bytes — plenty for XOR over typical bot token lengths.
   private static final byte[] OBF_KEY = new byte[] {
@@ -55,6 +61,28 @@ public final class BotStore {
 
   @NonNull
   public synchronized List<BotConfig> getAll() {
+    reloadFromUiConfig();
+    return readPrefs();
+  }
+
+  /** Reload bots from all accounts' ui-config (call on app start / resume). */
+  public synchronized void reloadFromUiConfig() {
+    java.util.Map<String, BotConfig> merged = new java.util.LinkedHashMap<>();
+    for (BotConfig b : readPrefs()) {
+      merged.put(b.id, b);
+    }
+    for (int accountId : DcHelper.getAccounts(appContext).getAll()) {
+      DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
+      if (ctx == null || !ctx.isOk()) continue;
+      for (BotConfig b : readUiConfigForAccount(ctx.getAccountId(), ctx)) {
+        merged.put(b.id, b);
+      }
+    }
+    writePrefs(new ArrayList<>(merged.values()), false);
+  }
+
+  @NonNull
+  private List<BotConfig> readPrefs() {
     String raw = prefs().getString(KEY_LIST, null);
     if (raw == null) return Collections.emptyList();
     String json = deobfuscate(raw);
@@ -70,12 +98,97 @@ public final class BotStore {
         }
       }
     } catch (Throwable t) {
-      Log.w(TAG, "getAll parse failed", t);
+      Log.w(TAG, "readPrefs parse failed", t);
     }
     return out;
   }
 
+  @NonNull
+  private List<BotConfig> readUiConfigForAccount(int accountId, @NonNull DcContext ctx) {
+    List<BotConfig> out = new ArrayList<>();
+    try {
+      String raw = ctx.getConfig(UI_CONFIG_KEY);
+      if (raw == null || raw.isEmpty()) return out;
+      String opened = EmailBotCrypto.openJson(appContext, accountId, raw);
+      if (opened == null || opened.isEmpty()) return out;
+      JSONObject root = new JSONObject(opened);
+      JSONArray arr = root.optJSONArray("bots");
+      if (arr == null) return out;
+      for (int i = 0; i < arr.length(); i++) {
+        try {
+          out.add(BotConfig.fromJson(arr.getJSONObject(i)));
+        } catch (Throwable t) {
+          Log.w(TAG, "skip ui-config bot at " + i, t);
+        }
+      }
+    } catch (Throwable t) {
+      Log.w(TAG, "readUiConfigForAccount failed", t);
+    }
+    return out;
+  }
+
+  private void persistUiConfig(@NonNull List<BotConfig> all, boolean publishSync) {
+    java.util.Map<Integer, JSONArray> byAccount = new java.util.LinkedHashMap<>();
+    for (BotConfig b : all) {
+      JSONArray arr = byAccount.get(b.dcAccountId);
+      if (arr == null) {
+        arr = new JSONArray();
+        byAccount.put(b.dcAccountId, arr);
+      }
+      try {
+        arr.put(b.toJson());
+      } catch (Throwable t) {
+        Log.w(TAG, "skip ui persist for " + b.id, t);
+      }
+    }
+    try {
+      for (int accountId : DcHelper.getAccounts(appContext).getAll()) {
+        DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
+        if (ctx == null || !ctx.isOk()) continue;
+        JSONArray arr = byAccount.get(accountId);
+        if (arr == null) continue;
+        JSONObject wrapper = new JSONObject();
+        wrapper.put("bots", arr);
+        wrapper.put("updatedAtMs", System.currentTimeMillis());
+        String sealed = EmailBotCrypto.sealJson(appContext, accountId, wrapper.toString());
+        ctx.setConfig(UI_CONFIG_KEY, sealed);
+        if (publishSync) {
+          TelegramBotSync.publishIfNeeded(appContext, accountId, wrapper.toString());
+        }
+      }
+    } catch (Throwable t) {
+      Log.w(TAG, "persistUiConfig failed", t);
+    }
+  }
+
+  /** Merges bots from an encrypted self-chat sync message. */
+  synchronized void mergeFromSyncJson(int accountId, @NonNull JSONArray arr) {
+    java.util.Map<String, BotConfig> merged = new java.util.LinkedHashMap<>();
+    for (BotConfig b : getAll()) {
+      if (b.dcAccountId == accountId) merged.put(b.id, b);
+    }
+    for (int i = 0; i < arr.length(); i++) {
+      try {
+        BotConfig b = BotConfig.fromJson(arr.getJSONObject(i));
+        if (b.dcAccountId == accountId) merged.put(b.id, b);
+      } catch (Throwable t) {
+        Log.w(TAG, "skip sync bot at " + i, t);
+      }
+    }
+    List<BotConfig> all = new ArrayList<>(getAll());
+    for (int i = all.size() - 1; i >= 0; i--) {
+      if (all.get(i).dcAccountId == accountId) all.remove(i);
+    }
+    all.addAll(merged.values());
+    writePrefs(all, false);
+    persistUiConfig(all, false);
+  }
+
   public synchronized void saveAll(@NonNull List<BotConfig> bots) {
+    writePrefs(bots, true);
+  }
+
+  private void writePrefs(@NonNull List<BotConfig> bots, boolean publishSync) {
     JSONArray arr = new JSONArray();
     for (BotConfig b : bots) {
       try {
@@ -86,6 +199,7 @@ public final class BotStore {
     }
     String obf = obfuscate(arr.toString());
     prefs().edit().putString(KEY_LIST, obf).apply();
+    persistUiConfig(bots, publishSync);
   }
 
   public synchronized void upsert(@NonNull BotConfig updated) {

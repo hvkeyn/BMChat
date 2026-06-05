@@ -397,9 +397,13 @@ function ViewGroupInner(
                         quantity: group.contactIds.length,
                       })
                     : ''
-                  : tx('n_recipients', group.contactIds.length.toString(), {
-                      quantity: group.contactIds.length,
-                    })}
+                  : tx(
+                      'n_recipients',
+                      Math.max(1, group.contactIds.length).toString(),
+                      {
+                        quantity: Math.max(1, group.contactIds.length),
+                      }
+                    )}
               </div>
               {groupDescription && (
                 <div className='group-profile-description'>

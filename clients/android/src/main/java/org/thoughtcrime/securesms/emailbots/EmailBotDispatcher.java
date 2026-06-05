@@ -17,6 +17,8 @@ import com.b44t.messenger.DcMsg;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.thoughtcrime.securesms.ApplicationContext;
+import org.thoughtcrime.securesms.bots.TelegramBotSync;
+import org.thoughtcrime.securesms.util.MessageMarkdown;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -106,6 +108,11 @@ public final class EmailBotDispatcher {
 
     // Catalog ingest must run even when this account has no local bots yet.
     if (EmailBotSync.tryIngest(appContext, accountId, msg, store)) return;
+
+    if (TelegramBotSync.tryIngest(
+        appContext, accountId, msg, new org.thoughtcrime.securesms.bots.BotStore(appContext))) {
+      return;
+    }
 
     if (directory.tryIngest(accountId, msg)) return;
 
@@ -574,6 +581,9 @@ public final class EmailBotDispatcher {
       }
       if (text == null || text.isEmpty()) return null;
 
+      String parseMode = resp.optString("parse_mode", null);
+      text = normalizeWebhookText(text, parseMode);
+
       JSONObject markup = resp.optJSONObject("reply_markup");
       if (markup != null) {
         String keyboard = renderInlineKeyboard(bot, markup.optJSONArray("inline_keyboard"));
@@ -586,6 +596,22 @@ public final class EmailBotDispatcher {
       Log.w(TAG, "decodeWebhookResponse parse failed", t);
       return null;
     }
+  }
+
+  @Nullable
+  private String normalizeWebhookText(@Nullable String text, @Nullable String parseMode) {
+    if (text == null || text.isEmpty()) return text;
+    if (parseMode != null) {
+      String mode = parseMode.trim().toLowerCase(Locale.ROOT);
+      if ("html".equals(mode)) {
+        return MessageMarkdown.normalizeTelegramMarkdown(
+            text.replaceAll("<br\\s*/?>", "\n")
+                .replaceAll("<(b|strong)>", "**").replaceAll("</(b|strong)>", "**")
+                .replaceAll("<(i|em)>", "__").replaceAll("</(i|em)>", "__")
+                .replaceAll("<[^>]+>", ""));
+      }
+    }
+    return MessageMarkdown.normalizeTelegramMarkdown(text);
   }
 
   /**

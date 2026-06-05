@@ -35,6 +35,7 @@ import { getConfigPath } from './application-constants.js'
 import { getLogger } from '../../shared/logger.js'
 import { getDCJsonrpcRemote, DCJsonrpcRemoteInitializedP } from './ipc.js'
 import { openJson, sealJson } from './bmchat-email-bot-crypto.js'
+import { tryIngestTelegramBotSync } from './bmchat-telegram-bots.js'
 
 const log = getLogger('main/bmchat-email-bots')
 
@@ -224,6 +225,7 @@ async function tryIngestBotSync(
     bots = Array.from(merged.values())
     await saveStore({ publishSync: false })
     await persistUiConfigForAccount(srcAccount, false)
+    await migrateBotContacts()
     return true
   } catch (e) {
     log.warn('tryIngestBotSync failed', e)
@@ -423,46 +425,109 @@ function findBotByChatId(accountId: number, chatId: number): EmailBot | null {
   )
 }
 
+/**
+ * Returns true when {@link chatId} is a local bot home chat: a self-only
+ * outgoing broadcast that is never queued to SMTP.
+ */
+async function isLocalBotChat(
+  accountId: number,
+  chatId: number
+): Promise<boolean> {
+  if (chatId <= 0) return false
+  try {
+    const rpc = getDCJsonrpcRemote().rpc
+    const chat: any = await rpc.getBasicChatInfo(accountId, chatId)
+    return chat?.chatType === 'OutBroadcast'
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Creates a self-only outgoing broadcast ("channel" with no external
+ * recipients) to host a bot conversation locally. Posting into it never
+ * produces a message addressed to the non-deliverable @bots.bmchat.local
+ * pseudo-contact, so providers no longer bounce it as spam.
+ */
+async function createLocalBotChat(
+  bot: EmailBot,
+  displayName: string
+): Promise<number> {
+  const rpc = getDCJsonrpcRemote().rpc
+  try {
+    const chatId = await rpc.createBroadcast(bot.ownerAccountId, displayName)
+    return chatId > 0 ? chatId : 0
+  } catch (e) {
+    log.warn('createBroadcast failed for %s', bot.name, e)
+    return 0
+  }
+}
+
 async function ensureBotContact(bot: EmailBot): Promise<void> {
   const rpc = getDCJsonrpcRemote().rpc
   const displayName = bot.displayName?.trim() || `@${bot.name}`
+
+  // Keep the pseudo-contact only for the "add bot to a real group" feature;
+  // it is never used as the home-chat recipient anymore.
   if (!bot.botContactId || bot.botContactId <= 0) {
-    bot.botContactId = await rpc.createContact(
-      bot.ownerAccountId,
-      makeBotEmail(bot.name),
-      displayName
-    )
-  }
-  if (!bot.botChatId || bot.botChatId <= 0) {
-    if (bot.botContactId > 0) {
-      try {
-        const existing = await rpc.getChatIdByContactId(
-          bot.ownerAccountId,
-          bot.botContactId
-        )
-        if (existing > 0) bot.botChatId = existing
-      } catch {
-        /* ignore */
-      }
-    }
-    if (!bot.botChatId || bot.botChatId <= 0) {
-      bot.botChatId = await rpc.createChatByContactId(
+    try {
+      bot.botContactId = await rpc.createContact(
         bot.ownerAccountId,
-        bot.botContactId
+        makeBotEmail(bot.name),
+        displayName
       )
+    } catch (e) {
+      log.warn('createContact failed for %s', bot.name, e)
     }
   }
+
+  // Resolve / migrate to a local self-only broadcast home chat.
+  let haveLocal = false
+  if (bot.botChatId && bot.botChatId > 0) {
+    try {
+      const chat: any = await rpc.getBasicChatInfo(
+        bot.ownerAccountId,
+        bot.botChatId
+      )
+      if (chat?.chatType === 'OutBroadcast') {
+        haveLocal = true
+      } else if (chat) {
+        // Legacy 1:1 @bots.bmchat.local chat (or any non-broadcast) →
+        // migrate to a local broadcast and delete the old chat so the user
+        // can no longer type into a conversation that bounces over SMTP.
+        const migrated = await createLocalBotChat(bot, displayName)
+        if (migrated > 0) {
+          try {
+            await rpc.deleteChat(bot.ownerAccountId, bot.botChatId)
+          } catch {
+            /* ignore */
+          }
+          bot.botChatId = migrated
+          haveLocal = true
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  if (!haveLocal) {
+    const created = await createLocalBotChat(bot, displayName)
+    if (created > 0) {
+      bot.botChatId = created
+      haveLocal = true
+    }
+  }
+
   await saveStore()
 }
 
 async function migrateBotContacts(): Promise<void> {
   for (const bot of bots) {
     if (!bot.enabled) continue
-    if (bot.botChatId && bot.botChatId > 0) continue
     try {
       await ensureBotContact(bot)
       log.info(
-        'email bot %s: home chat id=%s contact=%s',
+        'email bot %s: local home chat id=%s contact=%s',
         bot.name,
         bot.botChatId,
         bot.botContactId
@@ -601,6 +666,24 @@ function defaultWelcome(bot: EmailBot): string {
 //  webhook (main process has network)
 // ---------------------------------------------------------------------------
 
+function normalizeWebhookText(text: string, parseMode?: string): string {
+  const mode = (parseMode || '').trim().toLowerCase()
+  if (mode === 'html') {
+    return text
+      .replace(/<br\s*\/?>/gi, '\n')
+      .replace(/<(b|strong)>/gi, '**')
+      .replace(/<\/(b|strong)>/gi, '**')
+      .replace(/<(i|em)>/gi, '__')
+      .replace(/<\/(i|em)>/gi, '__')
+      .replace(/<[^>]+>/g, '')
+      .replace(/\*(?!\*)(\S(?:[^*\n]*\S)?)(?<!\*)\*(?!\*)/g, '**$1**')
+  }
+  return text.replace(
+    /(?<!\*)\*(?!\*)(\S(?:[^*\n]*\S)?)(?<!\*)\*(?!\*)/g,
+    '**$1**'
+  )
+}
+
 async function postWebhook(
   bot: EmailBot,
   inv: { command: string; argument: string },
@@ -690,6 +773,7 @@ async function postWebhook(
                 finish(null)
                 return
               }
+              text = normalizeWebhookText(text, resp.parse_mode)
               const keyboard = renderInlineKeyboard(
                 bot,
                 resp.reply_markup?.inline_keyboard
@@ -803,6 +887,7 @@ async function postBotCallback(
                 finish(null)
                 return
               }
+              text = normalizeWebhookText(text, resp.parse_mode)
               const keyboard = renderInlineKeyboard(
                 bot,
                 resp.reply_markup?.inline_keyboard
@@ -1081,6 +1166,11 @@ async function handleIncoming(
 
     if (await tryIngestBotSync(accountId, body)) {
       await reloadStoreMerged()
+      await migrateBotContacts()
+      return
+    }
+
+    if (await tryIngestTelegramBotSync(accountId, body)) {
       return
     }
 

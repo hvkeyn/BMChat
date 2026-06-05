@@ -110,9 +110,8 @@ public final class MessageMarkdown {
    * passes. Safe to call on already-styled text.
    */
   public static @NonNull SpannableStringBuilder apply(@NonNull CharSequence text) {
-    SpannableStringBuilder sb = text instanceof SpannableStringBuilder
-        ? (SpannableStringBuilder) text
-        : new SpannableStringBuilder(text);
+    SpannableStringBuilder sb = new SpannableStringBuilder(
+        normalizeTelegramMarkdown(text.toString()));
 
     // Order is important: handle fenced PRE first so backticks inside
     // it never get reinterpreted as inline code, then inline code
@@ -264,6 +263,14 @@ public final class MessageMarkdown {
 
   private interface SpanBuilder {
     @NonNull CharacterStyle[] build(@NonNull String inner);
+  }
+
+  /** Telegram {@code *bold*} / {@code _italic_} → BMChat {@code **…**} / {@code __…__}. */
+  public static @NonNull String normalizeTelegramMarkdown(@NonNull String text) {
+    String s = text;
+    s = s.replaceAll("(?<!\\*)\\*(?!\\*)(\\S(?:[^*\\n]*\\S)?)(?<!\\*)\\*(?!\\*)", "**$1**");
+    s = s.replaceAll("(?<!_)_(?!_)(\\S(?:[^_\\n]*\\S)?)(?<!_)_(?!_)", "__$1__");
+    return s;
   }
 
   // Keep the imports fail-safe even if Color.parseColor would be
