@@ -1,6 +1,6 @@
 {
-  "version": "2.50.12",
-  "publishedAt": "2026-06-05T18:00:00Z",
+  "version": "2.50.13",
+  "publishedAt": "2026-06-05T21:30:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.12-Portable.x64.exe",
-      "size": 126022476,
-      "sha256": "c98ab52a15082de372b57ee1ae457a6f96bce96079de0446c28c2a21818be34c"
+      "versionedFile": "BMChat-2.50.13-Portable.x64.exe",
+      "size": 126014686,
+      "sha256": "578a4681b32f3b214e9c406b21b3a49e5a6bcaf979005837d904d97729748072"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.12-Setup.x64.exe",
-      "size": 126338871,
-      "sha256": "a6d68249c9f95e56e90206c1eb0e3d5077f669be788090dbe86d28edea372df5"
+      "versionedFile": "BMChat-2.50.13-Setup.x64.exe",
+      "size": 126331192,
+      "sha256": "facd724a608d75b7a48b64fef440c13baeed6cf1718ac1f42e75e65a09e7a7ee"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "1746b0726431831f6ef11fee29110f459ac998778598d2cd48a72fa02732db86"
     }
   },
-  "notes": "BMChat Desktop 2.50.12 — боты, «Соединение» со статистикой.\n\nИСПРАВЛЕНО:\n• Кнопки bmchat-bot:// и /команды в чате email-бота.\n• «Соединение»: блок «Статистика BMChat» (контакты, чаты, сообщения, доставка).\n• IPC bmchat:emailbots:callback для inline-кнопок."
+  "notes": "BMChat Desktop 2.50.13 — «Соединение» и email-боты.\n\nИСПРАВЛЕНО:\n• «Соединение»: ошибка invalid type: null, expected u32 при загрузке статистики.\n• Email-боты: поиск по чату emailbot.*@bots.bmchat.local, callback/webhook.\n• Подсказки, если бот не добавлен в настройках или нет webhook URL."
 }

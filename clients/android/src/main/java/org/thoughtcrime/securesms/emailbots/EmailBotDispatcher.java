@@ -109,15 +109,17 @@ public final class EmailBotDispatcher {
 
     if (directory.tryIngest(accountId, msg)) return;
 
-    if (store.getForAccount(accountId).isEmpty()) return;
-
     DcChat chat = dcContext.getChat(chatId);
     if (chat == null) return;
 
+    EmailBotConfig activeBot = resolveActiveBotForChat(dcContext, accountId, chatId);
+    if (store.getForAccount(accountId).isEmpty() && activeBot == null) return;
+
     boolean isSelf = msg.getFromId() == DcContact.DC_CONTACT_ID_SELF;
-    EmailBotConfig activeBot = findBotForChat(accountId, chatId);
-    boolean inHomeChat = activeBot != null && activeBot.botChatId > 0
-        && activeBot.botChatId == chatId;
+    boolean inHomeChat = activeBot != null
+        && (activeBot.botChatId == chatId
+            || EmailBotContactHelper.slugFromBotHomeChat(dcContext, chatId)
+                .equalsIgnoreCase(activeBot.name));
 
     DcContact senderContact = dcContext.getContact(msg.getFromId());
     String senderEmail = senderContact != null
@@ -381,6 +383,15 @@ public final class EmailBotDispatcher {
       if (b.botChatId > 0 && b.botChatId == chatId) return b;
     }
     return null;
+  }
+
+  @Nullable
+  private EmailBotConfig resolveActiveBotForChat(@NonNull DcContext dc,
+                                                 int accountId,
+                                                 int chatId) {
+    EmailBotConfig bot = findBotForChat(accountId, chatId);
+    if (bot != null) return bot;
+    return EmailBotResolver.resolve(store, dc, accountId, null, chatId);
   }
 
   @Nullable

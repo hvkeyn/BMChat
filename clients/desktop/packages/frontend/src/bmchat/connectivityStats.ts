@@ -37,16 +37,31 @@ function esc(s: string): string {
     .replace(/"/g, '&quot;')
 }
 
+/** JSON-RPC rejects null for plain u32 parameters — normalize list entries. */
+function asU32(value: unknown): number | null {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    const n = Math.trunc(value)
+    if (n < 0) return null
+    return n
+  }
+  if (value != null && typeof value === 'object') {
+    const id = (value as { id?: unknown; chatId?: unknown }).id
+    if (id !== undefined) return asU32(id)
+    const chatId = (value as { chatId?: unknown }).chatId
+    if (chatId !== undefined) return asU32(chatId)
+  }
+  return null
+}
+
 async function countRealContacts(
   accountId: number,
   flags: number
 ): Promise<number> {
-  const ids = await BackendRemote.rpc.getContactIds(
-    accountId,
-    flags,
-    null
-  )
-  return ids.filter(id => id > C.DC_CONTACT_ID_LAST_SPECIAL).length
+  const ids = await BackendRemote.rpc.getContactIds(accountId, flags)
+  return ids
+    .map(id => asU32(id))
+    .filter((id): id is number => id != null && id > C.DC_CONTACT_ID_LAST_SPECIAL)
+    .length
 }
 
 /** Load core connectivity HTML; tolerates RPC naming / transient errors. */
@@ -116,8 +131,9 @@ async function collectChatStats(
         false,
         false
       )
-      for (const msgId of msgIds) {
-        if (msgId <= C.DC_MSG_ID_DAYMARKER) continue
+      for (const rawMsgId of msgIds) {
+        const msgId = asU32(rawMsgId)
+        if (msgId == null || msgId <= C.DC_MSG_ID_DAYMARKER) continue
         const msg = await BackendRemote.rpc.getMessage(accountId, msgId)
         if (!msg) continue
         if (msg.isInfo) continue

@@ -15,6 +15,7 @@ import org.json.JSONObject;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.emailbots.EmailBotConfig;
+import org.thoughtcrime.securesms.emailbots.EmailBotResolver;
 import org.thoughtcrime.securesms.emailbots.EmailBotStore;
 
 import java.io.BufferedReader;
@@ -97,7 +98,8 @@ public class EmailBotCallbackActivity extends Activity {
       DcContext dcContext = DcHelper.getContext(this);
       int accountId = dcContext.getAccountId();
 
-      EmailBotConfig bot = store.findByName(accountId, botName);
+      EmailBotConfig bot =
+          EmailBotResolver.resolve(store, dcContext, accountId, botName, originChatId);
       if (bot == null || !bot.enabled) {
         toastOnUi(getString(R.string.bmchat_email_bot_cb_no_bot, botName));
         return;
@@ -158,6 +160,13 @@ public class EmailBotCallbackActivity extends Activity {
       bmchat.put("bot", bot.name);
       bmchat.put("token_suffix", bot.token);
       bmchat.put("kind", "callback_query");
+      int chatForWebhook =
+          originChatId > 0
+              ? originChatId
+              : bot.botChatId > 0 ? bot.botChatId : 0;
+      if (chatForWebhook > 0) {
+        bmchat.put("chat_id", chatForWebhook);
+      }
       update.put("bmchat", bmchat);
 
       conn = (HttpURLConnection) new URL(bot.webhookUrl).openConnection();

@@ -815,10 +815,30 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     if (chatId <= 0 || cmd.isEmpty()) return false;
     try {
       DcContext dcContext = DcHelper.getContext(this);
+      org.thoughtcrime.securesms.emailbots.EmailBotStore store =
+          new org.thoughtcrime.securesms.emailbots.EmailBotStore(getApplicationContext());
       org.thoughtcrime.securesms.emailbots.EmailBotConfig bot =
-          new org.thoughtcrime.securesms.emailbots.EmailBotStore(getApplicationContext())
-              .findByChatId(dcContext.getAccountId(), chatId);
-      if (bot == null || !bot.enabled) return false;
+          org.thoughtcrime.securesms.emailbots.EmailBotResolver.resolve(
+              store, dcContext, dcContext.getAccountId(), null, chatId);
+      if (bot == null || !bot.enabled) {
+        String slug =
+            org.thoughtcrime.securesms.emailbots.EmailBotContactHelper.slugFromBotHomeChat(
+                dcContext, chatId);
+        if (!slug.isEmpty()) {
+          android.widget.Toast.makeText(
+                  this,
+                  getString(R.string.bmchat_email_bot_cb_no_bot, slug),
+                  android.widget.Toast.LENGTH_LONG)
+              .show();
+        }
+        return false;
+      }
+      if (android.text.TextUtils.isEmpty(bot.webhookUrl)) {
+        android.widget.Toast.makeText(
+                this, R.string.bmchat_email_bot_cb_no_webhook, android.widget.Toast.LENGTH_LONG)
+            .show();
+        return false;
+      }
       dcContext.sendTextMsg(chatId, cmd);
       return true;
     } catch (Throwable t) {

@@ -163,6 +163,85 @@ function makeBotEmail(name: string): string {
   return `emailbot.${slug}@bots.bmchat.local`
 }
 
+function nameFromBotEmail(email: string): string | null {
+  const lower = email.toLowerCase().trim()
+  if (!lower.endsWith('@bots.bmchat.local')) return null
+  const at = lower.indexOf('@')
+  if (at <= 0) return null
+  const local = lower.slice(0, at)
+  if (!local.startsWith('emailbot.')) return null
+  const slug = local.slice('emailbot.'.length)
+  return slug || null
+}
+
+async function slugFromBotHomeChat(
+  accountId: number,
+  chatId: number
+): Promise<string | null> {
+  if (chatId <= 0) return null
+  try {
+    const rpc = getDCJsonrpcRemote().rpc
+    const chat: any = await rpc.getBasicChatInfo(accountId, chatId)
+    const ids: number[] = Array.isArray(chat?.contactIds)
+      ? chat.contactIds
+      : []
+    for (const contactId of ids) {
+      if (contactId === DC_CONTACT_ID_SELF) continue
+      try {
+        const contact: any = await rpc.getContact(accountId, contactId)
+        const slug = nameFromBotEmail(String(contact?.address || ''))
+        if (slug) return slug
+      } catch {
+        /* ignore */
+      }
+    }
+  } catch {
+    /* ignore */
+  }
+  return null
+}
+
+function normalizeBotName(raw: string): string {
+  let s = (raw || '').trim()
+  if (s.startsWith('@')) s = s.slice(1)
+  try {
+    s = decodeURIComponent(s)
+  } catch {
+    /* ignore */
+  }
+  return s.trim()
+}
+
+async function resolveEmailBot(
+  accountId: number,
+  botNameHint: string,
+  chatId?: number
+): Promise<EmailBot | null> {
+  const hint = normalizeBotName(botNameHint)
+  if (hint) {
+    const byName = findByName(accountId, hint)
+    if (byName) return byName
+  }
+  const openChatId = Number(chatId) || 0
+  if (openChatId > 0) {
+    const byChat = findBotByChatId(accountId, openChatId)
+    if (byChat) return byChat
+    const slug = await slugFromBotHomeChat(accountId, openChatId)
+    if (slug) {
+      const bySlug = findByName(accountId, slug)
+      if (bySlug) {
+        if (!bySlug.botChatId || bySlug.botChatId <= 0) {
+          bySlug.botChatId = openChatId
+          await saveStore()
+        }
+        return bySlug
+      }
+    }
+  }
+  if (hint) return findByName(accountId, hint)
+  return null
+}
+
 function findBotByChatId(accountId: number, chatId: number): EmailBot | null {
   return (
     bots.find(
@@ -492,7 +571,8 @@ function parseBotCallbackUrl(
 /** POST a Telegram-style {@code callback_query} to the bot webhook. */
 async function postBotCallback(
   bot: EmailBot,
-  callbackData: string
+  callbackData: string,
+  chatId?: number
 ): Promise<string | null> {
   if (!bot.webhookUrl) return null
   let url: URL
@@ -514,6 +594,7 @@ async function postBotCallback(
       bot: bot.name,
       token_suffix: bot.token,
       kind: 'callback_query',
+      ...(Number(chatId) > 0 ? { chat_id: Number(chatId) } : {}),
     },
   })
 
@@ -801,7 +882,6 @@ async function handleIncoming(
   msgId: number
 ): Promise<void> {
   if (accountId <= 0 || chatId <= 0 || msgId <= 0) return
-  if (botsForAccount(accountId).length === 0) return
   try {
     const rpc = getDCJsonrpcRemote().rpc
     const msg: any = await rpc.getMessage(accountId, msgId)
@@ -831,7 +911,12 @@ async function handleIncoming(
     if (!body) return
 
     const isSelf = msg.fromId === DC_CONTACT_ID_SELF
-    const homeBot = findBotByChatId(accountId, chatId)
+    let homeBot = findBotByChatId(accountId, chatId)
+    if (!homeBot) {
+      const slug = await slugFromBotHomeChat(accountId, chatId)
+      if (slug) homeBot = findByName(accountId, slug)
+    }
+    if (botsForAccount(accountId).length === 0 && !homeBot) return
 
     // Own messages in the bot's 1:1 home chat must not re-trigger the webhook
     // (every bot reply was parsed as command "default" → infinite PHP loop).
@@ -1043,9 +1128,18 @@ export async function initEmailBots(): Promise<void> {
       const accountId = Number(args?.accountId) || 0
       const parsed = parseBotCallbackUrl(String(args?.url || ''))
       if (!parsed) return { ok: false, error: 'invalid_url' }
-      const bot = findByName(accountId, parsed.botName)
+      const bot = await resolveEmailBot(
+        accountId,
+        parsed.botName,
+        Number(args?.chatId) || 0
+      )
       if (!bot || !bot.enabled) return { ok: false, error: 'no_bot' }
-      const reply = await postBotCallback(bot, parsed.data)
+      if (!bot.webhookUrl) return { ok: false, error: 'no_webhook' }
+      const reply = await postBotCallback(
+        bot,
+        parsed.data,
+        Number(args?.chatId) || bot.botChatId || 0
+      )
       if (!reply) return { ok: false, error: 'no_reply' }
       const chatId =
         Number(args?.chatId) > 0

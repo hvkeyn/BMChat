@@ -84,15 +84,19 @@ function ConnectivityDialogInner() {
 
         setStatsLoading(true)
         try {
-          const withExtras = await appendConnectivityExtras(
+          const { html: withExtras, statsError } = await appendConnectivityExtras(
             accountId,
             cHTML,
             isElectron,
             forceMailProbe
           )
+          let body = withExtras
+          if (statsError) {
+            body += `<p><b>${tx('error')}</b></p><p>${statsError}</p>`
+          }
           setConnectivityHTML(
             wrapConnectivityDocument(
-              withExtras,
+              body,
               canInjectStyles ? stylesToInject : undefined
             )
           )
@@ -184,10 +188,13 @@ async function appendConnectivityExtras(
   cHTML: string,
   isElectron: boolean,
   forceMailProbe: boolean
-): Promise<string> {
+): Promise<{ html: string; statsError: string | null }> {
   const tx = window.static_translate
 
-  const statsHtml = await buildBmchatStatisticsHtml(accountId, {
+  let statsHtml = ''
+  let statsError: string | null = null
+  try {
+    statsHtml = await buildBmchatStatisticsHtml(accountId, {
     title: tx('bmchat_connectivity_stats_title'),
     hint: tx('bmchat_connectivity_stats_hint'),
     contacts: tx('bmchat_stats_contacts'),
@@ -233,7 +240,10 @@ async function appendConnectivityExtras(
         requests,
         protectedChats,
       ]),
-  })
+    })
+  } catch (e) {
+    statsError = formatRpcError(e)
+  }
 
   let mailProbeHtml = ''
   if (isElectron) {
@@ -265,9 +275,9 @@ async function appendConnectivityExtras(
 
   const tail = statsHtml + mailProbeHtml
   if (cHTML.includes('</body>')) {
-    return cHTML.replace('</body>', tail + '</body>')
+    return { html: cHTML.replace('</body>', tail + '</body>'), statsError }
   }
-  return cHTML + tail
+  return { html: cHTML + tail, statsError }
 }
 
 /** When BM servers look down, also probe IMAP/SMTP (email transport). */

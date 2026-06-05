@@ -2,7 +2,7 @@
   "private": true,
   "type": "module",
   "name": "@deltachat-desktop/target-electron",
-  "version": "2.50.12",
+  "version": "2.50.13",
   "description": "BMChat desktop messenger for communication through email systems",
   "repository": {
     "type": "git",

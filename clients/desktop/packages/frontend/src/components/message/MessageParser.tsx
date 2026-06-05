@@ -314,11 +314,21 @@ function BmchatBotLink({
     ev.stopPropagation()
     if (runtime.getRuntimeInfo().target !== 'electron') return
     try {
-      await runtime.bmchatBotsInvoke('bmchat:emailbots:callback', {
+      const res = await runtime.bmchatBotsInvoke('bmchat:emailbots:callback', {
         accountId,
         url,
         chatId,
       })
+      if (res && typeof res === 'object' && 'ok' in res && !res.ok) {
+        const err = (res as { error?: string }).error
+        const text =
+          err === 'no_bot'
+            ? window.static_translate('bmchat_email_bot_cb_no_bot')
+            : err === 'no_webhook'
+              ? window.static_translate('bmchat_email_bot_cb_no_webhook')
+              : window.static_translate('bmchat_email_bot_cb_no_reply')
+        window.__userFeedback?.({ type: 'error', text })
+      }
     } catch {
       window.__userFeedback?.({
         type: 'error',
