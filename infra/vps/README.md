@@ -28,6 +28,13 @@
 
 ## Локальный деплой
 
+Секреты **не хранятся в репозитории**. Перед первым деплоем:
+
+```bash
+cp infra/vps/.deploy.env.example infra/vps/.deploy.env
+# заполните BMCHAT_VPS_* и BMCHAT_MIRROR_* в .deploy.env (файл в .gitignore)
+```
+
 ```bash
 wsl bash infra/vps/deploy-site-and-mirror.sh
 ```
@@ -108,8 +115,8 @@ Linux + Windows на двух раннерах матрицы, потом отд
 
 | Secret | Что внутри |
 | --- | --- |
-| `BMCHAT_PRIM_SSH_PASS`  | SSH-пароль `root@5.187.4.132` (текущий: `wog11vrtfwjuoy4uwm`). |
-| `BMCHAT_MIRROR_SSH_KEY` | Полное содержимое приватного OpenSSH-ключа `dante@158.160.104.107`. Файл — `e:\PPROJECTS\whiteBlade\artifacts\deploy\ssh\yc_whiteblade`. |
+| `BMCHAT_PRIM_SSH_PASS`  | SSH-пароль primary VPS (`root@…`). Задаётся только в GitHub Secrets, не в коде. |
+| `BMCHAT_MIRROR_SSH_KEY` | Полное содержимое приватного OpenSSH-ключа mirror VPS. Задаётся только в GitHub Secrets. |
 
 После добавления — Run workflow → Use workflow from `main`.
 

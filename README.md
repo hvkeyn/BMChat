@@ -105,10 +105,8 @@ pnpm build && pnpm pack:win && pnpm pack:linux
 # bash infra/vps/deploy-desktop-2.50.10.sh
 # APK + сайт + зеркало:
 # bash infra/vps/deploy-site-and-mirror.sh
-# Зеркало Yandex (ключ из whiteBlade):
+# Зеркало Yandex (см. infra/vps/.deploy.env.example — BMCHAT_MIRROR_SSH_KEY):
 # BMCHAT_DESKTOP_VERSION=2.50.10 bash infra/vps/deploy-desktop-2.50.6-mirror.sh
-# (ключ: chmod 600 — иначе SSH отклонит; на зеркале нужно место на диске)
-# SSH: ssh -i E:/PPROJECTS/whiteBlade/artifacts/deploy/ssh/yc_whiteblade dante@158.160.104.107
 ```
 
 ### iOS

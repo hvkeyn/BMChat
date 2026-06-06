@@ -74,6 +74,9 @@ artifacts/
 .tmp-vps-*.sh
 .tmp-*.sh
 
+# Local VPS deploy credentials (copy from .deploy.env.example).
+infra/vps/.deploy.env
+
 # Built APKs and desktop installers — staged for VPS rollout, not committed.
 /releases/
 infra/vps/apk/

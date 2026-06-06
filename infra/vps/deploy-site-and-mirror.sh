@@ -8,20 +8,14 @@
 # to each other.
 set -euo pipefail
 
-# ---- primary VPS (Fornex, EU) ----
-PRIM_HOST="${PRIM_HOST:-5.187.4.132}"
-PRIM_USER="${PRIM_USER:-root}"
-# Password comes from BMCHAT_PRIM_SSH_PASS env when running in CI
-# (don't bake it into the script under VCS); fall back to the
-# baked-in development credential locally.
-PRIM_PASS="${BMCHAT_PRIM_SSH_PASS:-${PRIM_PASS:-wog11vrtfwjuoy4uwm}}"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/deploy-env.sh
+source "$SCRIPT_DIR/lib/deploy-env.sh"
 PRIM_ROOT="${PRIM_ROOT:-/var/www/bmchat}"
 
-# ---- WhiteBlade mirror (Yandex Cloud, RU) ----
-MIRROR_HOST="${MIRROR_HOST:-158.160.104.107}"
-MIRROR_USER="${MIRROR_USER:-dante}"
-MIRROR_KEY="${MIRROR_KEY:-${HOME}/.ssh/yc_whiteblade}"
-MIRROR_ROOT="${MIRROR_ROOT:-/var/www/bmchat}"
+# shellcheck source=lib/mirror-env.sh
+source "$SCRIPT_DIR/lib/mirror-env.sh"
+MIRROR_KEY="${BMCHAT_MIRROR_SSH_KEY}"
 
 LOCAL_ROOT="/mnt/e/PPROJECTS/BMChat/infra/vps"
 

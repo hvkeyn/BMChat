@@ -6,14 +6,14 @@
 # all stay untouched).
 set -euo pipefail
 
-VPS_HOST="5.187.4.132"
-VPS_USER="root"
-VPS_PASS="wog11vrtfwjuoy4uwm"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/deploy-env.sh
+source "$SCRIPT_DIR/lib/deploy-env.sh"
+
+
 APK_NAME="BMChat-foss-debug-2.49.36.apk"
 LOCAL_ROOT="/mnt/e/PPROJECTS/BMChat/infra/vps"
 
-SSH="sshpass -p ${VPS_PASS} ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=15 ${VPS_USER}@${VPS_HOST}"
-RSYNC="sshpass -p ${VPS_PASS} rsync -azvh -e 'ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=15'"
 
 echo "[uploader] preparing remote /tmp/bmchat-payload"
 ${SSH} "mkdir -p /tmp/bmchat-payload/{www,apk}"

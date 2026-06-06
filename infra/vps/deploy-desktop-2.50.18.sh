@@ -1,14 +1,15 @@
 #!/usr/bin/env bash
 # BMChat Desktop 2.50.18 — primary VPS uploader (Win + manifest).
 set -euo pipefail
-VPS_HOST="5.187.4.132"; VPS_USER="root"
-VPS_PASS="${BMCHAT_PRIM_SSH_PASS:-wog11vrtfwjuoy4uwm}"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/deploy-env.sh
+source "$SCRIPT_DIR/lib/deploy-env.sh"
+
 LOCAL_ROOT="/mnt/e/PPROJECTS/BMChat/infra/vps"
 SETUP="BMChat-2.50.18-Setup.x64.exe"
 PORTABLE="BMChat-2.50.18-Portable.x64.exe"
 
-SSH="sshpass -p ${VPS_PASS} ssh -o StrictHostKeyChecking=no ${VPS_USER}@${VPS_HOST}"
-RSYNC="sshpass -p ${VPS_PASS} rsync -azvh -e 'ssh -o StrictHostKeyChecking=no'"
 
 ${SSH} "mkdir -p /tmp/bmchat-desktop"
 eval ${RSYNC} "${LOCAL_ROOT}/desktop/${SETUP}"    "${VPS_USER}@${VPS_HOST}:/tmp/bmchat-desktop/"

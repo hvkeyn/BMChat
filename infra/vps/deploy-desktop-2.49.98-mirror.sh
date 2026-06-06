@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
 # BMChat Desktop 2.49.98 — mirror VPS uploader (Yandex Cloud, dante user).
 set -euo pipefail
-KEY="${BMCHAT_MIRROR_SSH_KEY:-/root/.ssh/yc_whiteblade}"
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=lib/mirror-env.sh
+source "$SCRIPT_DIR/lib/mirror-env.sh"
+
 HOST="dante@158.160.104.107"
 LOCAL_ROOT="/mnt/e/PPROJECTS/BMChat/infra/vps"
 SETUP="BMChat-2.49.98-Setup.x64.exe"
 PORTABLE="BMChat-2.49.98-Portable.x64.exe"
 
-SSH="ssh -i ${KEY} -o StrictHostKeyChecking=no"
-RSYNC="rsync -azvh -e '${SSH}'"
 
 eval ${RSYNC} "${LOCAL_ROOT}/desktop/${SETUP}"    "${HOST}:/tmp/${SETUP}"
 eval ${RSYNC} "${LOCAL_ROOT}/desktop/${PORTABLE}" "${HOST}:/tmp/${PORTABLE}"
