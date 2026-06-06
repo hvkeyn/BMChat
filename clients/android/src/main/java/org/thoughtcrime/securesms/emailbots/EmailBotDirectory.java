@@ -103,6 +103,29 @@ public final class EmailBotDirectory {
   }
 
   /**
+   * Mirrors the public bot catalog into encrypted self-chat for multidevice.
+   */
+  public void publishToSelfChat(int accountId) {
+    try {
+      DcContext dc = DcHelper.getAccounts(appContext).getAccount(accountId);
+      if (dc == null || !dc.isOk()) return;
+      String raw = dc.getConfig(UI_DIRECTORY_KEY);
+      if (raw == null || raw.isEmpty()) return;
+      String opened = EmailBotCrypto.openJson(appContext, accountId, raw);
+      if (opened == null || opened.isEmpty()) return;
+      JSONObject catalog = new JSONObject(opened);
+      String etag = catalog.optString("etag", sha256(opened));
+      String payload = MARKER_PREFIX + " etag=" + etag + "\n" + catalog.toString();
+      int selfChat = dc.getChatIdByContactId(DcContact.DC_CONTACT_ID_SELF);
+      if (selfChat <= 0) selfChat = dc.createChatByContactId(DcContact.DC_CONTACT_ID_SELF);
+      if (selfChat <= 0) return;
+      dc.sendTextMsg(selfChat, payload);
+    } catch (Throwable t) {
+      Log.w(TAG, "publishToSelfChat failed", t);
+    }
+  }
+
+  /**
    * Publishes enabled bots to ui-config and optionally gossips one small
    * e-mail per day to a few recent contacts (bounded traffic).
    */
@@ -131,6 +154,7 @@ public final class EmailBotDirectory {
       catalog.put("updatedAtMs", System.currentTimeMillis());
       dc.setConfig(UI_DIRECTORY_KEY,
           EmailBotCrypto.sealJson(appContext, accountId, catalog.toString()));
+      publishToSelfChat(accountId);
 
       long last = 0L;
       try {

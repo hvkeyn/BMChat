@@ -199,6 +199,10 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
       nameInput.setError(getString(R.string.bmchat_email_bot_error_name_taken));
       return;
     }
+    if (store.isNameTakenGlobally(name, existing != null ? existing.id : null)) {
+      nameInput.setError(getString(R.string.bmchat_email_bot_error_name_taken));
+      return;
+    }
 
     String developerEmail = developerEmailInput.getText().toString().trim();
     if (developerEmail.isEmpty()) {

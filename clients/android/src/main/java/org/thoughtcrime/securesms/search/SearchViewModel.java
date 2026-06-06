@@ -19,12 +19,14 @@ class SearchViewModel extends ViewModel {
   private final ObservingLiveData searchResult;
   private String lastQuery;
   private final DcContext dcContext;
+  private final Context appContext;
   private boolean forwarding = false;
   private boolean inBgSearch;
   private boolean needsAnotherBgSearch;
 
   SearchViewModel(@NonNull Context context) {
-    this.dcContext = DcHelper.getContext(context.getApplicationContext());
+    this.appContext = context.getApplicationContext();
+    this.dcContext = DcHelper.getContext(this.appContext);
     this.searchResult = new ObservingLiveData();
   }
 
@@ -89,6 +91,16 @@ class SearchViewModel extends ViewModel {
 
     startMs = System.currentTimeMillis();
     int[] contacts = dcContext.getContacts(DcContext.DC_GCL_ADD_SELF, query);
+    int[] botContacts = org.thoughtcrime.securesms.emailbots.EmailBotSearchHelper
+        .matchContactIds(appContext, dcContext.getAccountId(), query);
+    if (botContacts.length > 0) {
+      java.util.LinkedHashSet<Integer> merged = new java.util.LinkedHashSet<>();
+      for (int c : contacts) merged.add(c);
+      for (int c : botContacts) merged.add(c);
+      contacts = new int[merged.size()];
+      int i = 0;
+      for (Integer c : merged) contacts[i++] = c;
+    }
     overallCnt += contacts.length;
     Log.i(TAG, "⏰ getContacts(" + query + "): " + (System.currentTimeMillis() - startMs) + "ms");
 

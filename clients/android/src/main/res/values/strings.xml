@@ -1497,6 +1497,7 @@
     <string name="update_2_0">What\'s new?\n\n💯 End-to-end encryption is reliable and always on.\n\n✉️ BMChat shows chat-format messages and keeps ordinary mail out of chat notifications.\n\n😻 Profile screens and BMChat visuals were refreshed.\n\n🔲 Quick access to apps used in chats was improved.</string>
 
     <!-- BMChat e-mail bots -->
+    <string name="bmchat_bot_profile_username">Bot · @%1$s</string>
     <string name="bmchat_email_bots_title">Email-боты</string>
     <string name="bmchat_email_bots_summary">Создайте ботов в стиле Telegram BotFather, работающих по почте.</string>
     <string name="bmchat_email_bots_empty">Здесь пока нет email-ботов.\n\nEmail-боты — это аналог Telegram-ботов: имя оканчивается на «bot», задаётся отображаемое имя и описание. Пользователь обязан нажать «/start», иначе бот молчит. Все обновления автоматически уходят на e-mail разработчика бота (вебхук «на почту»), а его ответ в том же письме возвращается в исходный чат.</string>

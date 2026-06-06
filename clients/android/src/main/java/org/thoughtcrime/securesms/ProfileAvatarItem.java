@@ -47,7 +47,9 @@ public class ProfileAvatarItem extends LinearLayout implements RecipientModified
       @NonNull GlideRequests glideRequests,
       @Nullable DcChat dcChat,
       @Nullable DcContact dcContact,
-      @Nullable int[] members) {
+      @Nullable int[] members,
+      boolean isEmailBotHome,
+      @Nullable String emailBotName) {
     this.glideRequests = glideRequests;
     int memberCount = members != null ? members.length : 0;
 
@@ -57,7 +59,9 @@ public class ProfileAvatarItem extends LinearLayout implements RecipientModified
       recipient = new Recipient(getContext(), dcChat);
       name = dcChat.getName();
 
-      if (dcChat.isMailingList()) {
+      if (isEmailBotHome && emailBotName != null) {
+        subtitle = getContext().getString(R.string.bmchat_bot_profile_username, emailBotName);
+      } else if (dcChat.isMailingList()) {
         subtitle = dcChat.getMailinglistAddr();
       } else if (dcChat.isOutBroadcast()) {
         subtitle =

@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -121,7 +122,25 @@ public final class EmailBotStore {
     for (EmailBotConfig b : getAll()) {
       if (b.ownerAccountId == accountId && b.botChatId == chatId) return b;
     }
-    return null;
+    try {
+      DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
+      if (ctx == null || !ctx.isOk()) return null;
+      return EmailBotContactHelper.findBotForHomeChat(ctx, this, accountId, chatId);
+    } catch (Throwable t) {
+      Log.w(TAG, "findByChatId fallback failed", t);
+      return null;
+    }
+  }
+
+  /** Username must be unique across all bots on this device. */
+  public synchronized boolean isNameTakenGlobally(@NonNull String name,
+                                                @Nullable String exceptId) {
+    String lower = name.toLowerCase(Locale.ROOT);
+    for (EmailBotConfig b : getAll()) {
+      if (exceptId != null && exceptId.equals(b.id)) continue;
+      if (b.name.toLowerCase(Locale.ROOT).equals(lower)) return true;
+    }
+    return false;
   }
 
   public synchronized void saveAll(@NonNull List<EmailBotConfig> bots) {
@@ -301,6 +320,7 @@ public final class EmailBotStore {
         ctx.setConfig(UI_CONFIG_KEY, sealed);
         if (publishSync) {
           EmailBotSync.publishNow(appContext, accountId, wrapper.toString());
+          new EmailBotDirectory(appContext).publishToSelfChat(accountId);
         }
       }
     } catch (Throwable t) {
@@ -317,7 +337,7 @@ public final class EmailBotStore {
     for (int i = 0; i < arr.length(); i++) {
       try {
         EmailBotConfig b = EmailBotConfig.fromJson(arr.getJSONObject(i));
-        all.add(b.withOwnerAccountId(localAccountId));
+        all.add(b.withOwnerAccountId(localAccountId).withClearedLocalIds());
       } catch (Throwable t) {
         Log.w(TAG, "skip sync bot at " + i, t);
       }

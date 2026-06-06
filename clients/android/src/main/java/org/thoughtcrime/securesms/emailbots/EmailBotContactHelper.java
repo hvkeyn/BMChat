@@ -75,10 +75,8 @@ public final class EmailBotContactHelper {
     return "";
   }
 
-  /**
-   * Returns {@code true} when {@code chatId} is a local bot home chat,
-   * i.e. a self-only outgoing broadcast that never sends over SMTP.
-   */
+  /** Returns {@code true} when {@code chatId} is a local bot home chat,
+   * i.e. a self-only outgoing broadcast that never sends over SMTP. */
   public static boolean isLocalBotChat(@NonNull DcContext dc, int chatId) {
     if (chatId <= 0) return false;
     try {
@@ -87,6 +85,52 @@ public final class EmailBotContactHelper {
     } catch (Throwable t) {
       return false;
     }
+  }
+
+  /**
+   * Finds an email bot whose local home broadcast matches {@code chatId},
+   * including when {@code botChatId} from sync belongs to another device.
+   */
+  @Nullable
+  public static EmailBotConfig findBotForHomeChat(@NonNull DcContext dc,
+                                                  @NonNull EmailBotStore store,
+                                                  int accountId,
+                                                  int chatId) {
+    if (chatId <= 0) return null;
+    DcChat chat = dc.getChat(chatId);
+    if (chat == null || !chat.isOutBroadcast()) return null;
+    String chatName = chat.getName();
+    if (chatName == null) chatName = "";
+    for (EmailBotConfig b : store.getForAccount(accountId)) {
+      if (!b.enabled) continue;
+      if (matchesBotLabel(b, chatName)) return b;
+    }
+    return null;
+  }
+
+  public static boolean matchesBotLabel(@NonNull EmailBotConfig bot,
+                                        @NonNull String label) {
+    String n = label.trim();
+    if (n.isEmpty()) return false;
+    String dn = bot.displayName != null ? bot.displayName.trim() : "";
+    if (!dn.isEmpty() && dn.equalsIgnoreCase(n)) return true;
+    if (("@".concat(bot.name)).equalsIgnoreCase(n)) return true;
+    if (bot.name.equalsIgnoreCase(n)) return true;
+    return false;
+  }
+
+  /** Ensures a searchable pseudo-contact exists for {@code @botname}. */
+  @WorkerThread
+  public static int ensureSearchableContact(@NonNull DcContext dc,
+                                            @NonNull EmailBotConfig bot) {
+    String email = makeBotEmail(bot.name);
+    int contactId = dc.lookupContactIdByAddr(email);
+    if (contactId <= 0) {
+      String displayName = bot.displayName != null && !bot.displayName.isEmpty()
+          ? bot.displayName : "@" + bot.name;
+      contactId = dc.createContact(displayName, email);
+    }
+    return contactId;
   }
 
   @WorkerThread
@@ -149,6 +193,7 @@ public final class EmailBotContactHelper {
     if (contactId != bot.botContactId || chatId != bot.botChatId) {
       store.patchContactIds(bot.id, contactId, chatId);
     }
+    ensureSearchableContact(dc, bot);
   }
 
   /**

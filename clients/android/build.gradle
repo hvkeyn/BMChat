@@ -28,8 +28,8 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        versionCode 855
-        versionName "2.50.17"
+        versionCode 856
+        versionName "2.50.18"
 
         applicationId "chat.bromore.bmchat.foss"
         multiDexEnabled true

@@ -202,11 +202,10 @@ public final class EmailBotDispatcher {
       return;
     }
 
-    if (!ownerInHomeChat && !bot.isSubscribed(senderEmail)) {
-      // Silent drop. Telegram bots do the same — they ignore unknown
-      // users until /start has been issued.
-      Log.d(TAG, "drop unsubscribed sender for bot " + bot.name);
-      return;
+    if (!ownerInHomeChat && !senderEmail.isEmpty() && !bot.isSubscribed(senderEmail)) {
+      EmailBotConfig updated = bot.withSubscribed(senderEmail);
+      store.upsert(updated);
+      bot = updated;
     }
 
     // 4) Email-transport bot (the new flavour): forward the update to

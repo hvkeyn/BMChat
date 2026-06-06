@@ -266,6 +266,13 @@ public final class EmailBotConfig {
         newContactId, newChatId);
   }
 
+  /** Drop device-local ids before merging sync from another device. */
+  @NonNull
+  public EmailBotConfig withClearedLocalIds() {
+    if (botContactId == 0 && botChatId == 0) return this;
+    return withContactIds(0, 0);
+  }
+
   public EmailBotConfig withName(@NonNull String newName) {
     return new EmailBotConfig(id, newName, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,

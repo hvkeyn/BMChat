@@ -364,10 +364,12 @@ function ViewGroupInner(
 
   const [profileContact, setProfileContact] = useState<T.Contact | null>(null)
   const [isEmailBotHome, setIsEmailBotHome] = useState(false)
+  const [emailBotName, setEmailBotName] = useState<string | null>(null)
 
   useEffect(() => {
     if (!isBroadcast) {
       setIsEmailBotHome(false)
+      setEmailBotName(null)
       return
     }
     let cancelled = false
@@ -375,17 +377,29 @@ function ViewGroupInner(
       try {
         const bots = await listEmailBots()
         if (cancelled) return
-        setIsEmailBotHome(
-          bots.some(b => b.botChatId != null && b.botChatId > 0 && b.botChatId === chat.id)
-        )
+        const label = (groupName || '').trim()
+        const match = bots.find(b => {
+          if (b.botChatId != null && b.botChatId > 0 && b.botChatId === chat.id) {
+            return true
+          }
+          const dn = (b.displayName || '').trim()
+          if (dn && dn.toLowerCase() === label.toLowerCase()) return true
+          if (`@${b.name}`.toLowerCase() === label.toLowerCase()) return true
+          return b.name.toLowerCase() === label.toLowerCase()
+        })
+        setIsEmailBotHome(!!match)
+        setEmailBotName(match?.name ?? null)
       } catch {
-        if (!cancelled) setIsEmailBotHome(false)
+        if (!cancelled) {
+          setIsEmailBotHome(false)
+          setEmailBotName(null)
+        }
       }
     })()
     return () => {
       cancelled = true
     }
-  }, [isBroadcast, chat.id])
+  }, [isBroadcast, chat.id, groupName])
 
   const broadcastTitle = isEmailBotHome ? tx('bot') : tx('channel')
 
@@ -417,19 +431,21 @@ function ViewGroupInner(
                 disableFullscreen={shouldDisableFullscreenAvatar(chat)}
               />
               <div className='group-profile-subtitle'>
-                {!isBroadcast
-                  ? group.contactIds.length > 1 || group.selfInGroup
-                    ? tx('n_members', group.contactIds.length.toString(), {
-                        quantity: group.contactIds.length,
-                      })
-                    : ''
-                  : tx(
-                      'n_recipients',
-                      Math.max(1, group.contactIds.length).toString(),
-                      {
-                        quantity: Math.max(1, group.contactIds.length),
-                      }
-                    )}
+                {isEmailBotHome && emailBotName
+                  ? tx('bmchat_bot_profile_username', [emailBotName])
+                  : !isBroadcast
+                    ? group.contactIds.length > 1 || group.selfInGroup
+                      ? tx('n_members', group.contactIds.length.toString(), {
+                          quantity: group.contactIds.length,
+                        })
+                      : ''
+                    : tx(
+                        'n_recipients',
+                        Math.max(1, group.contactIds.length).toString(),
+                        {
+                          quantity: Math.max(1, group.contactIds.length),
+                        }
+                      )}
               </div>
               {groupDescription && (
                 <div className='group-profile-description'>
@@ -445,7 +461,7 @@ function ViewGroupInner(
               <RovingTabindexProvider
                 wrapperElementRef={groupMemberContactListWrapperRef}
               >
-                {!chatDisabled && group.isEncrypted && (
+                {!chatDisabled && group.isEncrypted && !isEmailBotHome && (
                   <>
                     {!isBroadcast && (
                       <PseudoListItemAddMember
@@ -455,7 +471,7 @@ function ViewGroupInner(
                     <PseudoListItemShowQrCode onClick={() => showQRDialog()} />
                   </>
                 )}
-                {group.contactIds.length != 0 && groupContacts.length == 0 && (
+                {!isEmailBotHome && group.contactIds.length != 0 && groupContacts.length == 0 && (
                   <div /* placeholder to keep layout from jumping around while contact info is loaded */
                     style={{
                       height:
@@ -465,20 +481,22 @@ function ViewGroupInner(
                     aria-busy
                   ></div>
                 )}
-                <ContactList
-                  contacts={groupContacts}
-                  showRemove={!chatDisabled && group.isEncrypted}
-                  onClick={contact => {
-                    if (contact.id === C.DC_CONTACT_ID_SELF) {
-                      return
-                    }
-                    setProfileContact(contact)
-                  }}
-                  onRemoveClick={showRemoveGroupMemberConfirmationDialog}
-                  olElementAttrs={{
-                    'aria-labelledby': 'group-profile-subtitle',
-                  }}
-                />
+                {!isEmailBotHome && (
+                  <ContactList
+                    contacts={groupContacts}
+                    showRemove={!chatDisabled && group.isEncrypted}
+                    onClick={contact => {
+                      if (contact.id === C.DC_CONTACT_ID_SELF) {
+                        return
+                      }
+                      setProfileContact(contact)
+                    }}
+                    onRemoveClick={showRemoveGroupMemberConfirmationDialog}
+                    olElementAttrs={{
+                      'aria-labelledby': 'group-profile-subtitle',
+                    }}
+                  />
+                )}
               </RovingTabindexProvider>
             </div>
             {group.pastContactIds.length != 0 && pastContacts.length == 0 && (

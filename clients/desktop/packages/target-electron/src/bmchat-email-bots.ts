@@ -243,6 +243,8 @@ async function tryIngestBotSync(
       const b = sanitizeBot(raw)
       if (b) {
         b.ownerAccountId = accountId
+        b.botContactId = 0
+        b.botChatId = 0
         merged.set(b.id, b)
       }
     }
@@ -278,6 +280,15 @@ function findByName(accountId: number, name: string): EmailBot | null {
   const lower = name.toLowerCase()
   return (
     botsForAccount(accountId).find(b => b.name.toLowerCase() === lower) ?? null
+  )
+}
+
+function findByNameGlobal(name: string, exceptId?: string): EmailBot | null {
+  const lower = name.toLowerCase()
+  return (
+    bots.find(
+      b => b.name.toLowerCase() === lower && (!exceptId || b.id !== exceptId)
+    ) ?? null
   )
 }
 
@@ -1266,7 +1277,8 @@ async function handleIncoming(
       senderEmail &&
       !bot.subscribedUsers.includes(senderEmail)
     ) {
-      return
+      bot.subscribedUsers.push(senderEmail)
+      await saveStore({ publishSync: false })
     }
 
     const { reply, forwarded } = await resolveOutgoingReply(
@@ -1384,8 +1396,11 @@ export async function initEmailBots(): Promise<void> {
       bot.botChatId = prev.botChatId ?? bot.botChatId
       bots[existingIdx] = bot
     } else {
-      // Name must be unique within the account.
+      // Name must be unique on all devices of this account.
       if (findByName(bot.ownerAccountId, bot.name)) {
+        return { ok: false, error: 'name_taken' }
+      }
+      if (findByNameGlobal(bot.name)) {
         return { ok: false, error: 'name_taken' }
       }
       bots.push(bot)

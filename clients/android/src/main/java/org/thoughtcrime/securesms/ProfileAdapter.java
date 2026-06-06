@@ -54,6 +54,8 @@ public class ProfileAdapter extends RecyclerView.Adapter {
   private DcChatlist itemDataSharedChats;
   private String itemDataStatusText;
   private boolean isOutBroadcast;
+  private boolean isEmailBotHome;
+  @Nullable private String emailBotName;
   private int[] memberList;
   private final Set<Integer> selectedMembers;
 
@@ -225,7 +227,7 @@ public class ProfileAdapter extends RecyclerView.Adapter {
     } else if (holder.itemView instanceof ProfileAvatarItem) {
       ProfileAvatarItem item = (ProfileAvatarItem) holder.itemView;
       item.setAvatarClickListener(view -> clickListener.onAvatarClicked());
-      item.set(glideRequests, dcChat, dcContact, memberList);
+      item.set(glideRequests, dcChat, dcContact, memberList, isEmailBotHome, emailBotName);
     } else if (holder.itemView instanceof ProfileTextItem) {
       ProfileTextItem item = (ProfileTextItem) holder.itemView;
       item.setOnClickListener(view -> clickListener.onSettingsClicked(data.viewType));
@@ -313,6 +315,17 @@ public class ProfileAdapter extends RecyclerView.Adapter {
     itemDataSharedChats = sharedChats;
     itemDataStatusText = "";
     isOutBroadcast = dcChat != null && dcChat.isOutBroadcast();
+    isEmailBotHome = false;
+    emailBotName = null;
+    if (isOutBroadcast && dcChat != null) {
+      org.thoughtcrime.securesms.emailbots.EmailBotConfig bot =
+          new org.thoughtcrime.securesms.emailbots.EmailBotStore(context)
+              .findByChatId(dcContext.getAccountId(), dcChat.getId());
+      if (bot != null) {
+        isEmailBotHome = true;
+        emailBotName = bot.name;
+      }
+    }
     boolean isMailingList = dcChat != null && dcChat.isMailingList();
     boolean isInBroadcast = dcChat != null && dcChat.isInBroadcast();
     boolean isSelfTalk = dcChat != null && dcChat.isSelfTalk();
@@ -377,7 +390,7 @@ public class ProfileAdapter extends RecyclerView.Adapter {
               R.drawable.contact_blocked_24));
     }
 
-    if (memberList != null && !isInBroadcast && !isMailingList) {
+    if (memberList != null && !isInBroadcast && !isMailingList && !isEmailBotHome) {
       itemData.add(new ItemData(ITEM_DIVIDER, null, 0));
       if (dcChat != null) {
         if (isOutBroadcast) {
