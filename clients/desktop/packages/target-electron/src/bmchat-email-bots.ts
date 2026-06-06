@@ -197,13 +197,25 @@ async function publishBotSync(
   await publishBotSyncNow(accountId, plainJson)
 }
 
+async function syncAccountBots(accountId: number): Promise<void> {
+  await pullBotSyncFromSelfChat(accountId)
+  await migrateBotContacts()
+  const accountBots = botsForAccount(accountId)
+  if (accountBots.length === 0) return
+  const wrapper = {
+    bots: accountBots,
+    updatedAtMs: Date.now(),
+  }
+  await publishBotSyncNow(accountId, JSON.stringify(wrapper))
+}
+
 async function pullBotSyncFromSelfChat(accountId: number): Promise<void> {
   try {
     const rpc = getDCJsonrpcRemote().rpc
     let selfChat = await rpc.getChatIdByContactId(accountId, DC_CONTACT_ID_SELF)
     if (!selfChat || selfChat <= 0) return
     const msgIds = await rpc.getMessageIds(accountId, selfChat, false, false)
-    const tail = msgIds.slice(-80)
+    const tail = msgIds.slice(-200)
     for (let i = tail.length - 1; i >= 0; i--) {
       const msgId = tail[i]
       if (typeof msgId !== 'number' || msgId <= 0) continue
@@ -458,6 +470,45 @@ function findBotByChatId(accountId: number, chatId: number): EmailBot | null {
         b.botChatId === chatId
     ) ?? null
   )
+}
+
+function matchesBotLabel(bot: EmailBot, label: string): boolean {
+  const n = label.trim()
+  if (!n) return false
+  const lower = n.toLowerCase()
+  const dn = (bot.displayName || '').trim()
+  if (dn && dn.toLowerCase() === lower) return true
+  if (`@${bot.name}`.toLowerCase() === lower) return true
+  if (bot.name.toLowerCase() === lower) return true
+  if (lower.includes(`@${bot.name.toLowerCase()}`)) return true
+  if (lower.includes(bot.name.toLowerCase())) return true
+  return false
+}
+
+async function findBotForHomeChat(
+  accountId: number,
+  chatId: number
+): Promise<EmailBot | null> {
+  if (chatId <= 0) return null
+  const byId = findBotByChatId(accountId, chatId)
+  if (byId) return byId
+  if (!(await isLocalBotChat(accountId, chatId))) return null
+  let chatName = ''
+  try {
+    const chat: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
+      accountId,
+      chatId
+    )
+    chatName = (chat?.name || '').trim()
+  } catch {
+    /* ignore */
+  }
+  const enabled = botsForAccount(accountId).filter(b => b.enabled)
+  for (const b of enabled) {
+    if (matchesBotLabel(b, chatName)) return b
+  }
+  if (enabled.length === 1) return enabled[0] ?? null
+  return null
 }
 
 /**
@@ -1352,7 +1403,7 @@ export async function initEmailBots(): Promise<void> {
       try {
         const accountIds = await getDCJsonrpcRemote().rpc.getAllAccountIds()
         for (const accountId of accountIds) {
-          if (accountId > 0) await pullBotSyncFromSelfChat(accountId)
+          if (accountId > 0) await syncAccountBots(accountId)
         }
       } catch (e) {
         log.warn('startup bot sync pull failed', e)
@@ -1364,6 +1415,17 @@ export async function initEmailBots(): Promise<void> {
     await reloadStoreMerged()
     return bots
   })
+
+  ipcMain.handle(
+    'bmchat:emailbots:is-home-chat',
+    async (_e, args: { accountId: number; chatId: number }) => {
+      await reloadStoreMerged()
+      const accountId = Number(args?.accountId) || 0
+      const chatId = Number(args?.chatId) || 0
+      const bot = await findBotForHomeChat(accountId, chatId)
+      return { isHome: !!bot, name: bot?.name ?? null }
+    }
+  )
 
   ipcMain.handle(
     'bmchat:emailbots:open-chat',

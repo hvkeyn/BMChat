@@ -468,22 +468,24 @@ public class ApplicationContext extends MultiDexApplication {
             ExistingPeriodicWorkPolicy.KEEP,
             webxdcGarbageCollectionRequest);
 
-    // Pull email-bot definitions from ui.bmchat.email_bots (multidevice) early.
+    // Pull email-bot definitions via encrypted self-chat sync.
     new Thread(() -> {
       try {
-        org.thoughtcrime.securesms.emailbots.EmailBotStore botStore =
-            new org.thoughtcrime.securesms.emailbots.EmailBotStore(this);
-        botStore.reloadFromUiConfig();
-        // Migrate legacy 1:1 @bots.bmchat.local home chats (which bounced over
-        // SMTP as spam) to local self-only broadcast channels.
-        botStore.ensureLocalBotChats();
         org.thoughtcrime.securesms.bots.BotStore tgStore =
             new org.thoughtcrime.securesms.bots.BotStore(this);
         tgStore.reloadFromUiConfig();
         for (int accountId : org.thoughtcrime.securesms.connect.DcHelper.getAccounts(this).getAll()) {
-          org.thoughtcrime.securesms.emailbots.EmailBotSync.pullFromSelfChat(
-              this, accountId, botStore, tgStore);
+          org.thoughtcrime.securesms.emailbots.EmailBotSync.syncAccount(
+              this, accountId);
         }
+        // Retry after IMAP may have fetched self-chat sync payloads.
+        android.os.Handler h = new android.os.Handler(android.os.Looper.getMainLooper());
+        h.postDelayed(() -> {
+          for (int accountId : org.thoughtcrime.securesms.connect.DcHelper.getAccounts(this).getAll()) {
+            org.thoughtcrime.securesms.emailbots.EmailBotSync.syncAccount(
+                this, accountId);
+          }
+        }, 15_000L);
       } catch (Throwable t) {
         Log.w("BMChat", "bots ui-config preload failed", t);
       }

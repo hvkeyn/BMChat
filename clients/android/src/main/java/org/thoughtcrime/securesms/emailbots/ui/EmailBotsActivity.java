@@ -100,11 +100,16 @@ public class EmailBotsActivity extends PassphraseRequiredActionBarActivity {
   }
 
   private void refresh() {
-    store.reloadFromUiConfig();
     int accountId = DcHelper.getContext(this).getAccountId();
-    List<EmailBotConfig> bots = store.getForAccount(accountId);
-    adapter.setData(bots);
-    emptyView.setVisibility(bots.isEmpty() ? View.VISIBLE : View.GONE);
+    new Thread(() -> {
+      org.thoughtcrime.securesms.emailbots.EmailBotSync.syncAccount(
+          getApplicationContext(), accountId);
+      runOnUiThread(() -> {
+        List<EmailBotConfig> bots = store.getForAccount(accountId);
+        adapter.setData(bots);
+        emptyView.setVisibility(bots.isEmpty() ? View.VISIBLE : View.GONE);
+      });
+    }, "emailbot-list-sync").start();
   }
 
   private void openEditor(@Nullable EmailBotConfig bot) {

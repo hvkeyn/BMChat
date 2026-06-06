@@ -149,6 +149,10 @@ public class ProfileFragment extends Fragment
     update();
   }
 
+  public void refreshContent() {
+    update();
+  }
+
   private void update() {
     int[] memberList = null;
     DcChatlist sharedChats = null;

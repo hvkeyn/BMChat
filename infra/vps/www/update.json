@@ -1,15 +1,15 @@
 {
-  "versionCode": 856,
-  "versionName": "2.50.18",
+  "versionCode": 857,
+  "versionName": "2.50.19",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.18.apk",
-  "sha256": "8925ad8aeac867f39802564baf53a1752c6867a89dcb6eb840cbf20adc2651bd",
-  "size": 77515506,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.19.apk",
+  "sha256": "18b73266342f5be3460f976fa010aa1c93318863b8feb3b39c23281c78ff7433",
+  "size": 77516298,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-06T20:00:00Z",
+  "publishedAt": "2026-06-06T22:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.18 — боты как контакты, синхронизация и поиск.\n\nИСПРАВЛЕНО:\n• Профиль email-бота: «Бот», без QR и списка получателей.\n• Синхронизация ботов desktop↔Android: очистка локальных chat/contact id при merge.\n• Любой пользователь может найти бота по @ник и написать ему без настроек.\n• Уникальность ников ботов при создании.\n• Команды бота работают без подписки; auto-subscribe при первом сообщении."
+  "notes": "BMChat 2.50.19 — профиль «Бот» и синхронизация email-ботов.\n\nИСПРАВЛЕНО:\n• Профиль home-chat бота: «Бот» без QR/получателей (один бот = OutBroadcast).\n• Синхронизация desktop↔Android: pull из self-chat при старте и открытии «Email-боты».\n• Desktop/Android переотправляют конфиг в self-chat для подхвата на другом устройстве."
 }

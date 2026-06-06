@@ -28,7 +28,9 @@ public final class EmailBotSync {
   private static final String TAG = "EmailBotSync";
   public static final String MARKER = "BMCHAT-BOT-SYNC v1";
   private static final long MIN_PUBLISH_INTERVAL_MS = 8_000L;
+  private static final long MIN_REPUBLISH_INTERVAL_MS = 60_000L;
   private static long lastPublishMs = 0L;
+  private static long lastRepublishMs = 0L;
 
   private EmailBotSync() {}
 
@@ -59,6 +61,51 @@ public final class EmailBotSync {
     }
   }
 
+  /** Pull sync blobs from self-chat and materialise local bot home chats. */
+  public static void syncAccount(@NonNull Context context, int accountId) {
+    syncAccount(context, accountId, true);
+  }
+
+  /** Pull-only variant (e.g. profile refresh without re-broadcasting). */
+  public static void syncAccountPull(@NonNull Context context, int accountId) {
+    syncAccount(context, accountId, false);
+  }
+
+  private static void syncAccount(@NonNull Context context, int accountId,
+                                  boolean republish) {
+    EmailBotStore emailStore = new EmailBotStore(context);
+    org.thoughtcrime.securesms.bots.BotStore tgStore =
+        new org.thoughtcrime.securesms.bots.BotStore(context);
+    emailStore.reloadFromUiConfig();
+    pullFromSelfChat(context, accountId, emailStore, tgStore);
+    emailStore.ensureLocalBotChats();
+    if (republish) {
+      republishIfNeeded(context, accountId, emailStore);
+    }
+  }
+
+  /** Re-broadcast configs so a newly opened device can catch up via self-chat. */
+  private static void republishIfNeeded(@NonNull Context context, int accountId,
+                                        @NonNull EmailBotStore store) {
+    long now = System.currentTimeMillis();
+    if (now - lastRepublishMs < MIN_REPUBLISH_INTERVAL_MS) return;
+    try {
+      java.util.List<EmailBotConfig> bots = store.getForAccount(accountId);
+      if (bots.isEmpty()) return;
+      org.json.JSONArray arr = new org.json.JSONArray();
+      for (EmailBotConfig b : bots) {
+        arr.put(b.toJson());
+      }
+      org.json.JSONObject wrapper = new org.json.JSONObject();
+      wrapper.put("bots", arr);
+      wrapper.put("updatedAtMs", System.currentTimeMillis());
+      publishNow(context, accountId, wrapper.toString());
+      lastRepublishMs = now;
+    } catch (Throwable t) {
+      Log.w(TAG, "republishIfNeeded failed", t);
+    }
+  }
+
   /**
    * Scans recent self-chat messages for sync payloads (multidevice catch-up).
    */
@@ -72,7 +119,7 @@ public final class EmailBotSync {
       if (selfChat <= 0) return;
       int[] ids = dc.getChatMsgs(selfChat, 0, 0);
       if (ids == null || ids.length == 0) return;
-      int start = Math.max(0, ids.length - 80);
+      int start = Math.max(0, ids.length - 200);
       for (int i = ids.length - 1; i >= start; i--) {
         DcMsg msg = dc.getMsg(ids[i]);
         if (msg == null) continue;

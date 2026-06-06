@@ -37,7 +37,7 @@ import { copyToBlobDir } from '../../utils/copyToBlobDir'
 import AlertDialog from './AlertDialog'
 import { unknownErrorToString } from '@deltachat-desktop/shared/unknownErrorToString'
 import { getLogger } from '@deltachat-desktop/shared/logger'
-import { listEmailBots } from '../../bmchat/emailBots'
+import { listEmailBots, resolveEmailBotHomeChat } from '../../bmchat/emailBots'
 const log = getLogger('ViewGroup')
 
 /**
@@ -375,6 +375,13 @@ function ViewGroupInner(
     let cancelled = false
     ;(async () => {
       try {
+        const resolved = await resolveEmailBotHomeChat(accountId, chat.id)
+        if (cancelled) return
+        if (resolved.isHome) {
+          setIsEmailBotHome(true)
+          setEmailBotName(resolved.name)
+          return
+        }
         const bots = await listEmailBots()
         if (cancelled) return
         const label = (groupName || '').trim()
@@ -399,7 +406,7 @@ function ViewGroupInner(
     return () => {
       cancelled = true
     }
-  }, [isBroadcast, chat.id, groupName])
+  }, [isBroadcast, chat.id, groupName, accountId])
 
   const broadcastTitle = isEmailBotHome ? tx('bot') : tx('channel')
 

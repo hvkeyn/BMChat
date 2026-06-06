@@ -8,6 +8,27 @@ export interface EmailBotPublic {
   botChatId?: number
 }
 
+export async function resolveEmailBotHomeChat(
+  accountId: number,
+  chatId: number
+): Promise<{ isHome: boolean; name: string | null }> {
+  if (runtime.getRuntimeInfo().target !== 'electron') {
+    return { isHome: false, name: null }
+  }
+  try {
+    const res = await runtime.bmchatBotsInvoke('bmchat:emailbots:is-home-chat', {
+      accountId,
+      chatId,
+    })
+    return {
+      isHome: !!res?.isHome,
+      name: typeof res?.name === 'string' ? res.name : null,
+    }
+  } catch {
+    return { isHome: false, name: null }
+  }
+}
+
 export async function listEmailBots(): Promise<EmailBotPublic[]> {
   if (runtime.getRuntimeInfo().target !== 'electron') {
     return []

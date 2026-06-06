@@ -99,12 +99,25 @@ public final class EmailBotContactHelper {
     if (chatId <= 0) return null;
     DcChat chat = dc.getChat(chatId);
     if (chat == null || !chat.isOutBroadcast()) return null;
-    String chatName = chat.getName();
-    if (chatName == null) chatName = "";
+
     for (EmailBotConfig b : store.getForAccount(accountId)) {
       if (!b.enabled) continue;
-      if (matchesBotLabel(b, chatName)) return b;
+      if (b.botChatId == chatId) return b;
     }
+
+    String chatName = chat.getName();
+    if (chatName == null) chatName = "";
+    EmailBotConfig labelMatch = null;
+    java.util.List<EmailBotConfig> enabled = new java.util.ArrayList<>();
+    for (EmailBotConfig b : store.getForAccount(accountId)) {
+      if (!b.enabled) continue;
+      enabled.add(b);
+      if (matchesBotLabel(b, chatName)) labelMatch = b;
+    }
+    if (labelMatch != null) return labelMatch;
+    // Self-only OutBroadcast has no pseudo-contact members — if the account
+    // owns exactly one bot, this channel must be its home chat.
+    if (enabled.size() == 1) return enabled.get(0);
     return null;
   }
 
@@ -112,10 +125,13 @@ public final class EmailBotContactHelper {
                                         @NonNull String label) {
     String n = label.trim();
     if (n.isEmpty()) return false;
+    String lower = n.toLowerCase(Locale.ROOT);
     String dn = bot.displayName != null ? bot.displayName.trim() : "";
     if (!dn.isEmpty() && dn.equalsIgnoreCase(n)) return true;
     if (("@".concat(bot.name)).equalsIgnoreCase(n)) return true;
     if (bot.name.equalsIgnoreCase(n)) return true;
+    if (lower.contains("@" + bot.name.toLowerCase(Locale.ROOT))) return true;
+    if (lower.contains(bot.name.toLowerCase(Locale.ROOT))) return true;
     return false;
   }
 

@@ -72,21 +72,8 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
     setSupportActionBar(this.toolbar);
     ActionBar supportActionBar = getSupportActionBar();
     if (supportActionBar != null) {
-      String title = getString(R.string.profile);
-      if (chatIsMailingList) {
-        title = getString(R.string.mailing_list);
-      } else if (chatIsOutBroadcast || chatIsInBroadcast) {
-        title = chatIsEmailBotHome ? getString(R.string.bot) : getString(R.string.channel);
-      } else if (chatIsMultiUser) {
-        title = getString(R.string.tab_group);
-      } else if (contactIsBot) {
-        title = getString(R.string.bot);
-      } else if (!chatIsDeviceTalk && !isSelfProfile()) {
-        title = getString(R.string.tab_contact);
-      }
-
       supportActionBar.setDisplayHomeAsUpEnabled(true);
-      supportActionBar.setTitle(title);
+      supportActionBar.setTitle(buildProfileTitle());
     }
 
     Bundle args = new Bundle();
@@ -184,6 +171,56 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
   public void onDestroy() {
     DcHelper.getEventCenter(this).removeObservers(this);
     super.onDestroy();
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    if (chatId == 0) return;
+    new Thread(() -> {
+      org.thoughtcrime.securesms.emailbots.EmailBotSync.syncAccountPull(
+          getApplicationContext(), dcContext.getAccountId());
+      runOnUiThread(this::refreshEmailBotProfileUi);
+    }, "profile-emailbot-sync").start();
+  }
+
+  private void refreshEmailBotProfileUi() {
+    if (chatId != 0) {
+      DcChat dcChat = dcContext.getChat(chatId);
+      chatIsOutBroadcast = dcChat != null && dcChat.isOutBroadcast();
+      chatIsEmailBotHome = false;
+      if (chatIsOutBroadcast) {
+        org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
+            new org.thoughtcrime.securesms.emailbots.EmailBotStore(this)
+                .findByChatId(dcContext.getAccountId(), chatId);
+        chatIsEmailBotHome = emailBot != null;
+      }
+    }
+    ActionBar bar = getSupportActionBar();
+    if (bar != null) {
+      bar.setTitle(buildProfileTitle());
+    }
+    androidx.fragment.app.Fragment f =
+        getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+    if (f instanceof ProfileFragment) {
+      ((ProfileFragment) f).refreshContent();
+    }
+  }
+
+  private String buildProfileTitle() {
+    String title = getString(R.string.profile);
+    if (chatIsMailingList) {
+      title = getString(R.string.mailing_list);
+    } else if (chatIsOutBroadcast || chatIsInBroadcast) {
+      title = chatIsEmailBotHome ? getString(R.string.bot) : getString(R.string.channel);
+    } else if (chatIsMultiUser) {
+      title = getString(R.string.tab_group);
+    } else if (contactIsBot) {
+      title = getString(R.string.bot);
+    } else if (!chatIsDeviceTalk && !isSelfProfile()) {
+      title = getString(R.string.tab_contact);
+    }
+    return title;
   }
 
   @Override
