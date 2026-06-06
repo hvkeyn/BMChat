@@ -437,6 +437,11 @@ http://5.187.4.132/"))]
 
     #[strum(props(fallback = "Messages are end-to-end encrypted."))]
     MessagesAreE2ee = 242,
+
+    #[strum(props(
+        fallback = "⚠️ It seems you are using BMChat on multiple devices that cannot decrypt each other's outgoing messages. To fix this, on the older device open Settings → Add Second Device and follow the instructions."
+    ))]
+    CantDecryptOutgoingMsgs = 243,
 }
 
 impl StockMessage {
@@ -1027,6 +1032,11 @@ pub(crate) fn messages_e2ee_info_msg(context: &Context) -> String {
 /// Stock string: `Messages are end-to-end encrypted.`
 pub(crate) fn messages_are_e2ee(context: &Context) -> String {
     translated(context, StockMessage::MessagesAreE2ee)
+}
+
+/// Stock string: multidevice outgoing decryption failure (device chat).
+pub(crate) fn cant_decrypt_outgoing_msgs(context: &Context) -> String {
+    translated(context, StockMessage::CantDecryptOutgoingMsgs)
 }
 
 /// Stock string: `Reply`.

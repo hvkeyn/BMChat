@@ -408,7 +408,7 @@ function ViewGroupInner(
     }
   }, [isBroadcast, chat.id, groupName, accountId])
 
-  const broadcastTitle = isEmailBotHome ? tx('bot') : tx('channel')
+  const broadcastTitle = tx('channel')
 
   return (
     <>
@@ -439,7 +439,7 @@ function ViewGroupInner(
               />
               <div className='group-profile-subtitle'>
                 {isEmailBotHome && emailBotName
-                  ? tx('bmchat_bot_profile_username', [emailBotName])
+                  ? tx('bmchat_channel_profile_username', [emailBotName])
                   : !isBroadcast
                     ? group.contactIds.length > 1 || group.selfInGroup
                       ? tx('n_members', group.contactIds.length.toString(), {

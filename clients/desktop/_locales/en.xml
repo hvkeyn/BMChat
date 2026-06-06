@@ -343,6 +343,8 @@
     <string name="bmchat_bots_queue_publish_all">Publish all</string>
     <string name="bmchat_bots_queue_clear">Clear queue</string>
     <string name="bmchat_bot_profile_username">Bot · @%1$s</string>
+    <string name="bmchat_channel_profile_username">Channel · @%1$s</string>
+    <string name="devicemsg_cant_decrypt_outgoing">⚠️ It seems you are using BMChat on multiple devices that cannot decrypt each other's outgoing messages. To fix this, on the older device open Settings → Add Second Device and follow the instructions.</string>
     <string name="bmchat_email_bots_title">Email bots</string>
     <string name="bmchat_email_bots_explain">Each email bot appears in your chat list as its own contact. Find it via search (@botname) or tap «Write to bot», then send /start or a command (e.g. /help).</string>
     <string name="bmchat_email_bots_empty">No email bots yet.</string>

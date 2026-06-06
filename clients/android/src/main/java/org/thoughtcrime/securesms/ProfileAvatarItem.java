@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContact;
 import org.thoughtcrime.securesms.components.AvatarView;
+import org.thoughtcrime.securesms.emailbots.EmailBotContactHelper;
 import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientModifiedListener;
@@ -60,7 +61,11 @@ public class ProfileAvatarItem extends LinearLayout implements RecipientModified
       name = dcChat.getName();
 
       if (isEmailBotHome && emailBotName != null) {
-        subtitle = getContext().getString(R.string.bmchat_bot_profile_username, emailBotName);
+        int subtitleRes =
+            dcChat.isOutBroadcast()
+                ? R.string.bmchat_channel_profile_username
+                : R.string.bmchat_bot_profile_username;
+        subtitle = getContext().getString(subtitleRes, emailBotName);
       } else if (dcChat.isMailingList()) {
         subtitle = dcChat.getMailinglistAddr();
       } else if (dcChat.isOutBroadcast()) {
@@ -79,6 +84,11 @@ public class ProfileAvatarItem extends LinearLayout implements RecipientModified
     } else if (dcContact != null) {
       recipient = new Recipient(getContext(), dcContact);
       name = dcContact.getDisplayName();
+      String botSlug = EmailBotContactHelper.nameFromBotEmail(dcContact.getAddr());
+      if (!botSlug.isEmpty()) {
+        subtitle =
+            getContext().getString(R.string.bmchat_bot_profile_username, botSlug);
+      }
     }
 
     recipient.addListener(this);

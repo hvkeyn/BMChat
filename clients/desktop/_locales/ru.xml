@@ -360,6 +360,8 @@
     <string name="bmchat_bots_queue_publish_all">Опубликовать все</string>
     <string name="bmchat_bots_queue_clear">Очистить очередь</string>
     <string name="bmchat_bot_profile_username">Бот · @%1$s</string>
+    <string name="bmchat_channel_profile_username">Канал · @%1$s</string>
+    <string name="devicemsg_cant_decrypt_outgoing">⚠️ Похоже, вы используете BMChat на нескольких устройствах, которые не могут расшифровать исходящие сообщения друг друга. Чтобы исправить это, на старом устройстве откройте «Настройки → Добавить второе устройство» и следуйте инструкциям.</string>
     <string name="bmchat_email_bots_title">Email-боты</string>
     <string name="bmchat_email_bots_explain">Каждый email-бот — отдельный контакт в списке чатов. Настройки синхронизируются между вашими устройствами (multidevice). В домашнем чате бота пишите только команды (/start, /help). В группах — @имя_бота /команда. Кнопка «Добавить бота в чат…» подключает бота к каналу или группе.</string>
     <string name="bmchat_email_bots_empty">Email-ботов пока нет.</string>

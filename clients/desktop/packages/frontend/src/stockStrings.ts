@@ -184,6 +184,10 @@ export async function updateCoreStrings() {
     [C.DC_STR_CHANNEL_IMAGE_CHANGED]: tx('channel_image_changed'),
     [C.DC_STR_CHANNEL_NAME_CHANGED]: tx('channel_name_changed'),
     [C.DC_STR_MESSAGES_ARE_E2EE]: tx('messages_are_e2ee'),
+    // BMChat 2.50.21 — not yet in upstream DC_STR enum
+    [243 as typeof C.DC_STR_MESSAGES_ARE_E2EE]: tx(
+      'devicemsg_cant_decrypt_outgoing'
+    ),
   }
 
   await BackendRemote.rpc.setStockStrings(strings)

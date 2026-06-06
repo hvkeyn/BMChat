@@ -212,7 +212,7 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
     if (chatIsMailingList) {
       title = getString(R.string.mailing_list);
     } else if (chatIsOutBroadcast || chatIsInBroadcast) {
-      title = chatIsEmailBotHome ? getString(R.string.bot) : getString(R.string.channel);
+      title = getString(R.string.channel);
     } else if (chatIsMultiUser) {
       title = getString(R.string.tab_group);
     } else if (contactIsBot) {
@@ -241,6 +241,14 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
       DcContact dcContact = dcContext.getContact(contactId);
       chatId = dcContext.getChatIdByContactId(contactId);
       contactIsBot = dcContact.isBot();
+      if (!contactIsBot) {
+        String botSlug =
+            org.thoughtcrime.securesms.emailbots.EmailBotContactHelper.nameFromBotEmail(
+                dcContact.getAddr());
+        if (!botSlug.isEmpty()) {
+          contactIsBot = true;
+        }
+      }
     }
 
     if (chatId != 0) {

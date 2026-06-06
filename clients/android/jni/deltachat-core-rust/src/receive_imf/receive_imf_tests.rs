@@ -3343,7 +3343,7 @@ async fn test_outgoing_undecryptable() -> Result<()> {
     assert!(
         dev_msg
             .text
-            .starts_with("⚠️ It seems you are using Delta Chat on multiple devices that cannot decrypt each other's outgoing messages. To fix this, on the older device use \"Settings / Add Second Device\" and follow the instructions. (Error:")
+            .starts_with("⚠️ It seems you are using BMChat on multiple devices that cannot decrypt each other's outgoing messages.")
     );
 
     let raw = include_bytes!("../../test-data/message/thunderbird_encrypted_signed.eml");
