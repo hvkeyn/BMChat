@@ -390,7 +390,7 @@ public class ProfileAdapter extends RecyclerView.Adapter {
               R.drawable.contact_blocked_24));
     }
 
-    if (memberList != null && !isInBroadcast && !isMailingList && !isEmailBotHome) {
+    if (memberList != null && !isInBroadcast && !isMailingList) {
       itemData.add(new ItemData(ITEM_DIVIDER, null, 0));
       if (dcChat != null) {
         if (isOutBroadcast) {

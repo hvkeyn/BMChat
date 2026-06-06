@@ -29,6 +29,7 @@ import org.thoughtcrime.securesms.ConversationListActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.connect.DcHelper;
+import org.thoughtcrime.securesms.emailbots.EmailBotContactHelper;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.search.model.SearchResult;
 import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
@@ -166,19 +167,36 @@ public class SearchFragment extends BaseConversationListFragment
     ConversationListActivity conversationList = (ConversationListActivity) getActivity();
     if (conversationList != null) {
       DcContext dcContext = DcHelper.getContext(requireContext());
+      boolean isEmailBot = !EmailBotContactHelper.nameFromBotEmail(contact.getAddr()).isEmpty();
       int chatId = dcContext.getChatIdByContactId(contact.getId());
       if (chatId == 0) {
-        new AlertDialog.Builder(requireContext())
-            .setMessage(getString(R.string.ask_start_chat_with, contact.getDisplayName()))
-            .setCancelable(true)
-            .setNegativeButton(android.R.string.cancel, null)
-            .setPositiveButton(
-                android.R.string.ok,
-                (dialog, which) -> {
-                  int chatId1 = dcContext.createChatByContactId(contact.getId());
-                  conversationList.onCreateConversation(chatId1);
-                })
-            .show();
+        Runnable openChat = () -> {
+          int newChatId = dcContext.createChatByContactId(contact.getId());
+          if (newChatId > 0) {
+            if (isEmailBot) {
+              android.content.Intent intent =
+                  new android.content.Intent(requireContext(),
+                      org.thoughtcrime.securesms.ConversationActivity.class);
+              intent.putExtra(org.thoughtcrime.securesms.ConversationActivity.CHAT_ID_EXTRA,
+                  newChatId);
+              intent.putExtra(org.thoughtcrime.securesms.ConversationActivity.TEXT_EXTRA,
+                  "/start");
+              startActivity(intent);
+            } else {
+              conversationList.onCreateConversation(newChatId);
+            }
+          }
+        };
+        if (isEmailBot) {
+          openChat.run();
+        } else {
+          new AlertDialog.Builder(requireContext())
+              .setMessage(getString(R.string.ask_start_chat_with, contact.getDisplayName()))
+              .setCancelable(true)
+              .setNegativeButton(android.R.string.cancel, null)
+              .setPositiveButton(android.R.string.ok, (dialog, which) -> openChat.run())
+              .show();
+        }
       } else {
         conversationList.onCreateConversation(chatId);
       }

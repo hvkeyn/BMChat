@@ -166,7 +166,7 @@ public class ProfileFragment extends Fragment
       dcChat = dcContext.getChat(chatId);
     }
 
-    if (dcChat != null && dcChat.isMultiUser()) {
+    if (dcChat != null && (dcChat.isMultiUser() || dcChat.isOutBroadcast())) {
       memberList = dcContext.getChatContacts(chatId);
     } else if (contactId > 0 && contactId != DcContact.DC_CONTACT_ID_SELF) {
       sharedChats = dcContext.getChatlist(0, null, contactId);
@@ -306,12 +306,28 @@ public class ProfileFragment extends Fragment
     String channelName = broadcast != null ? broadcast.getName() : "";
     String body = getString(R.string.bmchat_channel_invite_body_fmt, channelName, inviteUrl);
 
+    org.thoughtcrime.securesms.emailbots.EmailBotStore botStore =
+        new org.thoughtcrime.securesms.emailbots.EmailBotStore(requireContext());
+    int accountId = dcContext.getAccountId();
     int sent = 0;
     int skipped = 0;
+    int botsAttached = 0;
     for (Integer contactId : contactIds) {
       if (contactId == null || contactId <= 0) continue;
       if (contactId == DcContact.DC_CONTACT_ID_SELF) {
         skipped++;
+        continue;
+      }
+      org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
+          botStore.findByContactId(accountId, contactId);
+      if (emailBot != null) {
+        try {
+          botStore.upsert(emailBot.withAttachedChat(broadcastChatId));
+          botsAttached++;
+        } catch (Throwable t) {
+          Log.w(TAG, "attach bot to channel failed contact=" + contactId, t);
+          skipped++;
+        }
         continue;
       }
       try {
@@ -326,15 +342,22 @@ public class ProfileFragment extends Fragment
     }
     final int fSent = sent;
     final int fSkipped = skipped;
+    final int fBots = botsAttached;
     Util.runOnMain(() -> {
       Context ctx = getContext();
       if (ctx == null) return;
       String msg;
-      if (fSent > 0 && fSkipped == 0) {
+      if (fBots > 0 && fSent == 0 && fSkipped == 0) {
+        msg = getResources().getQuantityString(
+            R.plurals.bmchat_email_bot_attached_to_channel, fBots, fBots);
+      } else if (fSent > 0 && fSkipped == 0) {
         msg = getResources().getQuantityString(
             R.plurals.bmchat_channel_invite_sent, fSent, fSent);
       } else if (fSent > 0) {
         msg = getString(R.string.bmchat_channel_invite_partial_fmt, fSent, fSkipped);
+      } else if (fBots > 0) {
+        msg = getResources().getQuantityString(
+            R.plurals.bmchat_email_bot_attached_to_channel, fBots, fBots);
       } else {
         msg = getString(R.string.bmchat_channel_invite_failed);
       }

@@ -38,6 +38,9 @@ import AlertDialog from './AlertDialog'
 import { unknownErrorToString } from '@deltachat-desktop/shared/unknownErrorToString'
 import { getLogger } from '@deltachat-desktop/shared/logger'
 import { listEmailBots, resolveEmailBotHomeChat } from '../../bmchat/emailBots'
+import { rewriteInviteLink } from '@deltachat-desktop/shared/util'
+import { createChatByContactId } from '../../backend/chat'
+import { runtime } from '@deltachat-desktop/runtime-interface'
 const log = getLogger('ViewGroup')
 
 /**
@@ -102,6 +105,143 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         return
       }
 
+      const isBroadcast = chat.chatType === 'OutBroadcast'
+
+      if (isBroadcast) {
+        let inviteUrl = ''
+        try {
+          const [qrCode] = await BackendRemote.rpc.getChatSecurejoinQrCodeSvg(
+            accountId,
+            chat.id
+          )
+          inviteUrl = rewriteInviteLink(qrCode)
+        } catch (error) {
+          openDialog(AlertDialog, {
+            title: tx('error'),
+            message: tx(
+              'error_x',
+              `Failed to get channel invite link: ${unknownErrorToString(error)}`
+            ),
+          })
+          return
+        }
+        const channelName = chat.name || ''
+        const body = tx('bmchat_channel_invite_body_fmt', channelName, inviteUrl)
+
+        let emailBots: Awaited<ReturnType<typeof listEmailBots>> = []
+        if (runtime.getRuntimeInfo().target === 'electron') {
+          try {
+            const raw = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
+            emailBots = Array.isArray(raw) ? raw : []
+          } catch {
+            emailBots = await listEmailBots()
+          }
+        }
+
+        let sent = 0
+        let skipped = 0
+        let botsAttached = 0
+        for (const contactId of members) {
+          if (contactId <= 0 || contactId === C.DC_CONTACT_ID_SELF) {
+            skipped++
+            continue
+          }
+          const emailBot = emailBots.find(
+            b =>
+              b.enabled &&
+              (b as { botContactId?: number }).botContactId === contactId
+          )
+          if (!emailBot && runtime.getRuntimeInfo().target === 'electron') {
+            try {
+              const contact = await BackendRemote.rpc.getContact(
+                accountId,
+                contactId
+              )
+              const addr = (contact?.address || '').toLowerCase()
+              if (addr.endsWith('@bots.bmchat.local')) {
+                const slug = addr
+                  .replace(/^emailbot\./, '')
+                  .replace(/@bots\.bmchat\.local$/, '')
+                const byName = emailBots.find(
+                  b => b.enabled && b.name.toLowerCase() === slug
+                )
+                if (byName) {
+                  try {
+                    const res = await runtime.bmchatBotsInvoke(
+                      'bmchat:emailbots:attach-chat',
+                      { id: byName.id, chatId: chat.id }
+                    )
+                    if (res?.ok) {
+                      botsAttached++
+                      continue
+                    }
+                  } catch {
+                    skipped++
+                    continue
+                  }
+                }
+              }
+            } catch {
+              // fall through to invite link
+            }
+          }
+          if (emailBot && runtime.getRuntimeInfo().target === 'electron') {
+            try {
+              const res = await runtime.bmchatBotsInvoke(
+                'bmchat:emailbots:attach-chat',
+                { id: emailBot.id, chatId: chat.id }
+              )
+              if (res?.ok) {
+                botsAttached++
+                continue
+              }
+            } catch {
+              skipped++
+              continue
+            }
+          }
+          try {
+            const dmChatId = await createChatByContactId(accountId, contactId)
+            if (dmChatId <= 0) {
+              skipped++
+              continue
+            }
+            await BackendRemote.rpc.sendMsg(accountId, dmChatId, { text: body })
+            sent++
+          } catch {
+            skipped++
+          }
+        }
+
+        if (botsAttached > 0 && sent === 0 && skipped === 0) {
+          window.__userFeedback?.({
+            type: 'success',
+            text: tx('bmchat_email_bot_attached_to_channel', String(botsAttached)),
+          })
+        } else if (sent > 0 && skipped === 0) {
+          window.__userFeedback?.({
+            type: 'success',
+            text: tx('bmchat_channel_invite_sent', String(sent)),
+          })
+        } else if (sent > 0) {
+          window.__userFeedback?.({
+            type: 'info',
+            text: tx('bmchat_channel_invite_partial_fmt', String(sent), String(skipped)),
+          })
+        } else if (botsAttached > 0) {
+          window.__userFeedback?.({
+            type: 'success',
+            text: tx('bmchat_email_bot_attached_to_channel', String(botsAttached)),
+          })
+        } else {
+          window.__userFeedback?.({
+            type: 'error',
+            text: tx('bmchat_channel_invite_failed'),
+          })
+        }
+        return
+      }
+
       try {
         await Promise.all(
           members.map(id =>
@@ -125,7 +265,7 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         )})`
       )
     },
-    [tx, openDialog, chat.id, accountId]
+    [tx, openDialog, chat.id, chat.name, chat.chatType, accountId]
   )
 
   const removeMember = useCallback(
@@ -468,17 +608,15 @@ function ViewGroupInner(
               <RovingTabindexProvider
                 wrapperElementRef={groupMemberContactListWrapperRef}
               >
-                {!chatDisabled && group.isEncrypted && !isEmailBotHome && (
+                {!chatDisabled && (group.isEncrypted || isBroadcast) && (
                   <>
-                    {!isBroadcast && (
-                      <PseudoListItemAddMember
-                        onClick={() => showAddMemberDialog()}
-                      />
-                    )}
+                    <PseudoListItemAddMember
+                      onClick={() => showAddMemberDialog()}
+                    />
                     <PseudoListItemShowQrCode onClick={() => showQRDialog()} />
                   </>
                 )}
-                {!isEmailBotHome && group.contactIds.length != 0 && groupContacts.length == 0 && (
+                {group.contactIds.length != 0 && groupContacts.length == 0 && (
                   <div /* placeholder to keep layout from jumping around while contact info is loaded */
                     style={{
                       height:
@@ -488,7 +626,7 @@ function ViewGroupInner(
                     aria-busy
                   ></div>
                 )}
-                {!isEmailBotHome && (
+                {
                   <ContactList
                     contacts={groupContacts}
                     showRemove={!chatDisabled && group.isEncrypted}
@@ -503,7 +641,7 @@ function ViewGroupInner(
                       'aria-labelledby': 'group-profile-subtitle',
                     }}
                   />
-                )}
+                }
               </RovingTabindexProvider>
             </div>
             {group.pastContactIds.length != 0 && pastContacts.length == 0 && (

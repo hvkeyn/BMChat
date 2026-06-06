@@ -257,7 +257,8 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
           developerEmail,
           null,
           0,
-          0);
+          0,
+          null);
     } else {
       saved = existing
           .withName(name)

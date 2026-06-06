@@ -384,6 +384,11 @@
     <string name="bmchat_email_bot_cb_no_webhook">This bot has no webhook URL in Email bot settings.</string>
     <string name="bmchat_email_bot_attach_chat">Add bot to chat…</string>
     <string name="bmchat_email_bot_attached_chats">Attached chats: %1$s</string>
+    <string name="bmchat_email_bot_attached_to_channel">Bot connected to this channel (%1$s).</string>
+    <string name="bmchat_channel_invite_body_fmt">I'm inviting you to my BMChat channel "%1$s". Tap the link to join:\n\n%2$s</string>
+    <string name="bmchat_channel_invite_partial_fmt">Sent %1$s invitation(s). %2$s failed.</string>
+    <string name="bmchat_channel_invite_failed">Couldn't send any invitations.</string>
+    <string name="bmchat_channel_invite_sent">Sent %1$s invitation(s).</string>
     <string name="bmchat_email_bot_open_failed">Could not open the bot chat. Restart the app or re-save the bot in settings.</string>
     <string name="bmchat_connectivity_stats_title">BMChat statistics</string>
     <string name="bmchat_connectivity_stats_hint">Local summary for this profile. Nothing is sent to a BMChat server.</string>

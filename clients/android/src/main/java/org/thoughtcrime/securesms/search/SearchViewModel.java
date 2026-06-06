@@ -82,13 +82,7 @@ class SearchViewModel extends ViewModel {
     overallCnt += conversations.getCnt();
     Log.i(TAG, "⏰ getChatlist(" + query + "): " + (System.currentTimeMillis() - startMs) + "ms");
 
-    // #2 search for contacts
-    if (!query.equals(lastQuery) && overallCnt > 0) {
-      Log.i(TAG, "... skipping getContacts() and searchMsgs(), more recent search pending");
-      callback.onResult(new SearchResult(query, new int[0], conversations, new int[0]));
-      return;
-    }
-
+    // #2 search for contacts (+ email bots from every local profile / catalog)
     startMs = System.currentTimeMillis();
     int[] contacts = dcContext.getContacts(DcContext.DC_GCL_ADD_SELF, query);
     int[] botContacts = org.thoughtcrime.securesms.emailbots.EmailBotSearchHelper
@@ -102,6 +96,12 @@ class SearchViewModel extends ViewModel {
       for (Integer c : merged) contacts[i++] = c;
     }
     overallCnt += contacts.length;
+
+    if (!query.equals(lastQuery) && overallCnt > 0) {
+      Log.i(TAG, "... skipping searchMsgs(), more recent search pending");
+      callback.onResult(new SearchResult(query, contacts, conversations, new int[0]));
+      return;
+    }
     Log.i(TAG, "⏰ getContacts(" + query + "): " + (System.currentTimeMillis() - startMs) + "ms");
 
     // #3 search for messages

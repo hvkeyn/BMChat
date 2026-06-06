@@ -403,6 +403,11 @@
     <string name="bmchat_email_bot_cb_no_webhook">У бота не задан webhook URL в настройках Email-ботов.</string>
     <string name="bmchat_email_bot_attach_chat">Добавить бота в чат…</string>
     <string name="bmchat_email_bot_attached_chats">Подключено чатов: %1$s</string>
+    <string name="bmchat_email_bot_attached_to_channel">Бот подключён к этому каналу (%1$s).</string>
+    <string name="bmchat_channel_invite_body_fmt">Приглашаю вас в мой канал BMChat «%1$s». Нажмите на ссылку, чтобы присоединиться:\n\n%2$s</string>
+    <string name="bmchat_channel_invite_partial_fmt">Отправлено приглашений: %1$s. Не удалось отправить: %2$s.</string>
+    <string name="bmchat_channel_invite_failed">Не удалось отправить ни одного приглашения.</string>
+    <string name="bmchat_channel_invite_sent">Отправлено приглашений: %1$s.</string>
     <string name="bmchat_email_bot_open_failed">Не удалось открыть чат с ботом. Перезапустите приложение или пересохраните бота в настройках.</string>
     <string name="bmchat_connectivity_stats_title">Статистика BMChat</string>
     <string name="bmchat_connectivity_stats_hint">Локальная сводка по этому профилю. Данные не отправляются на сервер BMChat.</string>

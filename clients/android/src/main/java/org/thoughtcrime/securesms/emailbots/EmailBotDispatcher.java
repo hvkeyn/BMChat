@@ -120,7 +120,8 @@ public final class EmailBotDispatcher {
     if (chat == null) return;
 
     EmailBotConfig activeBot = resolveActiveBotForChat(dcContext, accountId, chatId);
-    if (store.getForAccount(accountId).isEmpty() && activeBot == null) return;
+    String botSlugInChat = EmailBotContactHelper.slugFromBotHomeChat(dcContext, chatId);
+    if (store.getAll().isEmpty() && activeBot == null && botSlugInChat.isEmpty()) return;
 
     boolean isSelf = msg.getFromId() == DcContact.DC_CONTACT_ID_SELF;
     boolean inHomeChat = activeBot != null
@@ -261,18 +262,27 @@ public final class EmailBotDispatcher {
     return sb.toString();
   }
 
-  /** Posts a bot reply in {@code chatId} and bumps the bot's stats. */
+  /** Posts a bot reply and mirrors it into {@link EmailBotConfig#attachedChatIds}. */
   private void sendBotReply(@NonNull DcContext dcContext,
                             @NonNull EmailBotConfig bot,
-                            int chatId,
+                            int originChatId,
                             @NonNull String reply) {
     try {
-      // Tag with @botname so it's obvious which bot answered in
-      // multi-bot groups — same convention Telegram bots use.
-      int targetChatId = bot.botChatId > 0 ? bot.botChatId : chatId;
-      boolean home = bot.botChatId > 0 && bot.botChatId == targetChatId;
-      String visible = home ? reply : "@" + bot.name + ": " + reply;
-      dcContext.sendTextMsg(targetChatId, BOT_OUT_MARKER + visible);
+      java.util.LinkedHashSet<Integer> targets = new java.util.LinkedHashSet<>();
+      if (originChatId > 0) {
+        targets.add(originChatId);
+      } else if (bot.botChatId > 0) {
+        targets.add(bot.botChatId);
+      }
+      for (int attachedId : bot.attachedChatIds) {
+        if (attachedId > 0) targets.add(attachedId);
+      }
+      if (targets.isEmpty()) return;
+      for (int targetChatId : targets) {
+        boolean home = bot.botChatId > 0 && bot.botChatId == targetChatId;
+        String visible = home ? reply : "@" + bot.name + ": " + reply;
+        dcContext.sendTextMsg(targetChatId, BOT_OUT_MARKER + visible);
+      }
       EmailBotConfig updated = bot.withReplySent(System.currentTimeMillis());
       store.upsert(updated);
     } catch (Throwable t) {
@@ -372,6 +382,7 @@ public final class EmailBotDispatcher {
     EmailBotConfig bot;
     if (botName != null) {
       bot = store.findByName(accountId, botName);
+      if (bot == null) bot = store.findByNameGlobal(botName);
     } else {
       // No mention: only fire when the user has exactly one bot,
       // otherwise we have no way of guessing which one they meant.

@@ -37,18 +37,22 @@ public final class EmailBotSearchHelper {
 
     for (EmailBotConfig b : store.getAll()) {
       if (!b.enabled) continue;
-      if (!matchesQuery(b.name, b.displayName, bare, trimmed)) continue;
+      if (!matchesQuery(b.name, b.displayName, b.description, bare, trimmed)) continue;
       int cid = EmailBotContactHelper.ensureSearchableContact(dc, b);
       if (cid > 0) ids.add(cid);
     }
 
-    for (EmailBotDirectory.DirectoryEntry e : directory.getEntries(accountId)) {
-      if (!matchesQuery(e.name, e.displayName, bare, trimmed)) continue;
-      int cid = dc.lookupContactIdByAddr(e.botEmail);
-      if (cid <= 0) {
-        cid = dc.createContact(e.displayName, e.botEmail);
+    for (int dirAccountId : DcHelper.getAccounts(context).getAll()) {
+      for (EmailBotDirectory.DirectoryEntry e : directory.getEntries(dirAccountId)) {
+        if (!matchesQuery(e.name, e.displayName, e.description, bare, trimmed)) continue;
+        int cid = dc.lookupContactIdByAddr(e.botEmail);
+        if (cid <= 0) {
+          String label = e.displayName != null && !e.displayName.isEmpty()
+              ? e.displayName : "@" + e.name;
+          cid = dc.createContact(label, e.botEmail);
+        }
+        if (cid > 0) ids.add(cid);
       }
-      if (cid > 0) ids.add(cid);
     }
 
     int[] out = new int[ids.size()];
@@ -59,6 +63,7 @@ public final class EmailBotSearchHelper {
 
   private static boolean matchesQuery(@NonNull String name,
                                       @Nullable String displayName,
+                                      @Nullable String description,
                                       @NonNull String bare,
                                       @NonNull String trimmed) {
     String n = name.toLowerCase(Locale.ROOT);
@@ -67,7 +72,23 @@ public final class EmailBotSearchHelper {
     }
     if (!TextUtils.isEmpty(displayName)) {
       String dn = displayName.toLowerCase(Locale.ROOT);
-      if (dn.contains(bare)) return true;
+      if (dn.equals(bare) || dn.contains(bare)) return true;
+    }
+    if (!TextUtils.isEmpty(description)) {
+      if (description.toLowerCase(Locale.ROOT).contains(bare)) return true;
+    }
+    if (bare.contains(" ")) {
+      String[] tokens = bare.split("\\s+");
+      int hits = 0;
+      for (String token : tokens) {
+        if (token.isEmpty()) continue;
+        if (n.contains(token)) { hits++; continue; }
+        if (!TextUtils.isEmpty(displayName)
+            && displayName.toLowerCase(Locale.ROOT).contains(token)) {
+          hits++;
+        }
+      }
+      if (hits >= tokens.length) return true;
     }
     return false;
   }

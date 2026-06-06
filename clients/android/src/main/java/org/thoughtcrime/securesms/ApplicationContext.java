@@ -474,9 +474,15 @@ public class ApplicationContext extends MultiDexApplication {
         org.thoughtcrime.securesms.bots.BotStore tgStore =
             new org.thoughtcrime.securesms.bots.BotStore(this);
         tgStore.reloadFromUiConfig();
+        org.thoughtcrime.securesms.emailbots.EmailBotStore emailBotStore =
+            new org.thoughtcrime.securesms.emailbots.EmailBotStore(this);
+        org.thoughtcrime.securesms.emailbots.EmailBotDirectory botDirectory =
+            new org.thoughtcrime.securesms.emailbots.EmailBotDirectory(this);
         for (int accountId : org.thoughtcrime.securesms.connect.DcHelper.getAccounts(this).getAll()) {
           org.thoughtcrime.securesms.emailbots.EmailBotSync.syncAccount(
               this, accountId);
+          botDirectory.publishIfNeeded(
+              accountId, emailBotStore.getForAccount(accountId));
         }
         // Retry after IMAP may have fetched self-chat sync payloads.
         android.os.Handler h = new android.os.Handler(android.os.Looper.getMainLooper());

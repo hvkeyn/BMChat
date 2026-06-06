@@ -66,6 +66,8 @@ interface EmailBot {
   /** Pseudo-contact (@bots.bmchat.local) for a dedicated 1:1 bot chat. */
   botContactId?: number
   botChatId?: number
+  /** Group/channel chats that receive mirrored bot replies (Telegram-style). */
+  attachedChatIds?: number[]
   createdAtMs: number
   lastReplyAtMs: number
   totalReplies: number
@@ -369,6 +371,11 @@ function sanitizeBot(input: any): EmailBot | null {
       : [],
     botContactId: Number(input.botContactId) || 0,
     botChatId: Number(input.botChatId) || 0,
+    attachedChatIds: Array.isArray(input.attachedChatIds)
+      ? input.attachedChatIds
+          .map((v: unknown) => Number(v))
+          .filter((v: number) => v > 0)
+      : [],
     createdAtMs: Number(input.createdAtMs) || Date.now(),
     lastReplyAtMs: Number(input.lastReplyAtMs) || 0,
     totalReplies: Number(input.totalReplies) || 0,
@@ -835,8 +842,18 @@ function parseInvocationInBotChat(
   return { bot: homeBot, command: 'default', argument: trimmed }
 }
 
-function replyChatId(bot: EmailBot, originChatId: number): number {
-  return bot.botChatId && bot.botChatId > 0 ? bot.botChatId : originChatId
+function withAttachedChat(bot: EmailBot, chatId: number): EmailBot {
+  if (chatId <= 0) return bot
+  const prev = bot.attachedChatIds ?? []
+  if (prev.includes(chatId)) return bot
+  return { ...bot, attachedChatIds: [...prev, chatId] }
+}
+
+function withoutAttachedChat(bot: EmailBot, chatId: number): EmailBot {
+  if (chatId <= 0) return bot
+  const prev = bot.attachedChatIds ?? []
+  if (!prev.includes(chatId)) return bot
+  return { ...bot, attachedChatIds: prev.filter(id => id !== chatId) }
 }
 
 function commandValue(bot: EmailBot, key: string): string | undefined {
@@ -1580,6 +1597,9 @@ export async function initEmailBots(): Promise<void> {
       const prev = bots[existingIdx]
       bot.botContactId = prev.botContactId ?? bot.botContactId
       bot.botChatId = prev.botChatId ?? bot.botChatId
+      bot.attachedChatIds = bot.attachedChatIds?.length
+        ? bot.attachedChatIds
+        : prev.attachedChatIds ?? []
       bots[existingIdx] = bot
     } else {
       // Name must be unique on all devices of this account.
@@ -1626,6 +1646,50 @@ export async function initEmailBots(): Promise<void> {
         await saveStore({ publishSync: true })
       }
       return bots
+    }
+  )
+
+  ipcMain.handle(
+    'bmchat:emailbots:attach-chat',
+    async (_e, args: { id: string; chatId: number }) => {
+      await reloadStoreMerged()
+      const bot = bots.find(b => b.id === args?.id)
+      const chatId = Number(args?.chatId) || 0
+      if (!bot || chatId <= 0) return { ok: false, error: 'invalid' }
+      const accountId = bot.ownerAccountId
+      if (accountId <= 0) return { ok: false, error: 'no_account' }
+      try {
+        const rpc = getDCJsonrpcRemote().rpc
+        const chat: any = await rpc.getChat(accountId, chatId)
+        if (!chat?.canSend) return { ok: false, error: 'cannot_send' }
+        if (!chat?.isMultiUser) return { ok: false, error: 'not_multiuser' }
+        if (bot.botChatId && bot.botChatId === chatId) {
+          return { ok: false, error: 'home_chat' }
+        }
+        const updated = withAttachedChat(bot, chatId)
+        const idx = bots.findIndex(b => b.id === bot.id)
+        if (idx >= 0) bots[idx] = updated
+        await saveStore({ publishSync: true })
+        return { ok: true, bot: updated }
+      } catch (e) {
+        log.warn('attach-chat failed for %s chat=%s', bot.name, chatId, e)
+        return { ok: false, error: 'failed' }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'bmchat:emailbots:detach-chat',
+    async (_e, args: { id: string; chatId: number }) => {
+      await reloadStoreMerged()
+      const bot = bots.find(b => b.id === args?.id)
+      const chatId = Number(args?.chatId) || 0
+      if (!bot || chatId <= 0) return { ok: false, error: 'invalid' }
+      const updated = withoutAttachedChat(bot, chatId)
+      const idx = bots.findIndex(b => b.id === bot.id)
+      if (idx >= 0) bots[idx] = updated
+      await saveStore({ publishSync: true })
+      return { ok: true, bot: updated }
     }
   )
 

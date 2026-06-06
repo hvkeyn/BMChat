@@ -159,6 +159,12 @@ public final class EmailBotConfig {
   /** 1:1 home chat with the pseudo-contact. */
   public final int botChatId;
 
+  /**
+   * Groups/channels that receive this bot's outbound posts (webhook/API
+   * replies). Mirrors {@link org.thoughtcrime.securesms.bots.BotConfig#attachedChatIds}.
+   */
+  @NonNull public final List<Integer> attachedChatIds;
+
   public EmailBotConfig(@NonNull String id,
                         @NonNull String name,
                         @Nullable String description,
@@ -175,7 +181,8 @@ public final class EmailBotConfig {
                         @Nullable String developerEmail,
                         @Nullable Set<String> subscribedUsers,
                         int botContactId,
-                        int botChatId) {
+                        int botChatId,
+                        @Nullable List<Integer> attachedChatIds) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -194,6 +201,19 @@ public final class EmailBotConfig {
     this.subscribedUsers = sanitiseSubscribed(subscribedUsers);
     this.botContactId = botContactId;
     this.botChatId = botChatId;
+    this.attachedChatIds = sanitiseChatIds(attachedChatIds);
+  }
+
+  private static List<Integer> sanitiseChatIds(@Nullable List<Integer> raw) {
+    if (raw == null || raw.isEmpty()) return Collections.emptyList();
+    LinkedHashSet<Integer> dedup = new LinkedHashSet<>(raw.size());
+    for (Integer v : raw) {
+      if (v == null) continue;
+      int n = v;
+      if (n > 0) dedup.add(n);
+    }
+    if (dedup.isEmpty()) return Collections.emptyList();
+    return Collections.unmodifiableList(new ArrayList<>(dedup));
   }
 
   private static Set<String> sanitiseSubscribed(@Nullable Set<String> raw) {
@@ -220,7 +240,7 @@ public final class EmailBotConfig {
     return new EmailBotConfig(
         id, name, null, ownerAccountId, true, defaults, null,
         System.currentTimeMillis(), 0L, 0L, null,
-        null, null, null, null, 0, 0);
+        null, null, null, null, 0, 0, null);
   }
 
   /**
@@ -248,14 +268,16 @@ public final class EmailBotConfig {
     if (newOwnerAccountId == ownerAccountId) return this;
     return new EmailBotConfig(id, name, description, newOwnerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withEnabled(boolean newEnabled) {
     if (newEnabled == enabled) return this;
     return new EmailBotConfig(id, name, description, ownerAccountId, newEnabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withContactIds(int newContactId, int newChatId) {
@@ -263,7 +285,7 @@ public final class EmailBotConfig {
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
         displayName, avatarPath, developerEmail, subscribedUsers,
-        newContactId, newChatId);
+        newContactId, newChatId, attachedChatIds);
   }
 
   /** Drop device-local ids before merging sync from another device. */
@@ -276,49 +298,76 @@ public final class EmailBotConfig {
   public EmailBotConfig withName(@NonNull String newName) {
     return new EmailBotConfig(id, newName, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withDescription(@Nullable String newDescription) {
     return new EmailBotConfig(id, name, newDescription, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withCommands(@Nullable Map<String, String> newCommands) {
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         newCommands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withWebhookUrl(@Nullable String url) {
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, url, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withReplySent(long whenMs) {
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, whenMs, totalReplies + 1, token,
-        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withDisplayName(@Nullable String newDisplayName) {
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        newDisplayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        newDisplayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withAvatarPath(@Nullable String newAvatarPath) {
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, newAvatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+        displayName, newAvatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
   }
 
   public EmailBotConfig withDeveloperEmail(@Nullable String newDeveloperEmail) {
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, newDeveloperEmail, subscribedUsers, botContactId, botChatId);
+        displayName, avatarPath, newDeveloperEmail, subscribedUsers, botContactId, botChatId,
+        attachedChatIds);
+  }
+
+  public EmailBotConfig withAttachedChat(int chatId) {
+    if (chatId <= 0 || attachedChatIds.contains(chatId)) return this;
+    LinkedHashSet<Integer> next = new LinkedHashSet<>(attachedChatIds);
+    next.add(chatId);
+    return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
+        commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId,
+        new ArrayList<>(next));
+  }
+
+  public EmailBotConfig withoutAttachedChat(int chatId) {
+    if (chatId <= 0 || !attachedChatIds.contains(chatId)) return this;
+    ArrayList<Integer> next = new ArrayList<>(attachedChatIds);
+    next.remove(Integer.valueOf(chatId));
+    return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
+        commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId, next);
   }
 
   public EmailBotConfig withSubscribed(@NonNull String email) {
@@ -328,7 +377,7 @@ public final class EmailBotConfig {
     next.add(e);
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, next, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, next, botContactId, botChatId, attachedChatIds);
   }
 
   public EmailBotConfig withoutSubscribed(@NonNull String email) {
@@ -338,7 +387,7 @@ public final class EmailBotConfig {
     next.remove(e);
     return new EmailBotConfig(id, name, description, ownerAccountId, enabled,
         commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
-        displayName, avatarPath, developerEmail, next, botContactId, botChatId);
+        displayName, avatarPath, developerEmail, next, botContactId, botChatId, attachedChatIds);
   }
 
   public boolean isSubscribed(@NonNull String email) {
@@ -415,6 +464,14 @@ public final class EmailBotConfig {
         if (s != null && !s.isEmpty()) subs.add(s);
       }
     }
+    ArrayList<Integer> attached = new ArrayList<>();
+    JSONArray attachArr = o.optJSONArray("attachedChatIds");
+    if (attachArr != null) {
+      for (int i = 0; i < attachArr.length(); i++) {
+        int cid = attachArr.optInt(i, 0);
+        if (cid > 0) attached.add(cid);
+      }
+    }
     return new EmailBotConfig(
         o.getString("id"),
         o.getString("name"),
@@ -432,7 +489,8 @@ public final class EmailBotConfig {
         o.optString("developerEmail", null),
         subs,
         o.optInt("botContactId", 0),
-        o.optInt("botChatId", 0));
+        o.optInt("botChatId", 0),
+        attached);
   }
 
   /**

@@ -120,10 +120,42 @@ public final class EmailBotStore {
   }
 
   @Nullable
-  public synchronized EmailBotConfig findByName(int accountId, @NonNull String name) {
-    String lower = name.toLowerCase();
+  public synchronized EmailBotConfig findByContactId(int accountId, int contactId) {
+    if (contactId <= 0) return null;
     for (EmailBotConfig b : getAll()) {
-      if (b.ownerAccountId == accountId && b.name.toLowerCase().equals(lower)) return b;
+      if (b.ownerAccountId == accountId && b.botContactId == contactId) return b;
+    }
+    try {
+      DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
+      if (ctx == null || !ctx.isOk()) return null;
+      com.b44t.messenger.DcContact c = ctx.getContact(contactId);
+      if (c == null) return null;
+      String slug = EmailBotContactHelper.nameFromBotEmail(c.getAddr());
+      if (slug.isEmpty()) return null;
+      return findByName(accountId, slug);
+    } catch (Throwable t) {
+      Log.w(TAG, "findByContactId failed", t);
+      return null;
+    }
+  }
+
+  @Nullable
+  public synchronized EmailBotConfig findByName(int accountId, @NonNull String name) {
+    String lower = name.toLowerCase(Locale.ROOT);
+    for (EmailBotConfig b : getAll()) {
+      if (b.ownerAccountId == accountId && b.name.toLowerCase(Locale.ROOT).equals(lower)) {
+        return b;
+      }
+    }
+    return null;
+  }
+
+  /** Finds an enabled bot by username across every profile on this device. */
+  @Nullable
+  public synchronized EmailBotConfig findByNameGlobal(@NonNull String name) {
+    String lower = name.toLowerCase(Locale.ROOT);
+    for (EmailBotConfig b : getAll()) {
+      if (b.enabled && b.name.toLowerCase(Locale.ROOT).equals(lower)) return b;
     }
     return null;
   }

@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.annotation.NonNull;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
+import org.thoughtcrime.securesms.emailbots.EmailBotContactHelper;
 import org.thoughtcrime.securesms.util.AsyncLoader;
 import org.thoughtcrime.securesms.util.Util;
 
@@ -42,6 +43,7 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
     }
 
     int[] contact_ids = dcContext.getContacts(listflags, query);
+    contact_ids = mergeEmailBotContacts(dcContext.getAccountId(), contact_ids, query);
     int[] additional_items = new int[0];
     if (query == null && addScanQRLink) {
       additional_items = Util.appendInt(additional_items, DcContact.DC_CONTACT_ID_QR_INVITE);
@@ -65,6 +67,40 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
     System.arraycopy(additional_items, 0, all_ids, 0, additional_items.length);
     System.arraycopy(contact_ids, 0, all_ids, additional_items.length, contact_ids.length);
     return new Ret(all_ids);
+  }
+
+  /** Ensures email-bot pseudo-contacts appear in pickers (all local profiles). */
+  private int[] mergeEmailBotContacts(int accountId, int[] contactIds, String filter) {
+    try {
+      com.b44t.messenger.DcContext dc = DcHelper.getContext(getContext());
+      java.util.LinkedHashSet<Integer> botIds = new java.util.LinkedHashSet<>();
+      if (filter != null && !filter.isEmpty()) {
+        for (int cid : org.thoughtcrime.securesms.emailbots.EmailBotSearchHelper
+            .matchContactIds(getContext(), accountId, filter)) {
+          if (cid > 0) botIds.add(cid);
+        }
+      } else {
+        org.thoughtcrime.securesms.emailbots.EmailBotStore store =
+            new org.thoughtcrime.securesms.emailbots.EmailBotStore(getContext());
+        for (org.thoughtcrime.securesms.emailbots.EmailBotConfig b : store.getAll()) {
+          if (!b.enabled) continue;
+          int cid = b.botContactId;
+          if (cid <= 0) {
+            cid = EmailBotContactHelper.ensureSearchableContact(dc, b);
+          }
+          if (cid > 0) botIds.add(cid);
+        }
+      }
+      if (botIds.isEmpty()) return contactIds;
+      java.util.LinkedHashSet<Integer> merged = new java.util.LinkedHashSet<>(botIds);
+      for (int id : contactIds) merged.add(id);
+      int[] out = new int[merged.size()];
+      int i = 0;
+      for (Integer id : merged) out[i++] = id;
+      return out;
+    } catch (Throwable ignored) {
+      return contactIds;
+    }
   }
 
   public static class Ret {

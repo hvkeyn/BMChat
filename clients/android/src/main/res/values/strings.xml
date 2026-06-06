@@ -1499,6 +1499,10 @@
     <!-- BMChat e-mail bots -->
     <string name="bmchat_bot_profile_username">Bot · @%1$s</string>
     <string name="bmchat_channel_profile_username">Channel · @%1$s</string>
+    <plurals name="bmchat_email_bot_attached_to_channel">
+        <item quantity="one">Bot attached to this channel.</item>
+        <item quantity="other">%1$d bots attached to this channel.</item>
+    </plurals>
     <string name="devicemsg_cant_decrypt_outgoing">⚠️ It seems you are using BMChat on multiple devices that cannot decrypt each other\'s outgoing messages. To fix this, on the older device open Settings → Add Second Device and follow the instructions.</string>
     <string name="bmchat_email_bots_title">Email-боты</string>
     <string name="bmchat_email_bots_summary">Создайте ботов в стиле Telegram BotFather, работающих по почте.</string>

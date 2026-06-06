@@ -154,6 +154,7 @@ public final class EmailBotDirectory {
       catalog.put("updatedAtMs", System.currentTimeMillis());
       dc.setConfig(UI_DIRECTORY_KEY,
           EmailBotCrypto.sealJson(appContext, accountId, catalog.toString()));
+      replicateCatalogToSiblingAccounts(accountId, catalog);
       publishToSelfChat(accountId);
 
       long last = 0L;
@@ -173,6 +174,20 @@ public final class EmailBotDirectory {
       }
     } catch (Throwable t) {
       Log.w(TAG, "publishIfNeeded failed", t);
+    }
+  }
+
+  /** Copies the publisher's public bot catalog into every other local profile. */
+  private void replicateCatalogToSiblingAccounts(int publisherAccountId,
+                                                 @NonNull JSONObject catalog) {
+    try {
+      String etag = catalog.optString("etag", "");
+      for (int accountId : DcHelper.getAccounts(appContext).getAll()) {
+        if (accountId == publisherAccountId) continue;
+        mergeCatalog(accountId, etag, catalog);
+      }
+    } catch (Throwable t) {
+      Log.w(TAG, "replicateCatalogToSiblingAccounts failed", t);
     }
   }
 
