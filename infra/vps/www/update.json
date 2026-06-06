@@ -1,15 +1,15 @@
 {
-  "versionCode": 857,
-  "versionName": "2.50.19",
+  "versionCode": 858,
+  "versionName": "2.50.20",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.19.apk",
-  "sha256": "18b73266342f5be3460f976fa010aa1c93318863b8feb3b39c23281c78ff7433",
-  "size": 77516298,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.20.apk",
+  "sha256": "c8dd0dd023a882dccc18d732133cfbe67ba62d8a4145f667ff8fa3931d0c3546",
+  "size": 77517325,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-06T22:00:00Z",
+  "publishedAt": "2026-06-06T23:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.19 — профиль «Бот» и синхронизация email-ботов.\n\nИСПРАВЛЕНО:\n• Профиль home-chat бота: «Бот» без QR/получателей (один бот = OutBroadcast).\n• Синхронизация desktop↔Android: pull из self-chat при старте и открытии «Email-боты».\n• Desktop/Android переотправляют конфиг в self-chat для подхвата на другом устройстве."
+  "notes": "BMChat 2.50.20 — исправление дубликатов каналов бота.\n\nИСПРАВЛЕНО:\n• Синхронизация больше не создаёт пустые каналы «Новостной Бот» / «Channel».\n• Сохраняется один home-chat на бота; лишние OutBroadcast удаляются.\n• Убрана переотправка sync при каждом старте (источник дубликатов)."
 }

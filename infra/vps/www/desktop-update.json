@@ -1,6 +1,6 @@
 {
-  "version": "2.50.19",
-  "publishedAt": "2026-06-06T22:00:00Z",
+  "version": "2.50.20",
+  "publishedAt": "2026-06-06T23:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.19-Portable.x64.exe",
-      "size": 124141228,
-      "sha256": "cc875db99b6a11cb680a2dfdd188acc09ab5d69c4cd866bf7d1511641a4e7809"
+      "versionedFile": "BMChat-2.50.20-Portable.x64.exe",
+      "size": 124135555,
+      "sha256": "dd2abfffdd94e152094154a0de78a6a1effd019867243c3d63e6c5880e4667d8"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.19-Setup.x64.exe",
-      "size": 124457636,
-      "sha256": "6312fbea4ac0ca015a36c81d4d3dbb842141abfc7a5eaf70270471e90d6b726a"
+      "versionedFile": "BMChat-2.50.20-Setup.x64.exe",
+      "size": 124451949,
+      "sha256": "e9c086eef871c2abb0062f30524198c90724d89f501d587c84367f0ecd618a06"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "1746b0726431831f6ef11fee29110f459ac998778598d2cd48a72fa02732db86"
     }
   },
-  "notes": "BMChat Desktop 2.50.19 — профиль «Бот» и синхронизация email-ботов.\n\nИСПРАВЛЕНО:\n• Профиль home-chat бота: «Бот» без QR и получателей.\n• Синхронизация с Android: pull/republish через self-chat."
+  "notes": "BMChat Desktop 2.50.20 — исправление дубликатов каналов бота.\n\nИСПРАВЛЕНО:\n• Один home-chat на email-бота; лишние пустые каналы удаляются при старте.\n• Sync сохраняет локальный chatId, не создаёт новые «Channel»."
 }

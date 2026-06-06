@@ -200,13 +200,7 @@ async function publishBotSync(
 async function syncAccountBots(accountId: number): Promise<void> {
   await pullBotSyncFromSelfChat(accountId)
   await migrateBotContacts()
-  const accountBots = botsForAccount(accountId)
-  if (accountBots.length === 0) return
-  const wrapper = {
-    bots: accountBots,
-    updatedAtMs: Date.now(),
-  }
-  await publishBotSyncNow(accountId, JSON.stringify(wrapper))
+  await pruneDuplicateHomeChats(accountId)
 }
 
 async function pullBotSyncFromSelfChat(accountId: number): Promise<void> {
@@ -216,14 +210,21 @@ async function pullBotSyncFromSelfChat(accountId: number): Promise<void> {
     if (!selfChat || selfChat <= 0) return
     const msgIds = await rpc.getMessageIds(accountId, selfChat, false, false)
     const tail = msgIds.slice(-200)
+    let emailSynced = false
+    let tgSynced = false
     for (let i = tail.length - 1; i >= 0; i--) {
       const msgId = tail[i]
       if (typeof msgId !== 'number' || msgId <= 0) continue
       const msg: any = await rpc.getMessage(accountId, msgId)
       const body: string = msg?.text || ''
       if (!body) continue
-      if (await tryIngestBotSync(accountId, body)) continue
-      await tryIngestTelegramBotSync(accountId, body)
+      if (!emailSynced && (await tryIngestBotSync(accountId, body))) {
+        emailSynced = true
+      }
+      if (!tgSynced && (await tryIngestTelegramBotSync(accountId, body))) {
+        tgSynced = true
+      }
+      if (emailSynced && tgSynced) break
     }
   } catch (e) {
     log.warn('pullBotSyncFromSelfChat failed account=%s', accountId, e)
@@ -246,24 +247,43 @@ async function tryIngestBotSync(
     const root = JSON.parse(json)
     const arr = root?.bots
     if (!Array.isArray(arr)) return true
+    const prevById = new Map<string, EmailBot>()
+    for (const b of bots) {
+      if (b.ownerAccountId === accountId) prevById.set(b.id, b)
+    }
     const merged = new Map<string, EmailBot>()
     for (const b of bots) {
       if (b.ownerAccountId === accountId) continue
       merged.set(b.id, b)
     }
     for (const raw of arr) {
-      const b = sanitizeBot(raw)
-      if (b) {
-        b.ownerAccountId = accountId
-        b.botContactId = 0
-        b.botChatId = 0
-        merged.set(b.id, b)
+      const incoming = sanitizeBot(raw)
+      if (!incoming) continue
+      incoming.ownerAccountId = accountId
+      const prev = prevById.get(incoming.id)
+      let contactId = prev?.botContactId ?? 0
+      let chatId = prev?.botChatId ?? 0
+      if (chatId > 0) {
+        try {
+          const chat: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
+            accountId,
+            chatId
+          )
+          if (chat?.chatType !== 'OutBroadcast') chatId = 0
+        } catch {
+          chatId = 0
+        }
       }
+      if (chatId <= 0) {
+        chatId = await findExistingHomeChatId(accountId, incoming)
+      }
+      incoming.botContactId = contactId > 0 ? contactId : 0
+      incoming.botChatId = chatId > 0 ? chatId : 0
+      merged.set(incoming.id, incoming)
     }
     bots = Array.from(merged.values())
     await saveStore({ publishSync: false })
     await persistUiConfigForAccount(accountId, false)
-    await migrateBotContacts()
     return true
   } catch (e) {
     log.warn('tryIngestBotSync failed', e)
@@ -485,6 +505,98 @@ function matchesBotLabel(bot: EmailBot, label: string): boolean {
   return false
 }
 
+function isOrphanDefaultChannel(bot: EmailBot, chatName: string): boolean {
+  const n = chatName.trim()
+  if (!n) return true
+  return n.toLowerCase() === 'channel'
+}
+
+async function listAccountChatIds(accountId: number): Promise<number[]> {
+  try {
+    const rpc = getDCJsonrpcRemote().rpc as {
+      getChatlistEntries?: (
+        accountId: number,
+        flag: number,
+        query: string,
+        queryId: number
+      ) => Promise<number[]>
+    }
+    if (!rpc.getChatlistEntries) return []
+    const ids = await rpc.getChatlistEntries(accountId, 0, '', 0)
+    return (ids || []).filter(id => typeof id === 'number' && id > 0)
+  } catch {
+    return []
+  }
+}
+
+async function findExistingHomeChatId(
+  accountId: number,
+  bot: EmailBot
+): Promise<number> {
+  if (bot.botChatId && bot.botChatId > 0) {
+    try {
+      const chat: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
+        accountId,
+        bot.botChatId
+      )
+      if (chat?.chatType === 'OutBroadcast') return bot.botChatId
+    } catch {
+      /* ignore */
+    }
+  }
+  let best = 0
+  const rpc = getDCJsonrpcRemote().rpc
+  for (const cid of await listAccountChatIds(accountId)) {
+    try {
+      const chat: any = await rpc.getBasicChatInfo(accountId, cid)
+      if (chat?.chatType !== 'OutBroadcast') continue
+      const chatName = (chat?.name || '').trim()
+      if (
+        !matchesBotLabel(bot, chatName) &&
+        !isOrphanDefaultChannel(bot, chatName)
+      ) {
+        continue
+      }
+      if (best === 0 || cid < best) best = cid
+    } catch {
+      /* ignore */
+    }
+  }
+  return best
+}
+
+async function pruneDuplicateHomeChats(accountId: number): Promise<void> {
+  const rpc = getDCJsonrpcRemote().rpc
+  for (const bot of botsForAccount(accountId)) {
+    if (!bot.enabled) continue
+    let canonical = bot.botChatId ?? 0
+    if (canonical <= 0) {
+      canonical = await findExistingHomeChatId(accountId, bot)
+      if (canonical > 0) bot.botChatId = canonical
+    }
+    if (canonical <= 0) continue
+    for (const cid of await listAccountChatIds(accountId)) {
+      if (cid === canonical) continue
+      try {
+        const chat: any = await rpc.getBasicChatInfo(accountId, cid)
+        if (chat?.chatType !== 'OutBroadcast') continue
+        const chatName = (chat?.name || '').trim()
+        if (
+          !matchesBotLabel(bot, chatName) &&
+          !isOrphanDefaultChannel(bot, chatName)
+        ) {
+          continue
+        }
+        await rpc.deleteChat(accountId, cid)
+        log.info('pruned duplicate home chat %s for @%s', cid, bot.name)
+      } catch (e) {
+        log.warn('prune delete failed chat=%s', cid, e)
+      }
+    }
+  }
+  await saveStore()
+}
+
 async function findBotForHomeChat(
   accountId: number,
   chatId: number
@@ -597,6 +709,13 @@ async function ensureBotContact(bot: EmailBot): Promise<void> {
     }
   }
   if (!haveLocal) {
+    const existing = await findExistingHomeChatId(bot.ownerAccountId, bot)
+    if (existing > 0) {
+      bot.botChatId = existing
+      haveLocal = true
+    }
+  }
+  if (!haveLocal) {
     const created = await createLocalBotChat(bot, displayName)
     if (created > 0) {
       bot.botChatId = created
@@ -608,8 +727,10 @@ async function ensureBotContact(bot: EmailBot): Promise<void> {
 }
 
 async function migrateBotContacts(): Promise<void> {
+  const accounts = new Set<number>()
   for (const bot of bots) {
     if (!bot.enabled) continue
+    if (bot.ownerAccountId > 0) accounts.add(bot.ownerAccountId)
     try {
       await ensureBotContact(bot)
       log.info(
@@ -621,6 +742,9 @@ async function migrateBotContacts(): Promise<void> {
     } catch (e) {
       log.warn('ensureBotContact failed for %s', bot.name, e)
     }
+  }
+  for (const accountId of accounts) {
+    await pruneDuplicateHomeChats(accountId)
   }
 }
 

@@ -74,11 +74,23 @@ public final class EmailBotStore {
    * reload recursion baked into {@link #getAll()}.
    */
   public synchronized void ensureLocalBotChats() {
+    java.util.Set<Integer> accounts = new java.util.LinkedHashSet<>();
     for (EmailBotConfig b : readPrefs()) {
       try {
         EmailBotContactHelper.ensureBotContact(appContext, this, b);
+        if (b.ownerAccountId > 0) accounts.add(b.ownerAccountId);
       } catch (Throwable t) {
         Log.w(TAG, "ensureLocalBotChats failed for " + b.id, t);
+      }
+    }
+    for (int accountId : accounts) {
+      try {
+        DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
+        if (ctx != null && ctx.isOk()) {
+          EmailBotContactHelper.pruneDuplicateHomeChats(ctx, this, accountId);
+        }
+      } catch (Throwable t) {
+        Log.w(TAG, "pruneDuplicateHomeChats failed account=" + accountId, t);
       }
     }
   }
@@ -330,20 +342,55 @@ public final class EmailBotStore {
 
   /** Merges bots from an encrypted self-chat sync message. */
   synchronized void mergeFromSyncJson(int localAccountId, @NonNull JSONArray arr) {
-    List<EmailBotConfig> all = new ArrayList<>();
+    Map<String, EmailBotConfig> existingById = new LinkedHashMap<>();
+    List<EmailBotConfig> otherAccounts = new ArrayList<>();
     for (EmailBotConfig b : readPrefs()) {
-      if (b.ownerAccountId != localAccountId) all.add(b);
+      if (b.ownerAccountId == localAccountId) {
+        existingById.put(b.id, b);
+      } else {
+        otherAccounts.add(b);
+      }
     }
+    DcContext ctx = DcHelper.getAccounts(appContext).getAccount(localAccountId);
+
+    List<EmailBotConfig> merged = new ArrayList<>(otherAccounts);
     for (int i = 0; i < arr.length(); i++) {
       try {
-        EmailBotConfig b = EmailBotConfig.fromJson(arr.getJSONObject(i));
-        all.add(b.withOwnerAccountId(localAccountId).withClearedLocalIds());
+        EmailBotConfig incoming =
+            EmailBotConfig.fromJson(arr.getJSONObject(i)).withOwnerAccountId(localAccountId);
+        EmailBotConfig prev = existingById.get(incoming.id);
+        if (prev != null) {
+          int contactId = prev.botContactId;
+          int chatId = prev.botChatId;
+          if (ctx != null && ctx.isOk() && chatId > 0) {
+            try {
+              com.b44t.messenger.DcChat ch = ctx.getChat(chatId);
+              if (ch == null || !ch.isOutBroadcast()) chatId = 0;
+            } catch (Throwable ignored) {
+              chatId = 0;
+            }
+          }
+          if (chatId <= 0 && ctx != null && ctx.isOk()) {
+            chatId = EmailBotContactHelper.findExistingHomeChatId(ctx, incoming);
+          }
+          if (contactId > 0 || chatId > 0) {
+            incoming = incoming.withContactIds(contactId, chatId);
+          } else {
+            incoming = incoming.withClearedLocalIds();
+          }
+        } else if (ctx != null && ctx.isOk()) {
+          int chatId = EmailBotContactHelper.findExistingHomeChatId(ctx, incoming);
+          if (chatId > 0) incoming = incoming.withContactIds(0, chatId);
+          else incoming = incoming.withClearedLocalIds();
+        } else {
+          incoming = incoming.withClearedLocalIds();
+        }
+        merged.add(incoming);
       } catch (Throwable t) {
         Log.w(TAG, "skip sync bot at " + i, t);
       }
     }
-    writePrefs(all);
-    persistUiConfig(all, false);
-    ensureLocalBotChats();
+    writePrefs(merged);
+    persistUiConfig(merged, false);
   }
 }

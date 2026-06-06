@@ -195,6 +195,13 @@ public final class EmailBotContactHelper {
       }
     }
     if (!haveLocal) {
+      int existing = findExistingHomeChatId(dc, bot);
+      if (existing > 0) {
+        chatId = existing;
+        haveLocal = true;
+      }
+    }
+    if (!haveLocal) {
       int created = createLocalBotChat(dc, displayName, bot.avatarPath);
       if (created > 0) {
         chatId = created;
@@ -210,6 +217,87 @@ public final class EmailBotContactHelper {
       store.patchContactIds(bot.id, contactId, chatId);
     }
     ensureSearchableContact(dc, bot);
+  }
+
+  /**
+   * Reuses an existing OutBroadcast home chat instead of creating another
+   * empty "Channel" on every sync pull.
+   */
+  public static int findExistingHomeChatId(@NonNull DcContext dc,
+                                           @NonNull EmailBotConfig bot) {
+    if (bot.botChatId > 0) {
+      try {
+        DcChat chat = dc.getChat(bot.botChatId);
+        if (chat != null && chat.isOutBroadcast()) return bot.botChatId;
+      } catch (Throwable ignored) {}
+    }
+    int best = 0;
+    try {
+      com.b44t.messenger.DcChatlist list = dc.getChatlist(0, null, 0);
+      for (int i = 0; i < list.getCnt(); i++) {
+        int cid = list.getChatId(i);
+        DcChat chat = dc.getChat(cid);
+        if (chat == null || !chat.isOutBroadcast()) continue;
+        String chatName = chat.getName();
+        if (chatName == null) chatName = "";
+        if (!matchesBotLabel(bot, chatName) && !isOrphanDefaultChannel(bot, chatName)) {
+          continue;
+        }
+        if (best == 0 || cid < best) best = cid;
+      }
+    } catch (Throwable t) {
+      Log.w(TAG, "findExistingHomeChatId scan failed for " + bot.name, t);
+    }
+    return best;
+  }
+
+  /** Desktop/Android default broadcast title before rename. */
+  private static boolean isOrphanDefaultChannel(@NonNull EmailBotConfig bot,
+                                                @NonNull String chatName) {
+    String n = chatName.trim();
+    if (n.isEmpty()) return true;
+    if ("channel".equalsIgnoreCase(n)) return true;
+    return false;
+  }
+
+  /** Deletes duplicate empty bot home broadcasts, keeps one per bot. */
+  @WorkerThread
+  public static void pruneDuplicateHomeChats(@NonNull DcContext dc,
+                                             @NonNull EmailBotStore store,
+                                             int accountId) {
+    for (EmailBotConfig bot : store.getForAccount(accountId)) {
+      if (!bot.enabled) continue;
+      int canonical = bot.botChatId;
+      if (canonical <= 0) {
+        canonical = findExistingHomeChatId(dc, bot);
+        if (canonical > 0) {
+          store.patchContactIds(bot.id, bot.botContactId, canonical);
+        }
+      }
+      if (canonical <= 0) continue;
+      try {
+        com.b44t.messenger.DcChatlist list = dc.getChatlist(0, null, 0);
+        for (int i = 0; i < list.getCnt(); i++) {
+          int cid = list.getChatId(i);
+          if (cid == canonical) continue;
+          DcChat chat = dc.getChat(cid);
+          if (chat == null || !chat.isOutBroadcast()) continue;
+          String chatName = chat.getName();
+          if (chatName == null) chatName = "";
+          if (!matchesBotLabel(bot, chatName) && !isOrphanDefaultChannel(bot, chatName)) {
+            continue;
+          }
+          try {
+            dc.deleteChat(cid);
+            Log.i(TAG, "pruned duplicate home chat " + cid + " for @" + bot.name);
+          } catch (Throwable t) {
+            Log.w(TAG, "prune delete failed chat=" + cid, t);
+          }
+        }
+      } catch (Throwable t) {
+        Log.w(TAG, "prune scan failed for @" + bot.name, t);
+      }
+    }
   }
 
   /**
