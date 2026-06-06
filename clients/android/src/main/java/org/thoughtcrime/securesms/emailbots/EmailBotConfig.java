@@ -244,6 +244,13 @@ public final class EmailBotConfig {
   // Immutable updates
   // ---------------------------------------------------------------------
 
+  public EmailBotConfig withOwnerAccountId(int newOwnerAccountId) {
+    if (newOwnerAccountId == ownerAccountId) return this;
+    return new EmailBotConfig(id, name, description, newOwnerAccountId, enabled,
+        commands, webhookUrl, createdAtMs, lastReplyAtMs, totalReplies, token,
+        displayName, avatarPath, developerEmail, subscribedUsers, botContactId, botChatId);
+  }
+
   public EmailBotConfig withEnabled(boolean newEnabled) {
     if (newEnabled == enabled) return this;
     return new EmailBotConfig(id, name, description, ownerAccountId, newEnabled,

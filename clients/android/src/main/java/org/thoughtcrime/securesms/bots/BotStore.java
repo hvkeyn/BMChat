@@ -153,7 +153,7 @@ public final class BotStore {
         String sealed = EmailBotCrypto.sealJson(appContext, accountId, wrapper.toString());
         ctx.setConfig(UI_CONFIG_KEY, sealed);
         if (publishSync) {
-          TelegramBotSync.publishIfNeeded(appContext, accountId, wrapper.toString());
+          TelegramBotSync.publishNow(appContext, accountId, wrapper.toString());
         }
       }
     } catch (Throwable t) {
@@ -162,24 +162,19 @@ public final class BotStore {
   }
 
   /** Merges bots from an encrypted self-chat sync message. */
-  synchronized void mergeFromSyncJson(int accountId, @NonNull JSONArray arr) {
-    java.util.Map<String, BotConfig> merged = new java.util.LinkedHashMap<>();
-    for (BotConfig b : getAll()) {
-      if (b.dcAccountId == accountId) merged.put(b.id, b);
+  synchronized void mergeFromSyncJson(int localAccountId, @NonNull JSONArray arr) {
+    List<BotConfig> all = new ArrayList<>();
+    for (BotConfig b : readPrefs()) {
+      if (b.dcAccountId != localAccountId) all.add(b);
     }
     for (int i = 0; i < arr.length(); i++) {
       try {
         BotConfig b = BotConfig.fromJson(arr.getJSONObject(i));
-        if (b.dcAccountId == accountId) merged.put(b.id, b);
+        all.add(b.withTarget(localAccountId, b.targetDcChatId));
       } catch (Throwable t) {
         Log.w(TAG, "skip sync bot at " + i, t);
       }
     }
-    List<BotConfig> all = new ArrayList<>(getAll());
-    for (int i = all.size() - 1; i >= 0; i--) {
-      if (all.get(i).dcAccountId == accountId) all.remove(i);
-    }
-    all.addAll(merged.values());
     writePrefs(all, false);
     persistUiConfig(all, false);
   }

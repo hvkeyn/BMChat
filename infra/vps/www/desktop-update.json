@@ -1,6 +1,6 @@
 {
-  "version": "2.50.16",
-  "publishedAt": "2026-06-06T12:00:00Z",
+  "version": "2.50.17",
+  "publishedAt": "2026-06-06T18:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.16-Portable.x64.exe",
-      "size": 125975776,
-      "sha256": "0e748ccdbacf49200e561d08ebba2836ef607c0402c9a3db6c3c0c8ea41c3026"
+      "versionedFile": "BMChat-2.50.17-Portable.x64.exe",
+      "size": 125972090,
+      "sha256": "4742208dc6c5cc5564227d188bc5dfcabdd12e06a5d3c0dca31e5cd8a9a57ef4"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.16-Setup.x64.exe",
-      "size": 126292167,
-      "sha256": "21caf4f187aa49f7287b62a613728bd5241c66a20572b524b85c72352d5cf3e6"
+      "versionedFile": "BMChat-2.50.17-Setup.x64.exe",
+      "size": 126288501,
+      "sha256": "37b2c52d020b42528a55b02a59b0ee04b12ecd0212aab025d8fd7032a0ff51ea"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "1746b0726431831f6ef11fee29110f459ac998778598d2cd48a72fa02732db86"
     }
   },
-  "notes": "BMChat Desktop 2.50.16 — боты, markdown и синхронизация.\n\nИСПРАВЛЕНО:\n• «0 получателей» у локального канала бота.\n• Markdown в ответах бота (*жирный*, кнопки) — как в Telegram.\n• Синхронизация email- и Telegram-ботов между устройствами.\n• «Соединение»: invalid type null/u32 в статистике.\n• После sync автоматически создаётся локальный чат бота на всех платформах."
+  "notes": "BMChat Desktop 2.50.17 — синхронизация ботов и «Соединение».\n\nИСПРАВЛЕНО:\n• Синхронизация email- и Telegram-ботов между устройствами (ключ по email, pull из self-chat).\n• «Соединение»: кнопка проверки почты сверху, результат сохраняется; корректный TLS/SNI для IMAP.\n• Профиль email-бота: заголовок «Бот», а не «Канал»."
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { debounceWithInit } from '../chat/ChatListHelpers'
 import { onDCEvent } from '../../backend-com'
@@ -38,6 +38,7 @@ function ConnectivityDialogInner() {
   const accountId = selectedAccountId()
   const [connectivityHTML, setConnectivityHTML] = useState('')
   const [mailProbeBusy, setMailProbeBusy] = useState(false)
+  const mailProbeCacheRef = useRef<MailProbeResult | null>(null)
   const [loading, setLoading] = useState(true)
   const [statsLoading, setStatsLoading] = useState(false)
   const [coreError, setCoreError] = useState<string | null>(null)
@@ -84,12 +85,17 @@ function ConnectivityDialogInner() {
 
         setStatsLoading(true)
         try {
-          const { html: withExtras, statsError } = await appendConnectivityExtras(
-            accountId,
-            cHTML,
-            isElectron,
-            forceMailProbe
-          )
+          const { html: withExtras, statsError, probe } =
+            await appendConnectivityExtras(
+              accountId,
+              cHTML,
+              isElectron,
+              forceMailProbe,
+              mailProbeCacheRef.current
+            )
+          if (probe) {
+            mailProbeCacheRef.current = probe
+          }
           let body = withExtras
           if (statsError) {
             body += `<p><b>${tx('error')}</b></p><p>${statsError}</p>`
@@ -146,6 +152,20 @@ function ConnectivityDialogInner() {
   return (
     <DialogBody>
       <DialogContent>
+        {isElectron && (
+          <div style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
+            <button
+              type='button'
+              className='delta-button-round'
+              disabled={mailProbeBusy || loading}
+              onClick={runMailProbe}
+            >
+              {mailProbeBusy
+                ? tx('bmchat_connectivity_mail_probe_running')
+                : tx('bmchat_connectivity_mail_probe')}
+            </button>
+          </div>
+        )}
         <iframe
           style={{
             border: 0,
@@ -164,20 +184,6 @@ function ConnectivityDialogInner() {
             {tx('bmchat_connectivity_stats_loading')}
           </p>
         )}
-        {isElectron && (
-          <div style={{ marginTop: 12, display: 'flex', gap: 8 }}>
-            <button
-              type='button'
-              className='delta-button-round'
-              disabled={mailProbeBusy || loading}
-              onClick={runMailProbe}
-            >
-              {mailProbeBusy
-                ? tx('bmchat_connectivity_mail_probe_running')
-                : tx('bmchat_connectivity_mail_probe')}
-            </button>
-          </div>
-        )}
       </DialogContent>
     </DialogBody>
   )
@@ -187,8 +193,13 @@ async function appendConnectivityExtras(
   accountId: number,
   cHTML: string,
   isElectron: boolean,
-  forceMailProbe: boolean
-): Promise<{ html: string; statsError: string | null }> {
+  forceMailProbe: boolean,
+  cachedProbe: MailProbeResult | null
+): Promise<{
+  html: string
+  statsError: string | null
+  probe: MailProbeResult | null
+}> {
   const tx = window.static_translate
 
   let statsHtml = ''
@@ -246,38 +257,48 @@ async function appendConnectivityExtras(
   }
 
   let mailProbeHtml = ''
+  let probe: MailProbeResult | null = cachedProbe
   if (isElectron) {
-    const shouldProbe = forceMailProbe || connectivityLooksDegraded(cHTML)
+    const shouldProbe =
+      forceMailProbe || cachedProbe != null || connectivityLooksDegraded(cHTML)
     if (shouldProbe) {
       try {
-        const probe = (await runtime.bmchatBotsInvoke(
-          'bmchat:mail-probe',
-          accountId
-        )) as MailProbeResult
-        mailProbeHtml = buildMailProbeHtml(probe, {
-          title: tx('bmchat_connectivity_mail_probe_title'),
-          hint: tx('bmchat_connectivity_mail_probe_hint'),
-          imapOk: (host, port) =>
-            tx('bmchat_connectivity_mail_imap_ok', [host, String(port)]),
-          imapFail: (host, port) =>
-            tx('bmchat_connectivity_mail_imap_fail', [host, String(port)]),
-          smtpOk: (host, port) =>
-            tx('bmchat_connectivity_mail_smtp_ok', [host, String(port)]),
-          smtpFail: (host, port) =>
-            tx('bmchat_connectivity_mail_smtp_fail', [host, String(port)]),
-          unavailable: tx('bmchat_connectivity_mail_probe_unavailable'),
-        })
+        if (forceMailProbe || cachedProbe == null) {
+          probe = (await runtime.bmchatBotsInvoke(
+            'bmchat:mail-probe',
+            accountId
+          )) as MailProbeResult
+        }
+        if (probe) {
+          mailProbeHtml = buildMailProbeHtml(probe, {
+            title: tx('bmchat_connectivity_mail_probe_title'),
+            hint: tx('bmchat_connectivity_mail_probe_hint'),
+            imapOk: (host, port) =>
+              tx('bmchat_connectivity_mail_imap_ok', [host, String(port)]),
+            imapFail: (host, port) =>
+              tx('bmchat_connectivity_mail_imap_fail', [host, String(port)]),
+            smtpOk: (host, port) =>
+              tx('bmchat_connectivity_mail_smtp_ok', [host, String(port)]),
+            smtpFail: (host, port) =>
+              tx('bmchat_connectivity_mail_smtp_fail', [host, String(port)]),
+            unavailable: tx('bmchat_connectivity_mail_probe_unavailable'),
+          })
+        }
       } catch {
         /* ignore */
       }
     }
   }
 
-  const tail = statsHtml + mailProbeHtml
+  const head = mailProbeHtml + statsHtml
   if (cHTML.includes('</body>')) {
-    return { html: cHTML.replace('</body>', tail + '</body>'), statsError }
+    return {
+      html: cHTML.replace('</body>', head + '</body>'),
+      statsError,
+      probe,
+    }
   }
-  return { html: cHTML + tail, statsError }
+  return { html: head + cHTML, statsError, probe }
 }
 
 /** When BM servers look down, also probe IMAP/SMTP (email transport). */

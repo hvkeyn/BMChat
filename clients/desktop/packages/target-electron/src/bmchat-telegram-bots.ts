@@ -203,7 +203,7 @@ async function persistUiConfigForAccount(
   const sealed = await sealJson(accountId, JSON.stringify(wrapper))
   await getDCJsonrpcRemote().rpc.setConfig(accountId, UI_CONFIG_KEY, sealed)
   if (publishSync) {
-    await publishBotSync(accountId, JSON.stringify(wrapper))
+    await publishBotSyncNow(accountId, JSON.stringify(wrapper))
   }
 }
 
@@ -222,13 +222,10 @@ async function persistAllUiConfig(publishSync: boolean): Promise<void> {
   }
 }
 
-async function publishBotSync(
+async function publishBotSyncNow(
   accountId: number,
   plainJson: string
 ): Promise<void> {
-  const now = Date.now()
-  if (now - lastSyncPublishMs < MIN_SYNC_PUBLISH_MS) return
-  lastSyncPublishMs = now
   try {
     const rpc = getDCJsonrpcRemote().rpc
     let selfChat = await rpc.getChatIdByContactId(accountId, DC_CONTACT_ID_SELF)
@@ -239,9 +236,19 @@ async function publishBotSync(
     const sealed = await sealJson(accountId, plainJson)
     const body = `${SYNC_MARKER} account=${accountId}\n${sealed}`
     await rpc.miscSendTextMessage(accountId, selfChat, body)
+    lastSyncPublishMs = Date.now()
   } catch (e) {
-    log.warn('publishBotSync failed', e)
+    log.warn('publishBotSyncNow failed', e)
   }
+}
+
+async function publishBotSync(
+  accountId: number,
+  plainJson: string
+): Promise<void> {
+  const now = Date.now()
+  if (now - lastSyncPublishMs < MIN_SYNC_PUBLISH_MS) return
+  await publishBotSyncNow(accountId, plainJson)
 }
 
 export async function tryIngestTelegramBotSync(
@@ -250,35 +257,31 @@ export async function tryIngestTelegramBotSync(
 ): Promise<boolean> {
   const first = body.split(/\r?\n/, 1)[0]?.trim() || ''
   if (!first.startsWith(SYNC_MARKER)) return false
-  let srcAccount = accountId
-  const accIdx = first.indexOf('account=')
-  if (accIdx >= 0) {
-    const tail = first.slice(accIdx + 8).trim().split(/\s+/)[0]
-    const n = parseInt(tail, 10)
-    if (Number.isFinite(n) && n > 0) srcAccount = n
-  }
   const payload = body.includes('\n')
     ? body.slice(body.indexOf('\n') + 1).trim()
     : ''
   if (!payload) return true
   try {
-    const json = await openJson(srcAccount, payload)
+    const json = await openJson(accountId, payload)
     if (!json) return true
     const root = JSON.parse(json)
     const arr = root?.bots
     if (!Array.isArray(arr)) return true
     const merged = new Map<string, Bot>()
     for (const b of bots) {
-      if (b.accountId === srcAccount) continue
+      if (b.accountId === accountId) continue
       merged.set(b.id, b)
     }
     for (const raw of arr) {
       const b = raw as Bot
-      if (b?.id && b.accountId === srcAccount) merged.set(b.id, b)
+      if (b?.id) {
+        b.accountId = accountId
+        merged.set(b.id, b)
+      }
     }
     bots = Array.from(merged.values())
     await saveStore({ publishSync: false })
-    await persistUiConfigForAccount(srcAccount, false)
+    await persistUiConfigForAccount(accountId, false)
     return true
   } catch (e) {
     log.warn('tryIngestTelegramBotSync failed', e)

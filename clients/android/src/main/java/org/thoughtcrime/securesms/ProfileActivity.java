@@ -50,6 +50,7 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
   private boolean chatIsMailingList;
   private boolean chatIsOutBroadcast;
   private boolean chatIsInBroadcast;
+  private boolean chatIsEmailBotHome;
   private int contactId;
   private boolean contactIsBot;
   private Toolbar toolbar;
@@ -75,7 +76,7 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
       if (chatIsMailingList) {
         title = getString(R.string.mailing_list);
       } else if (chatIsOutBroadcast || chatIsInBroadcast) {
-        title = getString(R.string.channel);
+        title = chatIsEmailBotHome ? getString(R.string.bot) : getString(R.string.channel);
       } else if (chatIsMultiUser) {
         title = getString(R.string.tab_group);
       } else if (contactIsBot) {
@@ -197,6 +198,7 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
     chatIsMailingList = false;
     chatIsInBroadcast = false;
     chatIsOutBroadcast = false;
+    chatIsEmailBotHome = false;
 
     if (contactId != 0) {
       DcContact dcContact = dcContext.getContact(contactId);
@@ -211,6 +213,12 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
       chatIsMailingList = dcChat.isMailingList();
       chatIsInBroadcast = dcChat.isInBroadcast();
       chatIsOutBroadcast = dcChat.isOutBroadcast();
+      if (chatIsOutBroadcast) {
+        org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
+            new org.thoughtcrime.securesms.emailbots.EmailBotStore(this)
+                .findByChatId(dcContext.getAccountId(), chatId);
+        chatIsEmailBotHome = emailBot != null;
+      }
       if (!chatIsMultiUser) {
         final int[] members = dcContext.getChatContacts(chatId);
         contactId = members.length >= 1 ? members[0] : 0;

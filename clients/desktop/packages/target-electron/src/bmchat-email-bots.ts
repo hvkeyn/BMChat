@@ -143,7 +143,7 @@ async function persistUiConfigForAccount(
   const sealed = await sealJson(accountId, JSON.stringify(wrapper))
   await getDCJsonrpcRemote().rpc.setConfig(accountId, UI_CONFIG_KEY, sealed)
   if (publishSync) {
-    await publishBotSync(accountId, JSON.stringify(wrapper))
+    await publishBotSyncNow(accountId, JSON.stringify(wrapper))
   }
 }
 
@@ -162,13 +162,10 @@ async function persistAllUiConfig(publishSync: boolean): Promise<void> {
   }
 }
 
-async function publishBotSync(
+async function publishBotSyncNow(
   accountId: number,
   plainJson: string
 ): Promise<void> {
-  const now = Date.now()
-  if (now - lastSyncPublishMs < MIN_SYNC_PUBLISH_MS) return
-  lastSyncPublishMs = now
   try {
     const rpc = getDCJsonrpcRemote().rpc
     let selfChat = await rpc.getChatIdByContactId(
@@ -185,8 +182,39 @@ async function publishBotSync(
     const sealed = await sealJson(accountId, plainJson)
     const body = `${SYNC_MARKER} account=${accountId}\n${sealed}`
     await rpc.miscSendTextMessage(accountId, selfChat, body)
+    lastSyncPublishMs = Date.now()
   } catch (e) {
-    log.warn('publishBotSync failed', e)
+    log.warn('publishBotSyncNow failed', e)
+  }
+}
+
+async function publishBotSync(
+  accountId: number,
+  plainJson: string
+): Promise<void> {
+  const now = Date.now()
+  if (now - lastSyncPublishMs < MIN_SYNC_PUBLISH_MS) return
+  await publishBotSyncNow(accountId, plainJson)
+}
+
+async function pullBotSyncFromSelfChat(accountId: number): Promise<void> {
+  try {
+    const rpc = getDCJsonrpcRemote().rpc
+    let selfChat = await rpc.getChatIdByContactId(accountId, DC_CONTACT_ID_SELF)
+    if (!selfChat || selfChat <= 0) return
+    const msgIds = await rpc.getMessageIds(accountId, selfChat, false, false)
+    const tail = msgIds.slice(-80)
+    for (let i = tail.length - 1; i >= 0; i--) {
+      const msgId = tail[i]
+      if (typeof msgId !== 'number' || msgId <= 0) continue
+      const msg: any = await rpc.getMessage(accountId, msgId)
+      const body: string = msg?.text || ''
+      if (!body) continue
+      if (await tryIngestBotSync(accountId, body)) continue
+      await tryIngestTelegramBotSync(accountId, body)
+    }
+  } catch (e) {
+    log.warn('pullBotSyncFromSelfChat failed account=%s', accountId, e)
   }
 }
 
@@ -196,35 +224,31 @@ async function tryIngestBotSync(
 ): Promise<boolean> {
   const first = body.split(/\r?\n/, 1)[0]?.trim() || ''
   if (!first.startsWith(SYNC_MARKER)) return false
-  let srcAccount = accountId
-  const accIdx = first.indexOf('account=')
-  if (accIdx >= 0) {
-    const tail = first.slice(accIdx + 8).trim().split(/\s+/)[0]
-    const n = parseInt(tail, 10)
-    if (Number.isFinite(n) && n > 0) srcAccount = n
-  }
   const payload = body.includes('\n')
     ? body.slice(body.indexOf('\n') + 1).trim()
     : ''
   if (!payload) return true
   try {
-    const json = await openJson(srcAccount, payload)
+    const json = await openJson(accountId, payload)
     if (!json) return true
     const root = JSON.parse(json)
     const arr = root?.bots
     if (!Array.isArray(arr)) return true
     const merged = new Map<string, EmailBot>()
     for (const b of bots) {
-      if (b.ownerAccountId === srcAccount) continue
+      if (b.ownerAccountId === accountId) continue
       merged.set(b.id, b)
     }
     for (const raw of arr) {
       const b = sanitizeBot(raw)
-      if (b && b.ownerAccountId === srcAccount) merged.set(b.id, b)
+      if (b) {
+        b.ownerAccountId = accountId
+        merged.set(b.id, b)
+      }
     }
     bots = Array.from(merged.values())
     await saveStore({ publishSync: false })
-    await persistUiConfigForAccount(srcAccount, false)
+    await persistUiConfigForAccount(accountId, false)
     await migrateBotContacts()
     return true
   } catch (e) {
@@ -1312,6 +1336,16 @@ export async function initEmailBots(): Promise<void> {
       log.warn('failed to subscribe to email bot events', e)
     }
     void migrateBotContacts()
+    void (async () => {
+      try {
+        const accountIds = await getDCJsonrpcRemote().rpc.getAllAccountIds()
+        for (const accountId of accountIds) {
+          if (accountId > 0) await pullBotSyncFromSelfChat(accountId)
+        }
+      } catch (e) {
+        log.warn('startup bot sync pull failed', e)
+      }
+    })()
   }).catch(() => {})
 
   ipcMain.handle('bmchat:emailbots:list', async () => {

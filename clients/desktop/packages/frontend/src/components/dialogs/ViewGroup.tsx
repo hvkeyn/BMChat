@@ -37,6 +37,7 @@ import { copyToBlobDir } from '../../utils/copyToBlobDir'
 import AlertDialog from './AlertDialog'
 import { unknownErrorToString } from '@deltachat-desktop/shared/unknownErrorToString'
 import { getLogger } from '@deltachat-desktop/shared/logger'
+import { listEmailBots } from '../../bmchat/emailBots'
 const log = getLogger('ViewGroup')
 
 /**
@@ -362,6 +363,31 @@ function ViewGroupInner(
   }
 
   const [profileContact, setProfileContact] = useState<T.Contact | null>(null)
+  const [isEmailBotHome, setIsEmailBotHome] = useState(false)
+
+  useEffect(() => {
+    if (!isBroadcast) {
+      setIsEmailBotHome(false)
+      return
+    }
+    let cancelled = false
+    ;(async () => {
+      try {
+        const bots = await listEmailBots()
+        if (cancelled) return
+        setIsEmailBotHome(
+          bots.some(b => b.botChatId != null && b.botChatId > 0 && b.botChatId === chat.id)
+        )
+      } catch {
+        if (!cancelled) setIsEmailBotHome(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [isBroadcast, chat.id])
+
+  const broadcastTitle = isEmailBotHome ? tx('bot') : tx('channel')
 
   return (
     <>
@@ -369,7 +395,7 @@ function ViewGroupInner(
         <>
           {allowEdit && (
             <DialogHeader
-              title={!isBroadcast ? tx('tab_group') : tx('channel')}
+              title={!isBroadcast ? tx('tab_group') : broadcastTitle}
               onClickEdit={onClickEdit}
               onClose={onClose}
               dataTestid='view-group-dialog-header'

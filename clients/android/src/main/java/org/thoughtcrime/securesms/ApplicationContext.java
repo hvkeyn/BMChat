@@ -477,13 +477,15 @@ public class ApplicationContext extends MultiDexApplication {
         // Migrate legacy 1:1 @bots.bmchat.local home chats (which bounced over
         // SMTP as spam) to local self-only broadcast channels.
         botStore.ensureLocalBotChats();
+        org.thoughtcrime.securesms.bots.BotStore tgStore =
+            new org.thoughtcrime.securesms.bots.BotStore(this);
+        tgStore.reloadFromUiConfig();
+        for (int accountId : org.thoughtcrime.securesms.connect.DcHelper.getAccounts(this).getAll()) {
+          org.thoughtcrime.securesms.emailbots.EmailBotSync.pullFromSelfChat(
+              this, accountId, botStore, tgStore);
+        }
       } catch (Throwable t) {
-        Log.w("BMChat", "email bots ui-config preload failed", t);
-      }
-      try {
-        new org.thoughtcrime.securesms.bots.BotStore(this).reloadFromUiConfig();
-      } catch (Throwable t) {
-        Log.w("BMChat", "telegram bots ui-config preload failed", t);
+        Log.w("BMChat", "bots ui-config preload failed", t);
       }
     }, "emailbot-ui-preload").start();
 

@@ -4,18 +4,62 @@ import { getDCJsonrpcRemote } from './ipc.js'
 
 export const ENC_PREFIX = 'BMCHAT-ENC1:'
 
-async function deriveKey(accountId: number): Promise<Buffer> {
-  let addr = ''
+async function resolveAddr(accountId: number): Promise<string> {
   try {
-    addr =
+    return (
       (await getDCJsonrpcRemote().rpc.getConfig(accountId, 'configured_addr')) ||
       ''
+    )
+      .trim()
+      .toLowerCase()
+  } catch {
+    return ''
+  }
+}
+
+function deriveKeyV2(addr: string): Buffer {
+  return createHash('sha256')
+    .update(`bmchat-email-bot-v2|${addr}`)
+    .digest()
+}
+
+function deriveKeyV1(accountId: number, addr: string): Buffer {
+  return createHash('sha256')
+    .update(`bmchat-email-bot-v1|${accountId}|${addr}`)
+    .digest()
+}
+
+async function deriveKey(accountId: number): Promise<Buffer> {
+  const addr = await resolveAddr(accountId)
+  return deriveKeyV2(addr)
+}
+
+async function decryptWithKeys(
+  stored: string,
+  keys: Buffer[]
+): Promise<string | null> {
+  if (!stored.startsWith(ENC_PREFIX)) return stored
+  try {
+    const raw = Buffer.from(stored.slice(ENC_PREFIX.length), 'base64')
+    if (raw.length < 13) return null
+    const iv = raw.subarray(0, 12)
+    const tag = raw.subarray(raw.length - 16)
+    const ct = raw.subarray(12, raw.length - 16)
+    for (const key of keys) {
+      try {
+        const decipher = createDecipheriv('aes-256-gcm', key, iv)
+        decipher.setAuthTag(tag)
+        return Buffer.concat([decipher.update(ct), decipher.final()]).toString(
+          'utf8'
+        )
+      } catch {
+        /* try next key */
+      }
+    }
   } catch {
     /* ignore */
   }
-  return createHash('sha256')
-    .update(`bmchat-email-bot-v1|${accountId}|${addr.trim().toLowerCase()}`)
-    .digest()
+  return null
 }
 
 export async function encryptForAccount(
@@ -39,22 +83,12 @@ export async function decryptForAccount(
   accountId: number,
   stored: string
 ): Promise<string> {
-  if (!stored.startsWith(ENC_PREFIX)) return stored
-  try {
-    const raw = Buffer.from(stored.slice(ENC_PREFIX.length), 'base64')
-    if (raw.length < 13) return stored
-    const iv = raw.subarray(0, 12)
-    const tag = raw.subarray(raw.length - 16)
-    const ct = raw.subarray(12, raw.length - 16)
-    const key = await deriveKey(accountId)
-    const decipher = createDecipheriv('aes-256-gcm', key, iv)
-    decipher.setAuthTag(tag)
-    return Buffer.concat([decipher.update(ct), decipher.final()]).toString(
-      'utf8'
-    )
-  } catch {
-    return stored
-  }
+  const addr = await resolveAddr(accountId)
+  const plain = await decryptWithKeys(stored, [
+    deriveKeyV2(addr),
+    deriveKeyV1(accountId, addr),
+  ])
+  return plain ?? stored
 }
 
 export async function sealJson(

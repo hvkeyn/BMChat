@@ -14,6 +14,7 @@ import org.thoughtcrime.securesms.connect.DcHelper;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
+import java.util.Locale;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
@@ -70,14 +71,38 @@ public final class EmailBotCrypto {
       System.arraycopy(raw, 0, iv, 0, IV_LEN);
       byte[] ct = new byte[raw.length - IV_LEN];
       System.arraycopy(raw, IV_LEN, ct, 0, ct.length);
-      Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-      cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(deriveKey(context, accountId), "AES"),
-          new GCMParameterSpec(TAG_BITS, iv));
-      return new String(cipher.doFinal(ct), StandardCharsets.UTF_8);
+      byte[] plain = decryptBytes(context, accountId, iv, ct);
+      if (plain != null) {
+        return new String(plain, StandardCharsets.UTF_8);
+      }
     } catch (Throwable t) {
       Log.w(TAG, "decrypt failed", t);
-      return stored;
     }
+    return stored;
+  }
+
+  @Nullable
+  private static byte[] decryptBytes(@NonNull Context context, int accountId,
+                                     @NonNull byte[] iv, @NonNull byte[] ct) {
+    String addr = resolveAddr(context, accountId);
+    byte[][] keys;
+    try {
+      keys = new byte[][] {
+          deriveKeyV2(addr),
+          deriveKeyV1(context, accountId, addr)
+      };
+    } catch (Exception e) {
+      return null;
+    }
+    for (byte[] key : keys) {
+      try {
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
+        cipher.init(Cipher.DECRYPT_MODE, new SecretKeySpec(key, "AES"),
+            new GCMParameterSpec(TAG_BITS, iv));
+        return cipher.doFinal(ct);
+      } catch (Throwable ignored) {}
+    }
+    return null;
   }
 
   /** Wraps JSON for ui-config: {@code {"v":1,"enc":"BMCHAT-ENC1:…"}}. */
@@ -114,12 +139,32 @@ public final class EmailBotCrypto {
 
   @NonNull
   private static byte[] deriveKey(@NonNull Context context, int accountId) throws Exception {
+    return deriveKeyV2(resolveAddr(context, accountId));
+  }
+
+  @NonNull
+  private static String resolveAddr(@NonNull Context context, int accountId) {
     DcContext dc = DcHelper.getAccounts(context).getAccount(accountId);
-    String addr = "";
     if (dc != null && dc.isOk()) {
       String cfg = dc.getConfig("configured_addr");
-      if (cfg != null) addr = cfg.trim().toLowerCase();
+      if (cfg != null) return cfg.trim().toLowerCase(Locale.ROOT);
     }
+    return "";
+  }
+
+  /** Same mailbox on different devices shares one key (multidevice sync). */
+  @NonNull
+  private static byte[] deriveKeyV2(@NonNull String addr) throws Exception {
+    MessageDigest md = MessageDigest.getInstance("SHA-256");
+    md.update("bmchat-email-bot-v2|".getBytes(StandardCharsets.UTF_8));
+    md.update(addr.getBytes(StandardCharsets.UTF_8));
+    return md.digest();
+  }
+
+  /** Legacy per-device key — kept for decrypting old blobs only. */
+  @NonNull
+  private static byte[] deriveKeyV1(@NonNull Context context, int accountId,
+                                     @NonNull String addr) throws Exception {
     MessageDigest md = MessageDigest.getInstance("SHA-256");
     md.update("bmchat-email-bot-v1|".getBytes(StandardCharsets.UTF_8));
     md.update(Integer.toString(accountId).getBytes(StandardCharsets.UTF_8));

@@ -1,15 +1,15 @@
 {
-  "versionCode": 854,
-  "versionName": "2.50.16",
+  "versionCode": 855,
+  "versionName": "2.50.17",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.16.apk",
-  "sha256": "0b18ed760d9a74d9f51752fcb49eb378865861788b39588a2ca7d9bbabb60dbe",
-  "size": 77512701,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.17.apk",
+  "sha256": "e181474c1e1fc1997dc83be038c5b9061b745c49e44c6aa921107ecd98d29a53",
+  "size": 77512762,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-06T12:00:00Z",
+  "publishedAt": "2026-06-06T18:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.16 — боты, markdown и синхронизация.\n\nИСПРАВЛЕНО:\n• «0 получателей» у локального канала бота — теперь минимум 1 (вы сами).\n• Markdown в ответах бота: *жирный*, списки, кнопки — как в Telegram.\n• Синхронизация email- и Telegram-ботов между устройствами аккаунта (ui-config + self-chat sync).\n• «Соединение»: исправлена ошибка invalid type: null, expected u32 в статистике.\n• После sync на Android автоматически создаётся локальный чат бота."
+  "notes": "BMChat 2.50.17 — синхронизация ботов и «Соединение».\n\nИСПРАВЛЕНО:\n• Синхронизация email- и Telegram-ботов между устройствами: ключ шифрования по email, pull из self-chat при старте.\n• «Соединение»: кнопка проверки почты сверху, результат не пропадает; корректный TLS/SNI для IMAP.\n• Профиль email-бота: заголовок «Бот», а не «Канал»."
 }

@@ -300,7 +300,7 @@ public final class EmailBotStore {
             appContext, accountId, wrapper.toString());
         ctx.setConfig(UI_CONFIG_KEY, sealed);
         if (publishSync) {
-          EmailBotSync.publishIfNeeded(appContext, accountId, wrapper.toString());
+          EmailBotSync.publishNow(appContext, accountId, wrapper.toString());
         }
       }
     } catch (Throwable t) {
@@ -309,24 +309,19 @@ public final class EmailBotStore {
   }
 
   /** Merges bots from an encrypted self-chat sync message. */
-  synchronized void mergeFromSyncJson(int accountId, @NonNull JSONArray arr) {
-    Map<String, EmailBotConfig> merged = new LinkedHashMap<>();
-    for (EmailBotConfig b : getAll()) {
-      if (b.ownerAccountId == accountId) merged.put(b.id, b);
+  synchronized void mergeFromSyncJson(int localAccountId, @NonNull JSONArray arr) {
+    List<EmailBotConfig> all = new ArrayList<>();
+    for (EmailBotConfig b : readPrefs()) {
+      if (b.ownerAccountId != localAccountId) all.add(b);
     }
     for (int i = 0; i < arr.length(); i++) {
       try {
         EmailBotConfig b = EmailBotConfig.fromJson(arr.getJSONObject(i));
-        if (b.ownerAccountId == accountId) merged.put(b.id, b);
+        all.add(b.withOwnerAccountId(localAccountId));
       } catch (Throwable t) {
         Log.w(TAG, "skip sync bot at " + i, t);
       }
     }
-    List<EmailBotConfig> all = new ArrayList<>(getAll());
-    for (int i = all.size() - 1; i >= 0; i--) {
-      if (all.get(i).ownerAccountId == accountId) all.remove(i);
-    }
-    all.addAll(merged.values());
     writePrefs(all);
     persistUiConfig(all, false);
     ensureLocalBotChats();
