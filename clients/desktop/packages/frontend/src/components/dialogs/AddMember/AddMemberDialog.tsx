@@ -7,7 +7,12 @@ import { C, type T } from '@deltachat/jsonrpc-client'
 import type { DialogProps } from '../../../contexts/DialogContext'
 import { Avatar } from '../../Avatar'
 import useTranslationFunction from '../../../hooks/useTranslationFunction'
-import { listEmailBotContactIds } from '../../../bmchat/emailBots'
+import {
+  ensureEmailBotContact,
+  listEmailBotContactIds,
+  listEmailBots,
+} from '../../../bmchat/emailBots'
+import { runtime } from '@deltachat-desktop/runtime-interface'
 import { selectedAccountId } from '../../../ScreenController'
 import styles from './styles.module.scss'
 
@@ -27,9 +32,23 @@ export function AddMemberDialog({
 
   useEffect(() => {
     let cancelled = false
-    void listEmailBotContactIds(accountId, queryStr).then(ids => {
+    void (async () => {
+      let ids = await listEmailBotContactIds(accountId, queryStr)
+      if (
+        ids.length === 0 &&
+        runtime.getRuntimeInfo().target === 'electron'
+      ) {
+        const bots = await listEmailBots()
+        for (const bot of bots) {
+          const ensured = await ensureEmailBotContact(accountId, bot.id)
+          if (ensured?.contactId && ensured.contactId > 0) {
+            ids.push(ensured.contactId)
+          }
+        }
+        ids = await listEmailBotContactIds(accountId, queryStr)
+      }
       if (!cancelled) setBotContactIds(ids)
-    })
+    })()
     return () => {
       cancelled = true
     }

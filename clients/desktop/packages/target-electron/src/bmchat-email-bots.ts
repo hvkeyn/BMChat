@@ -834,15 +834,27 @@ function matchesBotContactQuery(
   const bare = trimmed.startsWith('@') ? trimmed.slice(1) : trimmed
   if (!bare) return true
   const name = bot.name.toLowerCase()
-  if (name === bare || name.startsWith(bare) || `@${name}` === trimmed) {
+  if (
+    name === bare ||
+    name.startsWith(bare) ||
+    bare.startsWith(name) ||
+    `@${name}` === trimmed
+  ) {
     return true
   }
   const displayName = (bot.displayName || '').trim().toLowerCase()
-  if (displayName && (displayName === bare || displayName.includes(bare))) {
+  if (
+    displayName &&
+    (displayName === bare ||
+      displayName.includes(bare) ||
+      bare.includes(displayName))
+  ) {
     return true
   }
   const description = (bot.description || '').trim().toLowerCase()
-  return !!description && description.includes(bare)
+  if (description && description.includes(bare)) return true
+  if (bare.includes('бот') || bare.includes('bot')) return true
+  return false
 }
 
 async function listBotContactIds(
@@ -864,23 +876,29 @@ async function listBotContactIds(
   return ids
 }
 
+function isGroupOrChannelChatType(chatType: string): boolean {
+  return (
+    chatType === 'Group' ||
+    chatType === 'Broadcast' ||
+    chatType === 'OutBroadcast' ||
+    chatType === 'InBroadcast'
+  )
+}
+
 async function isChatEligibleForBotAttach(
   accountId: number,
   chatId: number
 ): Promise<boolean> {
   if (accountId <= 0 || chatId <= 0) return false
   try {
-    const chat: any = await getDCJsonrpcRemote().rpc.getFullChatById(
-      accountId,
-      chatId
-    )
+    const rpc = getDCJsonrpcRemote().rpc
+    // Main process always has getBasicChatInfo; getFullChatById may be absent.
+    const chat: any = await rpc.getBasicChatInfo(accountId, chatId)
     const chatType = String(chat?.chatType || '')
     const groupLike =
-      chatType === 'Group' ||
-      chatType === 'OutBroadcast' ||
-      chatType === 'InBroadcast'
+      isGroupOrChannelChatType(chatType) || !!chat?.isMultiUser
     return (
-      !!chat?.canSend &&
+      chat?.canSend !== false &&
       groupLike &&
       !chat?.isContactRequest &&
       !chat?.isDeviceTalk &&
@@ -2000,6 +2018,11 @@ export async function initEmailBots(): Promise<void> {
         const rpc = getDCJsonrpcRemote().rpc
         await ensureBotContact(bot)
         if (!(await isChatEligibleForBotAttach(accountId, chatId))) {
+          log.warn(
+            'attach-chat: chat %s not eligible for bot %s',
+            chatId,
+            bot.name
+          )
           return { ok: false, error: 'cannot_send' }
         }
         if (bot.botChatId && bot.botChatId === chatId) {
