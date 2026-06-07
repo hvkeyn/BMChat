@@ -32,8 +32,8 @@ public final class EmailBotResolver {
     }
 
     if (chatIdHint > 0) {
-      EmailBotConfig byChat = store.findByChatId(accountId, chatIdHint);
-      if (byChat != null) return byChat;
+      EmailBotConfig byHome = store.resolveBotHomeChat(accountId, chatIdHint);
+      if (byHome != null) return byHome;
 
       String slug = EmailBotContactHelper.slugFromBotHomeChat(dc, chatIdHint);
       if (!slug.isEmpty()) {

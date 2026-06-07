@@ -320,7 +320,7 @@ public class ProfileAdapter extends RecyclerView.Adapter {
     if (isOutBroadcast && dcChat != null) {
       org.thoughtcrime.securesms.emailbots.EmailBotConfig bot =
           new org.thoughtcrime.securesms.emailbots.EmailBotStore(context)
-              .findByChatId(dcContext.getAccountId(), dcChat.getId());
+              .resolveBotHomeChat(dcContext.getAccountId(), dcChat.getId());
       if (bot != null) {
         isEmailBotHome = true;
         emailBotName = bot.name;

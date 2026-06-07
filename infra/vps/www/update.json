@@ -1,15 +1,15 @@
 {
-  "versionCode": 862,
-  "versionName": "2.50.24",
+  "versionCode": 863,
+  "versionName": "2.50.25",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.24.apk",
-  "sha256": "dd70f9c3d801d31c52a4c05ffc387cbe043ce59a7caa2f8ef8377d1b61965f7f",
-  "size": 77526331,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.25.apk",
+  "sha256": "b90403cb97384e564e916766e7ebc0f95884ca9ca610cbcf1d4814b284308a68",
+  "size": 77526593,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-07T03:55:00Z",
+  "publishedAt": "2026-06-07T12:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.24 — боты и каналы разделены.\n\nИСПРАВЛЕНО:\n• Канал больше не помечается как @newsbot (строгий botChatId).\n• Профиль бота: «Бот · @name», не «Канал».\n• Поиск открывает home-chat бота, не мёртвый 1:1 с @bots.bmchat.local.\n• Команды /start не срабатывают в пользовательских каналах."
+  "notes": "BMChat 2.50.25 — bot home relink и команды.\n\nИСПРАВЛЕНО:\n• Чат «Новостной Бот» снова определяется как bot home (по имени + self-only broadcast).\n• UI: «Бот · @name» вместо «Канал / 1 получатель».\n• /start и кнопки снова обрабатываются (relink botChatId, MsgsChanged fix)."
 }

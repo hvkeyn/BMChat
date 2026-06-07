@@ -1,6 +1,6 @@
 {
-  "version": "2.50.24",
-  "publishedAt": "2026-06-07T03:55:00Z",
+  "version": "2.50.25",
+  "publishedAt": "2026-06-07T12:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.24-Portable.x64.exe",
-      "size": 125980216,
-      "sha256": "8cb2ecc9bb3858e9e210727fc0623a8eef972e967771446f7f0fc2d90cae2653"
+      "versionedFile": "BMChat-2.50.25-Portable.x64.exe",
+      "size": 125980406,
+      "sha256": "dcdb1ec146bf37d3b3b95218720ce987978576dbbe597c0e510501a5be507552"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.24-Setup.x64.exe",
-      "size": 126296605,
-      "sha256": "49e2703a0640915ae459468080fd692f20a10400979c1a80659f51b15d20b7cc"
+      "versionedFile": "BMChat-2.50.25-Setup.x64.exe",
+      "size": 126296918,
+      "sha256": "a9e0903685b8e4a9ebf4cdaf1588afbdf686fb6de22bc7702f230cd1556fe911"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat Desktop 2.50.24 — боты отделены от каналов.\n\nИСПРАВЛЕНО:\n• Профиль bot home показывает «Бот · @name».\n• Пользовательские каналы не путаются с ботами.\n• Поиск и open-chat ведут в botChatId."
+  "notes": "BMChat Desktop 2.50.25 — bot home relink и команды (Windows).\n\nИСПРАВЛЕНО:\n• Чат с displayName «Новостной Бот» снова распознаётся как bot home.\n• Заголовок и профиль: «Бот · @name», без «Добавить участников».\n• /start и кнопки снова работают (resolveBotHomeChat + MsgsChanged)."
 }

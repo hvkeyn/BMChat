@@ -192,7 +192,7 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
       if (chatIsOutBroadcast) {
         org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
             new org.thoughtcrime.securesms.emailbots.EmailBotStore(this)
-                .findByChatId(dcContext.getAccountId(), chatId);
+                .resolveBotHomeChat(dcContext.getAccountId(), chatId);
         chatIsEmailBotHome = emailBot != null;
       }
     }
@@ -263,7 +263,7 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
       if (chatIsOutBroadcast) {
         org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
             new org.thoughtcrime.securesms.emailbots.EmailBotStore(this)
-                .findByChatId(dcContext.getAccountId(), chatId);
+                .resolveBotHomeChat(dcContext.getAccountId(), chatId);
         chatIsEmailBotHome = emailBot != null;
       }
       if (!chatIsMultiUser) {

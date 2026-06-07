@@ -69,7 +69,7 @@ public class ConversationTitleView extends RelativeLayout {
     } else if (dcChat.isOutBroadcast()) {
       org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
           new org.thoughtcrime.securesms.emailbots.EmailBotStore(context)
-              .findByChatIdStrict(dcContext.getAccountId(), chatId);
+              .resolveBotHomeChat(dcContext.getAccountId(), chatId);
       if (emailBot != null) {
         subtitleStr =
             context.getString(R.string.bmchat_bot_profile_username, emailBot.name);

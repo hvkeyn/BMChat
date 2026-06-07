@@ -531,7 +531,7 @@ function ViewGroupInner(
     }
   }, [isBroadcast, chat.id, groupName, accountId])
 
-  const broadcastTitle = tx('channel')
+  const broadcastTitle = isEmailBotHome ? tx('bot') : tx('channel')
 
   return (
     <>
@@ -591,7 +591,9 @@ function ViewGroupInner(
               <RovingTabindexProvider
                 wrapperElementRef={groupMemberContactListWrapperRef}
               >
-                {!chatDisabled && (group.isEncrypted || isBroadcast) && (
+                {!chatDisabled &&
+                  !isEmailBotHome &&
+                  (group.isEncrypted || isBroadcast) && (
                   <>
                     <PseudoListItemAddMember
                       onClick={() => showAddMemberDialog()}

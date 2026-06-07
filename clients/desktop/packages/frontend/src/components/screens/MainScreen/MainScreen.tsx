@@ -41,6 +41,7 @@ import { runtime } from '@deltachat-desktop/runtime-interface'
 import asyncThrottle from '@jcoreio/async-throttle'
 import { useFetch, useRpcFetch } from '../../../hooks/useFetch'
 import { getLogger } from '@deltachat-desktop/shared/logger'
+import { resolveEmailBotHomeChat } from '../../../bmchat/emailBots'
 import { useChatContextMenu } from '../../chat/ChatContextMenu'
 import useContextMenu from '../../../hooks/useContextMenu'
 import { GlobalVoiceMessagePlayer } from '../../GlobalVoiceMessagePlayer/GlobalVoiceMessagePlayer'
@@ -393,6 +394,28 @@ function ChatHeading({ chat }: { chat: T.FullChat }) {
   const openViewGroupDialog = useOpenViewGroupDialog()
   const openViewProfileDialog = useOpenViewProfileDialog()
   const accountId = selectedAccountId()
+  const [emailBotHomeName, setEmailBotHomeName] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (chat.chatType !== 'OutBroadcast') {
+      setEmailBotHomeName(null)
+      return
+    }
+    let cancelled = false
+    ;(async () => {
+      try {
+        const resolved = await resolveEmailBotHomeChat(accountId, chat.id)
+        if (!cancelled) {
+          setEmailBotHomeName(resolved.isHome ? resolved.name : null)
+        }
+      } catch {
+        if (!cancelled) setEmailBotHomeName(null)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [accountId, chat.id, chat.chatType, chat.name])
 
   const firstContactId: number | undefined = chat.contactIds[0]
   const firstChatContact = useRpcFetch(
@@ -434,7 +457,7 @@ function ChatHeading({ chat }: { chat: T.FullChat }) {
       break
     }
     case 'OutBroadcast': {
-      buttonLabel = tx('edit_channel')
+      buttonLabel = emailBotHomeName ? tx('menu_view_profile') : tx('edit_channel')
       break
     }
     case 'InBroadcast': {
@@ -453,10 +476,13 @@ function ChatHeading({ chat }: { chat: T.FullChat }) {
     }
   }
 
-  const subtitle = chatSubtitle(
-    chat,
-    firstChatContact?.result?.ok ? firstChatContact.result.value : null
-  )
+  const subtitle =
+    emailBotHomeName != null
+      ? tx('bmchat_bot_profile_username', [emailBotHomeName])
+      : chatSubtitle(
+          chat,
+          firstChatContact?.result?.ok ? firstChatContact.result.value : null
+        )
 
   return (
     <div className='navbar-heading' data-no-drag-region>

@@ -124,10 +124,7 @@ public final class EmailBotDispatcher {
     if (store.getAll().isEmpty() && activeBot == null && botSlugInChat.isEmpty()) return;
 
     boolean isSelf = msg.getFromId() == DcContact.DC_CONTACT_ID_SELF;
-    boolean inHomeChat = activeBot != null
-        && (activeBot.botChatId == chatId
-            || EmailBotContactHelper.slugFromBotHomeChat(dcContext, chatId)
-                .equalsIgnoreCase(activeBot.name));
+    boolean inHomeChat = activeBot != null;
 
     DcContact senderContact = dcContext.getContact(msg.getFromId());
     String senderEmail = senderContact != null
@@ -406,7 +403,7 @@ public final class EmailBotDispatcher {
   private EmailBotConfig resolveActiveBotForChat(@NonNull DcContext dc,
                                                  int accountId,
                                                  int chatId) {
-    EmailBotConfig bot = findBotForChat(accountId, chatId);
+    EmailBotConfig bot = store.resolveBotHomeChat(accountId, chatId);
     if (bot != null) return bot;
     return EmailBotResolver.resolve(store, dc, accountId, null, chatId);
   }

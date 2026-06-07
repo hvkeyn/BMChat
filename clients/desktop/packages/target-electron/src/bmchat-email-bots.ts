@@ -660,12 +660,32 @@ async function findBotForHomeChat(
   return null
 }
 
-/** True only for the canonical stored {@link EmailBot.botChatId}. */
+/** Strict id match, then self-only OutBroadcast title match; relinks stale botChatId. */
+async function resolveBotHomeChat(
+  accountId: number,
+  chatId: number,
+  relink = true
+): Promise<EmailBot | null> {
+  if (chatId <= 0) return null
+  const strict = findBotByChatId(accountId, chatId)
+  if (strict?.enabled) return strict
+
+  const byLabel = await findBotForHomeChat(accountId, chatId)
+  if (!byLabel?.enabled) return null
+
+  if (relink && byLabel.botChatId !== chatId) {
+    byLabel.botChatId = chatId
+    await saveStore()
+    return findBotByChatId(accountId, chatId) ?? byLabel
+  }
+  return byLabel
+}
+
 async function isLocalBotChat(
   accountId: number,
   chatId: number
 ): Promise<boolean> {
-  return findBotByChatId(accountId, chatId) != null
+  return (await resolveBotHomeChat(accountId, chatId)) != null
 }
 
 /**
@@ -1422,8 +1442,7 @@ async function handleIncoming(
     }
 
     const isSelf = msg.fromId === DC_CONTACT_ID_SELF
-    let homeBot =
-      findBotByChatId(accountId, chatId) ?? findBotByChatIdAny(chatId)
+    let homeBot = await resolveBotHomeChat(accountId, chatId)
     if (!homeBot) {
       const slug = await slugFromBotHomeChat(accountId, chatId)
       if (slug) {
@@ -1540,11 +1559,9 @@ export async function initEmailBots(): Promise<void> {
         const chatId = event?.chatId ?? event?.chat_id
         const msgId = event?.msgId ?? event?.msg_id
         if (!chatId || !msgId) return
-        if (!findBotByChatId(accountId, chatId) && !findBotByChatIdAny(chatId)) {
-          return
-        }
         void (async () => {
           try {
+            if (!(await resolveBotHomeChat(accountId, chatId))) return
             const msg: any = await getDCJsonrpcRemote().rpc.getMessage(
               accountId,
               msgId
@@ -1583,7 +1600,7 @@ export async function initEmailBots(): Promise<void> {
       await reloadStoreMerged()
       const accountId = Number(args?.accountId) || 0
       const chatId = Number(args?.chatId) || 0
-      const bot = findBotByChatId(accountId, chatId)
+      const bot = await resolveBotHomeChat(accountId, chatId)
       return { isHome: !!bot, name: bot?.name ?? null }
     }
   )

@@ -75,14 +75,40 @@ public final class EmailBotContactHelper {
     return "";
   }
 
-  /** Returns {@code true} only when {@code chatId} is the canonical bot home
-   * ({@link EmailBotConfig#botChatId}), not an arbitrary user channel. */
+  /**
+   * Resolves the bot whose local home broadcast is {@code chatId}: strict
+   * {@link EmailBotConfig#botChatId} first, then a self-only OutBroadcast whose
+   * title matches the bot. Relinks {@code botChatId} when the stored id is stale.
+   */
+  @Nullable
+  @WorkerThread
+  public static EmailBotConfig resolveBotHomeChat(@NonNull Context context,
+                                                  @NonNull DcContext dc,
+                                                  @NonNull EmailBotStore store,
+                                                  int accountId,
+                                                  int chatId) {
+    if (chatId <= 0) return null;
+    EmailBotConfig strict = store.findByChatIdStrict(accountId, chatId);
+    if (strict != null && strict.enabled) return strict;
+
+    EmailBotConfig byLabel = findBotForHomeChat(dc, store, accountId, chatId);
+    if (byLabel == null || !byLabel.enabled) return null;
+
+    if (byLabel.botChatId != chatId) {
+      store.patchContactIds(byLabel.id, byLabel.botContactId, chatId);
+      EmailBotConfig relinked = store.findByChatIdStrict(accountId, chatId);
+      return relinked != null ? relinked : byLabel;
+    }
+    return byLabel;
+  }
+
+  /** Returns {@code true} when {@code chatId} is a bot home, not a user channel. */
   public static boolean isLocalBotChat(@NonNull Context context,
                                        @NonNull DcContext dc,
                                        int chatId) {
     if (chatId <= 0) return false;
-    EmailBotConfig bot =
-        new EmailBotStore(context).findByChatIdStrict(dc.getAccountId(), chatId);
+    EmailBotStore store = new EmailBotStore(context);
+    EmailBotConfig bot = resolveBotHomeChat(context, dc, store, dc.getAccountId(), chatId);
     return bot != null && bot.enabled;
   }
 
