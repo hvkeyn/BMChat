@@ -1,6 +1,6 @@
 {
   "version": "2.50.25",
-  "publishedAt": "2026-06-07T12:00:00Z",
+  "publishedAt": "2026-06-07T14:30:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -11,15 +11,15 @@
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
       "versionedFile": "BMChat-2.50.25-Portable.x64.exe",
-      "size": 125980406,
-      "sha256": "dcdb1ec146bf37d3b3b95218720ce987978576dbbe597c0e510501a5be507552"
+      "size": 125982160,
+      "sha256": "bd0d3e1efdd697a46ca0be5927f2c772bbbacf5a7ac60acbd33ca6a70364efb3"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
       "versionedFile": "BMChat-2.50.25-Setup.x64.exe",
-      "size": 126296918,
-      "sha256": "a9e0903685b8e4a9ebf4cdaf1588afbdf686fb6de22bc7702f230cd1556fe911"
+      "size": 126298587,
+      "sha256": "af9e4109c959a4b28699943bdcce02ed06d2deaa0f14756e8067b15a6dd60b24"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat Desktop 2.50.25 — bot home relink и команды (Windows).\n\nИСПРАВЛЕНО:\n• Чат с displayName «Новостной Бот» снова распознаётся как bot home.\n• Заголовок и профиль: «Бот · @name», без «Добавить участников».\n• /start и кнопки снова работают (resolveBotHomeChat + MsgsChanged)."
+  "notes": "BMChat Desktop 2.50.25 — команды бота после отправки (Windows).\n\nИСПРАВЛЕНО:\n• Немедленный dispatch команд после sendMsg (как на Android).\n• Кнопки /help /news в bot home OutBroadcast.\n• Защита от эха ответов бота; retry загрузки текста сообщения."
 }

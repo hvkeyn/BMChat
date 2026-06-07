@@ -8,6 +8,25 @@ export interface EmailBotPublic {
   botChatId?: number
 }
 
+/** Mirrors Android maybeDispatchEmailBotCommand — immediate bot command handling. */
+export async function dispatchEmailBotCommand(
+  accountId: number,
+  chatId: number,
+  msgId: number
+): Promise<void> {
+  if (runtime.getRuntimeInfo().target !== 'electron') return
+  if (accountId <= 0 || chatId <= 0 || msgId <= 0) return
+  try {
+    await runtime.bmchatBotsInvoke('bmchat:emailbots:dispatch-message', {
+      accountId,
+      chatId,
+      msgId,
+    })
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function resolveEmailBotHomeChat(
   accountId: number,
   chatId: number

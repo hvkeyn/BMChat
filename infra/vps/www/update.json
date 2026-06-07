@@ -11,5 +11,5 @@
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.25 — bot home relink и команды.\n\nИСПРАВЛЕНО:\n• Чат «Новостной Бот» снова определяется как bot home (по имени + self-only broadcast).\n• UI: «Бот · @name» вместо «Канал / 1 получатель».\n• /start и кнопки снова обрабатываются (relink botChatId, MsgsChanged fix)."
+  "notes": "BMChat 2.50.25 — bot home relink и команды.\n\nИСПРАВЛЕНО:\n• Android: bot home по имени + relink botChatId.\n• Desktop: немедленный dispatch /start и кнопок после отправки.\n• UI: «Бот · @name» вместо «Канал / 1 получатель»."
 }

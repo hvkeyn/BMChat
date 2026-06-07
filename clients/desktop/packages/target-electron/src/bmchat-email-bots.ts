@@ -42,6 +42,8 @@ const log = getLogger('main/bmchat-email-bots')
 const STORE_FILE = 'bmchat-email-bots.json'
 const UI_CONFIG_KEY = 'ui.bmchat.email_bots'
 const SYNC_MARKER = 'BMCHAT-BOT-SYNC v1'
+/** Invisible prefix on bot replies — ignored by command parser (Android parity). */
+const BOT_OUT_MARKER = '\u2060'
 const DC_CONTACT_ID_SELF = 1
 const MIN_SYNC_PUBLISH_MS = 8_000
 let lastSyncPublishMs = 0
@@ -453,6 +455,8 @@ async function resolveEmailBot(
   }
   const openChatId = Number(chatId) || 0
   if (openChatId > 0) {
+    const byHome = await resolveBotHomeChat(accountId, openChatId)
+    if (byHome) return byHome
     const byChat = findBotByChatId(accountId, openChatId)
     if (byChat) return byChat
     const slug = await slugFromBotHomeChat(accountId, openChatId)
@@ -1377,6 +1381,32 @@ function renderInlineKeyboard(bot: EmailBot, rows: any): string | null {
 //  dispatcher
 // ---------------------------------------------------------------------------
 
+function isBotEchoMessage(body: string): boolean {
+  const t = body.trim()
+  if (t.startsWith(BOT_OUT_MARKER)) return true
+  return t.startsWith('@') && /^@[A-Za-z0-9_]+:\s/.test(t)
+}
+
+async function loadMessageText(
+  accountId: number,
+  msgId: number,
+  attempts = 4
+): Promise<{ msg: any; body: string } | null> {
+  const rpc = getDCJsonrpcRemote().rpc
+  for (let i = 0; i < attempts; i++) {
+    try {
+      const msg: any = await rpc.getMessage(accountId, msgId)
+      if (!msg) return null
+      const body: string = msg.text || ''
+      if (body || i === attempts - 1) return { msg, body }
+    } catch {
+      if (i === attempts - 1) return null
+    }
+    await new Promise(r => setTimeout(r, 40 * (i + 1)))
+  }
+  return null
+}
+
 async function sendBotReply(
   accountId: number,
   chatId: number,
@@ -1387,7 +1417,8 @@ async function sendBotReply(
     const rpc = getDCJsonrpcRemote().rpc
     const targetChatId = replyChatId(bot, chatId)
     const inHomeChat = bot.botChatId && bot.botChatId === targetChatId
-    const text = inHomeChat ? reply : '@' + bot.name + ': ' + reply
+    const visible = inHomeChat ? reply : '@' + bot.name + ': ' + reply
+    const text = inHomeChat ? BOT_OUT_MARKER + visible : visible
     await rpc.miscSendTextMessage(accountId, targetChatId, text)
     bot.lastReplyAtMs = Date.now()
     bot.totalReplies += 1
@@ -1404,9 +1435,10 @@ async function handleIncoming(
 ): Promise<void> {
   if (accountId <= 0 || chatId <= 0 || msgId <= 0) return
   try {
-    const rpc = getDCJsonrpcRemote().rpc
-    const msg: any = await rpc.getMessage(accountId, msgId)
-    if (!msg) return
+    const loaded = await loadMessageText(accountId, msgId)
+    if (!loaded) return
+    const msg = loaded.msg
+    const body: string = loaded.body
 
     let senderEmail = ''
     if (msg.fromId !== DC_CONTACT_ID_SELF) {
@@ -1428,8 +1460,8 @@ async function handleIncoming(
     // Developer SMTP reply (BMCHAT-BOT-REPLY) — before user-command parsing.
     if (await handleDeveloperReply(accountId, msg, senderEmail)) return
 
-    const body: string = msg.text || ''
     if (!body) return
+    if (isBotEchoMessage(body)) return
 
     if (await tryIngestBotSync(accountId, body)) {
       await reloadStoreMerged()
@@ -1562,11 +1594,8 @@ export async function initEmailBots(): Promise<void> {
         void (async () => {
           try {
             if (!(await resolveBotHomeChat(accountId, chatId))) return
-            const msg: any = await getDCJsonrpcRemote().rpc.getMessage(
-              accountId,
-              msgId
-            )
-            if (!msg || msg.fromId !== DC_CONTACT_ID_SELF) return
+            const loaded = await loadMessageText(accountId, msgId)
+            if (!loaded?.msg || loaded.msg.fromId !== DC_CONTACT_ID_SELF) return
             await handleIncoming(accountId, chatId, msgId)
           } catch {
             /* ignore */
@@ -1593,6 +1622,22 @@ export async function initEmailBots(): Promise<void> {
     await reloadStoreMerged()
     return bots
   })
+
+  ipcMain.handle(
+    'bmchat:emailbots:dispatch-message',
+    async (
+      _e,
+      args: { accountId: number; chatId: number; msgId: number }
+    ) => {
+      const accountId = Number(args?.accountId) || 0
+      const chatId = Number(args?.chatId) || 0
+      const msgId = Number(args?.msgId) || 0
+      if (accountId <= 0 || chatId <= 0 || msgId <= 0) return { ok: false }
+      if (!(await resolveBotHomeChat(accountId, chatId))) return { ok: false }
+      void handleIncoming(accountId, chatId, msgId)
+      return { ok: true }
+    }
+  )
 
   ipcMain.handle(
     'bmchat:emailbots:is-home-chat',

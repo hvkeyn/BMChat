@@ -4,6 +4,8 @@ import useChat from './useChat'
 import { BackendRemote } from '../../backend-com'
 import { getLogger } from '../../../../shared/logger'
 import { notifyWebxdcMessageSent } from '../useWebxdcMessageSent'
+import { dispatchEmailBotCommand } from '../../bmchat/emailBots'
+import { runtime } from '@deltachat-desktop/runtime-interface'
 
 import type { T } from '@deltachat/jsonrpc-client'
 
@@ -135,6 +137,10 @@ export default function useMessage() {
         ...MESSAGE_DEFAULT,
         ...message,
       })
+
+      if (runtime.getRuntimeInfo().target === 'electron' && msgId > 0) {
+        void dispatchEmailBotCommand(accountId, chatId, msgId)
+      }
 
       // Notify about the sent message (listeners can filter by message type if needed)
       notifyWebxdcMessageSent(accountId, chatId, message)

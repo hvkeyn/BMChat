@@ -22,6 +22,7 @@ import useCreateChatByEmail from '../../hooks/chat/useCreateChatByEmail'
 import useDialog from '../../hooks/dialog/useDialog'
 import useMessage from '../../hooks/chat/useMessage'
 import { runtime } from '@deltachat-desktop/runtime-interface'
+import { resolveEmailBotHomeChat } from '../../bmchat/emailBots'
 
 const log = getLogger('renderer/message-parser')
 
@@ -29,6 +30,14 @@ async function isEmailBotChat(
   accountId: number,
   chatId: number
 ): Promise<boolean> {
+  if (runtime.getRuntimeInfo().target === 'electron') {
+    try {
+      const resolved = await resolveEmailBotHomeChat(accountId, chatId)
+      if (resolved.isHome) return true
+    } catch {
+      /* fall through */
+    }
+  }
   try {
     const chat = await BackendRemote.rpc.getBasicChatInfo(accountId, chatId)
     if (chat.chatType !== 'Single' || chat.contactIds.length < 1) return false
