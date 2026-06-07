@@ -99,6 +99,8 @@ interface EmailBot {
   botChatId?: number
   /** Group/channel chats that receive mirrored bot replies (Telegram-style). */
   attachedChatIds?: number[]
+  /** Allow the bot to read/answer commands inside attached channels/chats. */
+  relayFromChats?: boolean
   createdAtMs: number
   lastReplyAtMs: number
   totalReplies: number
@@ -324,12 +326,16 @@ async function tryIngestBotSync(
   }
 }
 
-async function saveStore(opts?: { publishSync?: boolean }): Promise<void> {
+async function saveStore(opts?: {
+  publishSync?: boolean
+  skipUiConfig?: boolean
+}): Promise<void> {
   try {
     await fs.writeFile(storePath(), JSON.stringify({ bots }, null, 2), 'utf8')
   } catch (e) {
     log.warn('Failed to persist email bots store', e)
   }
+  if (opts?.skipUiConfig) return
   try {
     await persistAllUiConfig(!!opts?.publishSync)
   } catch (e) {
@@ -407,6 +413,7 @@ function sanitizeBot(input: any): EmailBot | null {
           .map((v: unknown) => Number(v))
           .filter((v: number) => v > 0)
       : [],
+    relayFromChats: input.relayFromChats !== false,
     createdAtMs: Number(input.createdAtMs) || Date.now(),
     lastReplyAtMs: Number(input.lastReplyAtMs) || 0,
     totalReplies: Number(input.totalReplies) || 0,
@@ -1420,29 +1427,41 @@ async function loadMessageText(
   accountId: number,
   msgId: number,
   textHint?: string,
-  attempts = 10
+  attempts = 3
 ): Promise<{ msg: any; body: string } | null> {
   const rpc = getDCJsonrpcRemote().rpc
   const hint = (textHint || '').trim()
+  let lastMsg: any = null
   for (let i = 0; i < attempts; i++) {
     try {
       const msg: any = await rpc.getMessage(accountId, msgId)
-      if (!msg) return null
-      const body: string = msg.text || hint || ''
-      if (body.trim() || i === attempts - 1) {
-        return { msg, body: body.trim() ? body : hint }
+      if (msg) {
+        lastMsg = msg
+        const body: string = (msg.text || '').trim()
+        if (body) return { msg, body }
       }
     } catch {
-      if (i === attempts - 1) {
-        if (hint) {
-          return { msg: { fromId: DC_CONTACT_ID_SELF, text: hint }, body: hint }
-        }
-        return null
-      }
+      /* message not ready yet — fall through to the text hint */
     }
-    await new Promise(r => setTimeout(r, 60 * (i + 1)))
+    if (hint) break
+    if (i < attempts - 1) await new Promise(r => setTimeout(r, 80))
   }
-  return null
+  // The renderer passes the exact text it just sent, so trust the hint when
+  // the core has not finished writing the message body yet.
+  if (hint) {
+    const msg = lastMsg ?? { fromId: DC_CONTACT_ID_SELF, text: hint }
+    return { msg, body: hint }
+  }
+  return lastMsg ? { msg: lastMsg, body: '' } : null
+}
+
+/**
+ * Where a bot reply should be delivered. Replies always go back to the chat
+ * the command arrived in (home chat, attached channel, or the sender's 1:1
+ * e-mail chat). Falls back to the bot home when the origin is unknown.
+ */
+function replyChatId(bot: EmailBot, chatId: number): number {
+  return chatId > 0 ? chatId : bot.botChatId && bot.botChatId > 0 ? bot.botChatId : 0
 }
 
 async function sendBotReply(
@@ -1454,13 +1473,36 @@ async function sendBotReply(
   try {
     const rpc = getDCJsonrpcRemote().rpc
     const targetChatId = replyChatId(bot, chatId)
-    const inHomeChat = bot.botChatId && bot.botChatId === targetChatId
+    if (targetChatId <= 0) {
+      log.warn('sendBotReply: no target chat for %s', bot.name)
+      return
+    }
+    const inHomeChat = !!bot.botChatId && bot.botChatId === targetChatId
     const visible = inHomeChat ? reply : '@' + bot.name + ': ' + reply
     const text = inHomeChat ? BOT_OUT_MARKER + visible : visible
     await rpc.miscSendTextMessage(accountId, targetChatId, text)
+
+    // Telegram-style broadcast: when the owner posts in the bot home chat,
+    // mirror the post into every attached channel/group the bot manages.
+    if (inHomeChat && Array.isArray(bot.attachedChatIds)) {
+      for (const attached of bot.attachedChatIds) {
+        if (!attached || attached === targetChatId) continue
+        try {
+          await rpc.miscSendTextMessage(
+            accountId,
+            attached,
+            BOT_OUT_MARKER + reply
+          )
+        } catch (e) {
+          log.warn('sendBotReply: mirror to chat %s failed', attached, e)
+        }
+      }
+    }
+
     bot.lastReplyAtMs = Date.now()
     bot.totalReplies += 1
-    await saveStore()
+    // Counters only — avoid re-sealing ui-config on every reply (RPC churn).
+    await saveStore({ skipUiConfig: true })
   } catch (e) {
     log.warn('sendBotReply failed for %s', bot.name, e)
   }
@@ -1470,14 +1512,12 @@ async function handleIncoming(
   accountId: number,
   chatId: number,
   msgId: number,
-  textHint?: string,
-  force = false
+  textHint?: string
 ): Promise<void> {
   if (accountId <= 0 || chatId <= 0 || msgId <= 0) return
-  if (!force && shouldSkipDuplicateDispatch(accountId, chatId, msgId)) return
+  if (shouldSkipDuplicateDispatch(accountId, chatId, msgId)) return
   return runDispatchSerial(async () => {
     try {
-      await reloadStoreMerged()
       const rpc = getDCJsonrpcRemote().rpc
       const loaded = await loadMessageText(accountId, msgId, textHint)
       if (!loaded) return
@@ -1549,6 +1589,15 @@ async function handleIncoming(
       if (!inv) return
       const bot = inv.bot
       if (!bot.enabled) return
+
+      // Channel/chat reception toggle: when the bot is attached to a group or
+      // channel but the owner forbids reading from chats, ignore commands that
+      // arrive there (the bot home chat and direct e-mail are unaffected).
+      const fromAttachedChat =
+        !homeBot &&
+        Array.isArray(bot.attachedChatIds) &&
+        bot.attachedChatIds.includes(chatId)
+      if (fromAttachedChat && bot.relayFromChats === false) return
 
       const ownerInHomeChat = isSelf && homeBot != null && homeBot.id === bot.id
 
@@ -1662,8 +1711,7 @@ export async function initEmailBots(): Promise<void> {
               accountId,
               chatId,
               msgId,
-              loaded.body || undefined,
-              true
+              loaded.body || undefined
             )
           } catch {
             /* ignore */
@@ -1691,6 +1739,47 @@ export async function initEmailBots(): Promise<void> {
     return bots
   })
 
+  ipcMain.handle('bmchat:emailbots:list-search', async () => {
+    await reloadStoreMerged()
+    return bots
+      .filter(b => b.enabled)
+      .map(b => ({
+        id: b.id,
+        name: b.name,
+        displayName: b.displayName ?? null,
+        enabled: b.enabled,
+        botChatId: b.botChatId ?? 0,
+        botContactId: b.botContactId ?? 0,
+      }))
+  })
+
+  ipcMain.handle(
+    'bmchat:emailbots:ensure-contact',
+    async (_e, args: { accountId?: number; botId?: string }) => {
+      await reloadStoreMerged()
+      const accountId = Number(args?.accountId) || 0
+      const botId = String(args?.botId || '')
+      const bot = bots.find(b => b.id === botId)
+      if (!bot || accountId <= 0) return { ok: false, error: 'invalid' }
+      if (bot.ownerAccountId > 0 && bot.ownerAccountId !== accountId) {
+        return { ok: false, error: 'wrong_account' }
+      }
+      try {
+        if (bot.ownerAccountId <= 0) bot.ownerAccountId = accountId
+        await ensureBotContact(bot)
+        const contactId = bot.botContactId ?? 0
+        const chatId = bot.botChatId ?? 0
+        if (contactId <= 0 && chatId <= 0) {
+          return { ok: false, error: 'no_contact' }
+        }
+        return { ok: true, contactId, chatId }
+      } catch (e) {
+        log.warn('ensure-contact failed for %s', bot.name, e)
+        return { ok: false, error: 'failed' }
+      }
+    }
+  )
+
   ipcMain.handle(
     'bmchat:emailbots:dispatch-message',
     async (
@@ -1708,7 +1797,7 @@ export async function initEmailBots(): Promise<void> {
       const text =
         typeof args?.text === 'string' ? args.text.trim() : ''
       if (accountId <= 0 || chatId <= 0 || msgId <= 0) return { ok: false }
-      await handleIncoming(accountId, chatId, msgId, text || undefined, true)
+      await handleIncoming(accountId, chatId, msgId, text || undefined)
       return { ok: true }
     }
   )
@@ -1756,6 +1845,9 @@ export async function initEmailBots(): Promise<void> {
       bot.attachedChatIds = bot.attachedChatIds?.length
         ? bot.attachedChatIds
         : prev.attachedChatIds ?? []
+      if (input.relayFromChats === undefined) {
+        bot.relayFromChats = prev.relayFromChats !== false
+      }
       bots[existingIdx] = bot
     } else {
       // Name must be unique on all devices of this account.
@@ -1816,9 +1908,18 @@ export async function initEmailBots(): Promise<void> {
       if (accountId <= 0) return { ok: false, error: 'no_account' }
       try {
         const rpc = getDCJsonrpcRemote().rpc
+        await ensureBotContact(bot)
         const chat: any = await rpc.getChat(accountId, chatId)
-        if (!chat?.canSend) return { ok: false, error: 'cannot_send' }
-        if (!chat?.isMultiUser) return { ok: false, error: 'not_multiuser' }
+        const chatType = String(chat?.chatType || '')
+        const eligible =
+          !!chat?.canSend &&
+          !chat?.isContactRequest &&
+          !chat?.isDeviceTalk &&
+          !chat?.isSelfTalk &&
+          (chat?.isMultiUser ||
+            chatType === 'OutBroadcast' ||
+            chatType === 'InBroadcast')
+        if (!eligible) return { ok: false, error: 'cannot_send' }
         if (bot.botChatId && bot.botChatId === chatId) {
           return { ok: false, error: 'home_chat' }
         }

@@ -379,6 +379,7 @@
     <string name="bmchat_email_bot_add_contact_done">Bot added as a contact — find it in chats and search.</string>
     <string name="bmchat_email_bot_add_contact_failed">Could not add the bot as a contact.</string>
     <string name="bmchat_email_bot_attach_failed">Could not add the bot to this chat (check that it is a group or channel).</string>
+    <string name="bmchat_email_bot_attach_done">Bot connected to the chat.</string>
     <string name="bmchat_email_bot_cb_no_reply">The bot did not respond to the button.</string>
     <string name="bmchat_email_bot_cb_no_bot">Add the bot under Settings → Email bots (name newsbot, webhook URL and token).</string>
     <string name="bmchat_email_bot_cb_no_webhook">This bot has no webhook URL in Email bot settings.</string>

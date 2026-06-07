@@ -45,6 +45,7 @@ interface EmailBot {
   totalReplies: number
   botChatId?: number
   attachedChatIds?: number[]
+  relayFromChats?: boolean
 }
 
 const EB = {
@@ -63,16 +64,22 @@ const EB = {
 export default function EmailBots({ onClose }: DialogProps) {
   const tx = useTranslationFunction()
   const openConfirmationDialog = useConfirmationDialog()
-  const openDialog = useDialog()
+  const { openDialog, closeDialog } = useDialog()
   const { selectChat } = useChat()
   const accountId = selectedAccountId()
 
-  const pickChat = (headerTitle: string, onPick: (chatId: number) => void) => {
-    openDialog(SelectChat, {
+  const pickChat = (
+    headerTitle: string,
+    onPick: (chatId: number) => void | Promise<void>
+  ) => {
+    const dialogId = openDialog(SelectChat, {
       headerTitle,
       listFlags: C.DC_GCL_NO_SPECIALS,
       enableAccountSwitch: false,
-      onChatClick: ({ chatId }: { chatId: number }) => onPick(chatId),
+      onChatClick: ({ chatId }: { chatId: number }) => {
+        closeDialog(dialogId)
+        void onPick(chatId)
+      },
     })
   }
 
@@ -199,6 +206,7 @@ export default function EmailBots({ onClose }: DialogProps) {
                     {tx('bmchat_email_bot_add_contact')}
                   </button>
                   <button
+                    type='button'
                     className='delta-button-round'
                     onClick={() =>
                       pickChat(
@@ -209,6 +217,11 @@ export default function EmailBots({ onClose }: DialogProps) {
                             window.__userFeedback?.({
                               type: 'error',
                               text: tx('bmchat_email_bot_attach_failed'),
+                            })
+                          } else {
+                            window.__userFeedback?.({
+                              type: 'success',
+                              text: tx('bmchat_email_bot_attach_done'),
                             })
                           }
                           await refresh()
@@ -291,6 +304,9 @@ function EmailBotEditor({
     initial.developerEmail ?? ''
   )
   const [webhookUrl, setWebhookUrl] = useState(initial.webhookUrl ?? '')
+  const [relayFromChats, setRelayFromChats] = useState(
+    initial.relayFromChats !== false
+  )
   const [commands, setCommands] = useState<CommandEntry[]>(
     initial.commands ?? []
   )
@@ -319,6 +335,7 @@ function EmailBotEditor({
         description: description.trim() || null,
         developerEmail: developerEmail.trim() || null,
         webhookUrl: webhookUrl.trim() || null,
+        relayFromChats,
         commands: commands
           .map(c => ({ k: c.k.trim(), v: c.v }))
           .filter(c => c.k.length > 0),
@@ -398,6 +415,26 @@ function EmailBotEditor({
           />
           <p style={{ fontSize: 12, opacity: 0.7, marginTop: -6, marginBottom: 10 }}>
             {tx('bmchat_email_bot_field_webhook_hint')}
+          </p>
+
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              marginBottom: 4,
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type='checkbox'
+              checked={relayFromChats}
+              onChange={e => setRelayFromChats(e.target.checked)}
+            />
+            {tx('bmchat_email_bot_field_relay_from_chats')}
+          </label>
+          <p style={{ fontSize: 12, opacity: 0.7, marginTop: -2, marginBottom: 10 }}>
+            {tx('bmchat_email_bot_field_relay_from_chats_hint')}
           </p>
 
           <label>{tx('bmchat_email_bot_field_developer_email')}</label>

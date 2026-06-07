@@ -6,6 +6,7 @@ export interface EmailBotPublic {
   displayName?: string | null
   enabled: boolean
   botChatId?: number
+  botContactId?: number
 }
 
 /** Mirrors Android maybeDispatchEmailBotCommand — immediate bot command handling. */
@@ -65,6 +66,7 @@ export async function listEmailBots(): Promise<EmailBotPublic[]> {
       displayName: b.displayName ?? null,
       enabled: b.enabled !== false,
       botChatId: b.botChatId,
+      botContactId: b.botContactId,
     }))
   } catch {
     return []
