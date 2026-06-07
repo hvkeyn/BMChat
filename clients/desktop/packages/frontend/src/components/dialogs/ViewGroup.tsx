@@ -99,6 +99,68 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
     modifyGroup(accountId, chat.id, groupName, groupDescription, groupImage)
   }, [groupName, groupDescription, groupImage, chat.id, accountId])
 
+  const [attachedBotContacts, setAttachedBotContacts] = useState<T.Contact[]>(
+    []
+  )
+  const [attachedBotIdByContact, setAttachedBotIdByContact] = useState<
+    Map<number, string>
+  >(new Map())
+
+  const loadAttachedBotContacts = useCallback(async () => {
+    if (
+      chat.chatType !== 'OutBroadcast' ||
+      runtime.getRuntimeInfo().target !== 'electron'
+    ) {
+      setAttachedBotContacts([])
+      setAttachedBotIdByContact(new Map())
+      return
+    }
+    try {
+      const raw = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
+      const allBots = Array.isArray(raw) ? raw : []
+      const attached = allBots.filter(
+        (b: {
+          enabled?: boolean
+          attachedChatIds?: number[]
+          botContactId?: number
+          id?: string
+        }) =>
+          b.enabled !== false &&
+          Array.isArray(b.attachedChatIds) &&
+          b.attachedChatIds.includes(chat.id) &&
+          Number(b.botContactId) > 0
+      )
+      const idMap = new Map<number, string>()
+      const contactIds: number[] = []
+      for (const b of attached) {
+        const cid = Number(b.botContactId)
+        if (cid > 0 && b.id) {
+          contactIds.push(cid)
+          idMap.set(cid, String(b.id))
+        }
+      }
+      setAttachedBotIdByContact(idMap)
+      if (contactIds.length === 0) {
+        setAttachedBotContacts([])
+        return
+      }
+      const loaded = await BackendRemote.rpc.getContactsByIds(
+        accountId,
+        contactIds
+      )
+      setAttachedBotContacts(
+        contactIds.map(id => loaded[id]).filter((c): c is T.Contact => !!c)
+      )
+    } catch {
+      setAttachedBotContacts([])
+      setAttachedBotIdByContact(new Map())
+    }
+  }, [accountId, chat.chatType, chat.id])
+
+  useEffect(() => {
+    void loadAttachedBotContacts()
+  }, [loadAttachedBotContacts])
+
   const addMembers = useCallback(
     async (members: number[]) => {
       if (!members || members.length === 0) {
@@ -345,67 +407,6 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
   }, [accountId, group.pastContactIds])
 
   const [groupContacts, setGroupContacts] = useState<T.Contact[]>([])
-  const [attachedBotContacts, setAttachedBotContacts] = useState<T.Contact[]>(
-    []
-  )
-  const [attachedBotIdByContact, setAttachedBotIdByContact] = useState<
-    Map<number, string>
-  >(new Map())
-
-  const loadAttachedBotContacts = useCallback(async () => {
-    if (
-      chat.chatType !== 'OutBroadcast' ||
-      runtime.getRuntimeInfo().target !== 'electron'
-    ) {
-      setAttachedBotContacts([])
-      setAttachedBotIdByContact(new Map())
-      return
-    }
-    try {
-      const raw = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
-      const allBots = Array.isArray(raw) ? raw : []
-      const attached = allBots.filter(
-        (b: {
-          enabled?: boolean
-          attachedChatIds?: number[]
-          botContactId?: number
-          id?: string
-        }) =>
-          b.enabled !== false &&
-          Array.isArray(b.attachedChatIds) &&
-          b.attachedChatIds.includes(chat.id) &&
-          Number(b.botContactId) > 0
-      )
-      const idMap = new Map<number, string>()
-      const contactIds: number[] = []
-      for (const b of attached) {
-        const cid = Number(b.botContactId)
-        if (cid > 0 && b.id) {
-          contactIds.push(cid)
-          idMap.set(cid, String(b.id))
-        }
-      }
-      setAttachedBotIdByContact(idMap)
-      if (contactIds.length === 0) {
-        setAttachedBotContacts([])
-        return
-      }
-      const loaded = await BackendRemote.rpc.getContactsByIds(
-        accountId,
-        contactIds
-      )
-      setAttachedBotContacts(
-        contactIds.map(id => loaded[id]).filter((c): c is T.Contact => !!c)
-      )
-    } catch {
-      setAttachedBotContacts([])
-      setAttachedBotIdByContact(new Map())
-    }
-  }, [accountId, chat.chatType, chat.id])
-
-  useEffect(() => {
-    void loadAttachedBotContacts()
-  }, [loadAttachedBotContacts])
 
   useEffect(() => {
     BackendRemote.rpc

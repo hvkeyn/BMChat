@@ -11,15 +11,15 @@
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
       "versionedFile": "BMChat-2.50.28-Portable.x64.exe",
-      "size": 126148721,
-      "sha256": "6bd61e79d703a3b19aa9f32bde111f33e6a0a99c51e97f86b472e4c40f164e87"
+      "size": 126148624,
+      "sha256": "78334aaaf4bb720474f706ef17650634c24470f63151bb1103262d1d64259bce"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
       "versionedFile": "BMChat-2.50.28-Setup.x64.exe",
-      "size": 126465114,
-      "sha256": "3cdd2b76bd586d0edb5c7fcdcd785a2ee9eb471ea5b0783d1dd0992a5e2a0ba6"
+      "size": 126465018,
+      "sha256": "b55b4830617ba7db44b547a1f0fb70f23c1008ba9f54d165bcae7a4c61b7ac9f"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
