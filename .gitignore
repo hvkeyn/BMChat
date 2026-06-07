@@ -81,6 +81,9 @@ infra/vps/.deploy.env
 /releases/
 infra/vps/apk/
 infra/vps/desktop/
+infra/vps/desktop/BMChatData/
+infra/vps/_*.sh
+**/__pycache__/
 
 # Ad-hoc BMChat capture logs (verbatim adb logcat dumps).
 bmchat-log-*.txt

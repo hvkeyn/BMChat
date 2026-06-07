@@ -24,14 +24,14 @@
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
       "url": "http://5.187.4.132/desktop/BMChat-x86_64.AppImage",
-      "versionedFile": "BMChat-2.50.24-x86_64.AppImage",
+      "versionedFile": "BMChat-2.50.25-x86_64.AppImage",
       "size": 152825657,
       "sha256": "ae27d87c6f4f6e5654bf43984b78f2a1d2bdbccf548fbcf47c992e871717f916"
     },
     "linux-x64-deb": {
       "label": ".deb (amd64)",
       "url": "http://5.187.4.132/desktop/bmchat-amd64.deb",
-      "versionedFile": "bmchat-desktop_2.50.24_amd64.deb",
+      "versionedFile": "bmchat-desktop_2.50.25_amd64.deb",
       "size": 121560196,
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
