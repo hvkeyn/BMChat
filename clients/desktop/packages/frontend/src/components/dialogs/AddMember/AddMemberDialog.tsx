@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AddMemberInnerDialog } from './AddMemberInnerDialog'
 import { useLazyLoadedContacts } from '../../contact/ContactList'
 import Dialog from '../../Dialog'
@@ -7,6 +7,8 @@ import { C, type T } from '@deltachat/jsonrpc-client'
 import type { DialogProps } from '../../../contexts/DialogContext'
 import { Avatar } from '../../Avatar'
 import useTranslationFunction from '../../../hooks/useTranslationFunction'
+import { listEmailBotContactIds } from '../../../bmchat/emailBots'
+import { selectedAccountId } from '../../../ScreenController'
 import styles from './styles.module.scss'
 
 export function AddMemberDialog({
@@ -20,6 +22,19 @@ export function AddMemberDialog({
   listFlags: number
 } & DialogProps) {
   const [queryStr, setQueryStr] = useState('')
+  const accountId = selectedAccountId()
+  const [botContactIds, setBotContactIds] = useState<number[]>([])
+
+  useEffect(() => {
+    let cancelled = false
+    void listEmailBotContactIds(accountId, queryStr).then(ids => {
+      if (!cancelled) setBotContactIds(ids)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [accountId, queryStr])
+
   const {
     contactIds,
     contactCache,
@@ -27,7 +42,7 @@ export function AddMemberDialog({
     loadContacts,
     queryStrIsValidEmail,
     refreshContacts,
-  } = useLazyLoadedContacts(listFlags, queryStr)
+  } = useLazyLoadedContacts(listFlags, queryStr, botContactIds)
 
   // compare bitwise if address flag is set
   const allowAddManually = (listFlags & C.DC_GCL_ADDRESS) !== 0

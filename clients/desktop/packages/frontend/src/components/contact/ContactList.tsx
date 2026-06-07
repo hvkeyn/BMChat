@@ -85,13 +85,19 @@ export function ContactList(props: {
  */
 export function useLazyLoadedContacts(
   listFlags: number,
-  queryStr: string | undefined
+  queryStr: string | undefined,
+  extraContactIds: number[] = []
 ) {
   const accountId = selectedAccountId()
   const { contactIds, queryStrIsValidEmail, refreshContacts } = useContactIds(
     listFlags,
     queryStr
   )
+  const mergedContactIds = useMemo(() => {
+    const merged = new Set<number>(extraContactIds)
+    for (const id of contactIds) merged.add(id)
+    return Array.from(merged)
+  }, [contactIds, extraContactIds])
 
   // TODO perf: shall we use Map instead of an object?
   // Or does it not matter since there is not going to be too many contacts?
@@ -101,12 +107,13 @@ export function useLazyLoadedContacts(
   const loadingContacts = useRef(new Set<T.Contact['id']>()).current
 
   const isContactLoaded: (index: number) => boolean = index =>
-    !!contactCache[contactIds[index]] || loadingContacts.has(contactIds[index])
+    !!contactCache[mergedContactIds[index]] ||
+    loadingContacts.has(mergedContactIds[index])
   const loadContacts: (
     startIndex: number,
     stopIndex: number
   ) => Promise<void> = async (startIndex, stopIndex) => {
-    const ids = contactIds.slice(startIndex, stopIndex + 1)
+    const ids = mergedContactIds.slice(startIndex, stopIndex + 1)
 
     for (const id of ids) {
       loadingContacts.add(id)
@@ -119,7 +126,7 @@ export function useLazyLoadedContacts(
   }
 
   return {
-    contactIds,
+    contactIds: mergedContactIds,
     /**
      * This function is not reactive, i.e. it doesn't get re-created
      * when we start loading more items.

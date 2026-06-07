@@ -754,11 +754,23 @@ async function ensureBotContact(bot: EmailBot): Promise<void> {
 
   // Keep the pseudo-contact only for the "add bot to a real group" feature;
   // it is never used as the home-chat recipient anymore.
+  const botEmail = makeBotEmail(bot.name)
+  if (!bot.botContactId || bot.botContactId <= 0) {
+    try {
+      const existing = await rpc.lookupContactIdByAddr(
+        bot.ownerAccountId,
+        botEmail
+      )
+      if (existing > 0) bot.botContactId = existing
+    } catch {
+      /* ignore */
+    }
+  }
   if (!bot.botContactId || bot.botContactId <= 0) {
     try {
       bot.botContactId = await rpc.createContact(
         bot.ownerAccountId,
-        makeBotEmail(bot.name),
+        botEmail,
         displayName
       )
     } catch (e) {
@@ -811,6 +823,73 @@ async function ensureBotContact(bot: EmailBot): Promise<void> {
   }
 
   await saveStore()
+}
+
+function matchesBotContactQuery(
+  bot: EmailBot,
+  query: string
+): boolean {
+  const trimmed = query.trim().toLowerCase()
+  if (!trimmed) return true
+  const bare = trimmed.startsWith('@') ? trimmed.slice(1) : trimmed
+  if (!bare) return true
+  const name = bot.name.toLowerCase()
+  if (name === bare || name.startsWith(bare) || `@${name}` === trimmed) {
+    return true
+  }
+  const displayName = (bot.displayName || '').trim().toLowerCase()
+  if (displayName && (displayName === bare || displayName.includes(bare))) {
+    return true
+  }
+  const description = (bot.description || '').trim().toLowerCase()
+  return !!description && description.includes(bare)
+}
+
+async function listBotContactIds(
+  accountId: number,
+  query = ''
+): Promise<number[]> {
+  const ids: number[] = []
+  for (const bot of botsForAccount(accountId)) {
+    if (!bot.enabled) continue
+    if (!matchesBotContactQuery(bot, query)) continue
+    try {
+      await ensureBotContact(bot)
+    } catch (e) {
+      log.warn('ensureBotContact for picker failed %s', bot.name, e)
+    }
+    const contactId = bot.botContactId ?? 0
+    if (contactId > 0 && !ids.includes(contactId)) ids.push(contactId)
+  }
+  return ids
+}
+
+async function isChatEligibleForBotAttach(
+  accountId: number,
+  chatId: number
+): Promise<boolean> {
+  if (accountId <= 0 || chatId <= 0) return false
+  try {
+    const chat: any = await getDCJsonrpcRemote().rpc.getFullChatById(
+      accountId,
+      chatId
+    )
+    const chatType = String(chat?.chatType || '')
+    const groupLike =
+      chatType === 'Group' ||
+      chatType === 'OutBroadcast' ||
+      chatType === 'InBroadcast'
+    return (
+      !!chat?.canSend &&
+      groupLike &&
+      !chat?.isContactRequest &&
+      !chat?.isDeviceTalk &&
+      !chat?.isSelfTalk
+    )
+  } catch (e) {
+    log.warn('isChatEligibleForBotAttach failed chat=%s', chatId, e)
+    return false
+  }
 }
 
 async function migrateBotContacts(): Promise<void> {
@@ -1754,6 +1833,17 @@ export async function initEmailBots(): Promise<void> {
   })
 
   ipcMain.handle(
+    'bmchat:emailbots:contact-ids',
+    async (_e, args: { accountId?: number; query?: string }) => {
+      await reloadStoreMerged()
+      const accountId = Number(args?.accountId) || 0
+      if (accountId <= 0) return []
+      const query = typeof args?.query === 'string' ? args.query : ''
+      return listBotContactIds(accountId, query)
+    }
+  )
+
+  ipcMain.handle(
     'bmchat:emailbots:ensure-contact',
     async (_e, args: { accountId?: number; botId?: string }) => {
       await reloadStoreMerged()
@@ -1909,17 +1999,9 @@ export async function initEmailBots(): Promise<void> {
       try {
         const rpc = getDCJsonrpcRemote().rpc
         await ensureBotContact(bot)
-        const chat: any = await rpc.getChat(accountId, chatId)
-        const chatType = String(chat?.chatType || '')
-        const eligible =
-          !!chat?.canSend &&
-          !chat?.isContactRequest &&
-          !chat?.isDeviceTalk &&
-          !chat?.isSelfTalk &&
-          (chat?.isMultiUser ||
-            chatType === 'OutBroadcast' ||
-            chatType === 'InBroadcast')
-        if (!eligible) return { ok: false, error: 'cannot_send' }
+        if (!(await isChatEligibleForBotAttach(accountId, chatId))) {
+          return { ok: false, error: 'cannot_send' }
+        }
         if (bot.botChatId && bot.botChatId === chatId) {
           return { ok: false, error: 'home_chat' }
         }

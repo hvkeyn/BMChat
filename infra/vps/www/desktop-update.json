@@ -1,6 +1,6 @@
 {
-  "version": "2.50.26",
-  "publishedAt": "2026-06-07T15:00:00Z",
+  "version": "2.50.27",
+  "publishedAt": "2026-06-07T16:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.26-Portable.x64.exe",
-      "size": 125985760,
-      "sha256": "5a4f5aa1d2d23268dd44047f14c0e793abdb0a5e893488f5e8877ba8f63d11ae"
+      "versionedFile": "BMChat-2.50.27-Portable.x64.exe",
+      "size": 125986489,
+      "sha256": "696a1bba3ec9558de7a4d84ae670e387a4f70798db0def3ce378faa468434511"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.26-Setup.x64.exe",
-      "size": 126302165,
-      "sha256": "fee108e314eb5cb5b6979583fd8ff9fea74e6f87655e1785922f779a2e5d1aa0"
+      "versionedFile": "BMChat-2.50.27-Setup.x64.exe",
+      "size": 126302983,
+      "sha256": "4edebc72757e847696c816f0a253f453e82a2cb7345d81e9198dad11ccef3845"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat Desktop 2.50.26 — боты: команды, контакты, подключение к чатам.\n\nИСПРАВЛЕНО:\n• Команды бота отвечают без «крутит» (replyChatId, меньше RPC-нагрузки).\n• «Добавить в контакты» и «Добавить бота в чат» работают (ensure-contact IPC).\n• Бот появляется в списке участников; поиск @newsbot в боковой панели.\n• Посты из домашнего чата дублируются в подключённые каналы/группы.\n• Настройка «Получать сообщения из каналов и чатов»."
+  "notes": "BMChat Desktop 2.50.27 — бот в каналах и поиск контакта.\n\nИСПРАВЛЕНО:\n• «Добавить бота в чат» работает для каналов OutBroadcast и групп (getFullChatById).\n• Контакт бота виден при добавлении участников в канал/группу.\n• Поиск @newsbot подмешивает псевдо-контакт бота в список."
 }

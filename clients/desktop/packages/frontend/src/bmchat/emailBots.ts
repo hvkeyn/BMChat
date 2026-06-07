@@ -51,6 +51,25 @@ export async function resolveEmailBotHomeChat(
   }
 }
 
+/** Contact IDs for enabled bots — merged into member pickers (Android parity). */
+export async function listEmailBotContactIds(
+  accountId: number,
+  query?: string | null
+): Promise<number[]> {
+  if (runtime.getRuntimeInfo().target !== 'electron') return []
+  if (accountId <= 0) return []
+  try {
+    const ids = await runtime.bmchatBotsInvoke(
+      'bmchat:emailbots:contact-ids',
+      { accountId, query: query?.trim() || '' }
+    )
+    if (!Array.isArray(ids)) return []
+    return ids.map((id: unknown) => Number(id)).filter(id => id > 0)
+  } catch {
+    return []
+  }
+}
+
 export async function listEmailBots(): Promise<EmailBotPublic[]> {
   if (runtime.getRuntimeInfo().target !== 'electron') {
     return []
