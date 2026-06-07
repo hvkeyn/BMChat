@@ -1470,10 +1470,11 @@ async function handleIncoming(
   accountId: number,
   chatId: number,
   msgId: number,
-  textHint?: string
+  textHint?: string,
+  force = false
 ): Promise<void> {
   if (accountId <= 0 || chatId <= 0 || msgId <= 0) return
-  if (shouldSkipDuplicateDispatch(accountId, chatId, msgId)) return
+  if (!force && shouldSkipDuplicateDispatch(accountId, chatId, msgId)) return
   return runDispatchSerial(async () => {
     try {
       await reloadStoreMerged()
@@ -1556,7 +1557,7 @@ async function handleIncoming(
           bot.subscribedUsers.push(senderEmail)
           await saveStore()
         }
-        const welcome =
+        let welcome =
           resolveReply(bot, 'start', inv.argument, senderEmail) ??
           defaultWelcome(bot)
         const { reply, forwarded } = await resolveOutgoingReply(
@@ -1568,9 +1569,9 @@ async function handleIncoming(
           chatId,
           msgId
         )
-        const outgoing = bot.webhookUrl ? reply : reply ?? welcome
-        if (outgoing) {
-          await sendBotReply(accountId, chatId, bot, outgoing)
+        if (reply) welcome = reply
+        if (welcome) {
+          await sendBotReply(accountId, chatId, bot, welcome)
         } else if (!forwarded) {
           log.warn('email bot %s: /start produced no reply', bot.name)
         }
@@ -1595,10 +1596,8 @@ async function handleIncoming(
         chatId,
         msgId
       )
-      let outgoing = reply
-      if (!outgoing && !bot.webhookUrl) {
-        outgoing = resolveReply(bot, inv.command, inv.argument, senderEmail)
-      }
+      let outgoing =
+        reply ?? resolveReply(bot, inv.command, inv.argument, senderEmail)
       if (!outgoing) {
         if (forwarded) return
         log.warn(
@@ -1633,7 +1632,17 @@ export async function initEmailBots(): Promise<void> {
       const chatId = event?.chatId ?? event?.chat_id
       const msgId = event?.msgId ?? event?.msg_id
       if (!chatId || !msgId) return
-      void handleIncoming(accountId, chatId, msgId)
+      // Outgoing commands in bot home are handled by dispatch-message IPC
+      // (with text hint). IncomingMsg often arrives before message text exists
+      // and was blocking the real dispatch via dedupe.
+      void (async () => {
+        try {
+          if (await resolveBotHomeChat(accountId, chatId)) return
+        } catch {
+          /* fall through */
+        }
+        void handleIncoming(accountId, chatId, msgId)
+      })()
     }
     try {
       ;(remote as any).on('IncomingMsg', onBotMessage)
@@ -1649,7 +1658,13 @@ export async function initEmailBots(): Promise<void> {
             if (!(await resolveBotHomeChat(accountId, chatId))) return
             const loaded = await loadMessageText(accountId, msgId)
             if (!loaded?.msg || loaded.msg.fromId !== DC_CONTACT_ID_SELF) return
-            await handleIncoming(accountId, chatId, msgId)
+            await handleIncoming(
+              accountId,
+              chatId,
+              msgId,
+              loaded.body || undefined,
+              true
+            )
           } catch {
             /* ignore */
           }
@@ -1693,7 +1708,7 @@ export async function initEmailBots(): Promise<void> {
       const text =
         typeof args?.text === 'string' ? args.text.trim() : ''
       if (accountId <= 0 || chatId <= 0 || msgId <= 0) return { ok: false }
-      await handleIncoming(accountId, chatId, msgId, text || undefined)
+      await handleIncoming(accountId, chatId, msgId, text || undefined, true)
       return { ok: true }
     }
   )
