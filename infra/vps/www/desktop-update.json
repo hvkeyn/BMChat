@@ -1,6 +1,6 @@
 {
-  "version": "2.50.27",
-  "publishedAt": "2026-06-07T16:30:00Z",
+  "version": "2.50.28",
+  "publishedAt": "2026-06-07T18:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.27-Portable.x64.exe",
-      "size": 126146551,
-      "sha256": "66fad1aea02dca3007fd91cbb262e3168dbe7a94a5f47ef37498f2dc9e6a51f1"
+      "versionedFile": "BMChat-2.50.28-Portable.x64.exe",
+      "size": 126148721,
+      "sha256": "6bd61e79d703a3b19aa9f32bde111f33e6a0a99c51e97f86b472e4c40f164e87"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.27-Setup.x64.exe",
-      "size": 126463051,
-      "sha256": "00927ca6833a977a6e6b31b05dc7f9d5b53b24793d8dda1d446f374d43c434c9"
+      "versionedFile": "BMChat-2.50.28-Setup.x64.exe",
+      "size": 126465114,
+      "sha256": "3cdd2b76bd586d0edb5c7fcdcd785a2ee9eb471ea5b0783d1dd0992a5e2a0ba6"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat Desktop 2.50.27 — бот в каналах и поиск контакта.\n\nИСПРАВЛЕНО:\n• Подключение бота к каналам/группам (тип Broadcast, getBasicChatInfo).\n• Контакт бота виден при добавлении участников в канал.\n• Поиск @newsbot / «новостной» / «бот» в списке участников."
+  "notes": "BMChat Desktop 2.50.28 — бот в списке участников канала.\n\nИСПРАВЛЕНО:\n• Прикреплённый email-бот отображается в профиле канала (секция «Бот»).\n• Отключение бота из канала через detach (без удаления из рассылки).\n• Счётчик получателей учитывает подключённых ботов."
 }

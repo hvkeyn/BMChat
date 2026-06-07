@@ -214,6 +214,7 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         }
 
         if (botsAttached > 0 && sent === 0 && skipped === 0) {
+          await loadAttachedBotContacts()
           window.__userFeedback?.({
             type: 'success',
             text: tx('bmchat_email_bot_attached_to_channel', String(botsAttached)),
@@ -229,6 +230,7 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
             text: tx('bmchat_channel_invite_partial_fmt', String(sent), String(skipped)),
           })
         } else if (botsAttached > 0) {
+          await loadAttachedBotContacts()
           window.__userFeedback?.({
             type: 'success',
             text: tx('bmchat_email_bot_attached_to_channel', String(botsAttached)),
@@ -265,11 +267,39 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         )})`
       )
     },
-    [tx, openDialog, chat.id, chat.name, chat.chatType, accountId]
+    [tx, openDialog, chat.id, chat.name, chat.chatType, accountId, loadAttachedBotContacts]
   )
 
   const removeMember = useCallback(
     async (userId: number) => {
+      if (chat.chatType === 'OutBroadcast') {
+        const botId = attachedBotIdByContact.get(userId)
+        if (botId && runtime.getRuntimeInfo().target === 'electron') {
+          try {
+            const res = await runtime.bmchatBotsInvoke(
+              'bmchat:emailbots:detach-chat',
+              { id: botId, chatId: chat.id }
+            )
+            if (res?.ok) {
+              await loadAttachedBotContacts()
+              log.info(
+                `Account ${accountId} detached bot ${botId} from channel ${chat.id}`
+              )
+              return
+            }
+          } catch (error) {
+            openDialog(AlertDialog, {
+              title: tx('error'),
+              message: tx(
+                'error_x',
+                `Failed to detach bot from channel: ${unknownErrorToString(error)}`
+              ),
+            })
+            return
+          }
+        }
+      }
+
       try {
         await BackendRemote.rpc.removeContactFromChat(
           accountId,
@@ -291,7 +321,15 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         `Account ${accountId} removed member ${userId} from group ${chat.id})`
       )
     },
-    [tx, openDialog, chat.id, accountId]
+    [
+      tx,
+      openDialog,
+      chat.id,
+      chat.chatType,
+      accountId,
+      attachedBotIdByContact,
+      loadAttachedBotContacts,
+    ]
   )
 
   const [pastContacts, setPastContacts] = useState<T.Contact[]>([])
@@ -307,6 +345,67 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
   }, [accountId, group.pastContactIds])
 
   const [groupContacts, setGroupContacts] = useState<T.Contact[]>([])
+  const [attachedBotContacts, setAttachedBotContacts] = useState<T.Contact[]>(
+    []
+  )
+  const [attachedBotIdByContact, setAttachedBotIdByContact] = useState<
+    Map<number, string>
+  >(new Map())
+
+  const loadAttachedBotContacts = useCallback(async () => {
+    if (
+      chat.chatType !== 'OutBroadcast' ||
+      runtime.getRuntimeInfo().target !== 'electron'
+    ) {
+      setAttachedBotContacts([])
+      setAttachedBotIdByContact(new Map())
+      return
+    }
+    try {
+      const raw = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
+      const allBots = Array.isArray(raw) ? raw : []
+      const attached = allBots.filter(
+        (b: {
+          enabled?: boolean
+          attachedChatIds?: number[]
+          botContactId?: number
+          id?: string
+        }) =>
+          b.enabled !== false &&
+          Array.isArray(b.attachedChatIds) &&
+          b.attachedChatIds.includes(chat.id) &&
+          Number(b.botContactId) > 0
+      )
+      const idMap = new Map<number, string>()
+      const contactIds: number[] = []
+      for (const b of attached) {
+        const cid = Number(b.botContactId)
+        if (cid > 0 && b.id) {
+          contactIds.push(cid)
+          idMap.set(cid, String(b.id))
+        }
+      }
+      setAttachedBotIdByContact(idMap)
+      if (contactIds.length === 0) {
+        setAttachedBotContacts([])
+        return
+      }
+      const loaded = await BackendRemote.rpc.getContactsByIds(
+        accountId,
+        contactIds
+      )
+      setAttachedBotContacts(
+        contactIds.map(id => loaded[id]).filter((c): c is T.Contact => !!c)
+      )
+    } catch {
+      setAttachedBotContacts([])
+      setAttachedBotIdByContact(new Map())
+    }
+  }, [accountId, chat.chatType, chat.id])
+
+  useEffect(() => {
+    void loadAttachedBotContacts()
+  }, [loadAttachedBotContacts])
 
   useEffect(() => {
     BackendRemote.rpc
@@ -374,9 +473,10 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         BackendRemote.rpc
           .getChatDescription(accountId, chatId)
           .then(setGroupDescription)
+        void loadAttachedBotContacts()
       }
     })
-  }, [accountId, group.id])
+  }, [accountId, group.id, loadAttachedBotContacts])
 
   return {
     group,
@@ -386,6 +486,7 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
     setGroupName,
     setGroupDescription,
     groupContacts,
+    attachedBotContacts,
     addMembers,
     removeMember,
     setGroupImage,
@@ -420,6 +521,7 @@ function ViewGroupInner(
     setGroupName,
     setGroupDescription,
     groupContacts,
+    attachedBotContacts,
     pastContacts,
     addMembers,
     removeMember,
@@ -571,9 +673,15 @@ function ViewGroupInner(
                       : ''
                     : tx(
                         'n_recipients',
-                        Math.max(1, group.contactIds.length).toString(),
+                        Math.max(
+                          1,
+                          group.contactIds.length + attachedBotContacts.length
+                        ).toString(),
                         {
-                          quantity: Math.max(1, group.contactIds.length),
+                          quantity: Math.max(
+                            1,
+                            group.contactIds.length + attachedBotContacts.length
+                          ),
                         }
                       )}
               </div>
@@ -601,19 +709,39 @@ function ViewGroupInner(
                     <PseudoListItemShowQrCode onClick={() => showQRDialog()} />
                   </>
                 )}
-                {group.contactIds.length != 0 && groupContacts.length == 0 && (
+                {groupContacts.length === 0 &&
+                  attachedBotContacts.length === 0 &&
+                  group.contactIds.length > 0 && (
                   <div /* placeholder to keep layout from jumping around while contact info is loaded */
                     style={{
                       height:
-                        group.contactIds.length *
+                        (group.contactIds.length + attachedBotContacts.length) *
                         64 /* 64px is the height of a contact list item */,
                     }}
                     aria-busy
                   ></div>
                 )}
+                {attachedBotContacts.length > 0 && (
+                  <>
+                    <div className='group-separator'>{tx('bot')}</div>
+                    <ContactList
+                      contacts={attachedBotContacts}
+                      showRemove={!chatDisabled}
+                      onClick={contact => {
+                        if (contact.id === C.DC_CONTACT_ID_SELF) {
+                          return
+                        }
+                        setProfileContact(contact)
+                      }}
+                      onRemoveClick={showRemoveGroupMemberConfirmationDialog}
+                    />
+                  </>
+                )}
                 {
                   <ContactList
-                    contacts={groupContacts}
+                    contacts={groupContacts.filter(
+                      c => !attachedBotContacts.some(b => b.id === c.id)
+                    )}
                     showRemove={!chatDisabled && group.isEncrypted}
                     onClick={contact => {
                       if (contact.id === C.DC_CONTACT_ID_SELF) {
