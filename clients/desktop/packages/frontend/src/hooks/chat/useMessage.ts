@@ -139,7 +139,12 @@ export default function useMessage() {
       })
 
       if (runtime.getRuntimeInfo().target === 'electron' && msgId > 0) {
-        void dispatchEmailBotCommand(accountId, chatId, msgId)
+        void dispatchEmailBotCommand(
+          accountId,
+          chatId,
+          msgId,
+          message.text ?? null
+        )
       }
 
       // Notify about the sent message (listeners can filter by message type if needed)

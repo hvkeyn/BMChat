@@ -47,6 +47,35 @@ const BOT_OUT_MARKER = '\u2060'
 const DC_CONTACT_ID_SELF = 1
 const MIN_SYNC_PUBLISH_MS = 8_000
 let lastSyncPublishMs = 0
+let dispatchChain: Promise<void> = Promise.resolve()
+const recentDispatchKeys = new Map<string, number>()
+
+function runDispatchSerial<T>(fn: () => Promise<T>): Promise<T> {
+  const run = dispatchChain.then(fn, fn)
+  dispatchChain = run.then(
+    () => {},
+    () => {}
+  )
+  return run
+}
+
+function shouldSkipDuplicateDispatch(
+  accountId: number,
+  chatId: number,
+  msgId: number
+): boolean {
+  const key = `${accountId}:${chatId}:${msgId}`
+  const now = Date.now()
+  const prev = recentDispatchKeys.get(key)
+  if (prev != null && now - prev < 2500) return true
+  recentDispatchKeys.set(key, now)
+  if (recentDispatchKeys.size > 200) {
+    for (const [k, t] of recentDispatchKeys) {
+      if (now - t > 60_000) recentDispatchKeys.delete(k)
+    }
+  }
+  return false
+}
 
 interface CommandEntry {
   k: string
@@ -1390,19 +1419,28 @@ function isBotEchoMessage(body: string): boolean {
 async function loadMessageText(
   accountId: number,
   msgId: number,
-  attempts = 4
+  textHint?: string,
+  attempts = 10
 ): Promise<{ msg: any; body: string } | null> {
   const rpc = getDCJsonrpcRemote().rpc
+  const hint = (textHint || '').trim()
   for (let i = 0; i < attempts; i++) {
     try {
       const msg: any = await rpc.getMessage(accountId, msgId)
       if (!msg) return null
-      const body: string = msg.text || ''
-      if (body || i === attempts - 1) return { msg, body }
+      const body: string = msg.text || hint || ''
+      if (body.trim() || i === attempts - 1) {
+        return { msg, body: body.trim() ? body : hint }
+      }
     } catch {
-      if (i === attempts - 1) return null
+      if (i === attempts - 1) {
+        if (hint) {
+          return { msg: { fromId: DC_CONTACT_ID_SELF, text: hint }, body: hint }
+        }
+        return null
+      }
     }
-    await new Promise(r => setTimeout(r, 40 * (i + 1)))
+    await new Promise(r => setTimeout(r, 60 * (i + 1)))
   }
   return null
 }
@@ -1431,92 +1469,123 @@ async function sendBotReply(
 async function handleIncoming(
   accountId: number,
   chatId: number,
-  msgId: number
+  msgId: number,
+  textHint?: string
 ): Promise<void> {
   if (accountId <= 0 || chatId <= 0 || msgId <= 0) return
-  try {
-    const loaded = await loadMessageText(accountId, msgId)
-    if (!loaded) return
-    const msg = loaded.msg
-    const body: string = loaded.body
-
-    let senderEmail = ''
-    if (msg.fromId !== DC_CONTACT_ID_SELF) {
-      try {
-        const contact: any = await rpc.getContact(accountId, msg.fromId)
-        senderEmail = (contact?.address || '').toLowerCase()
-      } catch {
-        /* ignore */
-      }
-    } else {
-      try {
-        const self: any = await rpc.getContact(accountId, DC_CONTACT_ID_SELF)
-        senderEmail = (self?.address || '').toLowerCase()
-      } catch {
-        /* ignore */
-      }
-    }
-
-    // Developer SMTP reply (BMCHAT-BOT-REPLY) — before user-command parsing.
-    if (await handleDeveloperReply(accountId, msg, senderEmail)) return
-
-    if (!body) return
-    if (isBotEchoMessage(body)) return
-
-    if (await tryIngestBotSync(accountId, body)) {
+  if (shouldSkipDuplicateDispatch(accountId, chatId, msgId)) return
+  return runDispatchSerial(async () => {
+    try {
       await reloadStoreMerged()
-      await migrateBotContacts()
-      return
-    }
+      const rpc = getDCJsonrpcRemote().rpc
+      const loaded = await loadMessageText(accountId, msgId, textHint)
+      if (!loaded) return
+      const msg = loaded.msg
+      const body: string = loaded.body
 
-    if (await tryIngestTelegramBotSync(accountId, body)) {
-      return
-    }
-
-    const isSelf = msg.fromId === DC_CONTACT_ID_SELF
-    let homeBot = await resolveBotHomeChat(accountId, chatId)
-    if (!homeBot) {
-      const slug = await slugFromBotHomeChat(accountId, chatId)
-      if (slug) {
-        homeBot =
-          findByName(accountId, slug) ??
-          bots.find(b => b.enabled && b.name.toLowerCase() === slug.toLowerCase()) ??
-          null
+      let senderEmail = ''
+      if (msg.fromId !== DC_CONTACT_ID_SELF) {
+        try {
+          const contact: any = await rpc.getContact(accountId, msg.fromId)
+          senderEmail = (contact?.address || '').toLowerCase()
+        } catch {
+          /* ignore */
+        }
+      } else {
+        try {
+          const self: any = await rpc.getContact(accountId, DC_CONTACT_ID_SELF)
+          senderEmail = (self?.address || '').toLowerCase()
+        } catch {
+          /* ignore */
+        }
       }
-    }
-    if (botsForAccount(accountId).length === 0 && !homeBot) return
 
-    // Own messages in the bot's 1:1 home chat must not re-trigger the webhook
-    // (every bot reply was parsed as command "default" → infinite PHP loop).
-    if (isSelf && homeBot) {
-      const t = body.trim()
-      if (!t.startsWith('/')) {
+      if (await handleDeveloperReply(accountId, msg, senderEmail)) return
+
+      if (!body) return
+      if (isBotEchoMessage(body)) return
+
+      if (await tryIngestBotSync(accountId, body)) {
+        await reloadStoreMerged()
+        await migrateBotContacts()
         return
       }
-    }
 
-    let inv: Invocation | null
-    if (homeBot) {
-      inv = parseInvocationInBotChat(body, accountId, homeBot)
-    } else if (isSelf) {
-      inv = parseInvocation(body, accountId)
-    } else {
-      inv = parseInvocation(body, accountId)
-    }
-    if (!inv) return
-    const bot = inv.bot
-    if (!bot.enabled) return
-
-    const ownerInHomeChat = isSelf && homeBot != null && homeBot.id === bot.id
-
-    if (inv.command === 'start') {
-      if (senderEmail && !bot.subscribedUsers.includes(senderEmail)) {
-        bot.subscribedUsers.push(senderEmail)
-        await saveStore()
+      if (await tryIngestTelegramBotSync(accountId, body)) {
+        return
       }
-      let welcome =
-        resolveReply(bot, 'start', inv.argument, senderEmail) ??
-        defaultWelcome(bot)
+
+      const isSelf = msg.fromId === DC_CONTACT_ID_SELF
+      let homeBot = await resolveBotHomeChat(accountId, chatId)
+      if (!homeBot) {
+        const slug = await slugFromBotHomeChat(accountId, chatId)
+        if (slug) {
+          homeBot =
+            findByName(accountId, slug) ??
+            bots.find(
+              b => b.enabled && b.name.toLowerCase() === slug.toLowerCase()
+            ) ??
+            null
+        }
+      }
+      if (botsForAccount(accountId).length === 0 && !homeBot) return
+
+      if (isSelf && homeBot) {
+        const t = body.trim()
+        if (!t.startsWith('/')) {
+          return
+        }
+      }
+
+      let inv: Invocation | null
+      if (homeBot) {
+        inv = parseInvocationInBotChat(body, accountId, homeBot)
+      } else if (isSelf) {
+        inv = parseInvocation(body, accountId)
+      } else {
+        inv = parseInvocation(body, accountId)
+      }
+      if (!inv) return
+      const bot = inv.bot
+      if (!bot.enabled) return
+
+      const ownerInHomeChat = isSelf && homeBot != null && homeBot.id === bot.id
+
+      if (inv.command === 'start') {
+        if (senderEmail && !bot.subscribedUsers.includes(senderEmail)) {
+          bot.subscribedUsers.push(senderEmail)
+          await saveStore()
+        }
+        const welcome =
+          resolveReply(bot, 'start', inv.argument, senderEmail) ??
+          defaultWelcome(bot)
+        const { reply, forwarded } = await resolveOutgoingReply(
+          accountId,
+          bot,
+          inv,
+          senderEmail,
+          body,
+          chatId,
+          msgId
+        )
+        const outgoing = bot.webhookUrl ? reply : reply ?? welcome
+        if (outgoing) {
+          await sendBotReply(accountId, chatId, bot, outgoing)
+        } else if (!forwarded) {
+          log.warn('email bot %s: /start produced no reply', bot.name)
+        }
+        return
+      }
+
+      if (
+        !ownerInHomeChat &&
+        senderEmail &&
+        !bot.subscribedUsers.includes(senderEmail)
+      ) {
+        bot.subscribedUsers.push(senderEmail)
+        await saveStore({ publishSync: false })
+      }
+
       const { reply, forwarded } = await resolveOutgoingReply(
         accountId,
         bot,
@@ -1526,41 +1595,25 @@ async function handleIncoming(
         chatId,
         msgId
       )
-      const outgoing = bot.webhookUrl ? reply : reply ?? welcome
-      if (outgoing) {
-        await sendBotReply(accountId, chatId, bot, outgoing)
-      } else if (!forwarded) {
-        log.warn('email bot %s: /start produced no reply', bot.name)
+      let outgoing = reply
+      if (!outgoing && !bot.webhookUrl) {
+        outgoing = resolveReply(bot, inv.command, inv.argument, senderEmail)
       }
-      return
+      if (!outgoing) {
+        if (forwarded) return
+        log.warn(
+          'email bot %s: /%s produced no reply (webhook=%s)',
+          bot.name,
+          inv.command,
+          !!bot.webhookUrl
+        )
+        return
+      }
+      await sendBotReply(accountId, chatId, bot, outgoing)
+    } catch (e) {
+      log.warn('email bot handleIncoming failed', e)
     }
-
-    if (
-      !ownerInHomeChat &&
-      senderEmail &&
-      !bot.subscribedUsers.includes(senderEmail)
-    ) {
-      bot.subscribedUsers.push(senderEmail)
-      await saveStore({ publishSync: false })
-    }
-
-    const { reply, forwarded } = await resolveOutgoingReply(
-      accountId,
-      bot,
-      inv,
-      senderEmail,
-      body,
-      chatId,
-      msgId
-    )
-    if (!reply) {
-      if (forwarded) return
-      return
-    }
-    await sendBotReply(accountId, chatId, bot, reply)
-  } catch (e) {
-    log.warn('email bot handleIncoming failed', e)
-  }
+  })
 }
 
 // ---------------------------------------------------------------------------
@@ -1627,14 +1680,20 @@ export async function initEmailBots(): Promise<void> {
     'bmchat:emailbots:dispatch-message',
     async (
       _e,
-      args: { accountId: number; chatId: number; msgId: number }
+      args: {
+        accountId: number
+        chatId: number
+        msgId: number
+        text?: string
+      }
     ) => {
       const accountId = Number(args?.accountId) || 0
       const chatId = Number(args?.chatId) || 0
       const msgId = Number(args?.msgId) || 0
+      const text =
+        typeof args?.text === 'string' ? args.text.trim() : ''
       if (accountId <= 0 || chatId <= 0 || msgId <= 0) return { ok: false }
-      if (!(await resolveBotHomeChat(accountId, chatId))) return { ok: false }
-      void handleIncoming(accountId, chatId, msgId)
+      await handleIncoming(accountId, chatId, msgId, text || undefined)
       return { ok: true }
     }
   )

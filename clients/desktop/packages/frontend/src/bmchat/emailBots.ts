@@ -12,7 +12,8 @@ export interface EmailBotPublic {
 export async function dispatchEmailBotCommand(
   accountId: number,
   chatId: number,
-  msgId: number
+  msgId: number,
+  text?: string | null
 ): Promise<void> {
   if (runtime.getRuntimeInfo().target !== 'electron') return
   if (accountId <= 0 || chatId <= 0 || msgId <= 0) return
@@ -21,6 +22,7 @@ export async function dispatchEmailBotCommand(
       accountId,
       chatId,
       msgId,
+      text: text?.trim() || undefined,
     })
   } catch {
     /* ignore */
