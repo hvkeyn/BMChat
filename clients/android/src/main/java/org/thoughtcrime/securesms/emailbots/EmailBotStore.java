@@ -160,18 +160,33 @@ public final class EmailBotStore {
     return null;
   }
 
+  /** Strict match: only the stored {@link EmailBotConfig#botChatId}. */
   @Nullable
-  public synchronized EmailBotConfig findByChatId(int accountId, int chatId) {
+  public synchronized EmailBotConfig findByChatIdStrict(int accountId, int chatId) {
     if (chatId <= 0) return null;
     for (EmailBotConfig b : getAll()) {
       if (b.ownerAccountId == accountId && b.botChatId == chatId) return b;
     }
+    return null;
+  }
+
+  @Nullable
+  public synchronized EmailBotConfig findByChatId(int accountId, int chatId) {
+    return findByChatIdStrict(accountId, chatId);
+  }
+
+  /** Migration-only lookup; never use for profile/search UI labelling. */
+  @Nullable
+  public synchronized EmailBotConfig findByChatIdMigrating(int accountId, int chatId) {
+    EmailBotConfig strict = findByChatIdStrict(accountId, chatId);
+    if (strict != null) return strict;
+    if (chatId <= 0) return null;
     try {
       DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
       if (ctx == null || !ctx.isOk()) return null;
       return EmailBotContactHelper.findBotForHomeChat(ctx, this, accountId, chatId);
     } catch (Throwable t) {
-      Log.w(TAG, "findByChatId fallback failed", t);
+      Log.w(TAG, "findByChatIdMigrating fallback failed", t);
       return null;
     }
   }

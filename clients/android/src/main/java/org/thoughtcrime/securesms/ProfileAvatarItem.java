@@ -61,11 +61,7 @@ public class ProfileAvatarItem extends LinearLayout implements RecipientModified
       name = dcChat.getName();
 
       if (isEmailBotHome && emailBotName != null) {
-        int subtitleRes =
-            dcChat.isOutBroadcast()
-                ? R.string.bmchat_channel_profile_username
-                : R.string.bmchat_bot_profile_username;
-        subtitle = getContext().getString(subtitleRes, emailBotName);
+        subtitle = getContext().getString(R.string.bmchat_bot_profile_username, emailBotName);
       } else if (dcChat.isMailingList()) {
         subtitle = dcChat.getMailinglistAddr();
       } else if (dcChat.isOutBroadcast()) {

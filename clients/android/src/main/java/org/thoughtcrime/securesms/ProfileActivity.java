@@ -211,6 +211,8 @@ public class ProfileActivity extends PassphraseRequiredActionBarActivity
     String title = getString(R.string.profile);
     if (chatIsMailingList) {
       title = getString(R.string.mailing_list);
+    } else if (chatIsEmailBotHome) {
+      title = getString(R.string.bot);
     } else if (chatIsOutBroadcast || chatIsInBroadcast) {
       title = getString(R.string.channel);
     } else if (chatIsMultiUser) {

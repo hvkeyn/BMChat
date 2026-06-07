@@ -517,25 +517,8 @@ function ViewGroupInner(
       try {
         const resolved = await resolveEmailBotHomeChat(accountId, chat.id)
         if (cancelled) return
-        if (resolved.isHome) {
-          setIsEmailBotHome(true)
-          setEmailBotName(resolved.name)
-          return
-        }
-        const bots = await listEmailBots()
-        if (cancelled) return
-        const label = (groupName || '').trim()
-        const match = bots.find(b => {
-          if (b.botChatId != null && b.botChatId > 0 && b.botChatId === chat.id) {
-            return true
-          }
-          const dn = (b.displayName || '').trim()
-          if (dn && dn.toLowerCase() === label.toLowerCase()) return true
-          if (`@${b.name}`.toLowerCase() === label.toLowerCase()) return true
-          return b.name.toLowerCase() === label.toLowerCase()
-        })
-        setIsEmailBotHome(!!match)
-        setEmailBotName(match?.name ?? null)
+        setIsEmailBotHome(resolved.isHome)
+        setEmailBotName(resolved.name)
       } catch {
         if (!cancelled) {
           setIsEmailBotHome(false)
@@ -579,7 +562,7 @@ function ViewGroupInner(
               />
               <div className='group-profile-subtitle'>
                 {isEmailBotHome && emailBotName
-                  ? tx('bmchat_channel_profile_username', [emailBotName])
+                  ? tx('bmchat_bot_profile_username', [emailBotName])
                   : !isBroadcast
                     ? group.contactIds.length > 1 || group.selfInGroup
                       ? tx('n_members', group.contactIds.length.toString(), {

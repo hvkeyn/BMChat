@@ -1,15 +1,15 @@
 {
-  "versionCode": 861,
-  "versionName": "2.50.23",
+  "versionCode": 862,
+  "versionName": "2.50.24",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.23.apk",
-  "sha256": "d5bcb6e7199c1c238490ebfae9730f5b5fd8bebd02ca8f0996d6dab2d8140621",
-  "size": 77526110,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.24.apk",
+  "sha256": "dd70f9c3d801d31c52a4c05ffc387cbe043ce59a7caa2f8ef8377d1b61965f7f",
+  "size": 77526331,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-07T15:30:00Z",
+  "publishedAt": "2026-06-07T03:55:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.23 — поиск ботов с других аккаунтов.\n\nНОВОЕ:\n• Глобальный поиск ботов: @newsbot, newsbot, «новостной бот».\n• Каталог ботов реплицируется между профилями на устройстве.\n• Клик по боту в поиске открывает личный чат (/start).\n• Боты из всех локальных аккаунтов видны при поиске — как в Telegram."
+  "notes": "BMChat 2.50.24 — боты и каналы разделены.\n\nИСПРАВЛЕНО:\n• Канал больше не помечается как @newsbot (строгий botChatId).\n• Профиль бота: «Бот · @name», не «Канал».\n• Поиск открывает home-chat бота, не мёртвый 1:1 с @bots.bmchat.local.\n• Команды /start не срабатывают в пользовательских каналах."
 }

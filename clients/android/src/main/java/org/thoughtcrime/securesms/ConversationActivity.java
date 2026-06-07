@@ -877,7 +877,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
     if (sentChatId <= 0 || sentMsgId <= 0) return;
     try {
       if (!org.thoughtcrime.securesms.emailbots.EmailBotContactHelper.isLocalBotChat(
-              dcContext, sentChatId)) {
+              getApplicationContext(), dcContext, sentChatId)) {
         return;
       }
     } catch (Throwable ignored) {

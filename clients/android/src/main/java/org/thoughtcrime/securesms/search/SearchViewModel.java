@@ -91,9 +91,25 @@ class SearchViewModel extends ViewModel {
       java.util.LinkedHashSet<Integer> merged = new java.util.LinkedHashSet<>();
       for (int c : contacts) merged.add(c);
       for (int c : botContacts) merged.add(c);
-      contacts = new int[merged.size()];
+      org.thoughtcrime.securesms.emailbots.EmailBotStore botStore =
+          new org.thoughtcrime.securesms.emailbots.EmailBotStore(appContext);
+      java.util.LinkedHashSet<Integer> pruned = new java.util.LinkedHashSet<>();
+      for (Integer contactId : merged) {
+        com.b44t.messenger.DcContact contact = dcContext.getContact(contactId);
+        String slug =
+            org.thoughtcrime.securesms.emailbots.EmailBotContactHelper.nameFromBotEmail(
+                contact != null ? contact.getAddr() : "");
+        if (!slug.isEmpty()) {
+          org.thoughtcrime.securesms.emailbots.EmailBotConfig bot =
+              botStore.findByName(dcContext.getAccountId(), slug);
+          if (bot == null) bot = botStore.findByNameGlobal(slug);
+          if (bot != null && bot.botChatId > 0) continue;
+        }
+        pruned.add(contactId);
+      }
+      contacts = new int[pruned.size()];
       int i = 0;
-      for (Integer c : merged) contacts[i++] = c;
+      for (Integer c : pruned) contacts[i++] = c;
     }
     overallCnt += contacts.length;
 

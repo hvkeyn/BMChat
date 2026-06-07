@@ -507,9 +507,28 @@ function matchesBotLabel(bot: EmailBot, label: string): boolean {
   if (dn && dn.toLowerCase() === lower) return true
   if (`@${bot.name}`.toLowerCase() === lower) return true
   if (bot.name.toLowerCase() === lower) return true
-  if (lower.includes(`@${bot.name.toLowerCase()}`)) return true
-  if (lower.includes(bot.name.toLowerCase())) return true
   return false
+}
+
+function isAttachedChat(bot: EmailBot, chatId: number): boolean {
+  return (bot.attachedChatIds || []).some(id => id === chatId)
+}
+
+async function isSelfOnlyOutBroadcast(
+  accountId: number,
+  chatId: number
+): Promise<boolean> {
+  try {
+    const chat: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
+      accountId,
+      chatId
+    )
+    const ids: number[] = Array.isArray(chat?.contactIds) ? chat.contactIds : []
+    if (ids.length === 0) return true
+    return ids.every(id => id === DC_CONTACT_ID_SELF)
+  } catch {
+    return false
+  }
 }
 
 function isOrphanDefaultChannel(bot: EmailBot, chatName: string): boolean {
@@ -558,6 +577,8 @@ async function findExistingHomeChatId(
       const chat: any = await rpc.getBasicChatInfo(accountId, cid)
       if (chat?.chatType !== 'OutBroadcast') continue
       const chatName = (chat?.name || '').trim()
+      if (isAttachedChat(bot, cid)) continue
+      if (!(await isSelfOnlyOutBroadcast(accountId, cid))) continue
       if (
         !matchesBotLabel(bot, chatName) &&
         !isOrphanDefaultChannel(bot, chatName)
@@ -611,7 +632,16 @@ async function findBotForHomeChat(
   if (chatId <= 0) return null
   const byId = findBotByChatId(accountId, chatId)
   if (byId) return byId
-  if (!(await isLocalBotChat(accountId, chatId))) return null
+  try {
+    const chat: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
+      accountId,
+      chatId
+    )
+    if (chat?.chatType !== 'OutBroadcast') return null
+  } catch {
+    return null
+  }
+  if (!(await isSelfOnlyOutBroadcast(accountId, chatId))) return null
   let chatName = ''
   try {
     const chat: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
@@ -622,30 +652,20 @@ async function findBotForHomeChat(
   } catch {
     /* ignore */
   }
-  const enabled = botsForAccount(accountId).filter(b => b.enabled)
-  for (const b of enabled) {
+  for (const b of botsForAccount(accountId)) {
+    if (!b.enabled) continue
+    if (isAttachedChat(b, chatId)) continue
     if (matchesBotLabel(b, chatName)) return b
   }
-  if (enabled.length === 1) return enabled[0] ?? null
   return null
 }
 
-/**
- * Returns true when {@link chatId} is a local bot home chat: a self-only
- * outgoing broadcast that is never queued to SMTP.
- */
+/** True only for the canonical stored {@link EmailBot.botChatId}. */
 async function isLocalBotChat(
   accountId: number,
   chatId: number
 ): Promise<boolean> {
-  if (chatId <= 0) return false
-  try {
-    const rpc = getDCJsonrpcRemote().rpc
-    const chat: any = await rpc.getBasicChatInfo(accountId, chatId)
-    return chat?.chatType === 'OutBroadcast'
-  } catch {
-    return false
-  }
+  return findBotByChatId(accountId, chatId) != null
 }
 
 /**
@@ -700,7 +720,7 @@ async function ensureBotContact(bot: EmailBot): Promise<void> {
         // Legacy 1:1 @bots.bmchat.local chat (or any non-broadcast) →
         // migrate to a local broadcast and delete the old chat so the user
         // can no longer type into a conversation that bounces over SMTP.
-        const migrated = await createLocalBotChat(bot, displayName)
+        const migrated = await createLocalBotChat(bot, `@${bot.name}`)
         if (migrated > 0) {
           try {
             await rpc.deleteChat(bot.ownerAccountId, bot.botChatId)
@@ -723,7 +743,7 @@ async function ensureBotContact(bot: EmailBot): Promise<void> {
     }
   }
   if (!haveLocal) {
-    const created = await createLocalBotChat(bot, displayName)
+    const created = await createLocalBotChat(bot, `@${bot.name}`)
     if (created > 0) {
       bot.botChatId = created
       haveLocal = true
@@ -1563,7 +1583,7 @@ export async function initEmailBots(): Promise<void> {
       await reloadStoreMerged()
       const accountId = Number(args?.accountId) || 0
       const chatId = Number(args?.chatId) || 0
-      const bot = await findBotForHomeChat(accountId, chatId)
+      const bot = findBotByChatId(accountId, chatId)
       return { isHome: !!bot, name: bot?.name ?? null }
     }
   )

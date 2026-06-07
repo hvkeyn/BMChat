@@ -67,11 +67,19 @@ public class ConversationTitleView extends RelativeLayout {
     } else if (dcChat.isInBroadcast()) {
       subtitleStr = context.getString(R.string.channel);
     } else if (dcChat.isOutBroadcast()) {
-      int recipients = Math.max(1, chatContacts.length);
-      subtitleStr =
-          context
-              .getResources()
-              .getQuantityString(R.plurals.n_recipients, recipients, recipients);
+      org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
+          new org.thoughtcrime.securesms.emailbots.EmailBotStore(context)
+              .findByChatIdStrict(dcContext.getAccountId(), chatId);
+      if (emailBot != null) {
+        subtitleStr =
+            context.getString(R.string.bmchat_bot_profile_username, emailBot.name);
+      } else {
+        int recipients = Math.max(1, chatContacts.length);
+        subtitleStr =
+            context
+                .getResources()
+                .getQuantityString(R.plurals.n_recipients, recipients, recipients);
+      }
     } else if (dcChat.isMultiUser()) {
       if (chatContacts.length > 1 || Util.contains(chatContacts, DcContact.DC_CONTACT_ID_SELF)) {
         subtitleStr =

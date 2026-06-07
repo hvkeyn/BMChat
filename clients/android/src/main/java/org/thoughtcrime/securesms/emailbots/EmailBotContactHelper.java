@@ -75,16 +75,15 @@ public final class EmailBotContactHelper {
     return "";
   }
 
-  /** Returns {@code true} when {@code chatId} is a local bot home chat,
-   * i.e. a self-only outgoing broadcast that never sends over SMTP. */
-  public static boolean isLocalBotChat(@NonNull DcContext dc, int chatId) {
+  /** Returns {@code true} only when {@code chatId} is the canonical bot home
+   * ({@link EmailBotConfig#botChatId}), not an arbitrary user channel. */
+  public static boolean isLocalBotChat(@NonNull Context context,
+                                       @NonNull DcContext dc,
+                                       int chatId) {
     if (chatId <= 0) return false;
-    try {
-      DcChat chat = dc.getChat(chatId);
-      return chat != null && chat.getType() == DcChat.DC_CHAT_TYPE_OUT_BROADCAST;
-    } catch (Throwable t) {
-      return false;
-    }
+    EmailBotConfig bot =
+        new EmailBotStore(context).findByChatIdStrict(dc.getAccountId(), chatId);
+    return bot != null && bot.enabled;
   }
 
   /**
@@ -105,33 +104,43 @@ public final class EmailBotContactHelper {
       if (b.botChatId == chatId) return b;
     }
 
+    if (!isSelfOnlyOutBroadcast(dc, chatId)) return null;
     String chatName = chat.getName();
     if (chatName == null) chatName = "";
-    EmailBotConfig labelMatch = null;
-    java.util.List<EmailBotConfig> enabled = new java.util.ArrayList<>();
     for (EmailBotConfig b : store.getForAccount(accountId)) {
       if (!b.enabled) continue;
-      enabled.add(b);
-      if (matchesBotLabel(b, chatName)) labelMatch = b;
+      if (isAttachedChat(b, chatId)) continue;
+      if (matchesBotLabel(b, chatName)) return b;
     }
-    if (labelMatch != null) return labelMatch;
-    // Self-only OutBroadcast has no pseudo-contact members — if the account
-    // owns exactly one bot, this channel must be its home chat.
-    if (enabled.size() == 1) return enabled.get(0);
     return null;
   }
 
+  /** Exact title match only — avoids hijacking unrelated user channels. */
   public static boolean matchesBotLabel(@NonNull EmailBotConfig bot,
                                         @NonNull String label) {
     String n = label.trim();
     if (n.isEmpty()) return false;
-    String lower = n.toLowerCase(Locale.ROOT);
     String dn = bot.displayName != null ? bot.displayName.trim() : "";
     if (!dn.isEmpty() && dn.equalsIgnoreCase(n)) return true;
     if (("@".concat(bot.name)).equalsIgnoreCase(n)) return true;
     if (bot.name.equalsIgnoreCase(n)) return true;
-    if (lower.contains("@" + bot.name.toLowerCase(Locale.ROOT))) return true;
-    if (lower.contains(bot.name.toLowerCase(Locale.ROOT))) return true;
+    return false;
+  }
+
+  private static boolean isSelfOnlyOutBroadcast(@NonNull DcContext dc, int chatId) {
+    int[] contacts = dc.getChatContacts(chatId);
+    if (contacts == null || contacts.length == 0) return true;
+    for (int contactId : contacts) {
+      if (contactId != DcContact.DC_CONTACT_ID_SELF) return false;
+    }
+    return true;
+  }
+
+  private static boolean isAttachedChat(@NonNull EmailBotConfig bot, int chatId) {
+    if (bot.attachedChatIds == null) return false;
+    for (int attachedId : bot.attachedChatIds) {
+      if (attachedId == chatId) return true;
+    }
     return false;
   }
 
@@ -159,6 +168,7 @@ public final class EmailBotContactHelper {
     String email = makeBotEmail(bot.name);
     String displayName = bot.displayName != null && !bot.displayName.isEmpty()
         ? bot.displayName : "@" + bot.name;
+    String homeChatTitle = "@" + bot.name;
 
     // The pseudo-contact is kept only so the bot can still be added to real
     // groups/broadcasts as a labelled member; it is NEVER used as the home
@@ -183,7 +193,7 @@ public final class EmailBotContactHelper {
           // Old-style deliverable 1:1 (or any non-broadcast) chat → migrate
           // to a local broadcast and drop the old chat so the user can no
           // longer type into a conversation that bounces over SMTP.
-          int migrated = createLocalBotChat(dc, displayName, bot.avatarPath);
+          int migrated = createLocalBotChat(dc, homeChatTitle, bot.avatarPath);
           if (migrated > 0) {
             try { dc.deleteChat(chatId); } catch (Throwable ignored) {}
             chatId = migrated;
@@ -202,7 +212,7 @@ public final class EmailBotContactHelper {
       }
     }
     if (!haveLocal) {
-      int created = createLocalBotChat(dc, displayName, bot.avatarPath);
+      int created = createLocalBotChat(dc, homeChatTitle, bot.avatarPath);
       if (created > 0) {
         chatId = created;
         haveLocal = true;
@@ -240,6 +250,8 @@ public final class EmailBotContactHelper {
         if (chat == null || !chat.isOutBroadcast()) continue;
         String chatName = chat.getName();
         if (chatName == null) chatName = "";
+        if (isAttachedChat(bot, cid)) continue;
+        if (!isSelfOnlyOutBroadcast(dc, cid)) continue;
         if (!matchesBotLabel(bot, chatName) && !isOrphanDefaultChannel(bot, chatName)) {
           continue;
         }
@@ -284,6 +296,8 @@ public final class EmailBotContactHelper {
           if (chat == null || !chat.isOutBroadcast()) continue;
           String chatName = chat.getName();
           if (chatName == null) chatName = "";
+          if (isAttachedChat(bot, cid)) continue;
+          if (!isSelfOnlyOutBroadcast(dc, cid)) continue;
           if (!matchesBotLabel(bot, chatName) && !isOrphanDefaultChannel(bot, chatName)) {
             continue;
           }

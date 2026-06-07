@@ -1,6 +1,6 @@
 {
-  "version": "2.50.23",
-  "publishedAt": "2026-06-06T14:30:00Z",
+  "version": "2.50.24",
+  "publishedAt": "2026-06-07T03:55:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,31 +10,31 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.23-Portable.x64.exe",
-      "size": 125980364,
-      "sha256": "265dc3fb695e39a3395f845be3a09d850878bd7466f40d87608876447c35cd0f"
+      "versionedFile": "BMChat-2.50.24-Portable.x64.exe",
+      "size": 125980216,
+      "sha256": "8cb2ecc9bb3858e9e210727fc0623a8eef972e967771446f7f0fc2d90cae2653"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.23-Setup.x64.exe",
-      "size": 126296753,
-      "sha256": "adb4289263451a22b77968284d395ec3ac7fc9ffb7e742ba444dd77b9c33480e"
+      "versionedFile": "BMChat-2.50.24-Setup.x64.exe",
+      "size": 126296605,
+      "sha256": "49e2703a0640915ae459468080fd692f20a10400979c1a80659f51b15d20b7cc"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
       "url": "http://5.187.4.132/desktop/BMChat-x86_64.AppImage",
-      "versionedFile": "BMChat-2.50.23-x86_64.AppImage",
-      "size": 152817329,
-      "sha256": "5b4cb54a2a6e5c80b9b44da0ce499ab9ef51e2dc9339aa85ef89d0e7623b3e68"
+      "versionedFile": "BMChat-2.50.24-x86_64.AppImage",
+      "size": 152825657,
+      "sha256": "ae27d87c6f4f6e5654bf43984b78f2a1d2bdbccf548fbcf47c992e871717f916"
     },
     "linux-x64-deb": {
       "label": ".deb (amd64)",
       "url": "http://5.187.4.132/desktop/bmchat-amd64.deb",
-      "versionedFile": "bmchat-desktop_2.50.23_amd64.deb",
-      "size": 121556268,
-      "sha256": "7a25cfb9b158bd6f0fd70a2d3ba831479a7f6f6489eabf4d55cb72222b17d29d"
+      "versionedFile": "bmchat-desktop_2.50.24_amd64.deb",
+      "size": 121560196,
+      "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat Desktop 2.50.23 — поиск ботов и каналы.\n\nНОВОЕ:\n• Глобальный поиск email-ботов (@newsbot, имя, описание).\n• Боты подключаются к каналам (attachedChatIds), ответы дублируются в канал.\n• Меню ботов: открыть чат, добавить/убрать из канала.\n• Linux: AppImage и .deb обновлены до 2.50.23."
+  "notes": "BMChat Desktop 2.50.24 — боты отделены от каналов.\n\nИСПРАВЛЕНО:\n• Профиль bot home показывает «Бот · @name».\n• Пользовательские каналы не путаются с ботами.\n• Поиск и open-chat ведут в botChatId."
 }
