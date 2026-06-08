@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import com.b44t.messenger.DcContact;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.bots.BotPseudoContactHelper;
 import org.thoughtcrime.securesms.components.AvatarView;
 import org.thoughtcrime.securesms.contacts.avatars.ResourceContactPhoto;
 import org.thoughtcrime.securesms.mms.GlideRequests;
@@ -88,6 +89,13 @@ public class ContactSelectionListItem extends LinearLayout implements RecipientM
       this.avatar.setImageDrawable(
           new ResourceContactPhoto(R.drawable.ic_qr_code_24)
               .asDrawable(getContext(), ThemeUtil.getDummyContactColor(getContext())));
+    } else if (contact != null) {
+      String botAvatar = BotPseudoContactHelper.resolveAvatarPath(getContext(), contact);
+      if (botAvatar != null) {
+        avatar.setAvatarFromFile(glideRequests, botAvatar);
+      } else {
+        this.avatar.setAvatar(glideRequests, recipient, false);
+      }
     } else {
       this.avatar.setAvatar(glideRequests, recipient, false);
     }

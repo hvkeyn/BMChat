@@ -3,6 +3,7 @@ package org.thoughtcrime.securesms.components;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import java.io.File;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageView;
@@ -52,6 +53,10 @@ public class AvatarView extends ConstraintLayout {
 
   public void setImageDrawable(@Nullable Drawable drawable) {
     avatarImage.setImageDrawable(drawable);
+  }
+
+  public void setAvatarFromFile(@NonNull GlideRequests glideRequests, @NonNull String path) {
+    glideRequests.load(new File(path)).circleCrop().into(avatarImage);
   }
 
   public void setAvatarClickListener(OnClickListener listener) {

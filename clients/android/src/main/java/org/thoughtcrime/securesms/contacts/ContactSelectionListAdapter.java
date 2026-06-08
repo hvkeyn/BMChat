@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.bots.BotPseudoContactHelper;
 import org.thoughtcrime.securesms.connect.DcContactsLoader;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.mms.GlideRequests;
@@ -302,7 +303,8 @@ public class ContactSelectionListAdapter
     } else {
       dcContact = getContact(i);
       name = dcContact.getDisplayName();
-      addr = dcContact.getAddr();
+      String botSubtitle = BotPseudoContactHelper.pickerSubtitle(context, dcContact);
+      addr = botSubtitle != null ? botSubtitle : dcContact.getAddr();
     }
 
     viewHolder.unbind(glideRequests);

@@ -55,7 +55,7 @@ ul li { margin: 4px 0; }
 <div class="wrap">
 
 <header>
-  <h1>BMChat Email Bot API <span style="font-size:14px;color:var(--c-muted)">v1 · 2.49.50</span></h1>
+  <h1>BMChat Email Bot API <span style="font-size:14px;color:var(--c-muted)">v1 · 2.50.29</span></h1>
   <p>Telegram BotFather — но транспорт обычная электронная почта.</p>
   <p><a href="/">← на главную BMChat</a></p>
 </header>
@@ -69,6 +69,7 @@ ul li { margin: 4px 0; }
     <li><a href="#start">Команда <code>/start</code> и подписка</a></li>
     <li><a href="#wire">Формат писем (wire format)</a></li>
     <li><a href="#update">Update — что приходит разработчику</a></li>
+    <li><a href="#channels">Каналы и группы (chat_id)</a></li>
     <li><a href="#reply">Ответ — что разработчик отправляет назад</a></li>
     <li><a href="#keyboard">Inline-клавиатуры и callback</a></li>
     <li><a href="#auth">Аутентификация и безопасность</a></li>
@@ -148,7 +149,7 @@ BMCHAT-BOT-UPDATE v1 @helper_bot chat=42 message=1715812345 from=bob@example.com
   "update_id": 1715812345,
   "message": {
     "message_id": 1715812345,
-    "chat": { "id": 42, "type": "private" },
+    "chat": { "id": 42, "type": "channel", "title": "Новости" },
     "from": { "email": "bob@example.com" },
     "text": "/forecast Москва",
     "date": 1715812345
@@ -158,6 +159,9 @@ BMCHAT-BOT-UPDATE v1 @helper_bot chat=42 message=1715812345 from=bob@example.com
     "token_suffix": "&lt;первые 16 символов token&gt;",
     "command": "forecast",
     "argument": "Москва",
+    "origin_chat_id": 42,
+    "attached_chat_ids": [42, 77],
+    "bot_home_chat_id": 15,
     "reply_to": "alice@example.com"
   }
 }
@@ -199,10 +203,38 @@ BMCHAT-BOT-REPLY v1 @helper_bot chat=42 in_reply_to=1715812345
   <li><code>bmchat.token_suffix</code> — первые 16 символов вашего токена. Сверьте с тем, что хранится у вас, чтобы убедиться, что сообщение реально пришло из BMChat.</li>
 </ul>
 
+<h2 id="channels">Каналы и группы (chat_id)</h2>
+<p>С 2.50.29 update несёт реальный тип чата — как в Telegram Bot API:</p>
+<table>
+<thead><tr><th><code>message.chat.type</code></th><th>BMChat</th></tr></thead>
+<tbody>
+<tr><td><code>private</code></td><td>1:1 чат</td></tr>
+<tr><td><code>group</code></td><td>Зашифрованная группа</td></tr>
+<tr><td><code>supergroup</code></td><td>Рассылка / mailing-list</td></tr>
+<tr><td><code>channel</code></td><td>Исходящий или входящий канал (broadcast)</td></tr>
+</tbody>
+</table>
+<p>Поле <code>message.chat.id</code> — стабильный числовой ID чата на устройстве владельца. Именно его указывайте, когда бот должен ответить <em>в конкретный канал или группу</em>, а не только в чат, откуда пришло сообщение.</p>
+<p>Дополнительные поля в <code>bmchat</code>:</p>
+<ul>
+  <li><code>origin_chat_id</code> — чат, где пользователь написал команду;</li>
+  <li><code>attached_chat_ids</code> — каналы/группы, куда бот уже прикреплён через «Добавить участника»;</li>
+  <li><code>bot_home_chat_id</code> — локальный домашний чат бота (self-broadcast).</li>
+</ul>
+<p>Ответ разработчика может маршрутизироваться в другой чат:</p>
+<pre><code>{
+  "text": "Новость дня опубликована",
+  "chat_id": 77,
+  "chat_ids": [42, 77, 88]
+}</code></pre>
+<p><code>chat_id</code> — основной получатель (переопределяет <code>chat=</code> из заголовка reply). <code>chat_ids</code> — дополнительные каналы/группы для рассылки того же текста (как <code>sendMessage</code> в несколько чатов).</p>
+
 <h2 id="reply">Ответ — что разработчик отправляет назад</h2>
 <table>
 <thead><tr><th>Поле</th><th>Описание</th></tr></thead>
 <tbody>
+<tr><td><code>chat_id</code></td><td>Целевой чат (канал/группа/private). Если не задан — используется <code>chat=</code> из маркера reply.</td></tr>
+<tr><td><code>chat_ids</code></td><td>Массив дополнительных chat id для мульти-поста.</td></tr>
 <tr><td><code>text</code></td><td>Тело ответа. Поддерживается Markdown подмножество BMChat (<code>*жирный*</code>, <code>_курсив_</code>, <code>~зачёркнутый~</code>, ссылки <code>[label](url)</code>).</td></tr>
 <tr><td><code>parse_mode</code></td><td>Подсказка для логирования. BMChat всегда применяет свой Markdown.</td></tr>
 <tr><td><code>reply_markup.inline_keyboard</code></td><td>2-D массив кнопок — <a href="#keyboard">см. ниже</a>.</td></tr>

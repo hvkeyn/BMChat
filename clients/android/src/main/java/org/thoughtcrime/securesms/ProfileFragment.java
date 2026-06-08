@@ -325,7 +325,21 @@ public class ProfileFragment extends Fragment
           botStore.upsert(emailBot.withAttachedChat(broadcastChatId));
           botsAttached++;
         } catch (Throwable t) {
-          Log.w(TAG, "attach bot to channel failed contact=" + contactId, t);
+          Log.w(TAG, "attach email bot to channel failed contact=" + contactId, t);
+          skipped++;
+        }
+        continue;
+      }
+      org.thoughtcrime.securesms.bots.BotStore tgBotStore =
+          new org.thoughtcrime.securesms.bots.BotStore(requireContext());
+      org.thoughtcrime.securesms.bots.BotConfig tgBot =
+          tgBotStore.findByContactId(accountId, contactId);
+      if (tgBot != null) {
+        try {
+          tgBotStore.upsert(tgBot.withAttachedChat(broadcastChatId));
+          botsAttached++;
+        } catch (Throwable t) {
+          Log.w(TAG, "attach telegram bot to channel failed contact=" + contactId, t);
           skipped++;
         }
         continue;

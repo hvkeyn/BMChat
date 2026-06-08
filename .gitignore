@@ -73,6 +73,12 @@ artifacts/
 # Throw-away VPS deploy scripts that contain credentials / SSH passwords.
 .tmp-vps-*.sh
 .tmp-*.sh
+infra/vps/fix-ssh-console.sh
+infra/vps/configure-fail2ban-soft.sh
+infra/vps/run-fail2ban-soft-remote.sh
+infra/vps/run-deploy-now.sh
+infra/vps/cleanup-and-deploy-primary.sh
+infra/vps/deploy-mirror-only.sh
 
 # Local VPS deploy credentials (copy from .deploy.env.example).
 infra/vps/.deploy.env

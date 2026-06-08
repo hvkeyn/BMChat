@@ -8,6 +8,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
 
 import org.json.JSONArray;
@@ -225,6 +226,29 @@ public final class BotStore {
   @Nullable
   public synchronized BotConfig get(@NonNull String botId) {
     for (BotConfig b : getAll()) if (b.id.equals(botId)) return b;
+    return null;
+  }
+
+  @Nullable
+  public synchronized BotConfig findByContactId(int accountId, int contactId) {
+    if (contactId <= 0) return null;
+    for (BotConfig b : getAll()) {
+      if (b.dcAccountId == accountId && b.botContactId == contactId) return b;
+    }
+    try {
+      DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
+      if (ctx == null || !ctx.isOk()) return null;
+      DcContact c = ctx.getContact(contactId);
+      if (c == null) return null;
+      String slug = BotPseudoContactHelper.slugFromPseudoEmail(c.getAddr());
+      if (slug.isEmpty()) return null;
+      for (BotConfig b : getAll()) {
+        if (b.dcAccountId != accountId) continue;
+        if (slug.equalsIgnoreCase(b.telegramUsername)) return b;
+      }
+    } catch (Throwable t) {
+      Log.w(TAG, "findByContactId failed", t);
+    }
     return null;
   }
 

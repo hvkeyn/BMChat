@@ -329,7 +329,19 @@ public final class EmailBotDispatcher {
       }
     }
 
-    sendBotReply(dcContext, bot, env.originChatId, text);
+    int targetChatId = payload.optInt("chat_id", env.originChatId);
+    if (targetChatId <= 0) targetChatId = env.originChatId;
+    sendBotReply(dcContext, bot, targetChatId, text);
+
+    JSONArray extraTargets = payload.optJSONArray("chat_ids");
+    if (extraTargets != null) {
+      for (int i = 0; i < extraTargets.length(); i++) {
+        int cid = extraTargets.optInt(i, 0);
+        if (cid > 0 && cid != targetChatId) {
+          sendBotReply(dcContext, bot, cid, text);
+        }
+      }
+    }
     return true;
   }
 
@@ -515,23 +527,17 @@ public final class EmailBotDispatcher {
 
       JSONObject message = new JSONObject();
       message.put("message_id", msgId);
-      message.put("chat", new JSONObject()
-          .put("id", chatId)
-          .put("type", "private"));
+      DcContext dcContext = ApplicationContext.getDcAccounts().getAccount(bot.ownerAccountId);
+      if (dcContext == null) return null;
+      message.put("chat", EmailBotMailer.buildChatJson(dcContext, chatId));
       message.put("from", new JSONObject()
           .put("email", senderEmail));
       message.put("text", originalBody);
       message.put("date", System.currentTimeMillis() / 1000L);
       update.put("message", message);
 
-      // BMChat-specific convenience fields outside the Telegram
-      // envelope so trivial bots can read the parsed command without
-      // implementing a parser. These keys are stable.
-      JSONObject bmchat = new JSONObject();
-      bmchat.put("bot", bot.name);
-      bmchat.put("token_suffix", bot.token);
-      bmchat.put("command", inv.command);
-      bmchat.put("argument", inv.argument);
+      JSONObject bmchat = EmailBotMailer.buildBmchatMeta(
+          dcContext, bot, chatId, inv.command, inv.argument);
       update.put("bmchat", bmchat);
 
       conn = (HttpURLConnection) new URL(bot.webhookUrl).openConnection();

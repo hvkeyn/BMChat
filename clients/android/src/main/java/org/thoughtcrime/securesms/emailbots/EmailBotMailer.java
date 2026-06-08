@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcMsg;
@@ -70,6 +71,57 @@ public final class EmailBotMailer {
 
   private EmailBotMailer() {}
 
+  /** Telegram-shaped chat object with BMChat channel/group/private typing. */
+  @NonNull
+  public static JSONObject buildChatJson(@NonNull DcContext dcContext, int chatId)
+      throws org.json.JSONException {
+    JSONObject chat = new JSONObject();
+    chat.put("id", chatId);
+    DcChat dcChat = dcContext.getChat(chatId);
+    if (dcChat == null) {
+      chat.put("type", "private");
+      return chat;
+    }
+    String title = dcChat.getName();
+    if (!TextUtils.isEmpty(title)) {
+      chat.put("title", title);
+    }
+    if (dcChat.isOutBroadcast() || dcChat.isInBroadcast()) {
+      chat.put("type", "channel");
+    } else if (dcChat.isMailingList()) {
+      chat.put("type", "supergroup");
+    } else if (dcChat.getType() == DcChat.DC_CHAT_TYPE_GROUP) {
+      chat.put("type", "group");
+    } else {
+      chat.put("type", "private");
+    }
+    return chat;
+  }
+
+  @NonNull
+  public static JSONObject buildBmchatMeta(@NonNull DcContext dcContext,
+                                           @NonNull EmailBotConfig bot,
+                                           int originChatId,
+                                           @NonNull String command,
+                                           @NonNull String argument)
+      throws org.json.JSONException {
+    JSONObject bmchat = new JSONObject();
+    bmchat.put("bot", bot.name);
+    bmchat.put("token_suffix", bot.token);
+    bmchat.put("command", command);
+    bmchat.put("argument", argument);
+    bmchat.put("origin_chat_id", originChatId);
+    JSONArray attached = new JSONArray();
+    for (int attachedId : bot.attachedChatIds) {
+      if (attachedId > 0) attached.put(attachedId);
+    }
+    bmchat.put("attached_chat_ids", attached);
+    if (bot.botChatId > 0) {
+      bmchat.put("bot_home_chat_id", bot.botChatId);
+    }
+    return bmchat;
+  }
+
   /**
    * Encodes an inbound user message as a Telegram-style Update and
    * sends it to the bot's developer as a regular email. The developer
@@ -108,19 +160,13 @@ public final class EmailBotMailer {
 
       JSONObject message = new JSONObject();
       message.put("message_id", originMsgId);
-      message.put("chat", new JSONObject()
-          .put("id", originChatId)
-          .put("type", "private"));
+      message.put("chat", buildChatJson(dcContext, originChatId));
       message.put("from", new JSONObject().put("email", senderEmail));
       message.put("text", body);
       message.put("date", System.currentTimeMillis() / 1000L);
       update.put("message", message);
 
-      JSONObject bmchat = new JSONObject();
-      bmchat.put("bot", bot.name);
-      bmchat.put("token_suffix", bot.token);
-      bmchat.put("command", command);
-      bmchat.put("argument", argument);
+      JSONObject bmchat = buildBmchatMeta(dcContext, bot, originChatId, command, argument);
       // Hint to the developer's autoresponder: this is the address
       // they must send the reply to (i.e. our own self-address as the
       // owner of this bot).

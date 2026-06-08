@@ -10,7 +10,7 @@ import androidx.annotation.Nullable;
 import com.b44t.messenger.DcChat;
 import com.b44t.messenger.DcContact;
 import org.thoughtcrime.securesms.components.AvatarView;
-import org.thoughtcrime.securesms.emailbots.EmailBotContactHelper;
+import org.thoughtcrime.securesms.bots.BotPseudoContactHelper;
 import org.thoughtcrime.securesms.mms.GlideRequests;
 import org.thoughtcrime.securesms.recipients.Recipient;
 import org.thoughtcrime.securesms.recipients.RecipientModifiedListener;
@@ -80,7 +80,7 @@ public class ProfileAvatarItem extends LinearLayout implements RecipientModified
     } else if (dcContact != null) {
       recipient = new Recipient(getContext(), dcContact);
       name = dcContact.getDisplayName();
-      String botSlug = EmailBotContactHelper.nameFromBotEmail(dcContact.getAddr());
+      String botSlug = BotPseudoContactHelper.slugFromPseudoEmail(dcContact.getAddr());
       if (!botSlug.isEmpty()) {
         subtitle =
             getContext().getString(R.string.bmchat_bot_profile_username, botSlug);

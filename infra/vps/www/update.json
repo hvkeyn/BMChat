@@ -1,15 +1,15 @@
 {
-  "versionCode": 863,
-  "versionName": "2.50.25",
+  "versionCode": 864,
+  "versionName": "2.50.29",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.25.apk",
-  "sha256": "b90403cb97384e564e916766e7ebc0f95884ca9ca610cbcf1d4814b284308a68",
-  "size": 77526593,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.29.apk",
+  "sha256": "c6abd8989b17e373049ed21b5dc91aea1a270eb673635206116962a1156c24da",
+  "size": 77528214,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-07T12:00:00Z",
+  "publishedAt": "2026-06-08T12:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.25 — bot home relink и команды.\n\nИСПРАВЛЕНО:\n• Android: bot home по имени + relink botChatId.\n• Desktop: немедленный dispatch /start и кнопок после отправки.\n• UI: «Бот · @name» вместо «Канал / 1 получатель»."
+  "notes": "BMChat 2.50.29 — боты в picker и API каналов.\n\nИСПРАВЛЕНО:\n• При добавлении бота в канал: «Бот · @name» вместо pseudo-email.\n• Аватар бота в списке выбора контактов.\n• Telegram-боты тоже прикрепляются к каналам.\n• Email/webhook API: chat.type channel/group + chat_id в ответе."
 }
