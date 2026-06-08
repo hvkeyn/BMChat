@@ -44,6 +44,8 @@ export function ContactListItem(
     tagName: 'li' | 'div'
     style?: React.CSSProperties
     contact: Type.Contact
+    addressOverride?: string
+    profileImageOverride?: string | null
     onClick?: (contact: Type.Contact) => void
     showCheckbox: boolean
     checked: boolean
@@ -137,7 +139,16 @@ export function ContactListItem(
         onContextMenu={onContextMenu}
         aria-haspopup={onContextMenu != undefined ? 'menu' : undefined}
       >
-        <Contact contact={contact} />
+        <Contact
+          contact={{
+            ...contact,
+            address: props.addressOverride ?? contact.address,
+            profileImage:
+              props.profileImageOverride !== undefined
+                ? props.profileImageOverride
+                : contact.profileImage,
+          }}
+        />
       </button>
       {showCheckbox && (
         <DeltaCheckbox

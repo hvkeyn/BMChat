@@ -30,7 +30,7 @@ public final class BotPseudoContactHelper {
         && addr.toLowerCase(Locale.ROOT).trim().endsWith(SUFFIX);
   }
 
-  /** {@code emailbot.newsbot@…} or {@code tgbot.mybot@…} → {@code newsbot} / {@code mybot}. */
+  /** {@code emailbot.newsbot@...} or {@code tgbot.mybot@...} -> {@code newsbot} / {@code mybot}. */
   @NonNull
   public static String slugFromPseudoEmail(@Nullable String addr) {
     if (addr == null || addr.isEmpty()) return "";
@@ -45,7 +45,7 @@ public final class BotPseudoContactHelper {
     return local.substring("tgbot.".length());
   }
 
-  /** Subtitle for contact pickers — never show the raw pseudo-email. */
+  /** Subtitle for contact pickers - never show the raw pseudo-email. */
   @Nullable
   public static String pickerSubtitle(@NonNull Context context,
                                       @Nullable DcContact contact) {
@@ -55,7 +55,7 @@ public final class BotPseudoContactHelper {
     String desc = resolveDescription(context, contact);
     if (!TextUtils.isEmpty(desc)) {
       return context.getString(R.string.bmchat_bot_profile_username, slug)
-          + " — " + desc;
+          + " - " + desc;
     }
     return context.getString(R.string.bmchat_bot_profile_username, slug);
   }
@@ -97,6 +97,36 @@ public final class BotPseudoContactHelper {
       return tgBot.avatarPath;
     }
     return null;
+  }
+
+  @NonNull
+  public static int[] attachedBotContactIds(@NonNull Context context,
+                                            int accountId,
+                                            int chatId) {
+    if (chatId <= 0) return new int[0];
+    java.util.LinkedHashSet<Integer> ids = new java.util.LinkedHashSet<>();
+    DcContext dc = DcHelper.getContext(context);
+    EmailBotStore emailStore = new EmailBotStore(context);
+    for (EmailBotConfig bot : emailStore.getForAccount(accountId)) {
+      if (!bot.enabled || !bot.attachedChatIds.contains(chatId)) continue;
+      int cid = bot.botContactId;
+      if (cid <= 0) {
+        cid = EmailBotContactHelper.ensureSearchableContact(dc, bot);
+        if (cid > 0 && cid != bot.botContactId) {
+          emailStore.patchContactIds(bot.id, cid, bot.botChatId);
+        }
+      }
+      if (cid > 0) ids.add(cid);
+    }
+    BotStore tgStore = new BotStore(context);
+    for (BotConfig bot : tgStore.getAll()) {
+      if (bot.dcAccountId != accountId || !bot.attachedChatIds.contains(chatId)) continue;
+      if (bot.botContactId > 0) ids.add(bot.botContactId);
+    }
+    int[] out = new int[ids.size()];
+    int i = 0;
+    for (Integer id : ids) out[i++] = id;
+    return out;
   }
 
   private static boolean isReadableFile(@Nullable String path) {

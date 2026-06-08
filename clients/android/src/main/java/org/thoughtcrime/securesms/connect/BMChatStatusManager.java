@@ -32,6 +32,11 @@ public final class BMChatStatusManager {
     OK,
     /** DC_CONNECTIVITY_CONNECTING / WORKING — actively probing the server right now. */
     WORKING,
+    /**
+     * Web/proxy path looks down but the mailbox still syncs (e.g. Yandex
+     * IMAP while HTTP is blocked).
+     */
+    MAIL_FALLBACK,
     /** DC_CONNECTIVITY_NOT_CONNECTED or no accounts at all. */
     OFFLINE,
   }
@@ -64,6 +69,8 @@ public final class BMChatStatusManager {
           return ctx.getString(R.string.bmchat_status_online);
         case WORKING:
           return ctx.getString(R.string.bmchat_status_working);
+        case MAIL_FALLBACK:
+          return ctx.getString(R.string.bmchat_status_mail_mode);
         default:
           return ctx.getString(R.string.bmchat_status_offline);
       }
@@ -74,6 +81,9 @@ public final class BMChatStatusManager {
       String last = lastSyncMs == 0L
           ? ctx.getString(R.string.bmchat_status_no_sync_yet)
           : DateUtils.getRelativeTimeSpanString(lastSyncMs).toString();
+      if (severity == Severity.MAIL_FALLBACK) {
+        last = last + " · " + ctx.getString(R.string.bmchat_status_mail_hint);
+      }
       if (unread > 0) {
         return ctx.getString(R.string.bmchat_status_summary_with_unread, unread, last);
       }
@@ -198,6 +208,22 @@ public final class BMChatStatusManager {
       severity = Severity.WORKING;
     } else {
       severity = Severity.OFFLINE;
+    }
+
+    if (severity == Severity.OFFLINE && lastSyncMs > 0L) {
+      long ageMs = System.currentTimeMillis() - lastSyncMs;
+      if (ageMs < 30L * 60_000L) {
+        try {
+          for (int accountId : ApplicationContext.getDcAccounts().getAll()) {
+            DcContext dc = ApplicationContext.getDcAccounts().getAccount(accountId);
+            if (dc != null && dc.isOk() && dc.isChatmail()) {
+              severity = Severity.MAIL_FALLBACK;
+              break;
+            }
+          }
+        } catch (Throwable ignored) {
+        }
+      }
     }
 
     return new StatusInfo(severity, connectivity, unread, accountsTotal, lastSyncMs);

@@ -203,6 +203,8 @@ export function parseFormattedMessage(
 export function messageLikelyFormatted(text: string): boolean {
   if (!text) return false
   return (
+    /^> /m.test(text) ||
+    /^↪/m.test(text) ||
     /\[[^\]]+\]\([^)]+\)/.test(text) ||
     /\*\*[^*]+\*\*/.test(text) ||
     /(?<!\*)\*(?!\*)[^*\n]+\*(?!\*)/.test(text) ||

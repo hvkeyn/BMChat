@@ -1499,6 +1499,8 @@
     <!-- BMChat e-mail bots -->
     <string name="bmchat_bot_profile_username">Бот · @%1$s</string>
     <string name="bmchat_channel_profile_username">Канал · @%1$s</string>
+    <string name="bmchat_channel_bot_section">Бот</string>
+    <string name="bmchat_email_bot_already_on_channel">Этот бот уже подключён к каналу.</string>
     <plurals name="bmchat_email_bot_attached_to_channel">
         <item quantity="one">Бот подключён к этому каналу.</item>
         <item quantity="few">%1$d бота подключены к этому каналу.</item>
@@ -1597,6 +1599,10 @@
     <string name="bmchat_status_online">BMChat ● Связь есть</string>
     <string name="bmchat_status_working">BMChat ● Подключение…</string>
     <string name="bmchat_status_offline">BMChat ● Нет связи</string>
+    <string name="bmchat_status_mail_mode">BMChat ● Почтовый режим</string>
+    <string name="bmchat_status_mail_hint">синхронизация через почту</string>
+    <string name="bmchat_email_bot_field_relay_from_chats">Читать команды из прикреплённых каналов</string>
+    <string name="bmchat_email_bot_field_relay_from_chats_hint">Посты и команды из каналов/чатов, куда добавлен бот, пересылаются на почту разработчика и в webhook.</string>
     <string name="bmchat_status_no_sync_yet">ещё не было</string>
     <string name="bmchat_status_summary">Обновлено: %1$s</string>
     <string name="bmchat_status_summary_with_unread">%1$d непрочитанных · обновлено %2$s</string>

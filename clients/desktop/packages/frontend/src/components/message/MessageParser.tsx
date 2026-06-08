@@ -162,6 +162,125 @@ function renderElement(
  * and for quoted messages, without interactive elements
  * (links can not be clicked etc.)
  */
+function splitAttributionAndBody(message: string): {
+  attribution: string[]
+  body: string
+} {
+  const lines = message.split('\n')
+  const attribution: string[] = []
+  let index = 0
+  while (index < lines.length) {
+    const line = lines[index]
+    if (line.startsWith('> ')) {
+      attribution.push(line.slice(2))
+      index++
+      continue
+    }
+    if (line.startsWith('↪')) {
+      attribution.push(line)
+      index++
+      continue
+    }
+    break
+  }
+  if (index < lines.length && lines[index] === '') index++
+  return { attribution, body: lines.slice(index).join('\n') }
+}
+
+function renderFormattedBlock(
+  message: string,
+  tabindexForInteractiveContents: -1 | 0,
+  keyPrefix: string
+): React.ReactElement {
+  return (
+    <>
+      {parseFormattedMessage(message).map((seg, index) => {
+        const key = `${keyPrefix}-${index}`
+        if (seg.type === 'link' && seg.href) {
+          if (seg.href.startsWith('bmchat-bot://')) {
+            return (
+              <BmchatBotLink
+                key={key}
+                label={seg.value}
+                url={seg.href}
+                tabIndex={tabindexForInteractiveContents}
+              />
+            )
+          }
+          if (
+            seg.href.startsWith('http://') ||
+            seg.href.startsWith('https://')
+          ) {
+            let hostname: string | null = null
+            try {
+              hostname = new URL(seg.href).hostname
+            } catch {
+              /* ignore */
+            }
+            return (
+              <Link
+                key={key}
+                destination={{
+                  target: seg.href,
+                  hostname,
+                  punycode: null,
+                  scheme: seg.href.startsWith('https') ? 'https' : 'http',
+                  linkText: seg.value,
+                }}
+                tabIndex={tabindexForInteractiveContents}
+              />
+            )
+          }
+          return (
+            <a
+              key={key}
+              href={seg.href}
+              tabIndex={tabindexForInteractiveContents}
+              onClick={ev => {
+                ev.preventDefault()
+                ev.stopPropagation()
+                window.open(seg.href, '_blank', 'noopener')
+              }}
+            >
+              {seg.value}
+            </a>
+          )
+        }
+        if (seg.type === 'bold') {
+          return <strong key={key}>{seg.value}</strong>
+        }
+        if (seg.type === 'italic') {
+          return <em key={key}>{seg.value}</em>
+        }
+        if (seg.type === 'strike') {
+          return <s key={key}>{seg.value}</s>
+        }
+        if (seg.type === 'underline') {
+          return <u key={key}>{seg.value}</u>
+        }
+        if (seg.type === 'code') {
+          return (
+            <code key={key} className='message-inline-code'>
+              {seg.value}
+            </code>
+          )
+        }
+        if (seg.type === 'spoiler') {
+          return (
+            <span key={key} className='message-spoiler'>
+              {seg.value}
+            </span>
+          )
+        }
+        const elements = parseElements(seg.value)
+        return elements.map((el, i) =>
+          renderElement(el, tabindexForInteractiveContents, index * 1000 + i)
+        )
+      })}
+    </>
+  )
+}
+
 export function parseAndRenderMessage(
   message: string,
   preview: boolean,
@@ -178,93 +297,36 @@ export function parseAndRenderMessage(
     return <div className='truncated'>{plain}</div>
   }
   try {
-    if (messageLikelyFormatted(message)) {
+    const { attribution, body } = splitAttributionAndBody(message)
+    const renderBody = (text: string, keyPrefix: string) => {
+      if (messageLikelyFormatted(text)) {
+        return renderFormattedBlock(text, tabindexForInteractiveContents, keyPrefix)
+      }
+      const elements = parseElements(text)
       return (
         <>
-          {parseFormattedMessage(message).map((seg, index) => {
-            if (seg.type === 'link' && seg.href) {
-              if (seg.href.startsWith('bmchat-bot://')) {
-                return (
-                  <BmchatBotLink
-                    key={index}
-                    label={seg.value}
-                    url={seg.href}
-                    tabIndex={tabindexForInteractiveContents}
-                  />
-                )
-              }
-              if (
-                seg.href.startsWith('http://') ||
-                seg.href.startsWith('https://')
-              ) {
-                let hostname: string | null = null
-                try {
-                  hostname = new URL(seg.href).hostname
-                } catch {
-                  /* ignore */
-                }
-                return (
-                  <Link
-                    key={index}
-                    destination={{
-                      target: seg.href,
-                      hostname,
-                      punycode: null,
-                      scheme: seg.href.startsWith('https') ? 'https' : 'http',
-                      linkText: seg.value,
-                    }}
-                    tabIndex={tabindexForInteractiveContents}
-                  />
-                )
-              }
-              return (
-                <a
-                  key={index}
-                  href={seg.href}
-                  tabIndex={tabindexForInteractiveContents}
-                  onClick={ev => {
-                    ev.preventDefault()
-                    ev.stopPropagation()
-                    window.open(seg.href, '_blank', 'noopener')
-                  }}
-                >
-                  {seg.value}
-                </a>
-              )
-            }
-            if (seg.type === 'bold') {
-              return <strong key={index}>{seg.value}</strong>
-            }
-            if (seg.type === 'italic') {
-              return <em key={index}>{seg.value}</em>
-            }
-            if (seg.type === 'strike') {
-              return <s key={index}>{seg.value}</s>
-            }
-            if (seg.type === 'underline') {
-              return <u key={index}>{seg.value}</u>
-            }
-            if (seg.type === 'code') {
-              return (
-                <code key={index} className='message-inline-code'>
-                  {seg.value}
-                </code>
-              )
-            }
-            if (seg.type === 'spoiler') {
-              return (
-                <span key={index} className='message-spoiler'>
-                  {seg.value}
-                </span>
-              )
-            }
-            const elements = parseElements(seg.value)
-            return elements.map((el, i) =>
-              renderElement(el, tabindexForInteractiveContents, index * 1000 + i)
-            )
-          })}
+          {elements.map((el, index) =>
+            renderElement(el, tabindexForInteractiveContents, index)
+          )}
         </>
       )
+    }
+
+    if (attribution.length > 0 || messageLikelyFormatted(body)) {
+      return (
+        <>
+          {attribution.map((line, index) => (
+            <div key={`attr-${index}`} className='message-forward-attribution'>
+              {line}
+            </div>
+          ))}
+          {body ? renderBody(body, 'body') : null}
+        </>
+      )
+    }
+
+    if (messageLikelyFormatted(message)) {
+      return renderBody(message, 'full')
     }
     const elements = parseElements(message)
     return (

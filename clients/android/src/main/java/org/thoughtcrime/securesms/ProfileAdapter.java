@@ -23,6 +23,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import org.thoughtcrime.securesms.bots.AttachedBotHelper;
+import org.thoughtcrime.securesms.bots.BotPseudoContactHelper;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.contacts.ContactSelectionListItem;
 import org.thoughtcrime.securesms.mms.GlideRequests;
@@ -188,7 +190,8 @@ public class ProfileAdapter extends RecyclerView.Adapter {
       } else {
         dcContact = dcContext.getContact(contactId);
         name = dcContact.getDisplayName();
-        addr = dcContact.getAddr();
+        String botSubtitle = BotPseudoContactHelper.pickerSubtitle(context, dcContact);
+        addr = botSubtitle != null ? botSubtitle : dcContact.getAddr();
       }
 
       contactItem.unbind(glideRequests);
@@ -393,6 +396,8 @@ public class ProfileAdapter extends RecyclerView.Adapter {
     if (memberList != null && !isInBroadcast && !isMailingList) {
       itemData.add(new ItemData(ITEM_DIVIDER, null, 0));
       if (dcChat != null) {
+        boolean showBotManagement =
+            isOutBroadcast || (dcChat.isMultiUser() && dcChat.isEncrypted());
         if (isOutBroadcast) {
           // Broadcasts (channels) don't take regular dc_add_contact_to_chat
           // members. We still want users to invite contacts the easy way,
@@ -406,9 +411,44 @@ public class ProfileAdapter extends RecyclerView.Adapter {
           itemData.add(new ItemData(ITEM_MEMBERS, DcContact.DC_CONTACT_ID_ADD_MEMBER, 0));
           itemData.add(new ItemData(ITEM_MEMBERS, DcContact.DC_CONTACT_ID_QR_INVITE, 0));
         }
+        if (showBotManagement) {
+          int[] attachedBots =
+              BotPseudoContactHelper.attachedBotContactIds(
+                  context, dcContext.getAccountId(), dcChat.getId());
+          if (attachedBots.length > 0) {
+            itemData.add(
+                new ItemData(
+                    ITEM_HEADER, context.getString(R.string.bmchat_channel_bot_section), 0));
+            for (int botContactId : attachedBots) {
+              itemData.add(new ItemData(ITEM_MEMBERS, botContactId, 0));
+            }
+          }
+        }
+      }
+      java.util.Set<Integer> attachedBotIds =
+          dcChat != null
+              ? AttachedBotHelper.attachedContactIdSet(
+                  context, dcContext.getAccountId(), dcChat.getId())
+              : java.util.Collections.emptySet();
+      if (isOutBroadcast && memberList != null) {
+        int recipientCount = 0;
+        for (int value : memberList) {
+          if (!attachedBotIds.contains(value)) recipientCount++;
+        }
+        if (recipientCount > 0) {
+          itemData.add(
+              new ItemData(
+                  ITEM_HEADER,
+                  context.getResources()
+                      .getQuantityString(
+                          R.plurals.n_recipients, recipientCount, recipientCount),
+                  0));
+        }
       }
       for (int value : memberList) {
-        itemData.add(new ItemData(ITEM_MEMBERS, value, 0));
+        if (!attachedBotIds.contains(value)) {
+          itemData.add(new ItemData(ITEM_MEMBERS, value, 0));
+        }
       }
     }
 

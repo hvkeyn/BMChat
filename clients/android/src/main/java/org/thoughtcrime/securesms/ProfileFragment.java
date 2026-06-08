@@ -28,6 +28,7 @@ import com.b44t.messenger.DcEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import org.thoughtcrime.securesms.bots.AttachedBotHelper;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.mms.GlideApp;
@@ -80,19 +81,34 @@ public class ProfileFragment extends Fragment
                       DcChat chat = dcContext.getChat(chatId);
                       boolean isBroadcast = chat != null && chat.isOutBroadcast();
 
+                      int accountId = dcContext.getAccountId();
                       if (deselected != null && !isBroadcast) {
-                        // Broadcasts join via QR/invite-link, not via
-                        // dc_remove_contact_from_chat — leave membership
-                        // edits to the recipient there.
                         Log.i(TAG, deselected.size() + " members removed");
-                        int[] members = dcContext.getChatContacts(chatId);
+                        java.util.ArrayList<Integer> botDetach = new java.util.ArrayList<>();
+                        java.util.ArrayList<Integer> humanRemove = new java.util.ArrayList<>();
                         for (int contactId : deselected) {
+                          if (AttachedBotHelper.isAttachedBotContact(
+                              requireContext(), accountId, chatId, contactId)) {
+                            botDetach.add(contactId);
+                          } else {
+                            humanRemove.add(contactId);
+                          }
+                        }
+                        if (!botDetach.isEmpty()) {
+                          AttachedBotHelper.detachFromChat(
+                              requireContext(), accountId, chatId, botDetach);
+                        }
+                        int[] members = dcContext.getChatContacts(chatId);
+                        for (int contactId : humanRemove) {
                           for (int memberId : members) {
                             if (memberId == contactId) {
                               dcContext.removeContactFromChat(chatId, memberId);
                               break;
                             }
                           }
+                        }
+                        if (!botDetach.isEmpty() || !humanRemove.isEmpty()) {
+                          Util.runOnMain(() -> update());
                         }
                       }
 
@@ -101,10 +117,47 @@ public class ProfileFragment extends Fragment
                         if (isBroadcast) {
                           inviteContactsToBroadcast(chatId, selected);
                         } else {
+                          int botsAttached = 0;
+                          int botsAlready = 0;
                           for (Integer contactId : selected) {
-                            if (contactId != null) {
+                            if (contactId == null) continue;
+                            int attach = tryAttachBotToChat(chatId, contactId);
+                            if (attach == ATTACH_OK) {
+                              botsAttached++;
+                            } else if (attach == ATTACH_ALREADY) {
+                              botsAlready++;
+                            } else {
                               dcContext.addContactToChat(chatId, contactId);
                             }
+                          }
+                          if (botsAttached > 0 || botsAlready > 0) {
+                            final int n = botsAttached;
+                            final int already = botsAlready;
+                            Util.runOnMain(
+                                () -> {
+                                  if (n > 0) update();
+                                  Context ctx = getContext();
+                                  if (ctx == null) return;
+                                  if (n > 0) {
+                                    Toast.makeText(
+                                            ctx,
+                                            getResources()
+                                                .getQuantityString(
+                                                    R.plurals
+                                                        .bmchat_email_bot_attached_to_channel,
+                                                    n,
+                                                    n),
+                                            Toast.LENGTH_LONG)
+                                        .show();
+                                  } else if (already > 0) {
+                                    Toast.makeText(
+                                            ctx,
+                                            getString(
+                                                R.string.bmchat_email_bot_already_on_channel),
+                                            Toast.LENGTH_LONG)
+                                        .show();
+                                  }
+                                });
                           }
                         }
                       }
@@ -220,11 +273,18 @@ public class ProfileFragment extends Fragment
         || contactId == DcContact.DC_CONTACT_ID_SELF) {
       if (actionMode == null) {
         DcChat dcChat = dcContext.getChat(chatId);
-        if (dcChat.canSend() && dcChat.isEncrypted()) {
-          adapter.toggleMemberSelection(contactId);
-          actionMode =
-              ((AppCompatActivity) requireActivity()).startSupportActionMode(actionModeCallback);
+        if (dcChat == null || !dcChat.canSend()) return;
+        boolean attachedBot =
+            AttachedBotHelper.isAttachedBotContact(
+                requireContext(), dcContext.getAccountId(), chatId, contactId);
+        if (dcChat.isOutBroadcast()) {
+          if (!attachedBot) return;
+        } else if (!dcChat.isEncrypted()) {
+          return;
         }
+        adapter.toggleMemberSelection(contactId);
+        actionMode =
+            ((AppCompatActivity) requireActivity()).startSupportActionMode(actionModeCallback);
       } else {
         onMemberClicked(contactId);
       }
@@ -266,10 +326,11 @@ public class ProfileFragment extends Fragment
     Intent intent = new Intent(getContext(), ContactMultiSelectionActivity.class);
     ArrayList<Integer> preselectedContacts = new ArrayList<>();
     if (dcChat != null && dcChat.isOutBroadcast()) {
-      // For broadcast/channel invites we don't preselect existing recipients
-      // because Delta-core doesn't expose a simple "is X already subscribed
-      // via QR?" check, and the goal here is "send invitations" rather than
-      // "edit a member list" — sending the same invite link twice is fine.
+      for (Integer botId :
+          AttachedBotHelper.attachedContactIdSet(
+              requireContext(), dcContext.getAccountId(), chatId)) {
+        preselectedContacts.add(botId);
+      }
     } else {
       for (int memberId : dcContext.getChatContacts(chatId)) {
         preselectedContacts.add(memberId);
@@ -289,6 +350,65 @@ public class ProfileFragment extends Fragment
    * lands in {@link org.thoughtcrime.securesms.connect.BMChatInviteAutoAcceptor}
    * and is auto-joined.
    */
+  private static final int ATTACH_NOT_BOT = 0;
+  private static final int ATTACH_OK = 1;
+  private static final int ATTACH_ALREADY = 2;
+
+  /** @return {@link #ATTACH_OK}, {@link #ATTACH_ALREADY}, or {@link #ATTACH_NOT_BOT} */
+  private int tryAttachBotToChat(int targetChatId, int contactId) {
+    if (targetChatId <= 0 || contactId <= 0) return ATTACH_NOT_BOT;
+    int accountId = dcContext.getAccountId();
+    org.thoughtcrime.securesms.emailbots.EmailBotStore botStore =
+        new org.thoughtcrime.securesms.emailbots.EmailBotStore(requireContext());
+    org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
+        botStore.findByContactId(accountId, contactId);
+    if (emailBot != null) {
+      if (emailBot.attachedChatIds.contains(targetChatId)) return ATTACH_ALREADY;
+      try {
+        org.thoughtcrime.securesms.emailbots.EmailBotConfig next =
+            emailBot.withAttachedChat(targetChatId);
+        int resolvedContactId = contactId > 0 ? contactId : emailBot.botContactId;
+        if (resolvedContactId <= 0) {
+          resolvedContactId =
+              org.thoughtcrime.securesms.emailbots.EmailBotContactHelper.ensureSearchableContact(
+                  dcContext, next);
+        }
+        if (resolvedContactId > 0 && resolvedContactId != next.botContactId) {
+          next = next.withContactIds(resolvedContactId, next.botChatId);
+        }
+        botStore.upsert(next);
+        return ATTACH_OK;
+      } catch (Throwable t) {
+        Log.w(TAG, "attach email bot failed contact=" + contactId, t);
+        return ATTACH_NOT_BOT;
+      }
+    }
+    org.thoughtcrime.securesms.bots.BotStore tgBotStore =
+        new org.thoughtcrime.securesms.bots.BotStore(requireContext());
+    org.thoughtcrime.securesms.bots.BotConfig tgBot =
+        tgBotStore.findByContactId(accountId, contactId);
+    if (tgBot != null) {
+      if (tgBot.attachedChatIds.contains(targetChatId)) return ATTACH_ALREADY;
+      try {
+        org.thoughtcrime.securesms.bots.BotConfig next = tgBot.withAttachedChat(targetChatId);
+        if (tgBot.botContactId != contactId && contactId > 0) {
+          next = new org.thoughtcrime.securesms.bots.BotConfig(
+              next.id, next.token, next.telegramUsername, next.telegramName, next.avatarPath,
+              next.telegramBotId, next.dcAccountId, next.targetDcChatId,
+              next.lastUpdateId, next.lastPolledAtMs, next.paused, next.note,
+              contactId, next.description, next.shortDescription, next.attachedChatIds,
+              next.manualReview);
+        }
+        tgBotStore.upsert(next);
+        return ATTACH_OK;
+      } catch (Throwable t) {
+        Log.w(TAG, "attach telegram bot failed contact=" + contactId, t);
+        return ATTACH_NOT_BOT;
+      }
+    }
+    return ATTACH_NOT_BOT;
+  }
+
   private void inviteContactsToBroadcast(int broadcastChatId, List<Integer> contactIds) {
     if (contactIds == null || contactIds.isEmpty()) return;
     String inviteUrl;
@@ -312,36 +432,20 @@ public class ProfileFragment extends Fragment
     int sent = 0;
     int skipped = 0;
     int botsAttached = 0;
+    int botsAlready = 0;
     for (Integer contactId : contactIds) {
       if (contactId == null || contactId <= 0) continue;
       if (contactId == DcContact.DC_CONTACT_ID_SELF) {
         skipped++;
         continue;
       }
-      org.thoughtcrime.securesms.emailbots.EmailBotConfig emailBot =
-          botStore.findByContactId(accountId, contactId);
-      if (emailBot != null) {
-        try {
-          botStore.upsert(emailBot.withAttachedChat(broadcastChatId));
-          botsAttached++;
-        } catch (Throwable t) {
-          Log.w(TAG, "attach email bot to channel failed contact=" + contactId, t);
-          skipped++;
-        }
+      int attach = tryAttachBotToChat(broadcastChatId, contactId);
+      if (attach == ATTACH_OK) {
+        botsAttached++;
         continue;
       }
-      org.thoughtcrime.securesms.bots.BotStore tgBotStore =
-          new org.thoughtcrime.securesms.bots.BotStore(requireContext());
-      org.thoughtcrime.securesms.bots.BotConfig tgBot =
-          tgBotStore.findByContactId(accountId, contactId);
-      if (tgBot != null) {
-        try {
-          tgBotStore.upsert(tgBot.withAttachedChat(broadcastChatId));
-          botsAttached++;
-        } catch (Throwable t) {
-          Log.w(TAG, "attach telegram bot to channel failed contact=" + contactId, t);
-          skipped++;
-        }
+      if (attach == ATTACH_ALREADY) {
+        botsAlready++;
         continue;
       }
       try {
@@ -357,25 +461,29 @@ public class ProfileFragment extends Fragment
     final int fSent = sent;
     final int fSkipped = skipped;
     final int fBots = botsAttached;
+    final int fAlready = botsAlready;
     Util.runOnMain(() -> {
       Context ctx = getContext();
       if (ctx == null) return;
       String msg;
-      if (fBots > 0 && fSent == 0 && fSkipped == 0) {
+      if (fBots > 0 && fSent == 0 && fSkipped == 0 && fAlready == 0) {
         msg = getResources().getQuantityString(
             R.plurals.bmchat_email_bot_attached_to_channel, fBots, fBots);
+      } else if (fBots > 0) {
+        msg = getResources().getQuantityString(
+            R.plurals.bmchat_email_bot_attached_to_channel, fBots, fBots);
+      } else if (fAlready > 0 && fSent == 0) {
+        msg = getString(R.string.bmchat_email_bot_already_on_channel);
       } else if (fSent > 0 && fSkipped == 0) {
         msg = getResources().getQuantityString(
             R.plurals.bmchat_channel_invite_sent, fSent, fSent);
       } else if (fSent > 0) {
         msg = getString(R.string.bmchat_channel_invite_partial_fmt, fSent, fSkipped);
-      } else if (fBots > 0) {
-        msg = getResources().getQuantityString(
-            R.plurals.bmchat_email_bot_attached_to_channel, fBots, fBots);
       } else {
         msg = getString(R.string.bmchat_channel_invite_failed);
       }
       Toast.makeText(ctx, msg, Toast.LENGTH_LONG).show();
+      if (fBots > 0 || fAlready > 0) update();
     });
   }
 
@@ -453,9 +561,27 @@ public class ProfileFragment extends Fragment
                 .setPositiveButton(
                     R.string.remove_desktop,
                     (d, which) -> {
+                      java.util.ArrayList<Integer> botIds = new java.util.ArrayList<>();
+                      java.util.ArrayList<Integer> memberIds = new java.util.ArrayList<>();
+                      int accountId = dcContext.getAccountId();
                       for (Integer toDelId : toDelIds) {
-                        dcContext.removeContactFromChat(chatId, toDelId);
+                        if (AttachedBotHelper.isAttachedBotContact(
+                            requireContext(), accountId, chatId, toDelId)) {
+                          botIds.add(toDelId);
+                        } else {
+                          memberIds.add(toDelId);
+                        }
                       }
+                      if (!botIds.isEmpty()) {
+                        AttachedBotHelper.detachFromChat(
+                            requireContext(), accountId, chatId, botIds);
+                      }
+                      if (!memberIds.isEmpty() && dcChat.isEncrypted()) {
+                        for (Integer toDelId : memberIds) {
+                          dcContext.removeContactFromChat(chatId, toDelId);
+                        }
+                      }
+                      update();
                       mode.finish();
                     })
                 .setNegativeButton(android.R.string.cancel, null)

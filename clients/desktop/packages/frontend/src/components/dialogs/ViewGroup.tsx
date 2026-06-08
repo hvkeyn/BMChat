@@ -38,6 +38,7 @@ import AlertDialog from './AlertDialog'
 import { unknownErrorToString } from '@deltachat-desktop/shared/unknownErrorToString'
 import { getLogger } from '@deltachat-desktop/shared/logger'
 import { listEmailBots, resolveEmailBotHomeChat } from '../../bmchat/emailBots'
+import { resolveBotContactDisplay } from '../../bmchat/botContacts'
 import { rewriteInviteLink } from '@deltachat-desktop/shared/util'
 import { createChatByContactId } from '../../backend/chat'
 import { runtime } from '@deltachat-desktop/runtime-interface'
@@ -102,43 +103,76 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
   const [attachedBotContacts, setAttachedBotContacts] = useState<T.Contact[]>(
     []
   )
+  type AttachedBotRef = { type: 'email' | 'tg'; botId: string }
   const [attachedBotIdByContact, setAttachedBotIdByContact] = useState<
-    Map<number, string>
+    Map<number, AttachedBotRef>
   >(new Map())
+  const [attachedBotDisplayOverrides, setAttachedBotDisplayOverrides] =
+    useState<
+      Map<number, { address?: string; profileImage?: string | null }>
+    >(new Map())
 
   const loadAttachedBotContacts = useCallback(async () => {
-    if (
-      chat.chatType !== 'OutBroadcast' ||
-      runtime.getRuntimeInfo().target !== 'electron'
-    ) {
+    const showBots =
+      chat.chatType === 'OutBroadcast' ||
+      (chat.chatType === 'Group' && chat.canSend)
+    if (!showBots || runtime.getRuntimeInfo().target !== 'electron') {
       setAttachedBotContacts([])
       setAttachedBotIdByContact(new Map())
+      setAttachedBotDisplayOverrides(new Map())
       return
     }
     try {
-      const raw = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
-      const allBots = Array.isArray(raw) ? raw : []
-      const attached = allBots.filter(
-        (b: {
+      const idMap = new Map<number, AttachedBotRef>()
+      const contactIds: number[] = []
+
+      const rawEmail = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
+      const emailBots = Array.isArray(rawEmail) ? rawEmail : []
+      for (const b of emailBots) {
+        const row = b as {
           enabled?: boolean
           attachedChatIds?: number[]
           botContactId?: number
           id?: string
-        }) =>
-          b.enabled !== false &&
-          Array.isArray(b.attachedChatIds) &&
-          b.attachedChatIds.includes(chat.id) &&
-          Number(b.botContactId) > 0
-      )
-      const idMap = new Map<number, string>()
-      const contactIds: number[] = []
-      for (const b of attached) {
-        const cid = Number(b.botContactId)
-        if (cid > 0 && b.id) {
+        }
+        if (row.enabled === false) continue
+        if (!Array.isArray(row.attachedChatIds) || !row.attachedChatIds.includes(chat.id)) {
+          continue
+        }
+        let cid = Number(row.botContactId) || 0
+        if (cid <= 0 && row.id) {
+          const ensured = await runtime.bmchatBotsInvoke(
+            'bmchat:emailbots:ensure-contact',
+            { id: row.id }
+          )
+          cid = Number(ensured?.contactId) || 0
+        }
+        if (cid > 0 && row.id) {
           contactIds.push(cid)
-          idMap.set(cid, String(b.id))
+          idMap.set(cid, { type: 'email', botId: String(row.id) })
         }
       }
+
+      const rawTg = await runtime.bmchatBotsInvoke('bmchat:tgbots:list-config')
+      const tgBots = Array.isArray(rawTg) ? rawTg : []
+      for (const b of tgBots) {
+        const row = b as {
+          accountId?: number
+          attachedChatIds?: number[]
+          botContactId?: number
+          id?: string
+        }
+        if (row.accountId !== accountId) continue
+        if (!Array.isArray(row.attachedChatIds) || !row.attachedChatIds.includes(chat.id)) {
+          continue
+        }
+        const cid = Number(row.botContactId) || 0
+        if (cid > 0 && row.id) {
+          if (!contactIds.includes(cid)) contactIds.push(cid)
+          idMap.set(cid, { type: 'tg', botId: String(row.id) })
+        }
+      }
+
       setAttachedBotIdByContact(idMap)
       if (contactIds.length === 0) {
         setAttachedBotContacts([])
@@ -148,14 +182,35 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         accountId,
         contactIds
       )
-      setAttachedBotContacts(
-        contactIds.map(id => loaded[id]).filter((c): c is T.Contact => !!c)
-      )
+      const isBotPseudoContact = (c: T.Contact) =>
+        (c.address || '').toLowerCase().endsWith('@bots.bmchat.local')
+      const bots = contactIds
+        .map(id => loaded[id])
+        .filter((c): c is T.Contact => !!c && isBotPseudoContact(c))
+      setAttachedBotContacts(bots)
+      const overrides = new Map<
+        number,
+        { address?: string; profileImage?: string | null }
+      >()
+      for (const contact of bots) {
+        const display = await resolveBotContactDisplay(accountId, contact)
+        if (display) {
+          const base = tx('bmchat_bot_profile_username', display.slug)
+          overrides.set(contact.id, {
+            address: display.description
+              ? `${base} - ${display.description}`
+              : base,
+            profileImage: display.avatarPath,
+          })
+        }
+      }
+      setAttachedBotDisplayOverrides(overrides)
     } catch {
       setAttachedBotContacts([])
       setAttachedBotIdByContact(new Map())
+      setAttachedBotDisplayOverrides(new Map())
     }
-  }, [accountId, chat.chatType, chat.id])
+  }, [accountId, chat.chatType, chat.canSend, chat.id, tx])
 
   useEffect(() => {
     void loadAttachedBotContacts()
@@ -168,6 +223,117 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
       }
 
       const isBroadcast = chat.chatType === 'OutBroadcast'
+
+      const attachBotToChat = async (
+        contactId: number
+      ): Promise<'attached' | 'already' | false> => {
+        if (runtime.getRuntimeInfo().target !== 'electron') return false
+        let emailBots: any[] = []
+        let tgBots: any[] = []
+        try {
+          const raw = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
+          emailBots = Array.isArray(raw) ? raw : []
+        } catch {
+          emailBots = await listEmailBots()
+        }
+        try {
+          const rawTg = await runtime.bmchatBotsInvoke('bmchat:tgbots:list-config')
+          tgBots = Array.isArray(rawTg) ? rawTg : []
+        } catch {
+          tgBots = []
+        }
+
+        const emailBot = emailBots.find(
+          (b: {
+            enabled?: boolean
+            botContactId?: number
+            attachedChatIds?: number[]
+            id?: string
+          }) =>
+            b.enabled !== false &&
+            Number(b.botContactId) === contactId &&
+            b.id
+        )
+        if (emailBot?.id) {
+          if (emailBot.attachedChatIds?.includes(chat.id)) return 'already'
+          const res = await runtime.bmchatBotsInvoke('bmchat:emailbots:attach-chat', {
+            id: emailBot.id,
+            chatId: chat.id,
+          })
+          return res?.ok ? 'attached' : false
+        }
+
+        const tgBot = tgBots.find(
+          (b: {
+            accountId?: number
+            botContactId?: number
+            attachedChatIds?: number[]
+            id?: string
+          }) =>
+            b.accountId === accountId &&
+            Number(b.botContactId) === contactId &&
+            b.id
+        )
+        if (tgBot?.id) {
+          if (tgBot.attachedChatIds?.includes(chat.id)) return 'already'
+          const res = await runtime.bmchatBotsInvoke('bmchat:tgbots:attach-chat', {
+            id: tgBot.id,
+            chatId: chat.id,
+          })
+          return res?.ok ? 'attached' : false
+        }
+
+        try {
+          const contact = await BackendRemote.rpc.getContact(accountId, contactId)
+          const addr = (contact?.address || '').toLowerCase()
+          if (!addr.endsWith('@bots.bmchat.local')) return false
+          const slug = addr
+            .replace(/^emailbot\./, '')
+            .replace(/^tgbot\./, '')
+            .replace(/@bots\.bmchat\.local$/, '')
+          const byEmailName = emailBots.find(
+            (b: {
+              enabled?: boolean
+              name?: string
+              attachedChatIds?: number[]
+              id?: string
+            }) =>
+              b.enabled !== false &&
+              String(b.name || '').toLowerCase() === slug &&
+              b.id
+          )
+          if (byEmailName?.id) {
+            if (byEmailName.attachedChatIds?.includes(chat.id)) return 'already'
+            const res = await runtime.bmchatBotsInvoke('bmchat:emailbots:attach-chat', {
+              id: byEmailName.id,
+              chatId: chat.id,
+            })
+            return res?.ok ? 'attached' : false
+          }
+          const byTgName = tgBots.find(
+            (b: {
+              accountId?: number
+              telegramUsername?: string | null
+              attachedChatIds?: number[]
+              id?: string
+            }) =>
+              b.accountId === accountId &&
+              String(b.telegramUsername || '').toLowerCase() === slug &&
+              b.id
+          )
+          if (byTgName?.id) {
+            if (byTgName.attachedChatIds?.includes(chat.id)) return 'already'
+            const res = await runtime.bmchatBotsInvoke('bmchat:tgbots:attach-chat', {
+              id: byTgName.id,
+              chatId: chat.id,
+            })
+            return res?.ok ? 'attached' : false
+          }
+        } catch {
+          return false
+        }
+        return false
+      }
 
       if (isBroadcast) {
         let inviteUrl = ''
@@ -190,16 +356,6 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         const channelName = chat.name || ''
         const body = tx('bmchat_channel_invite_body_fmt', channelName, inviteUrl)
 
-        let emailBots: Awaited<ReturnType<typeof listEmailBots>> = []
-        if (runtime.getRuntimeInfo().target === 'electron') {
-          try {
-            const raw = await runtime.bmchatBotsInvoke('bmchat:emailbots:list')
-            emailBots = Array.isArray(raw) ? raw : []
-          } catch {
-            emailBots = await listEmailBots()
-          }
-        }
-
         let sent = 0
         let skipped = 0
         let botsAttached = 0
@@ -208,59 +364,17 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
             skipped++
             continue
           }
-          const emailBot = emailBots.find(
-            b =>
-              b.enabled &&
-              (b as { botContactId?: number }).botContactId === contactId
-          )
-          if (!emailBot && runtime.getRuntimeInfo().target === 'electron') {
-            try {
-              const contact = await BackendRemote.rpc.getContact(
-                accountId,
-                contactId
-              )
-              const addr = (contact?.address || '').toLowerCase()
-              if (addr.endsWith('@bots.bmchat.local')) {
-                const slug = addr
-                  .replace(/^emailbot\./, '')
-                  .replace(/@bots\.bmchat\.local$/, '')
-                const byName = emailBots.find(
-                  b => b.enabled && b.name.toLowerCase() === slug
-                )
-                if (byName) {
-                  try {
-                    const res = await runtime.bmchatBotsInvoke(
-                      'bmchat:emailbots:attach-chat',
-                      { id: byName.id, chatId: chat.id }
-                    )
-                    if (res?.ok) {
-                      botsAttached++
-                      continue
-                    }
-                  } catch {
-                    skipped++
-                    continue
-                  }
-                }
-              }
-            } catch {
-              // fall through to invite link
-            }
+          const attachResult = await attachBotToChat(contactId)
+          if (attachResult === 'attached') {
+            botsAttached++
+            continue
           }
-          if (emailBot && runtime.getRuntimeInfo().target === 'electron') {
-            try {
-              const res = await runtime.bmchatBotsInvoke(
-                'bmchat:emailbots:attach-chat',
-                { id: emailBot.id, chatId: chat.id }
-              )
-              if (res?.ok) {
-                botsAttached++
-                continue
-              }
-            } catch {
-              skipped++
-              continue
-            }
+          if (attachResult === 'already') {
+            window.__userFeedback?.({
+              type: 'info',
+              text: tx('bmchat_email_bot_already_on_channel'),
+            })
+            continue
           }
           try {
             const dmChatId = await createChatByContactId(accountId, contactId)
@@ -306,9 +420,33 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
         return
       }
 
+      let botsAttached = 0
+      const humanMembers: number[] = []
+      for (const contactId of members) {
+        if (contactId <= 0 || contactId === C.DC_CONTACT_ID_SELF) continue
+        const attachResult = await attachBotToChat(contactId)
+        if (attachResult === 'attached') {
+          botsAttached++
+        } else if (attachResult === 'already') {
+          window.__userFeedback?.({
+            type: 'info',
+            text: tx('bmchat_email_bot_already_on_channel'),
+          })
+        } else {
+          humanMembers.push(contactId)
+        }
+      }
+      if (botsAttached > 0) {
+        await loadAttachedBotContacts()
+        window.__userFeedback?.({
+          type: 'success',
+          text: tx('bmchat_email_bot_attached_to_channel', String(botsAttached)),
+        })
+      }
+
       try {
         await Promise.all(
-          members.map(id =>
+          humanMembers.map(id =>
             BackendRemote.rpc.addContactToChat(accountId, chat.id, id)
           )
         )
@@ -334,31 +472,33 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
 
   const removeMember = useCallback(
     async (userId: number) => {
-      if (chat.chatType === 'OutBroadcast') {
-        const botId = attachedBotIdByContact.get(userId)
-        if (botId && runtime.getRuntimeInfo().target === 'electron') {
-          try {
-            const res = await runtime.bmchatBotsInvoke(
-              'bmchat:emailbots:detach-chat',
-              { id: botId, chatId: chat.id }
+      const botRef = attachedBotIdByContact.get(userId)
+      if (botRef && runtime.getRuntimeInfo().target === 'electron') {
+        try {
+          const channel =
+            botRef.type === 'email'
+              ? 'bmchat:emailbots:detach-chat'
+              : 'bmchat:tgbots:detach-chat'
+          const res = await runtime.bmchatBotsInvoke(channel, {
+            id: botRef.botId,
+            chatId: chat.id,
+          })
+          if (res?.ok) {
+            await loadAttachedBotContacts()
+            log.info(
+              `Account ${accountId} detached ${botRef.type} bot ${botRef.botId} from chat ${chat.id}`
             )
-            if (res?.ok) {
-              await loadAttachedBotContacts()
-              log.info(
-                `Account ${accountId} detached bot ${botId} from channel ${chat.id}`
-              )
-              return
-            }
-          } catch (error) {
-            openDialog(AlertDialog, {
-              title: tx('error'),
-              message: tx(
-                'error_x',
-                `Failed to detach bot from channel: ${unknownErrorToString(error)}`
-              ),
-            })
             return
           }
+        } catch (error) {
+          openDialog(AlertDialog, {
+            title: tx('error'),
+            message: tx(
+              'error_x',
+              `Failed to detach bot: ${unknownErrorToString(error)}`
+            ),
+          })
+          return
         }
       }
 
@@ -488,6 +628,7 @@ export const useGroup = (accountId: number, chat: T.FullChat) => {
     setGroupDescription,
     groupContacts,
     attachedBotContacts,
+    attachedBotDisplayOverrides,
     addMembers,
     removeMember,
     setGroupImage,
@@ -523,6 +664,7 @@ function ViewGroupInner(
     setGroupDescription,
     groupContacts,
     attachedBotContacts,
+    attachedBotDisplayOverrides,
     pastContacts,
     addMembers,
     removeMember,
@@ -702,7 +844,7 @@ function ViewGroupInner(
               >
                 {!chatDisabled &&
                   !isEmailBotHome &&
-                  (group.isEncrypted || isBroadcast) && (
+                  (group.isEncrypted || isBroadcast || attachedBotContacts.length > 0) && (
                   <>
                     <PseudoListItemAddMember
                       onClick={() => showAddMemberDialog()}
@@ -727,6 +869,7 @@ function ViewGroupInner(
                     <div className='group-separator'>{tx('bot')}</div>
                     <ContactList
                       contacts={attachedBotContacts}
+                      contactOverrides={attachedBotDisplayOverrides}
                       showRemove={!chatDisabled}
                       onClick={contact => {
                         if (contact.id === C.DC_CONTACT_ID_SELF) {
@@ -738,6 +881,18 @@ function ViewGroupInner(
                     />
                   </>
                 )}
+                {isBroadcast && (() => {
+                  const recipients = groupContacts.filter(
+                    c => !attachedBotContacts.some(b => b.id === c.id)
+                  )
+                  return recipients.length > 0 ? (
+                    <div className='group-separator'>
+                      {tx('n_recipients', recipients.length.toString(), {
+                        quantity: recipients.length,
+                      })}
+                    </div>
+                  ) : null
+                })()}
                 {
                   <ContactList
                     contacts={groupContacts.filter(

@@ -16,6 +16,7 @@ import org.thoughtcrime.securesms.connect.DcHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -60,10 +61,34 @@ public final class EmailBotStore {
       DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
       if (ctx == null || !ctx.isOk()) continue;
       for (EmailBotConfig b : readUiConfigForAccount(ctx.getAccountId(), ctx)) {
-        merged.put(b.id, b);
+        EmailBotConfig local = merged.get(b.id);
+        merged.put(b.id, local == null ? b : mergeEmailBotConfig(local, b));
       }
     }
     writePrefs(new ArrayList<>(merged.values()));
+  }
+
+  /** Keeps {@link EmailBotConfig#attachedChatIds} and device ids when ui-config lags. */
+  @NonNull
+  private static EmailBotConfig mergeEmailBotConfig(@NonNull EmailBotConfig local,
+                                                    @NonNull EmailBotConfig remote) {
+    LinkedHashSet<Integer> attached = new LinkedHashSet<>(local.attachedChatIds);
+    attached.addAll(remote.attachedChatIds);
+    int contactId = local.botContactId > 0 ? local.botContactId : remote.botContactId;
+    int homeChatId = local.botChatId > 0 ? local.botChatId : remote.botChatId;
+    boolean relayFromChats = local.relayFromChats && remote.relayFromChats;
+    EmailBotConfig base = remote.lastReplyAtMs >= local.lastReplyAtMs ? remote : local;
+    if (attached.equals(base.attachedChatIds)
+        && contactId == base.botContactId
+        && homeChatId == base.botChatId
+        && relayFromChats == base.relayFromChats) {
+      return base;
+    }
+    EmailBotConfig merged = base.withContactIds(contactId, homeChatId).withRelayFromChats(relayFromChats);
+    for (int chatId : attached) {
+      merged = merged.withAttachedChat(chatId);
+    }
+    return merged;
   }
 
   /**
@@ -233,7 +258,7 @@ public final class EmailBotStore {
   }
 
   /** Updates contact/chat ids without re-running contact creation. */
-  synchronized void patchContactIds(@NonNull String botId, int contactId, int chatId) {
+  public synchronized void patchContactIds(@NonNull String botId, int contactId, int chatId) {
     List<EmailBotConfig> all = new ArrayList<>(getAll());
     for (int i = 0; i < all.size(); i++) {
       if (all.get(i).id.equals(botId)) {
@@ -327,7 +352,7 @@ public final class EmailBotStore {
     if (accountId > 0) {
       raw = EmailBotCrypto.encrypt(appContext, accountId, raw);
     }
-    prefs().edit().putString(KEY_LIST, raw).apply();
+    prefs().edit().putString(KEY_LIST, raw).commit();
   }
 
   @NonNull

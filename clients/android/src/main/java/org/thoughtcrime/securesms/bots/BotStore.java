@@ -76,10 +76,31 @@ public final class BotStore {
       DcContext ctx = DcHelper.getAccounts(appContext).getAccount(accountId);
       if (ctx == null || !ctx.isOk()) continue;
       for (BotConfig b : readUiConfigForAccount(ctx.getAccountId(), ctx)) {
-        merged.put(b.id, b);
+        BotConfig local = merged.get(b.id);
+        merged.put(b.id, local == null ? b : mergeBotConfig(local, b));
       }
     }
     writePrefs(new ArrayList<>(merged.values()), false);
+  }
+
+  @NonNull
+  private static BotConfig mergeBotConfig(@NonNull BotConfig local, @NonNull BotConfig remote) {
+    java.util.LinkedHashSet<Integer> attached = new java.util.LinkedHashSet<>(local.attachedChatIds);
+    attached.addAll(remote.attachedChatIds);
+    int contactId = local.botContactId > 0 ? local.botContactId : remote.botContactId;
+    BotConfig base = remote.lastPolledAtMs >= local.lastPolledAtMs ? remote : local;
+    BotConfig merged = base.botContactId == contactId
+        ? base
+        : new BotConfig(
+            base.id, base.token, base.telegramUsername, base.telegramName, base.avatarPath,
+            base.telegramBotId, base.dcAccountId, base.targetDcChatId,
+            base.lastUpdateId, base.lastPolledAtMs, base.paused, base.note,
+            contactId, base.description, base.shortDescription, base.attachedChatIds,
+            base.manualReview);
+    for (int chatId : attached) {
+      merged = merged.withAttachedChat(chatId);
+    }
+    return merged;
   }
 
   @NonNull

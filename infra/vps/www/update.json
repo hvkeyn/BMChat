@@ -1,15 +1,15 @@
 {
-  "versionCode": 864,
-  "versionName": "2.50.29",
+  "versionCode": 870,
+  "versionName": "2.50.35",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.29.apk",
-  "sha256": "c6abd8989b17e373049ed21b5dc91aea1a270eb673635206116962a1156c24da",
-  "size": 77528214,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.35.apk",
+  "sha256": "caaf3d8fc96beb578764e0e76def551fe35f23774cf24f7a6cc59dd6dff795c9",
+  "size": 77538742,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-08T12:00:00Z",
+  "publishedAt": "2026-06-09T00:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.29 — боты в picker и API каналов.\n\nИСПРАВЛЕНО:\n• При добавлении бота в канал: «Бот · @name» вместо pseudo-email.\n• Аватар бота в списке выбора контактов.\n• Telegram-боты тоже прикрепляются к каналам.\n• Email/webhook API: chat.type channel/group + chat_id в ответе."
+  "notes": "BMChat 2.50.35 — почтовый режим, каналы email-бота, паритет настроек.\n\nИСПРАВЛЕНО:\n• Статус «Почтовый режим» при блокировке веба, но работающей почте.\n• Посты из каналов пересылаются боту (channel_post) и пишутся в лог.\n• relayFromChats и настройки email-бота синхронизируются Android ↔ Desktop.\n• Email-бот остаётся в канале (attachedChatIds).\n• Превью Markdown в списке чатов без сырого **."
 }

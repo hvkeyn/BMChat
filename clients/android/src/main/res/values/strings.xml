@@ -1499,6 +1499,8 @@
     <!-- BMChat e-mail bots -->
     <string name="bmchat_bot_profile_username">Bot · @%1$s</string>
     <string name="bmchat_channel_profile_username">Channel · @%1$s</string>
+    <string name="bmchat_channel_bot_section">Bot</string>
+    <string name="bmchat_email_bot_already_on_channel">This bot is already connected to the channel.</string>
     <plurals name="bmchat_email_bot_attached_to_channel">
         <item quantity="one">Bot attached to this channel.</item>
         <item quantity="other">%1$d bots attached to this channel.</item>
@@ -1701,6 +1703,10 @@
     <string name="bmchat_status_online">BMChat ● Online</string>
     <string name="bmchat_status_working">BMChat ● Connecting…</string>
     <string name="bmchat_status_offline">BMChat ● Offline</string>
+    <string name="bmchat_status_mail_mode">BMChat ● Mail mode</string>
+    <string name="bmchat_status_mail_hint">syncing via mail</string>
+    <string name="bmchat_email_bot_field_relay_from_chats">Read commands from attached channels</string>
+    <string name="bmchat_email_bot_field_relay_from_chats_hint">When enabled, posts and commands from channels/groups where the bot is attached are forwarded to the developer mailbox and webhook.</string>
     <string name="bmchat_status_no_sync_yet">never synced yet</string>
     <string name="bmchat_status_summary">Last sync: %1$s</string>
     <string name="bmchat_status_summary_with_unread">%1$d unread · last sync %2$s</string>

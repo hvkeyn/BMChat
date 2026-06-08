@@ -18,6 +18,10 @@ const log = getLogger('ContactList')
  */
 export function ContactList(props: {
   contacts: Type.Contact[]
+  contactOverrides?: Map<
+    number,
+    { address?: string; profileImage?: string | null }
+  >
   onClick?: (contact: Type.Contact) => void
   showCheckbox?: boolean
   isChecked?: (contact: Type.Contact) => boolean
@@ -30,6 +34,7 @@ export function ContactList(props: {
 }) {
   const {
     contacts,
+    contactOverrides,
     onClick,
     showCheckbox,
     isChecked,
@@ -54,11 +59,14 @@ export function ContactList(props: {
         if (disabledContacts !== undefined) {
           disabled = disabledContacts.indexOf(contact.id) !== -1
         }
+        const override = contactOverrides?.get(contact.id)
         return (
           <ContactListItem
             tagName='li'
             key={contact.id}
             contact={contact}
+            addressOverride={override?.address}
+            profileImageOverride={override?.profileImage}
             onClick={onClick}
             showCheckbox={showCheckbox || false}
             checked={checked}

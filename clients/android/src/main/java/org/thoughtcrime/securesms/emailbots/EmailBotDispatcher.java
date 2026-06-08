@@ -158,10 +158,16 @@ public final class EmailBotDispatcher {
     } else {
       inv = parseInvocation(body, accountId);
     }
-    if (inv == null) return;
+    if (inv == null) {
+      relayAttachedChatPosts(dcContext, accountId, chatId, chat, msgId, senderEmail, body);
+      return;
+    }
 
     EmailBotConfig bot = inv.bot;
     if (bot == null || !bot.enabled) return;
+
+    boolean fromAttachedChat = !inHomeChat && bot.attachedChatIds.contains(chatId);
+    if (fromAttachedChat && !bot.relayFromChats) return;
 
     boolean ownerInHomeChat = isSelf && inHomeChat && activeBot != null
         && activeBot.id.equals(bot.id);
@@ -259,21 +265,34 @@ public final class EmailBotDispatcher {
     return sb.toString();
   }
 
-  /** Posts a bot reply and mirrors it into {@link EmailBotConfig#attachedChatIds}. */
+  /**
+   * Posts a bot reply. Routing rules (2.50.30):
+   * <ul>
+   *   <li>Command from bot <em>home</em> chat → post only to
+   *       {@link EmailBotConfig#attachedChatIds} (channel test mode).</li>
+   *   <li>Command from an attached channel/group → post only there.</li>
+   *   <li>Other chats → reply in the origin chat only.</li>
+   * </ul>
+   */
   private void sendBotReply(@NonNull DcContext dcContext,
                             @NonNull EmailBotConfig bot,
                             int originChatId,
                             @NonNull String reply) {
     try {
       java.util.LinkedHashSet<Integer> targets = new java.util.LinkedHashSet<>();
-      if (originChatId > 0) {
+      boolean fromHome = bot.botChatId > 0 && originChatId == bot.botChatId;
+      boolean fromAttached = originChatId > 0 && bot.attachedChatIds.contains(originChatId);
+
+      if (fromHome && !bot.attachedChatIds.isEmpty()) {
+        for (int attachedId : bot.attachedChatIds) {
+          if (attachedId > 0) targets.add(attachedId);
+        }
+      } else if (fromAttached || originChatId > 0) {
         targets.add(originChatId);
       } else if (bot.botChatId > 0) {
         targets.add(bot.botChatId);
       }
-      for (int attachedId : bot.attachedChatIds) {
-        if (attachedId > 0) targets.add(attachedId);
-      }
+
       if (targets.isEmpty()) return;
       for (int targetChatId : targets) {
         boolean home = bot.botChatId > 0 && bot.botChatId == targetChatId;
@@ -409,6 +428,97 @@ public final class EmailBotDispatcher {
       if (b.botChatId > 0 && b.botChatId == chatId) return b;
     }
     return null;
+  }
+
+  /**
+   * Forwards plain posts from channels/groups where the bot is attached
+   * to the developer mailbox and/or webhook (logged as channel_post).
+   */
+  @WorkerThread
+  private void relayAttachedChatPosts(@NonNull DcContext dcContext,
+                                      int accountId,
+                                      int chatId,
+                                      @NonNull DcChat chat,
+                                      int msgId,
+                                      @NonNull String senderEmail,
+                                      @NonNull String body) {
+    boolean multi =
+        chat.isMultiUser() || chat.isOutBroadcast() || chat.isInBroadcast()
+            || chat.isMailingList();
+    if (!multi) return;
+
+    for (EmailBotConfig bot : store.getForAccount(accountId)) {
+      if (!bot.enabled || !bot.relayFromChats) continue;
+      if (!bot.attachedChatIds.contains(chatId)) continue;
+      if (bot.botChatId > 0 && bot.botChatId == chatId) continue;
+
+      boolean hasTransport =
+          !TextUtils.isEmpty(bot.developerEmail) || !TextUtils.isEmpty(bot.webhookUrl);
+      if (!hasTransport) continue;
+
+      String preview = body.length() > 160 ? body.substring(0, 160) + "…" : body;
+      Log.i(TAG, "channel_post bot=" + bot.name + " chat=" + chatId
+          + " from=" + senderEmail + " msg=" + msgId + " text=" + preview);
+
+      if (!TextUtils.isEmpty(bot.developerEmail)) {
+        EmailBotMailer.sendUpdate(
+            dcContext, bot, chatId, msgId, senderEmail, body, "channel_post", "");
+      }
+      if (!TextUtils.isEmpty(bot.webhookUrl)) {
+        callWebhookChannelPost(dcContext, bot, senderEmail, body, chatId, msgId);
+      }
+    }
+  }
+
+  @WorkerThread
+  private void callWebhookChannelPost(@NonNull DcContext dcContext,
+                                      @NonNull EmailBotConfig bot,
+                                      @NonNull String senderEmail,
+                                      @NonNull String body,
+                                      int chatId,
+                                      int msgId) {
+    HttpURLConnection conn = null;
+    try {
+      Uri u = Uri.parse(bot.webhookUrl);
+      String scheme = u.getScheme() == null ? "" : u.getScheme().toLowerCase(Locale.ROOT);
+      if (!"http".equals(scheme) && !"https".equals(scheme)) return;
+
+      JSONObject update = new JSONObject();
+      update.put("update_id", msgId);
+      JSONObject message = new JSONObject();
+      message.put("message_id", msgId);
+      message.put("chat", EmailBotMailer.buildChatJson(dcContext, chatId));
+      message.put("from", new JSONObject().put("email", senderEmail));
+      message.put("text", body);
+      message.put("date", System.currentTimeMillis() / 1000L);
+      update.put("message", message);
+      JSONObject bmchat = EmailBotMailer.buildBmchatMeta(
+          dcContext, bot, chatId, "channel_post", "", "channel_post");
+      update.put("bmchat", bmchat);
+
+      conn = (HttpURLConnection) new URL(bot.webhookUrl).openConnection();
+      conn.setConnectTimeout(8_000);
+      conn.setReadTimeout(15_000);
+      conn.setRequestMethod("POST");
+      conn.setDoOutput(true);
+      conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
+      conn.setRequestProperty("User-Agent", "BMChat-EmailBot/2");
+      conn.setRequestProperty("X-BMChat-Bot-Token", bot.token);
+      byte[] bytes = update.toString().getBytes(StandardCharsets.UTF_8);
+      try (OutputStream os = conn.getOutputStream()) {
+        os.write(bytes);
+      }
+      int code = conn.getResponseCode();
+      if (code != HttpURLConnection.HTTP_OK) {
+        Log.w(TAG, "channel_post webhook " + bot.name + " HTTP " + code);
+      }
+    } catch (Throwable t) {
+      Log.w(TAG, "channel_post webhook " + bot.name + " failed", t);
+    } finally {
+      if (conn != null) {
+        try { conn.disconnect(); } catch (Throwable ignored) {}
+      }
+    }
   }
 
   @Nullable

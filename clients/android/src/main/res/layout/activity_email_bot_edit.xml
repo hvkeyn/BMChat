@@ -214,6 +214,36 @@
                 android:inputType="textUri"
                 android:hint="@string/bmchat_email_bot_field_webhook_placeholder" />
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/bmchat_email_bot_field_relay_from_chats"
+                    android:textSize="14sp"
+                    android:textColor="?android:attr/textColorPrimary" />
+
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/email_bot_relay_from_chats_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/bmchat_email_bot_field_relay_from_chats_hint"
+                android:textSize="12sp"
+                android:textColor="?android:attr/textColorSecondary" />
+
             <View
                 android:id="@+id/email_bot_token_divider"
                 android:layout_width="match_parent"

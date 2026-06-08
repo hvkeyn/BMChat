@@ -233,6 +233,9 @@ public class KeepAliveService extends Service {
       case WORKING:
         accentRes = R.color.bmchat_status_working;
         break;
+      case MAIL_FALLBACK:
+        accentRes = R.color.bmchat_status_mail;
+        break;
       default:
         accentRes = R.color.bmchat_status_offline;
         break;

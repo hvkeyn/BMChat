@@ -600,8 +600,9 @@ public final class TelegramMessageDispatcher {
     } else {
       body = "";
     }
-    if (forwardAttribution != null) {
-      body = body.isEmpty() ? forwardAttribution : forwardAttribution + "\n\n" + body;
+    String forwardLine = formatForwardAttribution(forwardAttribution);
+    if (forwardLine != null) {
+      body = body.isEmpty() ? forwardLine : forwardLine + "\n\n" + body;
     }
     String keyboard = TelegramFormatter.renderInlineKeyboard(m.optJSONObject("reply_markup"));
     if (!keyboard.isEmpty()) {
@@ -778,8 +779,9 @@ public final class TelegramMessageDispatcher {
       body = "";
     }
 
-    if (forwardAttribution != null) {
-      body = body.isEmpty() ? forwardAttribution : forwardAttribution + "\n\n" + body;
+    String forwardLine = formatForwardAttribution(forwardAttribution);
+    if (forwardLine != null) {
+      body = body.isEmpty() ? forwardLine : forwardLine + "\n\n" + body;
     }
 
     // Inline keyboard (Telegram-side action buttons → bullet list of links)
@@ -1246,6 +1248,13 @@ public final class TelegramMessageDispatcher {
    * <p>Returns {@code null} when the message is not a forward (so the
    * post stays as clean as a non-forwarded one).
    */
+  /** Wrap forward line for {@link org.thoughtcrime.securesms.util.MessageMarkdown} quote styling. */
+  @Nullable
+  static String formatForwardAttribution(@Nullable String attribution) {
+    if (attribution == null || attribution.isEmpty()) return null;
+    return "> " + attribution;
+  }
+
   static @Nullable String describeForwardAttribution(JSONObject m) {
     if (m == null) return null;
 

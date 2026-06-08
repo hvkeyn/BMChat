@@ -2,8 +2,11 @@ package org.thoughtcrime.securesms.connect;
 
 import android.content.Context;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import com.b44t.messenger.DcContact;
 import com.b44t.messenger.DcContext;
+import org.thoughtcrime.securesms.bots.BotConfig;
+import org.thoughtcrime.securesms.bots.BotStore;
 import org.thoughtcrime.securesms.emailbots.EmailBotContactHelper;
 import org.thoughtcrime.securesms.util.AsyncLoader;
 import org.thoughtcrime.securesms.util.Util;
@@ -69,7 +72,7 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
     return new Ret(all_ids);
   }
 
-  /** Ensures email-bot pseudo-contacts appear in pickers (all local profiles). */
+  /** Ensures email/Telegram bot pseudo-contacts appear in pickers. */
   private int[] mergeEmailBotContacts(int accountId, int[] contactIds, String filter) {
     try {
       com.b44t.messenger.DcContext dc = DcHelper.getContext(getContext());
@@ -78,6 +81,20 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
         for (int cid : org.thoughtcrime.securesms.emailbots.EmailBotSearchHelper
             .matchContactIds(getContext(), accountId, filter)) {
           if (cid > 0) botIds.add(cid);
+        }
+        BotStore tgStore = new BotStore(getContext());
+        String bare = filter.trim().toLowerCase(java.util.Locale.ROOT);
+        if (bare.startsWith("@")) bare = bare.substring(1);
+        for (BotConfig b : tgStore.getAll()) {
+          if (b.dcAccountId != accountId || b.botContactId <= 0) continue;
+          if (matchesBotFilter(
+              b.telegramUsername != null ? b.telegramUsername : "",
+              b.telegramName,
+              b.description,
+              bare,
+              filter)) {
+            botIds.add(b.botContactId);
+          }
         }
       } else {
         org.thoughtcrime.securesms.emailbots.EmailBotStore store =
@@ -90,6 +107,11 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
           }
           if (cid > 0) botIds.add(cid);
         }
+        BotStore tgStore = new BotStore(getContext());
+        for (BotConfig b : tgStore.getAll()) {
+          if (b.dcAccountId != accountId || b.botContactId <= 0) continue;
+          botIds.add(b.botContactId);
+        }
       }
       if (botIds.isEmpty()) return contactIds;
       java.util.LinkedHashSet<Integer> merged = new java.util.LinkedHashSet<>(botIds);
@@ -101,6 +123,26 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
     } catch (Throwable ignored) {
       return contactIds;
     }
+  }
+
+  private static boolean matchesBotFilter(@NonNull String name,
+                                          @Nullable String displayName,
+                                          @Nullable String description,
+                                          @NonNull String bare,
+                                          @NonNull String trimmed) {
+    String n = name.toLowerCase(java.util.Locale.ROOT);
+    if (n.equals(bare) || n.startsWith(bare) || ("@" + n).equals(trimmed.toLowerCase(java.util.Locale.ROOT))) {
+      return true;
+    }
+    if (displayName != null && !displayName.isEmpty()) {
+      String dn = displayName.toLowerCase(java.util.Locale.ROOT);
+      if (dn.equals(bare) || dn.contains(bare)) return true;
+    }
+    if (description != null && !description.isEmpty()
+        && description.toLowerCase(java.util.Locale.ROOT).contains(bare)) {
+      return true;
+    }
+    return false;
   }
 
   public static class Ret {

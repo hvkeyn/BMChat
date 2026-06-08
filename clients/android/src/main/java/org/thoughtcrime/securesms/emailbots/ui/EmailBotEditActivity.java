@@ -70,6 +70,7 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
   private EditText descriptionInput;
   private EditText developerEmailInput;
   private SwitchCompat enabledSwitch;
+  private SwitchCompat relayFromChatsSwitch;
   private LinearLayout commandsContainer;
   private EditText webhookInput;
 
@@ -97,8 +98,10 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
     descriptionInput = findViewById(R.id.email_bot_description_input);
     developerEmailInput = findViewById(R.id.email_bot_developer_email_input);
     enabledSwitch = findViewById(R.id.email_bot_enabled_switch);
+    relayFromChatsSwitch = findViewById(R.id.email_bot_relay_from_chats_switch);
     commandsContainer = findViewById(R.id.email_bot_commands_container);
     webhookInput = findViewById(R.id.email_bot_webhook_input);
+    relayFromChatsSwitch.setChecked(true);
 
     String botId = getIntent().getStringExtra(EXTRA_BOT_ID);
     existing = botId != null ? store.getById(botId) : null;
@@ -118,6 +121,7 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
       developerEmailInput.setText(
           existing.developerEmail == null ? "" : existing.developerEmail);
       enabledSwitch.setChecked(existing.enabled);
+      relayFromChatsSwitch.setChecked(existing.relayFromChats);
       webhookInput.setText(existing.webhookUrl == null ? "" : existing.webhookUrl);
       for (Map.Entry<String, String> e : existing.commandEntries()) {
         addCommandRow(e.getKey(), e.getValue());
@@ -258,6 +262,7 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
           null,
           0,
           0,
+          relayFromChatsSwitch.isChecked(),
           null);
     } else {
       saved = existing
@@ -267,7 +272,8 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
           .withCommands(commands)
           .withWebhookUrl(webhook)
           .withDisplayName(displayName)
-          .withDeveloperEmail(developerEmail);
+          .withDeveloperEmail(developerEmail)
+          .withRelayFromChats(relayFromChatsSwitch.isChecked());
     }
     store.upsert(saved);
 

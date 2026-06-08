@@ -80,6 +80,10 @@ interface Bot {
   lastPolledAtMs: number
   paused: boolean
   manualReview: boolean
+  /** BMChat pseudo-contact id (synced from Android). */
+  botContactId?: number
+  /** Channels/groups the bot publishes into locally. */
+  attachedChatIds?: number[]
 }
 
 /** Bot shape exposed to the renderer (token redacted). */
@@ -185,13 +189,36 @@ async function reloadStoreMerged(): Promise<void> {
     const accountIds = await getDCJsonrpcRemote().rpc.getAllAccountIds()
     for (const accountId of accountIds) {
       for (const b of await readUiConfigForAccount(accountId)) {
-        if (b.id) merged.set(b.id, b)
+        if (!b.id) continue
+        const local = merged.get(b.id)
+        merged.set(b.id, local ? mergeTgBot(local, b) : b)
       }
     }
   } catch (e) {
     log.warn('reloadStoreMerged: ui-config read failed', e)
   }
   bots = Array.from(merged.values())
+}
+
+function mergeTgBot(local: Bot, remote: Bot): Bot {
+  const attached = new Set<number>([
+    ...(local.attachedChatIds ?? []),
+    ...(remote.attachedChatIds ?? []),
+  ])
+  const botContactId =
+    (local.botContactId ?? 0) > 0
+      ? local.botContactId!
+      : remote.botContactId ?? 0
+  const botChatId =
+    (local.botChatId ?? 0) > 0 ? local.botChatId! : remote.botChatId ?? 0
+  const base =
+    (remote.lastReplyAtMs ?? 0) >= (local.lastReplyAtMs ?? 0) ? remote : local
+  return {
+    ...base,
+    botContactId,
+    botChatId,
+    attachedChatIds: Array.from(attached).filter(id => id > 0),
+  }
 }
 
 async function persistUiConfigForAccount(
@@ -331,6 +358,81 @@ function toPublic(bot: Bot): BotPublic {
     manualReview: bot.manualReview,
     lastPolledAtMs: bot.lastPolledAtMs,
     pendingCount: pending.filter(p => p.botId === bot.id).length,
+  }
+}
+
+function tgBotEmail(bot: Bot): string {
+  const slug = (bot.telegramUsername || bot.id).toLowerCase().replace(/[^a-z0-9_]/g, '')
+  return 'tgbot.' + slug + '@bots.bmchat.local'
+}
+
+function withTgAttachedChat(bot: Bot, chatId: number): Bot {
+  const prev = bot.attachedChatIds ?? []
+  if (prev.includes(chatId)) return bot
+  return { ...bot, attachedChatIds: [...prev, chatId] }
+}
+
+function withoutTgAttachedChat(bot: Bot, chatId: number): Bot {
+  const prev = bot.attachedChatIds ?? []
+  return { ...bot, attachedChatIds: prev.filter(id => id !== chatId) }
+}
+
+async function ensureTgBotContact(bot: Bot): Promise<Bot> {
+  if (bot.botContactId && bot.botContactId > 0) return bot
+  const rpc = getDCJsonrpcRemote().rpc
+  const email = tgBotEmail(bot)
+  let contactId = await rpc.lookupContactIdByAddr(bot.accountId, email)
+  if (!contactId || contactId <= 0) {
+    const label = bot.telegramName || (bot.telegramUsername ? '@' + bot.telegramUsername : 'Bot')
+    contactId = await rpc.createContact(bot.accountId, label, email)
+  }
+  if (contactId > 0) return { ...bot, botContactId: contactId }
+  return bot
+}
+
+async function resolveTargetChatIds(bot: Bot): Promise<number[]> {
+  const out = new Set<number>()
+  const rpc = getDCJsonrpcRemote().rpc
+  const cid = bot.botContactId ?? 0
+  if (cid > 0) {
+    try {
+      const home = await rpc.getChatIdByContactId(bot.accountId, cid)
+      if (home > 0) out.add(home)
+    } catch {}
+  } else if (bot.targetChatId > 0) {
+    out.add(bot.targetChatId)
+  }
+  for (const id of bot.attachedChatIds ?? []) {
+    if (id > 0) out.add(id)
+  }
+  return Array.from(out)
+}
+
+async function isChatEligibleForTgBotAttach(
+  accountId: number,
+  chatId: number
+): Promise<boolean> {
+  if (accountId <= 0 || chatId <= 0) return false
+  try {
+    const chat: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
+      accountId,
+      chatId
+    )
+    const chatType = String(chat?.chatType || '')
+    const groupLike =
+      chatType === 'Group' ||
+      chatType === 'OutBroadcast' ||
+      chatType === 'InBroadcast' ||
+      !!chat?.isMultiUser
+    return (
+      chat?.canSend !== false &&
+      groupLike &&
+      !chat?.isContactRequest &&
+      !chat?.isDeviceTalk &&
+      !chat?.isSelfTalk
+    )
+  } catch {
+    return false
   }
 }
 
@@ -908,25 +1010,30 @@ async function processBatch(
         pending.push(post)
         summary.queued++
       } else {
-        const ok = await publishToChat(
-          bot.accountId,
-          bot.targetChatId,
-          attachment && filePath
-            ? text
-            : text ||
-                (attachment ? '[медиа ' + attachment.viewtype + ']' : ''),
-          attachment && filePath
-            ? {
-                filePath,
-                filename: attachment.fileName,
-                viewtype: attachment.viewtype,
-                width: attachment.width,
-                height: attachment.height,
-                duration: attachment.duration,
-              }
-            : null
-        )
-        if (ok) summary.published++
+        const targets = await resolveTargetChatIds(bot)
+        let anyOk = false
+        for (const targetChatId of targets) {
+          const ok = await publishToChat(
+            bot.accountId,
+            targetChatId,
+            attachment && filePath
+              ? text
+              : text ||
+                  (attachment ? '[медиа ' + attachment.viewtype + ']' : ''),
+            attachment && filePath
+              ? {
+                  filePath,
+                  filename: attachment.fileName,
+                  viewtype: attachment.viewtype,
+                  width: attachment.width,
+                  height: attachment.height,
+                  duration: attachment.duration,
+                }
+              : null
+          )
+          if (ok) anyOk = true
+        }
+        if (anyOk) summary.published++
       }
     }
   }
@@ -1063,6 +1170,59 @@ export async function initTelegramBots(): Promise<void> {
   }).catch(() => {})
 
   ipcMain.handle('bmchat:tgbots:list', () => bots.map(toPublic))
+
+  ipcMain.handle('bmchat:tgbots:list-config', () =>
+    bots.map(b => ({
+      id: b.id,
+      accountId: b.accountId,
+      botContactId: b.botContactId ?? 0,
+      attachedChatIds: b.attachedChatIds ?? [],
+      telegramUsername: b.telegramUsername ?? null,
+      telegramName: b.telegramName ?? null,
+    }))
+  )
+
+  ipcMain.handle(
+    'bmchat:tgbots:attach-chat',
+    async (_e, args: { id: string; chatId: number }) => {
+      await reloadStoreMerged()
+      let bot = bots.find(b => b.id === args?.id)
+      const chatId = Number(args?.chatId) || 0
+      if (!bot || chatId <= 0) return { ok: false, error: 'invalid' }
+      if (!(await isChatEligibleForTgBotAttach(bot.accountId, chatId))) {
+        return { ok: false, error: 'cannot_send' }
+      }
+      try {
+        bot = await ensureTgBotContact(bot)
+        if (bot.targetChatId === chatId) {
+          return { ok: false, error: 'home_chat' }
+        }
+        const updated = withTgAttachedChat(bot, chatId)
+        const idx = bots.findIndex(b => b.id === bot!.id)
+        if (idx >= 0) bots[idx] = updated
+        await saveStore({ publishSync: true })
+        return { ok: true, bot: updated }
+      } catch (e) {
+        log.warn('tgbots attach-chat failed', e)
+        return { ok: false, error: 'failed' }
+      }
+    }
+  )
+
+  ipcMain.handle(
+    'bmchat:tgbots:detach-chat',
+    async (_e, args: { id: string; chatId: number }) => {
+      await reloadStoreMerged()
+      const bot = bots.find(b => b.id === args?.id)
+      const chatId = Number(args?.chatId) || 0
+      if (!bot || chatId <= 0) return { ok: false, error: 'invalid' }
+      const updated = withoutTgAttachedChat(bot, chatId)
+      const idx = bots.findIndex(b => b.id === bot.id)
+      if (idx >= 0) bots[idx] = updated
+      await saveStore({ publishSync: true })
+      return { ok: true, bot: updated }
+    }
+  )
 
   ipcMain.handle(
     'bmchat:tgbots:add',

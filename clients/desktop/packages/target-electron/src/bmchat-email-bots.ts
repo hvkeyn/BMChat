@@ -157,13 +157,36 @@ async function reloadStoreMerged(): Promise<void> {
     const accountIds = await getDCJsonrpcRemote().rpc.getAllAccountIds()
     for (const accountId of accountIds) {
       for (const b of await readUiConfigForAccount(accountId)) {
-        merged.set(b.id, b)
+        const local = merged.get(b.id)
+        merged.set(b.id, local ? mergeEmailBot(local, b) : b)
       }
     }
   } catch (e) {
     log.warn('reloadStoreMerged: ui-config read failed', e)
   }
   bots = Array.from(merged.values())
+}
+
+function mergeEmailBot(local: EmailBot, remote: EmailBot): EmailBot {
+  const attached = new Set<number>([
+    ...(local.attachedChatIds ?? []),
+    ...(remote.attachedChatIds ?? []),
+  ])
+  const botContactId =
+    (local.botContactId ?? 0) > 0
+      ? local.botContactId!
+      : remote.botContactId ?? 0
+  const botChatId =
+    (local.botChatId ?? 0) > 0 ? local.botChatId! : remote.botChatId ?? 0
+  const base = (remote.lastReplyAtMs ?? 0) >= (local.lastReplyAtMs ?? 0) ? remote : local
+  return {
+    ...base,
+    botContactId,
+    botChatId,
+    attachedChatIds: Array.from(attached).filter(id => id > 0),
+    relayFromChats:
+      (local.relayFromChats !== false) && (remote.relayFromChats !== false),
+  }
 }
 
 async function persistUiConfigForAccount(
@@ -1095,7 +1118,8 @@ async function postWebhook(
   body: string,
   chatId: number,
   msgId: number,
-  accountId: number
+  accountId: number,
+  fromId: number
 ): Promise<string | null> {
   return new Promise(resolve => {
     if (!bot.webhookUrl) {
@@ -1124,19 +1148,20 @@ async function postWebhook(
       } catch {
         /* optional hint for PHP mailer mode */
       }
-      const bmchat: Record<string, string> = {
-        bot: bot.name,
-        token_suffix: bot.token,
-        command: inv.command,
-        argument: inv.argument,
-      }
+      const bmchat = buildBmchatMeta(
+        bot,
+        chatId,
+        inv.command,
+        inv.argument,
+        inv.command === 'channel_post' ? 'channel_post' : undefined
+      )
       if (replyTo) bmchat.reply_to = replyTo
       const payload = JSON.stringify({
         update_id: msgId,
         message: {
           message_id: msgId,
-          chat: { id: chatId, type: 'private' },
-          from: { email: senderEmail },
+          chat: await buildChatJson(accountId, chatId),
+          from: await buildFromJson(accountId, fromId, senderEmail),
           text: body,
           date: Math.floor(Date.now() / 1000),
         },
@@ -1322,6 +1347,83 @@ async function postBotCallback(
 //  email transport (developer mailbox — mirrors Android EmailBotMailer)
 // ---------------------------------------------------------------------------
 
+/** Telegram-shaped chat object (Android {@code EmailBotMailer.buildChatJson}). */
+async function buildChatJson(
+  accountId: number,
+  chatId: number
+): Promise<Record<string, unknown>> {
+  const chat: Record<string, unknown> = { id: chatId, type: 'private' }
+  try {
+    const info: any = await getDCJsonrpcRemote().rpc.getBasicChatInfo(
+      accountId,
+      chatId
+    )
+    const name = (info?.name || '').trim()
+    if (name) chat.title = name
+    if (info?.isOutBroadcast || info?.isInBroadcast) chat.type = 'channel'
+    else if (info?.isMailingList) chat.type = 'supergroup'
+    else if (info?.isMultiUser) chat.type = 'group'
+    else chat.type = 'private'
+  } catch {
+    /* keep defaults */
+  }
+  return chat
+}
+
+/** Sender envelope — human author, never the channel title. */
+async function buildFromJson(
+  accountId: number,
+  fromId: number,
+  senderEmail: string
+): Promise<Record<string, unknown>> {
+  const from: Record<string, unknown> = {
+    email: senderEmail || '',
+  }
+  const contactId = fromId > 0 ? fromId : DC_CONTACT_ID_SELF
+  try {
+    const c: any = await getDCJsonrpcRemote().rpc.getContact(
+      accountId,
+      contactId
+    )
+    const email = (c?.address || senderEmail || '').toLowerCase()
+    if (email) from.email = email
+    const dn = (c?.displayName || c?.authName || '').trim()
+    if (dn) from.first_name = dn
+  } catch {
+    /* email-only fallback */
+  }
+  return from
+}
+
+/** bmchat meta block — parity with Android {@code buildBmchatMeta}. */
+function buildBmchatMeta(
+  bot: EmailBot,
+  originChatId: number,
+  command: string,
+  argument: string,
+  kind?: string
+): Record<string, unknown> {
+  const bmchat: Record<string, unknown> = {
+    bot: bot.name,
+    token_suffix: bot.token,
+    command,
+    argument,
+    origin_chat_id: originChatId,
+    attached_chat_ids: (bot.attachedChatIds ?? []).filter(id => id > 0),
+  }
+  if (bot.botChatId && bot.botChatId > 0) {
+    bmchat.bot_home_chat_id = bot.botChatId
+  }
+  if (kind) bmchat.kind = kind
+  return bmchat
+}
+
+function botSenderLabel(bot: EmailBot): string {
+  const dn = (bot.displayName || '').trim()
+  if (dn && dn.toLowerCase() !== bot.name.toLowerCase()) return dn
+  return '@' + bot.name
+}
+
 const MARKER_UPDATE = 'BMCHAT-BOT-UPDATE v1'
 const MARKER_REPLY = 'BMCHAT-BOT-REPLY v1'
 const REPLY_PATTERN =
@@ -1363,7 +1465,8 @@ async function sendDeveloperUpdate(
   senderEmail: string,
   body: string,
   command: string,
-  argument: string
+  argument: string,
+  fromId: number
 ): Promise<boolean> {
   if (!bot.developerEmail) return false
   try {
@@ -1375,22 +1478,24 @@ async function sendDeveloperUpdate(
     } catch {
       /* ignore */
     }
+    const bmchat = buildBmchatMeta(
+      bot,
+      originChatId,
+      command,
+      argument,
+      command === 'channel_post' ? 'channel_post' : undefined
+    )
+    if (replyTo) bmchat.reply_to = replyTo
     const update = {
       update_id: originMsgId,
       message: {
         message_id: originMsgId,
-        chat: { id: originChatId, type: 'private' },
-        from: { email: senderEmail },
+        chat: await buildChatJson(accountId, originChatId),
+        from: await buildFromJson(accountId, fromId, senderEmail),
         text: body,
         date: Math.floor(Date.now() / 1000),
       },
-      bmchat: {
-        bot: bot.name,
-        token_suffix: bot.token,
-        command,
-        argument,
-        ...(replyTo ? { reply_to: replyTo } : {}),
-      },
+      bmchat,
     }
     const header = `${MARKER_UPDATE} @${bot.name} chat=${originChatId} message=${originMsgId} from=${senderEmail}`
     const mailBody = header + '\n---\n' + JSON.stringify(update, null, 2)
@@ -1454,7 +1559,8 @@ async function resolveOutgoingReply(
   senderEmail: string,
   body: string,
   chatId: number,
-  msgId: number
+  msgId: number,
+  fromId: number
 ): Promise<{ reply: string | null; forwarded: boolean }> {
   let reply = resolveReply(bot, inv.command, inv.argument, senderEmail)
   if (bot.webhookUrl) {
@@ -1465,7 +1571,8 @@ async function resolveOutgoingReply(
       body,
       chatId,
       msgId,
-      accountId
+      accountId,
+      fromId
     )
     if (webhookReply) reply = webhookReply
   }
@@ -1479,7 +1586,8 @@ async function resolveOutgoingReply(
       senderEmail,
       body,
       inv.command,
-      inv.argument
+      inv.argument,
+      fromId
     )
   }
   return { reply, forwarded }
@@ -1569,39 +1677,114 @@ async function sendBotReply(
 ): Promise<void> {
   try {
     const rpc = getDCJsonrpcRemote().rpc
-    const targetChatId = replyChatId(bot, chatId)
-    if (targetChatId <= 0) {
+    const originChatId = replyChatId(bot, chatId)
+    if (originChatId <= 0) {
       log.warn('sendBotReply: no target chat for %s', bot.name)
       return
     }
-    const inHomeChat = !!bot.botChatId && bot.botChatId === targetChatId
-    const visible = inHomeChat ? reply : '@' + bot.name + ': ' + reply
-    const text = inHomeChat ? BOT_OUT_MARKER + visible : visible
-    await rpc.miscSendTextMessage(accountId, targetChatId, text)
+    const fromHome = !!bot.botChatId && bot.botChatId === originChatId
+    const fromAttached = (bot.attachedChatIds ?? []).includes(originChatId)
+    const targets = new Set<number>()
 
-    // Telegram-style broadcast: when the owner posts in the bot home chat,
-    // mirror the post into every attached channel/group the bot manages.
-    if (inHomeChat && Array.isArray(bot.attachedChatIds)) {
-      for (const attached of bot.attachedChatIds) {
-        if (!attached || attached === targetChatId) continue
-        try {
-          await rpc.miscSendTextMessage(
-            accountId,
-            attached,
-            BOT_OUT_MARKER + reply
-          )
-        } catch (e) {
-          log.warn('sendBotReply: mirror to chat %s failed', attached, e)
-        }
+    if (fromHome && (bot.attachedChatIds?.length ?? 0) > 0) {
+      for (const attached of bot.attachedChatIds ?? []) {
+        if (attached > 0) targets.add(attached)
       }
+    } else if (fromAttached || originChatId > 0) {
+      targets.add(originChatId)
+    } else if (bot.botChatId && bot.botChatId > 0) {
+      targets.add(bot.botChatId)
+    }
+
+    const senderLabel = botSenderLabel(bot)
+    for (const targetChatId of targets) {
+      const home = !!bot.botChatId && bot.botChatId === targetChatId
+      const visible = home ? reply : '@' + bot.name + ': ' + reply
+      const text = BOT_OUT_MARKER + visible
+      await rpc.sendMsg(accountId, targetChatId, {
+        file: null,
+        filename: null,
+        viewtype: null,
+        html: null,
+        location: null,
+        overrideSenderName: home ? null : senderLabel,
+        quotedMessageId: null,
+        quotedText: null,
+        text,
+      })
     }
 
     bot.lastReplyAtMs = Date.now()
     bot.totalReplies += 1
-    // Counters only — avoid re-sealing ui-config on every reply (RPC churn).
     await saveStore({ skipUiConfig: true })
   } catch (e) {
     log.warn('sendBotReply failed for %s', bot.name, e)
+  }
+}
+
+async function relayAttachedChannelPosts(
+  accountId: number,
+  chatId: number,
+  msgId: number,
+  senderEmail: string,
+  body: string,
+  fromId: number,
+  homeBot: EmailBot | null
+): Promise<void> {
+  try {
+    const rpc = getDCJsonrpcRemote().rpc
+    const chat: any = await rpc.getBasicChatInfo(accountId, chatId)
+    const isMulti =
+      !!chat?.isMultiUser ||
+      !!chat?.isOutBroadcast ||
+      !!chat?.isInBroadcast ||
+      !!chat?.isMailingList
+    if (!isMulti) return
+
+    for (const bot of botsForAccount(accountId)) {
+      if (!bot.enabled || bot.relayFromChats === false) continue
+      if (!(bot.attachedChatIds ?? []).includes(chatId)) continue
+      if (bot.botChatId && bot.botChatId === chatId) continue
+      if (!bot.developerEmail && !bot.webhookUrl) continue
+
+      const preview = body.length > 160 ? body.slice(0, 160) + '…' : body
+      log.info(
+        'channel_post bot=%s chat=%s from=%s msg=%s text=%s',
+        bot.name,
+        chatId,
+        senderEmail,
+        msgId,
+        preview
+      )
+
+      if (bot.developerEmail) {
+        await sendDeveloperUpdate(
+          accountId,
+          bot,
+          chatId,
+          msgId,
+          senderEmail,
+          body,
+          'channel_post',
+          '',
+          fromId
+        )
+      }
+      if (bot.webhookUrl) {
+        await postWebhook(
+          bot,
+          { command: 'channel_post', argument: '' },
+          senderEmail,
+          body,
+          chatId,
+          msgId,
+          accountId,
+          fromId
+        )
+      }
+    }
+  } catch (e) {
+    log.warn('relayAttachedChannelPosts failed', e)
   }
 }
 
@@ -1683,7 +1866,18 @@ async function handleIncoming(
       } else {
         inv = parseInvocation(body, accountId)
       }
-      if (!inv) return
+      if (!inv) {
+        await relayAttachedChannelPosts(
+          accountId,
+          chatId,
+          msgId,
+          senderEmail,
+          body,
+          msg.fromId ?? DC_CONTACT_ID_SELF,
+          homeBot
+        )
+        return
+      }
       const bot = inv.bot
       if (!bot.enabled) return
 
@@ -1713,7 +1907,8 @@ async function handleIncoming(
           senderEmail,
           body,
           chatId,
-          msgId
+          msgId,
+          msg.fromId ?? DC_CONTACT_ID_SELF
         )
         if (reply) welcome = reply
         if (welcome) {
@@ -1740,7 +1935,8 @@ async function handleIncoming(
         senderEmail,
         body,
         chatId,
-        msgId
+        msgId,
+        msg.fromId ?? DC_CONTACT_ID_SELF
       )
       let outgoing =
         reply ?? resolveReply(bot, inv.command, inv.argument, senderEmail)

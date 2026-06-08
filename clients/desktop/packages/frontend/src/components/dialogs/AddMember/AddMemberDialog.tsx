@@ -34,18 +34,33 @@ export function AddMemberDialog({
     let cancelled = false
     void (async () => {
       let ids = await listEmailBotContactIds(accountId, queryStr)
-      if (
-        ids.length === 0 &&
-        runtime.getRuntimeInfo().target === 'electron'
-      ) {
-        const bots = await listEmailBots()
-        for (const bot of bots) {
-          const ensured = await ensureEmailBotContact(accountId, bot.id)
-          if (ensured?.contactId && ensured.contactId > 0) {
-            ids.push(ensured.contactId)
+      if (runtime.getRuntimeInfo().target === 'electron') {
+        if (ids.length === 0) {
+          const bots = await listEmailBots()
+          for (const bot of bots) {
+            const ensured = await ensureEmailBotContact(accountId, bot.id)
+            if (ensured?.contactId && ensured.contactId > 0) {
+              ids.push(ensured.contactId)
+            }
           }
+          ids = await listEmailBotContactIds(accountId, queryStr)
         }
-        ids = await listEmailBotContactIds(accountId, queryStr)
+        try {
+          const rawTg = await runtime.bmchatBotsInvoke('bmchat:tgbots:list-config')
+          const tgBots = Array.isArray(rawTg) ? rawTg : []
+          for (const b of tgBots) {
+            const row = b as { accountId?: number; botContactId?: number }
+            if (
+              row.accountId === accountId &&
+              Number(row.botContactId) > 0 &&
+              !ids.includes(Number(row.botContactId))
+            ) {
+              ids.push(Number(row.botContactId))
+            }
+          }
+        } catch {
+          // optional
+        }
       }
       if (!cancelled) setBotContactIds(ids)
     })()

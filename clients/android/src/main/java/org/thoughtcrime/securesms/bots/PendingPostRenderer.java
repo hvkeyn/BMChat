@@ -81,8 +81,9 @@ public final class PendingPostRenderer {
     } else {
       body = "";
     }
-    if (forward != null) {
-      body = body.isEmpty() ? forward : forward + "\n\n" + body;
+    String forwardLine = TelegramMessageDispatcher.formatForwardAttribution(forward);
+    if (forwardLine != null) {
+      body = body.isEmpty() ? forwardLine : forwardLine + "\n\n" + body;
     }
     String keyboard = TelegramFormatter.renderInlineKeyboard(m.optJSONObject("reply_markup"));
     if (!keyboard.isEmpty()) {

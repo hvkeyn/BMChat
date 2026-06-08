@@ -386,6 +386,7 @@
     <string name="bmchat_email_bot_attach_chat">Add bot to chat…</string>
     <string name="bmchat_email_bot_attached_chats">Attached chats: %1$s</string>
     <string name="bmchat_email_bot_attached_to_channel">Bot connected to this channel (%1$s).</string>
+    <string name="bmchat_email_bot_already_on_channel">This bot is already connected to the channel.</string>
     <string name="bmchat_channel_invite_body_fmt">I'm inviting you to my BMChat channel "%1$s". Tap the link to join:\n\n%2$s</string>
     <string name="bmchat_channel_invite_partial_fmt">Sent %1$s invitation(s). %2$s failed.</string>
     <string name="bmchat_channel_invite_failed">Couldn't send any invitations.</string>

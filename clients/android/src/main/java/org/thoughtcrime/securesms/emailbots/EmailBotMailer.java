@@ -105,11 +105,25 @@ public final class EmailBotMailer {
                                            @NonNull String command,
                                            @NonNull String argument)
       throws org.json.JSONException {
+    return buildBmchatMeta(dcContext, bot, originChatId, command, argument, null);
+  }
+
+  @NonNull
+  public static JSONObject buildBmchatMeta(@NonNull DcContext dcContext,
+                                           @NonNull EmailBotConfig bot,
+                                           int originChatId,
+                                           @NonNull String command,
+                                           @NonNull String argument,
+                                           @Nullable String kind)
+      throws org.json.JSONException {
     JSONObject bmchat = new JSONObject();
     bmchat.put("bot", bot.name);
     bmchat.put("token_suffix", bot.token);
     bmchat.put("command", command);
     bmchat.put("argument", argument);
+    if (kind != null && !kind.isEmpty()) {
+      bmchat.put("kind", kind);
+    }
     bmchat.put("origin_chat_id", originChatId);
     JSONArray attached = new JSONArray();
     for (int attachedId : bot.attachedChatIds) {
@@ -166,7 +180,8 @@ public final class EmailBotMailer {
       message.put("date", System.currentTimeMillis() / 1000L);
       update.put("message", message);
 
-      JSONObject bmchat = buildBmchatMeta(dcContext, bot, originChatId, command, argument);
+      String kind = "channel_post".equals(command) ? "channel_post" : null;
+      JSONObject bmchat = buildBmchatMeta(dcContext, bot, originChatId, command, argument, kind);
       // Hint to the developer's autoresponder: this is the address
       // they must send the reply to (i.e. our own self-address as the
       // owner of this bot).
