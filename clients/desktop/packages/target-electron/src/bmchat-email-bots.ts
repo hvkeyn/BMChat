@@ -1682,37 +1682,21 @@ async function sendBotReply(
       log.warn('sendBotReply: no target chat for %s', bot.name)
       return
     }
-    const fromHome = !!bot.botChatId && bot.botChatId === originChatId
-    const fromAttached = (bot.attachedChatIds ?? []).includes(originChatId)
-    const targets = new Set<number>()
-
-    if (fromHome && (bot.attachedChatIds?.length ?? 0) > 0) {
-      for (const attached of bot.attachedChatIds ?? []) {
-        if (attached > 0) targets.add(attached)
-      }
-    } else if (fromAttached || originChatId > 0) {
-      targets.add(originChatId)
-    } else if (bot.botChatId && bot.botChatId > 0) {
-      targets.add(bot.botChatId)
-    }
-
+    const home = !!bot.botChatId && bot.botChatId === originChatId
     const senderLabel = botSenderLabel(bot)
-    for (const targetChatId of targets) {
-      const home = !!bot.botChatId && bot.botChatId === targetChatId
-      const visible = home ? reply : '@' + bot.name + ': ' + reply
-      const text = BOT_OUT_MARKER + visible
-      await rpc.sendMsg(accountId, targetChatId, {
-        file: null,
-        filename: null,
-        viewtype: null,
-        html: null,
-        location: null,
-        overrideSenderName: home ? null : senderLabel,
-        quotedMessageId: null,
-        quotedText: null,
-        text,
-      })
-    }
+    const visible = home ? reply : '@' + bot.name + ': ' + reply
+    const text = BOT_OUT_MARKER + visible
+    await rpc.sendMsg(accountId, originChatId, {
+      file: null,
+      filename: null,
+      viewtype: null,
+      html: null,
+      location: null,
+      overrideSenderName: home ? null : senderLabel,
+      quotedMessageId: null,
+      quotedText: null,
+      text,
+    })
 
     bot.lastReplyAtMs = Date.now()
     bot.totalReplies += 1

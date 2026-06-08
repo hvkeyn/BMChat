@@ -266,39 +266,17 @@ public final class EmailBotDispatcher {
   }
 
   /**
-   * Posts a bot reply. Routing rules (2.50.30):
-   * <ul>
-   *   <li>Command from bot <em>home</em> chat → post only to
-   *       {@link EmailBotConfig#attachedChatIds} (channel test mode).</li>
-   *   <li>Command from an attached channel/group → post only there.</li>
-   *   <li>Other chats → reply in the origin chat only.</li>
-   * </ul>
+   * Posts a bot reply in the chat where the command arrived (home, channel, or 1:1).
    */
   private void sendBotReply(@NonNull DcContext dcContext,
                             @NonNull EmailBotConfig bot,
                             int originChatId,
                             @NonNull String reply) {
     try {
-      java.util.LinkedHashSet<Integer> targets = new java.util.LinkedHashSet<>();
-      boolean fromHome = bot.botChatId > 0 && originChatId == bot.botChatId;
-      boolean fromAttached = originChatId > 0 && bot.attachedChatIds.contains(originChatId);
-
-      if (fromHome && !bot.attachedChatIds.isEmpty()) {
-        for (int attachedId : bot.attachedChatIds) {
-          if (attachedId > 0) targets.add(attachedId);
-        }
-      } else if (fromAttached || originChatId > 0) {
-        targets.add(originChatId);
-      } else if (bot.botChatId > 0) {
-        targets.add(bot.botChatId);
-      }
-
-      if (targets.isEmpty()) return;
-      for (int targetChatId : targets) {
-        boolean home = bot.botChatId > 0 && bot.botChatId == targetChatId;
-        String visible = home ? reply : "@" + bot.name + ": " + reply;
-        dcContext.sendTextMsg(targetChatId, BOT_OUT_MARKER + visible);
-      }
+      if (originChatId <= 0) return;
+      boolean home = bot.botChatId > 0 && originChatId == bot.botChatId;
+      String visible = home ? reply : "@" + bot.name + ": " + reply;
+      dcContext.sendTextMsg(originChatId, BOT_OUT_MARKER + visible);
       EmailBotConfig updated = bot.withReplySent(System.currentTimeMillis());
       store.upsert(updated);
     } catch (Throwable t) {
