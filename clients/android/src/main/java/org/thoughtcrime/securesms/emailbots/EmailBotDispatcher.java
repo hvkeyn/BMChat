@@ -184,19 +184,17 @@ public final class EmailBotDispatcher {
       if (TextUtils.isEmpty(welcome)) {
         welcome = defaultWelcome(bot);
       }
-      // HTTP webhook and developer-mailbox transport apply to /start too
-      // (PHP/Telegram-style bots expect the webhook on first contact).
-      boolean forwarded = false;
-      if (!TextUtils.isEmpty(bot.developerEmail)) {
-        forwarded = EmailBotMailer.sendUpdate(
-            dcContext, bot, chatId, msgId, senderEmail, body,
-            inv.command, inv.argument);
-      }
       if (!TextUtils.isEmpty(bot.webhookUrl)) {
         String webhookReply = callWebhook(bot, inv, senderEmail, body, chatId, msgId);
         if (!TextUtils.isEmpty(webhookReply)) {
           welcome = webhookReply;
         }
+      }
+      boolean forwarded = false;
+      if (shouldForwardToDeveloper(bot, chatId, !TextUtils.isEmpty(welcome))) {
+        forwarded = EmailBotMailer.sendUpdate(
+            dcContext, bot, chatId, msgId, senderEmail, body,
+            inv.command, inv.argument);
       }
       if (!TextUtils.isEmpty(welcome)) {
         sendBotReply(dcContext, bot, chatId, welcome);
@@ -217,22 +215,20 @@ public final class EmailBotDispatcher {
     //    static reply table is still consulted as a fallback so a
     //    purely "stateless" bot keeps working even before its mailbox
     //    is up.
-    boolean forwarded = false;
-    if (!TextUtils.isEmpty(bot.developerEmail)) {
-      forwarded = EmailBotMailer.sendUpdate(
-          dcContext, bot, chatId, msgId, senderEmail, body,
-          inv.command, inv.argument);
-    }
-
     String reply = resolveReply(bot, inv.command, inv.argument, senderEmail);
 
-    // 5) Legacy HTTP webhook augmentation (BMChat 2.49.47 contract).
-    //    Only fires when the developer has explicitly configured a URL.
     if (!TextUtils.isEmpty(bot.webhookUrl)) {
       String webhookReply = callWebhook(bot, inv, senderEmail, body, chatId, msgId);
       if (!TextUtils.isEmpty(webhookReply)) {
         reply = webhookReply;
       }
+    }
+
+    boolean forwarded = false;
+    if (shouldForwardToDeveloper(bot, chatId, !TextUtils.isEmpty(reply))) {
+      forwarded = EmailBotMailer.sendUpdate(
+          dcContext, bot, chatId, msgId, senderEmail, body,
+          inv.command, inv.argument);
     }
 
     if (TextUtils.isEmpty(reply)) {
@@ -244,6 +240,14 @@ public final class EmailBotDispatcher {
       return;
     }
     sendBotReply(dcContext, bot, chatId, reply);
+  }
+
+  private static boolean shouldForwardToDeveloper(@NonNull EmailBotConfig bot,
+                                                  int originChatId,
+                                                  boolean hasSynchronousReply) {
+    if (TextUtils.isEmpty(bot.developerEmail)) return false;
+    if (EmailBotMailer.isCommandFromAttachedChat(bot, originChatId)) return true;
+    return !hasSynchronousReply;
   }
 
   /** Default welcome banner when the bot has no /start template. */
@@ -326,16 +330,22 @@ public final class EmailBotDispatcher {
       }
     }
 
-    int targetChatId = payload.optInt("chat_id", env.originChatId);
-    if (targetChatId <= 0) targetChatId = env.originChatId;
+    boolean fromAttached = EmailBotMailer.isCommandFromAttachedChat(bot, env.originChatId);
+    int targetChatId = env.originChatId;
+    if (fromAttached) {
+      int payloadChatId = payload.optInt("chat_id", 0);
+      if (payloadChatId > 0) targetChatId = payloadChatId;
+    }
     sendBotReply(dcContext, bot, targetChatId, text);
 
-    JSONArray extraTargets = payload.optJSONArray("chat_ids");
-    if (extraTargets != null) {
-      for (int i = 0; i < extraTargets.length(); i++) {
-        int cid = extraTargets.optInt(i, 0);
-        if (cid > 0 && cid != targetChatId) {
-          sendBotReply(dcContext, bot, cid, text);
+    if (fromAttached) {
+      JSONArray extraTargets = payload.optJSONArray("chat_ids");
+      if (extraTargets != null) {
+        for (int i = 0; i < extraTargets.length(); i++) {
+          int cid = extraTargets.optInt(i, 0);
+          if (cid > 0 && cid != targetChatId) {
+            sendBotReply(dcContext, bot, cid, text);
+          }
         }
       }
     }

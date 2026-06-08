@@ -1,6 +1,6 @@
 {
-  "version": "2.50.37",
-  "publishedAt": "2026-06-09T01:00:00Z",
+  "version": "2.50.38",
+  "publishedAt": "2026-06-09T03:00:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://5.187.4.132",
@@ -10,16 +10,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.37-Portable.x64.exe",
-      "size": 126159909,
-      "sha256": "67693cab81ffbeaceeb4c989860c7c85aa339384b76b2b938bd9060a906cedbe"
+      "versionedFile": "BMChat-2.50.38-Portable.x64.exe",
+      "size": 126159580,
+      "sha256": "c028a2069b0cb94563563e8d6debf2b213739377e36b6e0a88a257c7f03d95e5"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.37-Setup.x64.exe",
-      "size": 126476302,
-      "sha256": "49c5f3b229870af1a6fb4bb092303685eda888d8f0180f70b02c175d3b5d85b0"
+      "versionedFile": "BMChat-2.50.38-Setup.x64.exe",
+      "size": 126475976,
+      "sha256": "7df9cdde6671f111478ac46c6718c3e545654a49b89e88f5847724160fca326f"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -36,5 +36,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat 2.50.37 — ответ бота в том же чате, где отправлена команда.\n\nИСПРАВЛЕНО:\n• /start и /news в личке @newsbot больше не уходят в подключённый канал.\n• Ответ всегда приходит в чат, откуда пришла команда."
+  "notes": "BMChat 2.50.38 — ответ бота только в чат команды.\n\nИСПРАВЛЕНО:\n• Команды из лички @newsbot больше не дублируются в подключённый канал.\n• В канал — только команды из канала или вручную через скрипт."
 }

@@ -1395,6 +1395,25 @@ async function buildFromJson(
   return from
 }
 
+/** Command arrived in an attached channel/group (not bot home / private). */
+function isCommandFromAttachedChat(bot: EmailBot, originChatId: number): boolean {
+  return (
+    originChatId > 0 &&
+    (bot.attachedChatIds ?? []).some(id => id > 0 && id === originChatId)
+  )
+}
+
+/** Skip developer-mail when webhook/static already answered in bot home. */
+function shouldForwardToDeveloper(
+  bot: EmailBot,
+  originChatId: number,
+  hasSynchronousReply: boolean
+): boolean {
+  if (!bot.developerEmail) return false
+  if (isCommandFromAttachedChat(bot, originChatId)) return true
+  return !hasSynchronousReply
+}
+
 /** bmchat meta block — parity with Android {@code buildBmchatMeta}. */
 function buildBmchatMeta(
   bot: EmailBot,
@@ -1409,7 +1428,10 @@ function buildBmchatMeta(
     command,
     argument,
     origin_chat_id: originChatId,
-    attached_chat_ids: (bot.attachedChatIds ?? []).filter(id => id > 0),
+  }
+  // Hint PHP/scripts to fan-out only when the command was typed in a channel.
+  if (isCommandFromAttachedChat(bot, originChatId)) {
+    bmchat.attached_chat_ids = (bot.attachedChatIds ?? []).filter(id => id > 0)
   }
   if (bot.botChatId && bot.botChatId > 0) {
     bmchat.bot_home_chat_id = bot.botChatId
@@ -1548,7 +1570,26 @@ async function handleDeveloperReply(
     payload.reply_markup?.inline_keyboard
   )
   if (keyboard) text = text + '\n\n' + keyboard
-  await sendBotReply(accountId, env.originChatId, bot, text)
+
+  const fromAttached = isCommandFromAttachedChat(bot, env.originChatId)
+  let targetChatId = env.originChatId
+  if (fromAttached) {
+    const payloadChatId = Number((payload as any).chat_id)
+    if (payloadChatId > 0) targetChatId = payloadChatId
+  }
+  await sendBotReply(accountId, targetChatId, bot, text)
+
+  if (fromAttached) {
+    const extraTargets = (payload as any).chat_ids
+    if (Array.isArray(extraTargets)) {
+      for (const raw of extraTargets) {
+        const cid = Number(raw)
+        if (cid > 0 && cid !== targetChatId) {
+          await sendBotReply(accountId, cid, bot, text)
+        }
+      }
+    }
+  }
   return true
 }
 
@@ -1577,7 +1618,7 @@ async function resolveOutgoingReply(
     if (webhookReply) reply = webhookReply
   }
   let forwarded = false
-  if (bot.developerEmail) {
+  if (shouldForwardToDeveloper(bot, chatId, !!reply?.trim())) {
     forwarded = await sendDeveloperUpdate(
       accountId,
       bot,

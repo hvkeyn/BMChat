@@ -98,6 +98,12 @@ public final class EmailBotMailer {
     return chat;
   }
 
+  /** Command typed inside an attached channel/group (not bot home). */
+  public static boolean isCommandFromAttachedChat(@NonNull EmailBotConfig bot,
+                                                  int originChatId) {
+    return originChatId > 0 && bot.attachedChatIds.contains(originChatId);
+  }
+
   @NonNull
   public static JSONObject buildBmchatMeta(@NonNull DcContext dcContext,
                                            @NonNull EmailBotConfig bot,
@@ -125,11 +131,13 @@ public final class EmailBotMailer {
       bmchat.put("kind", kind);
     }
     bmchat.put("origin_chat_id", originChatId);
-    JSONArray attached = new JSONArray();
-    for (int attachedId : bot.attachedChatIds) {
-      if (attachedId > 0) attached.put(attachedId);
+    if (isCommandFromAttachedChat(bot, originChatId)) {
+      JSONArray attached = new JSONArray();
+      for (int attachedId : bot.attachedChatIds) {
+        if (attachedId > 0) attached.put(attachedId);
+      }
+      bmchat.put("attached_chat_ids", attached);
     }
-    bmchat.put("attached_chat_ids", attached);
     if (bot.botChatId > 0) {
       bmchat.put("bot_home_chat_id", bot.botChatId);
     }

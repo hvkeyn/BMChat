@@ -1,15 +1,15 @@
 {
-  "versionCode": 871,
-  "versionName": "2.50.37",
+  "versionCode": 872,
+  "versionName": "2.50.38",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.37.apk",
-  "sha256": "d5296706eeab6a06923a8f550123d2c2db8d3624a2c503f6bb8df76ad23a5fdf",
-  "size": 77538267,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.38.apk",
+  "sha256": "7303b95945c01fc084197cbc4eae498e42a4aa4ce8cab331a828a4bedd25c1d5",
+  "size": 77538869,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-09T02:00:00Z",
+  "publishedAt": "2026-06-09T03:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.37 — ответ бота в том же чате, где отправлена команда.\n\nИСПРАВЛЕНО:\n• /start и /news в личке @newsbot больше не уходят в подключённый канал.\n• Ответ всегда приходит в чат, откуда пришла команда (как Desktop 2.50.37)."
+  "notes": "BMChat 2.50.38 — ответ бота только в чат команды.\n\nИСПРАВЛЕНО:\n• Команды из лички @newsbot больше не дублируются в подключённый канал.\n• В канал — только команды из самого канала или вручную через скрипт (chat_ids)."
 }
