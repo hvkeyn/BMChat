@@ -1,15 +1,15 @@
 {
-  "versionCode": 870,
-  "versionName": "2.50.35",
+  "versionCode": 871,
+  "versionName": "2.50.37",
   "releaseChannel": "debug",
-  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.35.apk",
-  "sha256": "caaf3d8fc96beb578764e0e76def551fe35f23774cf24f7a6cc59dd6dff795c9",
-  "size": 77538742,
+  "url": "http://5.187.4.132/apk/BMChat-foss-debug-2.50.37.apk",
+  "sha256": "d5296706eeab6a06923a8f550123d2c2db8d3624a2c503f6bb8df76ad23a5fdf",
+  "size": 77538267,
   "minSdkVersion": 21,
-  "publishedAt": "2026-06-09T00:00:00Z",
+  "publishedAt": "2026-06-09T02:00:00Z",
   "mirrors": [
     "http://5.187.4.132",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.35 — почтовый режим, каналы email-бота, паритет настроек.\n\nИСПРАВЛЕНО:\n• Статус «Почтовый режим» при блокировке веба, но работающей почте.\n• Посты из каналов пересылаются боту (channel_post) и пишутся в лог.\n• relayFromChats и настройки email-бота синхронизируются Android ↔ Desktop.\n• Email-бот остаётся в канале (attachedChatIds).\n• Превью Markdown в списке чатов без сырого **."
+  "notes": "BMChat 2.50.37 — ответ бота в том же чате, где отправлена команда.\n\nИСПРАВЛЕНО:\n• /start и /news в личке @newsbot больше не уходят в подключённый канал.\n• Ответ всегда приходит в чат, откуда пришла команда (как Desktop 2.50.37)."
 }
