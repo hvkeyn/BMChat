@@ -1,0 +1,21 @@
+// BMChat: inline email-bot callback buttons rendered inside message text.
+a.bmchat-bot-inline-btn,
+.msg-body > .text a.bmchat-bot-inline-btn {
+  display: inline-block;
+  margin: 2px 4px 2px 0;
+  padding: 4px 12px;
+  border-radius: 16px;
+  background: var(--buttonPrimaryBackground);
+  color: var(--buttonPrimaryText);
+  text-decoration: none;
+  font-size: 14px;
+
+  &:hover {
+    background: var(--buttonPrimaryHover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--colorPrimary);
+    outline-offset: 2px;
+  }
+}

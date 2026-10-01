@@ -325,8 +325,7 @@ const Composer = forwardRef<
           void BackendRemote.rpc.removeDraft(accountId, chatId)
         } catch (err) {
           openDialog(AlertDialog, {
-            message:
-              tx('error') + ': ' + unknownErrorToString(err),
+            message: tx('error') + ': ' + unknownErrorToString(err),
           })
         }
       },
@@ -851,7 +850,7 @@ const Composer = forwardRef<
               }}
               aria-label={tx('menu_send')}
               aria-keyshortcuts={ariaSendShortcut}
-              title={tx('bmchat_schedule_message')}
+              title={tx('menu_send')}
             >
               <div className='paper-plane'></div>
             </button>

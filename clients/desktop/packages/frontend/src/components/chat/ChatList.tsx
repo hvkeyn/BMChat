@@ -588,14 +588,16 @@ function ContactAndMessageSearchResults({
   const tx = useTranslationFunction()
   const { selectChat } = useChat()
 
-  const [emailBots, setEmailBots] = useState<Awaited<
-    ReturnType<typeof listEmailBots>
-  >>([])
+  const [emailBots, setEmailBots] = useState<
+    Awaited<ReturnType<typeof listEmailBots>>
+  >([])
   useEffect(() => {
     let cancelled = false
-    void listEmailBots().then(bots => {
-      if (!cancelled) setEmailBots(bots)
-    })
+    void listEmailBots()
+      .then(bots => {
+        if (!cancelled) setEmailBots(bots)
+      })
+      .catch(err => log.warn('listEmailBots failed', err))
     return () => {
       cancelled = true
     }
@@ -650,8 +652,7 @@ function ContactAndMessageSearchResults({
 
   const showPseudoListItemAddContactFromInviteLink =
     queryStr && isInviteLink(queryStr)
-  const dividerCount =
-    3 + (matchedEmailBots.length > 0 ? 1 : 0)
+  const dividerCount = 3 + (matchedEmailBots.length > 0 ? 1 : 0)
   const messagesHeight = (height: number) =>
     height -
     (DIVIDER_HEIGHT * dividerCount +
@@ -746,8 +747,7 @@ function ContactAndMessageSearchResults({
           >
             {ChatListItemRowContact}
           </ChatListPart>
-          {!isChatmail &&
-            contactIds.length === 0 &&
+          {contactIds.length === 0 &&
             chatListSearchResultsIsEmpty &&
             queryStrIsValidEmail && (
               <PseudoListItemAddContact

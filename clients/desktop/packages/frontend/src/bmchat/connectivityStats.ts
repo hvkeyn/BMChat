@@ -62,15 +62,18 @@ async function countRealContacts(
     if (!Array.isArray(ids)) return 0
     return ids
       .map(id => asU32(id))
-      .filter((id): id is number => id != null && id > C.DC_CONTACT_ID_LAST_SPECIAL)
-      .length
+      .filter(
+        (id): id is number => id != null && id > C.DC_CONTACT_ID_LAST_SPECIAL
+      ).length
   } catch {
     return 0
   }
 }
 
 /** Load core connectivity HTML; tolerates RPC naming / transient errors. */
-export async function fetchConnectivityHtml(accountId: number): Promise<string> {
+export async function fetchConnectivityHtml(
+  accountId: number
+): Promise<string> {
   const rpc = BackendRemote.rpc as {
     getConnectivityHtml?: (id: number) => Promise<unknown>
     get_connectivity_html?: (id: number) => Promise<unknown>
@@ -103,7 +106,11 @@ async function collectChatStats(
   for (const rawId of chatIds) {
     if (seen.size >= maxChats) return
     const chatId = asU32(rawId)
-    if (chatId == null || chatId <= C.DC_CHAT_ID_LAST_SPECIAL || seen.has(chatId)) {
+    if (
+      chatId == null ||
+      chatId <= C.DC_CHAT_ID_LAST_SPECIAL ||
+      seen.has(chatId)
+    ) {
       continue
     }
     seen.add(chatId)
@@ -296,17 +303,16 @@ export async function buildBmchatStatisticsHtml(
 /** Strip misleading IMAP-only provider line (ported from Android). */
 export function sanitizeConnectivityHtml(html: string): string {
   if (!html || !html.trim()) return ''
-  return html
-    .replace(
-      /<[^>]*>\s*Не поддерживается вашим провайдером\.?\s*<\/[^>]*>/gis,
-      ''
-    )
-    .replace(
-      /<[^>]*>\s*Not supported by your provider\.?\s*<\/[^>]*>/gis,
-      ''
-    )
-    // Drop empty section headers only when another <h3> follows (not before </body>).
-    .replace(/<h3[^>]*>[^<]*<\/h3>\s*(?=<h3)/gis, '')
+  return (
+    html
+      .replace(
+        /<[^>]*>\s*Не поддерживается вашим провайдером\.?\s*<\/[^>]*>/gis,
+        ''
+      )
+      .replace(/<[^>]*>\s*Not supported by your provider\.?\s*<\/[^>]*>/gis, '')
+      // Drop empty section headers only when another <h3> follows (not before </body>).
+      .replace(/<h3[^>]*>[^<]*<\/h3>\s*(?=<h3)/gis, '')
+  )
 }
 
 /** Ensure iframe srcDoc is a full HTML document. */
@@ -318,7 +324,7 @@ export function wrapConnectivityDocument(
   if (!inner) {
     return (
       '<!DOCTYPE html><html><head><meta charset="UTF-8"/>' +
-      `<style>body{padding:1em;opacity:.7}${extraHeadStyle}</style></head>` +
+      `<style>body{padding:16px}${extraHeadStyle}</style></head>` +
       '<body><p>…</p></body></html>'
     )
   }
@@ -338,16 +344,11 @@ export function injectConnectivityStyles(
 ): string {
   const extraCss = BMCHAT_STATS_CSS + BMCHAT_MAIL_PROBE_CSS
   const inject =
-    stylesToInject != null
-      ? ` html {${stylesToInject}}${extraCss}`
-      : extraCss
+    stylesToInject != null ? ` html {${stylesToInject}}${extraCss}` : extraCss
   if (html.includes('</style>')) {
     return html.replace('</style>', `</style><style>${inject}</style>`)
   }
-  return html.replace(
-    /<body[^>]*>/i,
-    m => `${m}<style>${inject}</style>`
-  )
+  return html.replace(/<body[^>]*>/i, m => `${m}<style>${inject}</style>`)
 }
 
 export interface MailProbeResult {
@@ -394,15 +395,17 @@ export function buildMailProbeHtml(
 }
 
 export const BMCHAT_MAIL_PROBE_CSS =
-  ' .bmchat-mail-probe{margin-top:1.5rem;padding-top:.7rem;border-top:1px solid rgba(128,128,128,.35)}' +
-  ' .bmchat-probe-line.ok::before{content:"● ";color:#2e7d32}' +
-  ' .bmchat-probe-line.fail::before{content:"● ";color:#c62828}'
+  ' .bmchat-mail-probe{margin-top:24px;padding-top:12px;border-top:1px solid rgba(128,128,128,.35)}' +
+  // iframe cannot read theme CSS variables: these dots keep >= 3:1 on both
+  // the light (#fff) and dark (#160208) BMChat backgrounds.
+  ' .bmchat-probe-line.ok::before{content:"● ";color:#3b8f4f}' +
+  ' .bmchat-probe-line.fail::before{content:"● ";color:#d03838}'
 
 export const BMCHAT_STATS_CSS =
-  ' .bmchat-stats{margin-top:2rem;padding-top:.7rem;border-top:1px solid rgba(128,128,128,.35)}' +
-  ' .bmchat-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.8rem}' +
-  ' .bmchat-stat{border:1px solid rgba(128,128,128,.35);border-radius:10px;padding:.75rem;background:rgba(128,128,128,.08)}' +
-  ' .bmchat-stat b{display:block;font-size:.95rem;margin-bottom:.25rem}' +
-  ' .bmchat-stat strong{display:block;font-size:1.45rem;line-height:1.2}' +
-  ' .bmchat-stat span{display:block;margin-top:.2rem;opacity:.75;font-size:.9rem}' +
+  ' .bmchat-stats{margin-top:32px;padding-top:12px;border-top:1px solid rgba(128,128,128,.35)}' +
+  ' .bmchat-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}' +
+  ' .bmchat-stat{border:1px solid rgba(128,128,128,.35);border-radius:8px;padding:12px;background:rgba(128,128,128,.08)}' +
+  ' .bmchat-stat b{display:block;font-size:14px;margin-bottom:4px}' +
+  ' .bmchat-stat strong{display:block;font-size:24px;line-height:1.2}' +
+  ' .bmchat-stat span{display:block;margin-top:4px;font-size:12px}' +
   ' .bmchat-stat-wide{grid-column:1/-1}'

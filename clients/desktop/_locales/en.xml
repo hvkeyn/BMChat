@@ -311,9 +311,32 @@
     <string name="bmchat_invite_by_email">Invite by email</string>
     <string name="bmchat_invite_by_email_explain">Enter an email address. We will start a chat and send your invitation link there, so the person can add you with one click.</string>
     <string name="bmchat_invite_by_email_sent">Invitation sent</string>
+    <string name="bmchat_resend_invite_title">Send end-to-end encryption invite</string>
     <string name="bmchat_mute_audio">Mute audio</string>
     <string name="bmchat_unmute_audio">Unmute audio</string>
     <string name="bmchat_check_for_updates">Check for updates</string>
+    <string name="bmchat_checking_for_updates">Checking for updates…</string>
+    <string name="bmchat_check_for_updates_failed">Could not check for updates. Please try again later.</string>
+    <string name="bmchat_miniplayer_label">Audio player</string>
+    <string name="bmchat_miniplayer_play">Play</string>
+    <string name="bmchat_miniplayer_pause">Pause</string>
+    <string name="bmchat_miniplayer_close">Close player</string>
+    <string name="bmchat_miniplayer_seek">Seek</string>
+    <!-- %1$s is replaced by the playback rate, e.g. "1.5x" -->
+    <string name="bmchat_miniplayer_speed">Playback speed %1$s</string>
+    <string name="bmchat_play_video">Play video</string>
+    <string name="bmchat_bots_token_label">Bot token</string>
+    <string name="bmchat_bots_load_failed">Could not load the bot list.</string>
+    <!-- default reply of a new email bot; keep {{from}} and {{bot}} placeholders untranslated -->
+    <string name="bmchat_email_bot_default_start">Hi, {{from}}! I am bot @{{bot}}.</string>
+    <string name="bmchat_email_bot_default_help">Commands: /start, /help</string>
+    <string name="bmchat_multidevice_relay_code_label">6-digit code from the phone</string>
+    <string name="bmchat_crash_title">Oops, something crashed</string>
+    <string name="bmchat_crash_explain">Please restart BMChat. If the problem persists, please report it to the developers:</string>
+    <string name="bmchat_crash_reload">Reload</string>
+    <string name="bmchat_crash_full_log">Full log:</string>
+    <!-- %1$s is replaced by the app version, %2$s by the git reference -->
+    <string name="bmchat_crash_version">BMChat version: %1$s (git: %2$s)</string>
     <string name="bmchat_share_contact_code">Share contact code</string>
     <string name="bmchat_contact_code_title">Contact code</string>
     <string name="bmchat_contact_code_explain">Send this code to another BMChat user. They can add this contact from "New chat" without typing the e-mail address.</string>
@@ -357,6 +380,8 @@
     <string name="bmchat_email_bot_field_webhook_hint">BMChat POSTs JSON updates here (header X-BMChat-Bot-Token). Works on Windows, Linux and macOS desktop builds.</string>
     <string name="bmchat_email_bot_field_developer_email">Developer e-mail (optional)</string>
     <string name="bmchat_email_bot_field_developer_email_hint">Mail transport: each user message is e-mailed as BMCHAT-BOT-UPDATE; reply with BMCHAT-BOT-REPLY or use cron/IMAP on your server.</string>
+    <string name="bmchat_email_bot_field_relay_from_chats">Relay messages from attached chats</string>
+    <string name="bmchat_email_bot_field_relay_from_chats_hint">When enabled, messages from chats the bot is attached to are passed to the bot (via webhook or mail).</string>
     <string name="bmchat_email_bot_token_label">API token (for webhook)</string>
     <string name="bmchat_email_bot_token_copy">Copy token</string>
     <string name="bmchat_email_bot_token_copied">Token copied</string>

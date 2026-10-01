@@ -4,6 +4,7 @@ import { debounceWithInit } from '../chat/ChatListHelpers'
 import { onDCEvent } from '../../backend-com'
 import { selectedAccountId } from '../../ScreenController'
 import Dialog, { DialogBody, DialogContent, DialogHeader } from '../Dialog'
+import Button from '../Button'
 import useTranslationFunction from '../../hooks/useTranslationFunction'
 import { formatRpcError } from '../../utils/formatRpcError'
 
@@ -79,20 +80,23 @@ function ConnectivityDialogInner() {
           if (fetchErr) {
             cHTML += `<p><b>${tx('error')}</b></p><p>${fetchErr}</p>`
           } else {
-            cHTML += `<p style="opacity:.75">${tx('bmchat_connectivity_stats_hint')}</p>`
+            cHTML += `<p style="font-size:14px">${tx('bmchat_connectivity_stats_hint')}</p>`
           }
         }
 
         setStatsLoading(true)
         try {
-          const { html: withExtras, statsError, probe } =
-            await appendConnectivityExtras(
-              accountId,
-              cHTML,
-              isElectron,
-              forceMailProbe,
-              mailProbeCacheRef.current
-            )
+          const {
+            html: withExtras,
+            statsError,
+            probe,
+          } = await appendConnectivityExtras(
+            accountId,
+            cHTML,
+            isElectron,
+            forceMailProbe,
+            mailProbeCacheRef.current
+          )
           if (probe) {
             mailProbeCacheRef.current = probe
           }
@@ -142,10 +146,8 @@ function ConnectivityDialogInner() {
   const iframeDoc =
     connectivityHTML ||
     wrapConnectivityDocument(
-      `<p>${loading ? tx('connectivity_connecting') : '…'}</p>` +
-        (coreError
-          ? `<p><b>${tx('error')}</b></p><p>${coreError}</p>`
-          : ''),
+      `<p>${loading ? tx('connectivity_connecting') : tx('loading')}</p>` +
+        (coreError ? `<p><b>${tx('error')}</b></p><p>${coreError}</p>` : ''),
       canInjectStyles ? stylesToInject : undefined
     )
 
@@ -154,16 +156,16 @@ function ConnectivityDialogInner() {
       <DialogContent>
         {isElectron && (
           <div style={{ marginBottom: 12, display: 'flex', gap: 8 }}>
-            <button
-              type='button'
-              className='delta-button-round'
+            <Button
+              className='bmchat-dialog-action'
               disabled={mailProbeBusy || loading}
+              aria-busy={mailProbeBusy}
               onClick={runMailProbe}
             >
               {mailProbeBusy
                 ? tx('bmchat_connectivity_mail_probe_running')
                 : tx('bmchat_connectivity_mail_probe')}
-            </button>
+            </Button>
           </div>
         )}
         <iframe
@@ -180,7 +182,11 @@ function ConnectivityDialogInner() {
           title={tx('connectivity')}
         />
         {statsLoading && (
-          <p style={{ marginTop: 8, opacity: 0.75, fontSize: '0.9rem' }}>
+          <p
+            className='bmchat-dialog-hint'
+            role='status'
+            style={{ marginTop: 8, fontSize: 14 }}
+          >
             {tx('bmchat_connectivity_stats_loading')}
           </p>
         )}
@@ -206,51 +212,51 @@ async function appendConnectivityExtras(
   let statsError: string | null = null
   try {
     statsHtml = await buildBmchatStatisticsHtml(accountId, {
-    title: tx('bmchat_connectivity_stats_title'),
-    hint: tx('bmchat_connectivity_stats_hint'),
-    contacts: tx('bmchat_stats_contacts'),
-    contactsHint: tx('bmchat_stats_contacts_hint'),
-    verified: tx('bmchat_stats_verified_contacts'),
-    verifiedHint: tx('bmchat_stats_verified_contacts_hint'),
-    chats: tx('bmchat_stats_chats'),
-    chatsHint: tx('bmchat_stats_chats_hint'),
-    groups: tx('bmchat_stats_groups'),
-    groupsHint: tx('bmchat_stats_groups_hint'),
-    messages: tx('bmchat_stats_messages'),
-    messagesHint: tx('bmchat_stats_messages_hint'),
-    attachments: tx('bmchat_stats_attachments'),
-    attachmentsHint: tx('bmchat_stats_attachments_hint'),
-    incoming: tx('bmchat_stats_incoming'),
-    incomingHint: tx('bmchat_stats_incoming_hint'),
-    outgoing: tx('bmchat_stats_outgoing'),
-    outgoingHint: tx('bmchat_stats_outgoing_hint'),
-    delivered: tx('bmchat_stats_delivered'),
-    deliveredHint: tx('bmchat_stats_delivered_hint'),
-    read: tx('bmchat_stats_read'),
-    readHint: tx('bmchat_stats_read_hint'),
-    failed: tx('bmchat_stats_failed'),
-    failedHint: tx('bmchat_stats_failed_hint'),
-    pending: tx('bmchat_stats_pending'),
-    pendingHint: tx('bmchat_stats_pending_hint'),
-    chatMix: tx('bmchat_stats_chat_mix'),
-    chatMixValue: (
-      direct,
-      groups,
-      channels,
-      archive,
-      pinned,
-      requests,
-      protectedChats
-    ) =>
-      tx('bmchat_stats_chat_mix_value', [
+      title: tx('bmchat_connectivity_stats_title'),
+      hint: tx('bmchat_connectivity_stats_hint'),
+      contacts: tx('bmchat_stats_contacts'),
+      contactsHint: tx('bmchat_stats_contacts_hint'),
+      verified: tx('bmchat_stats_verified_contacts'),
+      verifiedHint: tx('bmchat_stats_verified_contacts_hint'),
+      chats: tx('bmchat_stats_chats'),
+      chatsHint: tx('bmchat_stats_chats_hint'),
+      groups: tx('bmchat_stats_groups'),
+      groupsHint: tx('bmchat_stats_groups_hint'),
+      messages: tx('bmchat_stats_messages'),
+      messagesHint: tx('bmchat_stats_messages_hint'),
+      attachments: tx('bmchat_stats_attachments'),
+      attachmentsHint: tx('bmchat_stats_attachments_hint'),
+      incoming: tx('bmchat_stats_incoming'),
+      incomingHint: tx('bmchat_stats_incoming_hint'),
+      outgoing: tx('bmchat_stats_outgoing'),
+      outgoingHint: tx('bmchat_stats_outgoing_hint'),
+      delivered: tx('bmchat_stats_delivered'),
+      deliveredHint: tx('bmchat_stats_delivered_hint'),
+      read: tx('bmchat_stats_read'),
+      readHint: tx('bmchat_stats_read_hint'),
+      failed: tx('bmchat_stats_failed'),
+      failedHint: tx('bmchat_stats_failed_hint'),
+      pending: tx('bmchat_stats_pending'),
+      pendingHint: tx('bmchat_stats_pending_hint'),
+      chatMix: tx('bmchat_stats_chat_mix'),
+      chatMixValue: (
         direct,
         groups,
         channels,
         archive,
         pinned,
         requests,
-        protectedChats,
-      ]),
+        protectedChats
+      ) =>
+        tx('bmchat_stats_chat_mix_value', [
+          direct,
+          groups,
+          channels,
+          archive,
+          pinned,
+          requests,
+          protectedChats,
+        ]),
     })
   } catch (e) {
     statsError = formatRpcError(e)
@@ -318,7 +324,6 @@ function connectivityLooksDegraded(html: string): boolean {
   }
   const redDots =
     (html.match(/background-color:\s*#?f{2}0000|background:\s*red/gi) || [])
-      .length +
-    (html.match(/color:\s*#?f{2}0000/gi) || []).length
+      .length + (html.match(/color:\s*#?f{2}0000/gi) || []).length
   return redDots > 0
 }

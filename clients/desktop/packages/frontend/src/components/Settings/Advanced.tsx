@@ -67,11 +67,21 @@ export default function Advanced({ onClose, settingsStore }: Props) {
     onClose()
   }
 
+  const [checkingForUpdates, setCheckingForUpdates] = useState(false)
+  // The main process reports the result itself via a native dialog.
   const checkForUpdates = async () => {
+    if (checkingForUpdates) return
+    setCheckingForUpdates(true)
     try {
       await runtime.bmchatCheckForUpdates()
     } catch (err) {
       log.warn('Manual update check failed', err)
+      window.__userFeedback?.({
+        type: 'error',
+        text: tx('bmchat_check_for_updates_failed'),
+      })
+    } finally {
+      setCheckingForUpdates(false)
     }
   }
 
@@ -82,7 +92,11 @@ export default function Advanced({ onClose, settingsStore }: Props) {
           onClick={checkForUpdates}
           dataTestid='bmchat-check-for-updates'
         >
-          {tx('bmchat_check_for_updates')}
+          <span aria-live='polite'>
+            {checkingForUpdates
+              ? tx('bmchat_checking_for_updates')
+              : tx('bmchat_check_for_updates')}
+          </span>
         </SettingsButton>
       )}
 

@@ -22,4 +22,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="false">158.160.104.107</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">51.250.82.211</domain>
+    </domain-config>
 </network-security-config>

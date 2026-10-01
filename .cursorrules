@@ -13,3 +13,5 @@
 - Empty BMChat endpoint values mean disable that Delta/upstream network integration rather than falling back to public Delta/chatmail infrastructure.
 - BMChat strict mail policy: ordinary emails without `Chat-Version` or known BMChat/Delta thread linkage must not create chats or notifications.
 - Russian localization audit is in `docs/localization-audit.md`; do not assume existing Russian translations are BMChat-ready.
+- UI follows designsystems.one foundations: theme tokens instead of hex, WCAG AA contrast (4.5:1 text, 3:1 UI), 4px/4dp spacing, visible focus, labels for inputs, 48dp touch targets, loading/error/empty states. Android `values/strings.xml` must be English (Russian goes to `values-ru`); Desktop strings are `bmchat_*` keys in `_locales/en.xml` + `ru.xml`. In BMChat Dark, white text never goes on pink `--colorPrimary`; use `--buttonPrimaryBackground`.
+- Release flow: bump version, build, copy artifacts to `infra/vps/{apk,desktop}/` (gitignored), update `infra/vps/www/*update.json`, generate `deploy-*-2.50.NN.sh` via WSL sed from the previous ASCII scripts, deploy, then scan the diff for secrets before `git push`.

@@ -17,6 +17,9 @@ import java.util.Date;
 import java.util.List;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.DcHelper;
+import org.thoughtcrime.securesms.util.DynamicNoActionBarTheme;
+import org.thoughtcrime.securesms.util.DynamicTheme;
+import org.thoughtcrime.securesms.util.ResUtil;
 
 /**
  * BMChat 2.49.84 (Phase 4B): a list of every scheduled message the user has pending, broken down
@@ -25,16 +28,19 @@ import org.thoughtcrime.securesms.connect.DcHelper;
  */
 public final class BMChatScheduledMessagesActivity extends AppCompatActivity {
 
+  private final DynamicTheme dynamicTheme = new DynamicNoActionBarTheme();
+
   @Override
   protected void onCreate(@Nullable Bundle savedInstanceState) {
+    dynamicTheme.onCreate(this);
     super.onCreate(savedInstanceState);
-    setTheme(R.style.TextSecure_LightTheme);
     rebuild();
   }
 
   @Override
   protected void onResume() {
     super.onResume();
+    dynamicTheme.onResume(this);
     rebuild();
   }
 
@@ -69,6 +75,7 @@ public final class BMChatScheduledMessagesActivity extends AppCompatActivity {
       TextView empty = new TextView(this);
       empty.setText(R.string.bmchat_schedule_empty);
       empty.setTextSize(16);
+      empty.setTextColor(ResUtil.getColor(this, android.R.attr.textColorSecondary));
       empty.setPadding(0, pad * 2, 0, pad * 2);
       container.addView(empty);
     } else {
@@ -99,7 +106,7 @@ public final class BMChatScheduledMessagesActivity extends AppCompatActivity {
     }
 
     TextView title = new TextView(this);
-    title.setTextSize(15);
+    title.setTextSize(16);
     title.setText(
         chatName.isEmpty()
             ? entry.body
@@ -110,10 +117,7 @@ public final class BMChatScheduledMessagesActivity extends AppCompatActivity {
 
     TextView meta = new TextView(this);
     meta.setTextSize(12);
-    android.util.TypedValue secondary = new android.util.TypedValue();
-    if (getTheme().resolveAttribute(android.R.attr.textColorSecondary, secondary, true)) {
-      meta.setTextColor(getResources().getColor(secondary.resourceId));
-    }
+    meta.setTextColor(ResUtil.getColor(this, android.R.attr.textColorSecondary));
     String when =
         DateFormat.getMediumDateFormat(this).format(new Date(entry.scheduledAtMs))
             + " "

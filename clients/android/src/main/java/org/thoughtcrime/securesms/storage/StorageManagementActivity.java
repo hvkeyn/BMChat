@@ -46,6 +46,8 @@ import java.util.Map;
 import org.thoughtcrime.securesms.PassphraseRequiredActionBarActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.DcHelper;
+import org.thoughtcrime.securesms.util.DynamicTheme;
+import org.thoughtcrime.securesms.util.ResUtil;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 
@@ -99,20 +101,17 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
     LinearLayout root = new LinearLayout(this);
     root.setOrientation(LinearLayout.VERTICAL);
     int padH = dp(16);
-    int padTop = dp(96);
+    int padTop = dp(16);
     int padBottom = dp(24);
     root.setPadding(padH, padTop, padH, padBottom);
     scrollView.addView(root, new ScrollView.LayoutParams(-1, -2));
+    ViewUtil.applyWindowInsets(root);
 
     LinearLayout header = card();
     header.setGravity(Gravity.CENTER_HORIZONTAL);
-    header.setPadding(dp(20), dp(20), dp(20), dp(20));
+    header.setPadding(dp(24), dp(24), dp(24), dp(24));
 
     // Telegram-style donut with the headline number drawn in the centre.
-    // The screen intentionally keeps a very large top gap above this card
-    // because the base activity can draw the action bar over the first content
-    // pixels on some Samsung/One UI builds. This keeps the rounded card and
-    // the whole donut comfortably visible for operators.
     donutView = new StorageDonutView(this);
     LinearLayout.LayoutParams donutParams = new LinearLayout.LayoutParams(dp(140), dp(140));
     donutParams.topMargin = dp(4);
@@ -121,7 +120,7 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
 
     totalText = titleText();
     totalText.setGravity(Gravity.CENTER);
-    totalText.setTextSize(15);
+    totalText.setTextSize(16);
     header.addView(totalText, new LinearLayout.LayoutParams(-1, -2));
     freeText = subtitleText();
     freeText.setGravity(Gravity.CENTER);
@@ -494,9 +493,14 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
     card.setOrientation(LinearLayout.VERTICAL);
     card.setPadding(dp(16), dp(16), dp(16), dp(16));
     GradientDrawable bg = new GradientDrawable();
-    bg.setColor(ContextCompat.getColor(this, R.color.white));
-    bg.setCornerRadius(dp(18));
-    bg.setStroke(dp(1), ContextCompat.getColor(this, R.color.gray10));
+    boolean dark = DynamicTheme.isDarkTheme(this);
+    bg.setColor(
+        ContextCompat.getColor(this, dark ? R.color.bmchat_card_bg_dark : R.color.bmchat_card_bg));
+    bg.setCornerRadius(dp(16));
+    bg.setStroke(
+        dp(1),
+        ContextCompat.getColor(
+            this, dark ? R.color.bmchat_card_stroke_dark : R.color.bmchat_card_stroke));
     card.setBackground(bg);
     card.setClipToOutline(false);
     card.setLayoutParams(margins(new LinearLayout.LayoutParams(-1, -2), 0, 8, 0, 8));
@@ -512,14 +516,14 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
 
   private TextView titleText() {
     TextView text = new TextView(this);
-    text.setTextColor(ContextCompat.getColor(this, R.color.black));
+    text.setTextColor(ResUtil.getColor(this, android.R.attr.textColorPrimary));
     text.setTypeface(Typeface.DEFAULT_BOLD);
     return text;
   }
 
   private TextView subtitleText() {
     TextView text = new TextView(this);
-    text.setTextColor(ContextCompat.getColor(this, R.color.gray65));
+    text.setTextColor(ResUtil.getColor(this, android.R.attr.textColorSecondary));
     text.setTextSize(14);
     return text;
   }
@@ -528,15 +532,15 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
     TextView label = titleText();
     label.setText(resId);
     label.setTextSize(14);
-    label.setPadding(0, dp(10), 0, dp(4));
+    label.setPadding(0, dp(12), 0, dp(4));
     return label;
   }
 
   private Button primaryButton(int resId) {
     Button button = new Button(this);
     button.setText(resId);
-    button.setTextColor(ContextCompat.getColor(this, R.color.white));
-    button.setBackgroundColor(ContextCompat.getColor(this, R.color.delta_accent));
+    button.setTextColor(ContextCompat.getColor(this, R.color.core_white));
+    button.setBackgroundColor(ResUtil.getColor(this, R.attr.colorAccent));
     return button;
   }
 
@@ -547,8 +551,10 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
   }
 
   private Button dangerButton(int resId) {
+    // Filled instead of red-on-gray text so contrast holds in both themes.
     Button button = secondaryButton(resId);
-    button.setTextColor(0xffff0c16);
+    button.setTextColor(ContextCompat.getColor(this, R.color.core_white));
+    button.setBackgroundColor(ContextCompat.getColor(this, R.color.bmchat_status_offline));
     return button;
   }
 
@@ -615,6 +621,7 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
     private final Paint textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final Paint subtextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     private final RectF rect = new RectF();
+    private final int trackColor;
     private StorageUsage usage;
     private String centreText = "";
     private String centreUnit = "";
@@ -627,11 +634,18 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
       paint.setStyle(Paint.Style.STROKE);
       paint.setStrokeCap(Paint.Cap.BUTT);
 
-      textPaint.setColor(0xff111111);
+      trackColor =
+          ContextCompat.getColor(
+              context,
+              DynamicTheme.isDarkTheme(context)
+                  ? R.color.bmchat_donut_track_dark
+                  : R.color.bmchat_donut_track);
+
+      textPaint.setColor(ResUtil.getColor(context, android.R.attr.textColorPrimary));
       textPaint.setTextAlign(Paint.Align.CENTER);
       textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
-      subtextPaint.setColor(0xff666666);
+      subtextPaint.setColor(ResUtil.getColor(context, android.R.attr.textColorSecondary));
       subtextPaint.setTextAlign(Paint.Align.CENTER);
     }
 
@@ -676,7 +690,7 @@ public class StorageManagementActivity extends PassphraseRequiredActionBarActivi
       float inset = stroke / 2f + size * 0.02f;
       rect.set(inset, inset, size - inset, size - inset);
 
-      paint.setColor(0xffe5dade);
+      paint.setColor(trackColor);
       canvas.drawArc(rect, -90, 360, false, paint);
       long total = usage == null ? 0L : safe(usage.blobdirBytes);
       if (usage != null && usage.byCategory != null && total > 0) {

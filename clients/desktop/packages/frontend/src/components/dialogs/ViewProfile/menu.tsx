@@ -295,14 +295,15 @@ function ContactCodeDialog(props: { contact: T.Contact } & DialogProps) {
         <DialogContent>
           <p>{tx('bmchat_contact_code_explain')}</p>
           {failed ? (
-            <p style={{ color: 'var(--colorDanger, #d9534f)' }}>
+            <p style={{ color: 'var(--colorDanger)' }} role='alert'>
               {tx('bmchat_contact_code_failed')}
             </p>
           ) : (
             <DeltaInput
               key='contactcode'
               id='contactcode'
-              value={code ?? '…'}
+              label={tx('bmchat_contact_code_title')}
+              value={code ?? tx('loading')}
               onChange={() => {}}
             />
           )}

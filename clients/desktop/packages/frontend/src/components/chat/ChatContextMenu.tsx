@@ -17,8 +17,11 @@ import useTranslationFunction from '../../hooks/useTranslationFunction'
 import DisappearingMessages from '../dialogs/DisappearingMessages'
 import type { UnselectChat } from '../../contexts/ChatContext'
 import { mouseEventToPosition } from '../../utils/mouseEventToPosition'
+import { ScreenContext } from '../../contexts/ScreenContext'
+import { rewriteInviteLink } from '@deltachat-desktop/shared/util'
 import { getLogger } from '@deltachat-desktop/shared/logger'
 import { ActionEmitter, KeybindAction } from '../../keybindings'
+import { textMessageData } from '../../bmchat/textMessage'
 
 const log = getLogger('ChatListContextMenu')
 
@@ -337,6 +340,7 @@ export function useChatContextMenu(): {
   const openViewGroupDialog = useOpenViewGroupDialog()
   const openViewProfileDialog = useOpenViewProfileDialog()
   const { openContextMenu } = useContext(ContextMenuContext)
+  const { userFeedback } = useContext(ScreenContext)
   const accountId = selectedAccountId()
   const { unselectChat } = useChat()
   const tx = useTranslationFunction()
@@ -505,12 +509,46 @@ export function useChatContextMenu(): {
     const shouldLeaveBeforeDelete =
       relatedChat && canLeaveChat(fullChatToChatListItem(relatedChat))
 
+    const resendInviteMenuItem = relatedChat &&
+      !isGroup &&
+      !relatedChat.isSelfTalk &&
+      !relatedChat.isDeviceChat &&
+      !relatedChat.isEncrypted &&
+      relatedChat.chatType === 'Single' && {
+        label: tx('bmchat_resend_invite_title'),
+        action: async () => {
+          try {
+            const [qrCode] = await BackendRemote.rpc.getChatSecurejoinQrCodeSvg(
+              accountId,
+              null
+            )
+            const inviteUrl = rewriteInviteLink(qrCode)
+            await BackendRemote.rpc.sendMsg(
+              accountId,
+              relatedChat.id,
+              textMessageData(inviteUrl)
+            )
+            userFeedback({
+              type: 'success',
+              text: tx('bmchat_invite_by_email_sent'),
+            })
+          } catch (err) {
+            log.error('failed to send securejoin invite', err)
+            userFeedback({
+              type: 'error',
+              text: `${tx('error')}: ${err instanceof Error ? err.message : String(err)}`,
+            })
+          }
+        },
+      }
+
     // Build the complete menu
     const menu: (ContextMenuItem | false)[] = [
       isMainView && {
         label: tx('search_in_chat'),
         action: onSearchInChat,
       },
+      resendInviteMenuItem,
       !isMainView && pin,
       !isMainView &&
         (chatListItems.some(c => c.freshMessageCounter > 0)

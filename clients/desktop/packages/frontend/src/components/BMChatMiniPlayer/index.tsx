@@ -8,6 +8,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 
 import { MediaPlayerMutexContext } from '../../contexts/MediaPlayerMutexContext'
+import useTranslationFunction from '../../hooks/useTranslationFunction'
 import styles from './styles.module.scss'
 
 const SPEEDS = [1, 1.5, 2] as const
@@ -25,8 +26,9 @@ function readPersistedSpeed(): (typeof SPEEDS)[number] {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY_SPEED)
     const parsed = raw == null ? NaN : Number(raw)
-    if (SPEEDS.includes(parsed as any)) {
-      return parsed as (typeof SPEEDS)[number]
+    const match = SPEEDS.find(s => s === parsed)
+    if (match !== undefined) {
+      return match
     }
   } catch {
     // ignore
@@ -47,13 +49,15 @@ function fileNameFromSrc(src: string | null): string {
 }
 
 export function BMChatMiniPlayer() {
+  const tx = useTranslationFunction()
   const ctx = useContext(MediaPlayerMutexContext)
   const audio = ctx.audioElement
   const [currentSrc, setCurrentSrc] = useState<string | null>(ctx.currentSrc)
   const [isPlaying, setIsPlaying] = useState(!audio.paused)
   const [currentTime, setCurrentTime] = useState(audio.currentTime || 0)
   const [duration, setDuration] = useState(audio.duration || 0)
-  const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(readPersistedSpeed())
+  const [speed, setSpeed] =
+    useState<(typeof SPEEDS)[number]>(readPersistedSpeed())
   const seekingRef = useRef(false)
 
   useEffect(() => {
@@ -132,7 +136,9 @@ export function BMChatMiniPlayer() {
     if (!isFinite(t)) return
     setCurrentTime(t)
   }
-  const onSeekCommit = (e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent) => {
+  const onSeekCommit = (
+    e: React.MouseEvent | React.TouchEvent | React.KeyboardEvent
+  ) => {
     seekingRef.current = false
     const target = e.target as HTMLInputElement
     const t = Number(target.value)
@@ -141,14 +147,22 @@ export function BMChatMiniPlayer() {
   }
 
   return (
-    <div className={styles.miniplayer} role='complementary' aria-label='BMChat audio player'>
+    <div
+      className={styles.miniplayer}
+      role='complementary'
+      aria-label={tx('bmchat_miniplayer_label')}
+    >
       <button
         type='button'
         className={styles.playPause}
         onClick={togglePlay}
-        aria-label={isPlaying ? 'Pause' : 'Play'}
+        aria-label={
+          isPlaying
+            ? tx('bmchat_miniplayer_pause')
+            : tx('bmchat_miniplayer_play')
+        }
       >
-        {isPlaying ? '❚❚' : '▶'}
+        <span aria-hidden='true'>{isPlaying ? '❚❚' : '▶'}</span>
       </button>
       <div className={styles.body}>
         <div className={styles.title} title={displayName}>
@@ -159,6 +173,8 @@ export function BMChatMiniPlayer() {
           <input
             type='range'
             className={styles.seek}
+            aria-label={tx('bmchat_miniplayer_seek')}
+            aria-valuetext={`${formatTime(currentTime)} / ${formatTime(duration)}`}
             min={0}
             max={duration > 0 ? duration : 0}
             step={0.1}
@@ -177,7 +193,7 @@ export function BMChatMiniPlayer() {
         type='button'
         className={styles.speed}
         onClick={cycleSpeed}
-        aria-label={`Playback speed ${speed}x`}
+        aria-label={tx('bmchat_miniplayer_speed', `${speed}x`)}
       >
         {speed}x
       </button>
@@ -185,9 +201,10 @@ export function BMChatMiniPlayer() {
         type='button'
         className={styles.close}
         onClick={stop}
-        aria-label='Close player'
+        aria-label={tx('bmchat_miniplayer_close')}
+        title={tx('bmchat_miniplayer_close')}
       >
-        ✕
+        <span aria-hidden='true'>✕</span>
       </button>
     </div>
   )

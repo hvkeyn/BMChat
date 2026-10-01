@@ -14,6 +14,26 @@
     <color name="bmchat_status_offline">#C62828</color>
     <color name="bmchat_status_mail">#1565C0</color>
 
+    <!-- BMChat UI surfaces; *_dark variants are picked for TextSecure.DarkTheme. -->
+    <color name="bmchat_card_bg">#FFFFFFFF</color>
+    <color name="bmchat_card_bg_dark">#FF1E1E1E</color>
+    <color name="bmchat_card_stroke">#FFDDDDDD</color>
+    <color name="bmchat_card_stroke_dark">#FF3A3A3A</color>
+    <!-- Night-qualified in values-night; for drawables that cannot branch on DynamicTheme. -->
+    <color name="bmchat_surface_card">#FFF7F7F7</color>
+    <color name="bmchat_surface_card_stroke">@color/bmchat_card_stroke</color>
+    <color name="bmchat_donut_track">#FFE5DADE</color>
+    <color name="bmchat_donut_track_dark">#FF3A3A3A</color>
+    <!-- Status badges carry white text: all three keep >= 4.5:1 against #FFFFFF. -->
+    <color name="bmchat_badge_pending">#FF8A5300</color>
+    <color name="bmchat_badge_scheduled">#FF1565C0</color>
+    <color name="bmchat_badge_published">#FF2E7D32</color>
+    <color name="bmchat_scrim">#66000000</color>
+    <color name="bmchat_media_overlay">#88000000</color>
+    <color name="bmchat_player_overlay">#99000000</color>
+    <color name="bmchat_on_media_secondary">#CCFFFFFF</color>
+    <color name="bmchat_record_red">#FFE53935</color>
+
     <color name="primary_alpha_focus">#887B1226</color>
     <color name="primary_alpha33">#557B1226</color>
 

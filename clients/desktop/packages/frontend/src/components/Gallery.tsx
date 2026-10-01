@@ -224,6 +224,7 @@ export default class Gallery extends Component<
     mediaMessageIds: number[]
     mediaLoadResult: Record<number, Type.MessageLoadResult>
     linkEntries: LinkEntry[]
+    linksLoadFailed?: boolean
     loading: boolean
     queryText: string
     galleryImageKeepAspectRatio?: boolean
@@ -333,21 +334,24 @@ export default class Gallery extends Component<
     }
     const accountId = selectedAccountId()
     if (tab === 'links') {
-      this.setState({ loading: true })
+      this.setState({
+        currentTab: tab,
+        msgTypes: [],
+        mediaMessageIds: [],
+        mediaLoadResult: {},
+        linkEntries: [],
+        linksLoadFailed: false,
+        loading: true,
+      })
       loadLinkEntries(accountId, this.props.chatId)
         .then(linkEntries => {
-          this.setState({
-            currentTab: tab,
-            msgTypes: [],
-            mediaMessageIds: [],
-            mediaLoadResult: {},
-            linkEntries,
-            loading: false,
-          })
+          if (this.state.currentTab !== 'links') return
+          this.setState({ linkEntries, loading: false })
         })
         .catch(err => {
           log.error('Failed loading links tab', err)
-          this.setState({ loading: false })
+          if (this.state.currentTab !== 'links') return
+          this.setState({ loading: false, linksLoadFailed: true })
         })
       return
     }
@@ -496,6 +500,7 @@ export default class Gallery extends Component<
       galleryImageKeepAspectRatio,
       msgTypes,
       linkEntries,
+      linksLoadFailed,
     } = this.state
     const tx = window.static_translate // static because dynamic isn't too important here
     const emptyTabMessage = this.emptyTabMessage(currentTab)
@@ -577,15 +582,29 @@ export default class Gallery extends Component<
               galleryImageKeepAspectRatio ? 'contain' : 'cover'
             }`}
           >
-            {(currentTab === 'links'
-              ? linkEntries.length < 1
-              : mediaMessageIds.length < 1) &&
-              !loading && (
+            {currentTab === 'links' && loading && (
               <div className='empty-screen'>
-                {/* IDEA: when we have someone doing illustrations this would be a great place to add some */}
-                <p className='no-media-message'>{emptyTabMessage}</p>
+                <p className='no-media-message' role='status'>
+                  {tx('loading')}
+                </p>
               </div>
             )}
+            {currentTab === 'links' && !loading && linksLoadFailed && (
+              <div className='empty-screen'>
+                <p className='no-media-message' role='alert'>
+                  {tx('error')}
+                </p>
+              </div>
+            )}
+            {(currentTab === 'links'
+              ? linkEntries.length < 1 && !linksLoadFailed
+              : mediaMessageIds.length < 1) &&
+              !loading && (
+                <div className='empty-screen'>
+                  {/* IDEA: when we have someone doing illustrations this would be a great place to add some */}
+                  <p className='no-media-message'>{emptyTabMessage}</p>
+                </div>
+              )}
 
             {currentTab === 'files' && (
               <>
@@ -935,6 +954,7 @@ function LinkRow({
         type='button'
         className='link-open'
         title={link.url}
+        aria-label={`${tx('open')}: ${link.label || link.url}`}
         onClick={() => runtime.openLink(link.url)}
       >
         <span className='link-title'>{link.label}</span>
@@ -946,7 +966,10 @@ function LinkRow({
         {moment(link.timestamp * 1000).format('L')}
       </span>
       <div className='link-actions'>
-        <button type='button' onClick={() => runtime.writeClipboardText(link.url)}>
+        <button
+          type='button'
+          onClick={() => runtime.writeClipboardText(link.url)}
+        >
           {tx('copy')}
         </button>
         <button

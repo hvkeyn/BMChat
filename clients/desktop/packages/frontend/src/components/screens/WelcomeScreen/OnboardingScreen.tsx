@@ -59,7 +59,7 @@ export default function OnboardingScreen(props: Props) {
                 <img
                   className={styles.welcomeScreenImage}
                   src='./images/bmchat-welcome.jpg'
-                  alt='BMChat'
+                  alt={tx('app_name')}
                 />
               </div>
               <p className={styles.welcomeScreenTitle}>

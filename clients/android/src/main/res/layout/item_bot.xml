@@ -39,8 +39,8 @@
             android:id="@+id/bot_meta"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:textSize="13sp"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
             android:textColor="?android:attr/textColorSecondary"
             tools:text="@username · в чате «Лента»" />
 
@@ -48,9 +48,9 @@
             android:id="@+id/bot_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="4dp"
             android:textSize="12sp"
-            android:textColor="?android:attr/textColorTertiary"
+            android:textColor="?android:attr/textColorSecondary"
             tools:text="Последняя проверка: 14:32" />
     </LinearLayout>
 </LinearLayout>

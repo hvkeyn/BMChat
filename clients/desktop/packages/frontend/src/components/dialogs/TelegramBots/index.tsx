@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useId, useState } from 'react'
 
 import Dialog, {
   DialogBody,
@@ -14,6 +14,7 @@ import useTranslationFunction from '../../../hooks/useTranslationFunction'
 import useDialog from '../../../hooks/dialog/useDialog'
 import useConfirmationDialog from '../../../hooks/dialog/useConfirmationDialog'
 import SelectChat from '../SelectChat'
+import Button from '../../Button'
 import { getLogger } from '../../../../../shared/logger'
 
 import type { DialogProps } from '../../../contexts/DialogContext'
@@ -42,7 +43,8 @@ interface PendingItem {
 }
 
 const TG = {
-  list: (): Promise<BotPublic[]> => runtime.bmchatBotsInvoke('bmchat:tgbots:list'),
+  list: (): Promise<BotPublic[]> =>
+    runtime.bmchatBotsInvoke('bmchat:tgbots:list'),
   add: (p: { token: string; accountId: number; chatId: number }) =>
     runtime.bmchatBotsInvoke('bmchat:tgbots:add', p),
   remove: (id: string) => runtime.bmchatBotsInvoke('bmchat:tgbots:remove', id),
@@ -59,8 +61,11 @@ const TG = {
       accountId,
       chatId,
     }),
-  pollNow: (): Promise<{ received: number; published: number; queued: number }> =>
-    runtime.bmchatBotsInvoke('bmchat:tgbots:poll-now'),
+  pollNow: (): Promise<{
+    received: number
+    published: number
+    queued: number
+  }> => runtime.bmchatBotsInvoke('bmchat:tgbots:poll-now'),
   pendingList: (botId: string): Promise<PendingItem[]> =>
     runtime.bmchatBotsInvoke('bmchat:tgbots:pending-list', botId),
   pendingPublish: (id: string) =>
@@ -73,23 +78,40 @@ const TG = {
     runtime.bmchatBotsInvoke('bmchat:tgbots:pending-clear', botId),
 }
 
+const cardStyle: React.CSSProperties = {
+  border: '1px solid var(--separatorColor)',
+  borderRadius: 8,
+  padding: 12,
+  marginBottom: 8,
+}
+
 export default function TelegramBots({ onClose }: DialogProps) {
   const tx = useTranslationFunction()
   const { openDialog } = useDialog()
   const openConfirmationDialog = useConfirmationDialog()
+  const tokenInputId = useId()
 
   const [bots, setBots] = useState<BotPublic[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadFailed, setLoadFailed] = useState(false)
   const [token, setToken] = useState('')
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [status, setStatus] = useState<string | null>(null)
+  const [status, setStatus] = useState<{
+    text: string
+    isError?: boolean
+  } | null>(null)
   const [queueBotId, setQueueBotId] = useState<string | null>(null)
 
   const refresh = useCallback(async () => {
     try {
       setBots(await TG.list())
+      setLoadFailed(false)
     } catch (err) {
       log.warn('list bots failed', err)
+      setLoadFailed(true)
+    } finally {
+      setLoading(false)
     }
   }, [])
 
@@ -146,19 +168,20 @@ export default function TelegramBots({ onClose }: DialogProps) {
   }
 
   const onPollNow = async () => {
-    setStatus('…')
+    setStatus({ text: tx('loading') })
     try {
       const res = await TG.pollNow()
-      setStatus(
-        tx('bmchat_bots_poll_result', [
+      setStatus({
+        text: tx('bmchat_bots_poll_result', [
           String(res.received),
           String(res.published),
           String(res.queued),
-        ])
-      )
+        ]),
+      })
       await refresh()
-    } catch (_err) {
-      setStatus(null)
+    } catch (err) {
+      log.warn('poll now failed', err)
+      setStatus({ text: tx('error'), isError: true })
     }
   }
 
@@ -209,9 +232,13 @@ export default function TelegramBots({ onClose }: DialogProps) {
       <DialogBody>
         <DialogContent>
           <p style={{ marginBottom: 8 }}>{tx('bmchat_bots_explain')}</p>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 6 }}>
+          <label className='bmchat-dialog-label' htmlFor={tokenInputId}>
+            {tx('bmchat_bots_token_label')}
+          </label>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
             <input
-              className='search-input'
+              id={tokenInputId}
+              className='bmchat-dialog-input'
               style={{ flex: 1 }}
               spellCheck={false}
               placeholder={tx('bmchat_bots_token_hint')}
@@ -222,36 +249,41 @@ export default function TelegramBots({ onClose }: DialogProps) {
               }}
               data-testid='tgbot-token-input'
             />
-            <button
-              className='delta-button-round'
+            <Button
+              className='bmchat-dialog-action'
+              styling='primary'
               disabled={busy || token.trim().length === 0}
               onClick={onAddClick}
             >
               {tx('bmchat_bots_add')}
-            </button>
+            </Button>
           </div>
-          {error && <p className='input-error'>{error}</p>}
+          {error && (
+            <p className='bmchat-dialog-error' role='alert'>
+              {error}
+            </p>
+          )}
 
-          <div style={{ marginTop: 14 }}>
-            {bots.length === 0 ? (
-              <p style={{ opacity: 0.7 }}>{tx('bmchat_bots_empty')}</p>
+          <div style={{ marginTop: 16 }}>
+            {loading ? (
+              <p className='bmchat-dialog-hint' role='status'>
+                {tx('loading')}
+              </p>
+            ) : loadFailed ? (
+              <p className='bmchat-dialog-error' role='alert'>
+                {tx('bmchat_bots_load_failed')}
+              </p>
+            ) : bots.length === 0 ? (
+              <p className='bmchat-dialog-hint'>{tx('bmchat_bots_empty')}</p>
             ) : (
               bots.map(bot => (
-                <div
-                  key={bot.id}
-                  style={{
-                    border: '1px solid var(--separatorColor, #ddd)',
-                    borderRadius: 8,
-                    padding: '10px 12px',
-                    marginBottom: 10,
-                  }}
-                >
+                <div key={bot.id} style={cardStyle}>
                   <div style={{ fontWeight: 600 }}>
                     {bot.displayName}
                     {bot.paused ? ' · ⏸' : ''}
                   </div>
                   {bot.telegramUsername && (
-                    <div style={{ fontSize: 12, opacity: 0.7 }}>
+                    <div className='bmchat-dialog-hint'>
                       @{bot.telegramUsername}
                     </div>
                   )}
@@ -259,9 +291,9 @@ export default function TelegramBots({ onClose }: DialogProps) {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      gap: 6,
+                      gap: 8,
                       margin: '8px 0',
-                      fontSize: 13,
+                      fontSize: 14,
                     }}
                   >
                     <input
@@ -275,44 +307,52 @@ export default function TelegramBots({ onClose }: DialogProps) {
                     style={{
                       display: 'flex',
                       flexWrap: 'wrap',
-                      gap: 6,
+                      gap: 8,
                       marginTop: 4,
                     }}
                   >
-                    <button
-                      className='delta-button-round'
+                    <Button
+                      className='bmchat-dialog-action'
                       onClick={() => onTogglePaused(bot)}
                     >
                       {bot.paused
                         ? tx('bmchat_bots_resume')
                         : tx('bmchat_bots_pause')}
-                    </button>
-                    <button
-                      className='delta-button-round'
+                    </Button>
+                    <Button
+                      className='bmchat-dialog-action'
                       onClick={() => setQueueBotId(bot.id)}
                     >
                       {tx('bmchat_bots_open_queue')} ({bot.pendingCount})
-                    </button>
-                    <button
-                      className='delta-button-round'
+                    </Button>
+                    <Button
+                      className='bmchat-dialog-action'
                       onClick={() => onChangeTarget(bot)}
                     >
                       {tx('bmchat_bots_change_chat')}
-                    </button>
-                    <button
-                      className='delta-button-round'
-                      style={{ color: 'var(--colorDanger, #d9534f)' }}
+                    </Button>
+                    <Button
+                      className='bmchat-dialog-action'
+                      styling='danger'
                       onClick={() => onRemove(bot)}
                     >
                       {tx('bmchat_bots_remove')}
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))
             )}
           </div>
           {status && (
-            <p style={{ marginTop: 8, fontSize: 12, opacity: 0.8 }}>{status}</p>
+            <p
+              className={
+                status.isError ? 'bmchat-dialog-error' : 'bmchat-dialog-hint'
+              }
+              role={status.isError ? 'alert' : 'status'}
+              style={{ marginTop: 8 }}
+            >
+              {status.text}
+            </p>
           )}
         </DialogContent>
       </DialogBody>
@@ -343,12 +383,18 @@ function PendingQueue({
 }) {
   const tx = useTranslationFunction()
   const [items, setItems] = useState<PendingItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadFailed, setLoadFailed] = useState(false)
 
   const refresh = useCallback(async () => {
     try {
       setItems(await TG.pendingList(botId))
+      setLoadFailed(false)
     } catch (err) {
       log.warn('pending list failed', err)
+      setLoadFailed(true)
+    } finally {
+      setLoading(false)
     }
   }, [botId])
 
@@ -361,42 +407,45 @@ function PendingQueue({
       <DialogHeader title={`${tx('bmchat_bots_open_queue')} · ${botName}`} />
       <DialogBody>
         <DialogContent>
-          {items.length === 0 ? (
-            <p style={{ opacity: 0.7 }}>{tx('bmchat_bots_queue_empty')}</p>
+          {loading ? (
+            <p className='bmchat-dialog-hint' role='status'>
+              {tx('loading')}
+            </p>
+          ) : loadFailed ? (
+            <p className='bmchat-dialog-error' role='alert'>
+              {tx('error')}
+            </p>
+          ) : items.length === 0 ? (
+            <p className='bmchat-dialog-hint'>
+              {tx('bmchat_bots_queue_empty')}
+            </p>
           ) : (
             items.map(item => (
-              <div
-                key={item.id}
-                style={{
-                  border: '1px solid var(--separatorColor, #ddd)',
-                  borderRadius: 8,
-                  padding: '8px 10px',
-                  marginBottom: 8,
-                }}
-              >
-                <div style={{ fontSize: 13, marginBottom: 6 }}>
+              <div key={item.id} style={cardStyle}>
+                <div style={{ fontSize: 14, marginBottom: 8 }}>
                   {item.preview}
                 </div>
-                <div style={{ display: 'flex', gap: 6 }}>
-                  <button
-                    className='delta-button-round'
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <Button
+                    className='bmchat-dialog-action'
+                    styling='primary'
                     onClick={async () => {
                       await TG.pendingPublish(item.id)
                       await refresh()
                     }}
                   >
                     {tx('bmchat_bots_queue_publish')}
-                  </button>
-                  <button
-                    className='delta-button-round'
-                    style={{ color: 'var(--colorDanger, #d9534f)' }}
+                  </Button>
+                  <Button
+                    className='bmchat-dialog-action'
+                    styling='danger'
                     onClick={async () => {
                       await TG.pendingDrop(item.id)
                       await refresh()
                     }}
                   >
                     {tx('bmchat_bots_queue_drop')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))
@@ -408,7 +457,7 @@ function PendingQueue({
           <FooterActionButton onClick={onBack} type='button'>
             {tx('back')}
           </FooterActionButton>
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             <FooterActionButton
               type='button'
               onClick={async () => {

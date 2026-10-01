@@ -99,13 +99,15 @@ public final class BMChatUpdater {
      * <p>Order matters:
      *   <ol>
      *     <li>{@code 5.187.4.132} — primary (Fornex / EU).
-     *     <li>{@code 158.160.104.107:8080} — WhiteBlade mirror
+     *     <li>{@code 51.250.82.211:8080} — WhiteBlade mirror
      *         (Yandex Cloud / RU). Often reachable when the primary
      *         is filtered or routed away.
+     *     <li>{@code 158.160.104.107:8080} — legacy mirror.
      *   </ol>
      */
     static final String[] DEFAULT_HOSTS = new String[] {
         "http://5.187.4.132",
+        "http://51.250.82.211:8080",
         "http://158.160.104.107:8080"
     };
 
@@ -357,14 +359,14 @@ public final class BMChatUpdater {
     @MainThread
     public static void checkNowFromUi(final Activity activity) {
         if (activity == null || activity.isFinishing()) return;
-        Toast.makeText(activity, "Проверяем обновления BMChat…", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, R.string.bmchat_update_checking, Toast.LENGTH_SHORT).show();
         EXEC.submit(() -> {
             try {
                 final Manifest manifest =
                         fetchManifest(activity.getApplicationContext());
                 if (manifest == null) {
                     MAIN.post(() -> Toast.makeText(activity,
-                            "Не удалось получить update.json — проверьте сеть.",
+                            R.string.bmchat_update_fetch_failed,
                             Toast.LENGTH_LONG).show());
                     return;
                 }
@@ -380,8 +382,8 @@ public final class BMChatUpdater {
 
                 if (manifest.versionCode <= BuildConfig.VERSION_CODE) {
                     MAIN.post(() -> Toast.makeText(activity,
-                            "У вас уже установлена последняя версия BMChat ("
-                                    + BuildConfig.VERSION_NAME + ").",
+                            activity.getString(R.string.bmchat_update_up_to_date_fmt,
+                                    BuildConfig.VERSION_NAME),
                             Toast.LENGTH_LONG).show());
                     return;
                 }
@@ -389,7 +391,8 @@ public final class BMChatUpdater {
             } catch (Throwable t) {
                 android.util.Log.w(TAG, "manual update check failed", t);
                 MAIN.post(() -> Toast.makeText(activity,
-                        "Ошибка проверки обновлений: " + t.getMessage(),
+                        activity.getString(R.string.bmchat_update_check_error_fmt,
+                                String.valueOf(t.getMessage())),
                         Toast.LENGTH_LONG).show());
             }
         });
@@ -501,15 +504,16 @@ public final class BMChatUpdater {
                 ? PendingIntent.getActivity(ctx, 3, contentIntent, piFlags)
                 : installPi;
 
-        String body = "Размер: " + Formatter.formatShortFileSize(ctx, m.size);
+        String body = ctx.getString(R.string.bmchat_update_size_fmt,
+                Formatter.formatShortFileSize(ctx, m.size));
         if (m.notes != null && !m.notes.isEmpty()) {
             body = body + "\n" + (m.notes.length() > 200 ? m.notes.substring(0, 200) + "…" : m.notes);
         }
 
         NotificationCompat.Builder n = new NotificationCompat.Builder(ctx, UPDATE_NOTIF_CHANNEL)
                 .setSmallIcon(R.drawable.icon_notification)
-                .setContentTitle("Доступно обновление BMChat " + m.versionName)
-                .setContentText("Нажмите, чтобы установить")
+                .setContentTitle(ctx.getString(R.string.bmchat_update_available_title_fmt, m.versionName))
+                .setContentText(ctx.getString(R.string.bmchat_update_tap_to_install))
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 // PRIORITY_DEFAULT keeps the entry quiet in the drawer;
                 // no heads-up, no sound, no vibration. The user sees it
@@ -521,8 +525,8 @@ public final class BMChatUpdater {
                 .setAutoCancel(false)
                 .setOnlyAlertOnce(true)
                 .setContentIntent(contentPi)
-                .addAction(0, "Установить", installPi)
-                .addAction(0, "Пропустить", dismissPi);
+                .addAction(0, ctx.getString(R.string.bmchat_update_dl_install_action), installPi)
+                .addAction(0, ctx.getString(R.string.bmchat_update_action_skip), dismissPi);
 
         try {
             NotificationManagerCompat.from(ctx).notify(UPDATE_NOTIF_ID, n.build());
@@ -578,17 +582,18 @@ public final class BMChatUpdater {
         if (promptShown) return;
         promptShown = true;
 
-        String body = "Доступна новая версия BMChat " + m.versionName + "."
-                + "\nРазмер: " + Formatter.formatShortFileSize(activity, m.size)
+        String body = activity.getString(R.string.bmchat_update_new_version_fmt, m.versionName)
+                + "\n" + activity.getString(R.string.bmchat_update_size_fmt,
+                        Formatter.formatShortFileSize(activity, m.size))
                 + (m.notes != null && !m.notes.isEmpty() ? "\n\n" + m.notes : "");
         AlertDialog dialog = new AlertDialog.Builder(activity)
-                .setTitle("Обновление BMChat")
+                .setTitle(R.string.bmchat_update_dialog_title)
                 .setMessage(body)
                 .setCancelable(true)
-                .setPositiveButton("Скачать и установить",
+                .setPositiveButton(R.string.bmchat_update_download_and_install,
                         (d, w) -> beginDownload(activity, m))
-                .setNegativeButton("Позже", (d, w) -> {})
-                .setNeutralButton("Пропустить эту версию", (d, w) -> {
+                .setNegativeButton(R.string.bmchat_update_later, (d, w) -> {})
+                .setNeutralButton(R.string.bmchat_update_skip_version, (d, w) -> {
                     activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                             .edit().putLong(PREF_DECLINED_VERSION, m.versionCode).apply();
                     cancelUpdateNotification(activity.getApplicationContext());
@@ -631,23 +636,25 @@ public final class BMChatUpdater {
                 ? PendingIntent.getActivity(ctx, 3, contentIntent, piFlags)
                 : installPi;
 
-        String body = "Размер: " + Formatter.formatShortFileSize(ctx, m.size);
+        String size = ctx.getString(R.string.bmchat_update_size_fmt,
+                Formatter.formatShortFileSize(ctx, m.size));
+        String body = size;
         if (m.notes != null && !m.notes.isEmpty()) {
             body = body + "\n" + (m.notes.length() > 200 ? m.notes.substring(0, 200) + "…" : m.notes);
         }
 
         NotificationCompat.Builder n = new NotificationCompat.Builder(ctx, UPDATE_NOTIF_CHANNEL)
                 .setSmallIcon(R.drawable.icon_notification)
-                .setContentTitle("Обновление BMChat " + m.versionName)
-                .setContentText("Размер: " + Formatter.formatShortFileSize(ctx, m.size))
+                .setContentTitle(ctx.getString(R.string.bmchat_update_title_fmt, m.versionName))
+                .setContentText(size)
                 .setStyle(new NotificationCompat.BigTextStyle().bigText(body))
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_RECOMMENDATION)
                 .setOngoing(true)        // sticky until install / decline
                 .setAutoCancel(false)
                 .setContentIntent(contentPi)
-                .addAction(0, "Установить", installPi)
-                .addAction(0, "Пропустить", dismissPi);
+                .addAction(0, ctx.getString(R.string.bmchat_update_dl_install_action), installPi)
+                .addAction(0, ctx.getString(R.string.bmchat_update_action_skip), dismissPi);
 
         try {
             NotificationManagerCompat.from(ctx).notify(UPDATE_NOTIF_ID, n.build());
@@ -670,9 +677,9 @@ public final class BMChatUpdater {
         if (nm == null) return;
         if (nm.getNotificationChannel(UPDATE_NOTIF_CHANNEL) != null) return;
         NotificationChannel ch = new NotificationChannel(
-                UPDATE_NOTIF_CHANNEL, "Обновления BMChat",
+                UPDATE_NOTIF_CHANNEL, ctx.getString(R.string.bmchat_update_channel_name),
                 NotificationManager.IMPORTANCE_HIGH);
-        ch.setDescription("Уведомление, когда вышла новая версия мессенджера BMChat.");
+        ch.setDescription(ctx.getString(R.string.bmchat_update_channel_desc));
         ch.enableLights(true);
         ch.enableVibration(false);
         ch.setShowBadge(true);
@@ -759,7 +766,7 @@ public final class BMChatUpdater {
                             Uri.parse("package:" + activity.getPackageName())));
                 } catch (Throwable ignore) {}
                 Toast.makeText(activity,
-                        "Разрешите установку обновлений BMChat и снова откройте приложение.",
+                        R.string.bmchat_update_allow_install,
                         Toast.LENGTH_LONG).show();
                 return;
             }

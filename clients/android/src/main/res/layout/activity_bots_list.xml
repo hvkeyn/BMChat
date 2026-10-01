@@ -17,8 +17,8 @@
             android:layout_height="?attr/actionBarSize"
             android:minHeight="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:contentInsetStart="14dp"
-            app:contentInsetLeft="14dp"
+            app:contentInsetStart="16dp"
+            app:contentInsetLeft="16dp"
             android:elevation="4dp"
             android:theme="?attr/actionBarStyle" />
 

@@ -109,7 +109,7 @@ public class EmailBotEditActivity extends PassphraseRequiredActionBarActivity {
       if (bar != null) bar.setTitle(R.string.bmchat_email_bot_new_title);
       // Seed with a placeholder command so the user understands the
       // shape of the data they're about to fill in.
-      addCommandRow("start", "Привет! Я бот.");
+      addCommandRow("start", getString(R.string.bmchat_email_bot_default_start_reply));
     } else {
       if (bar != null) {
         bar.setTitle(getString(R.string.bmchat_email_bot_edit_title, existing.name));

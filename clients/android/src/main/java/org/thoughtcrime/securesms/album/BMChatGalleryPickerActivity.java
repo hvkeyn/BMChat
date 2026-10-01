@@ -479,7 +479,8 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
         getContentResolver()
             .insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
     if (target == null) {
-      android.widget.Toast.makeText(this, "Camera unavailable", android.widget.Toast.LENGTH_SHORT)
+      android.widget.Toast.makeText(
+              this, R.string.bmchat_gallery_picker_camera_error, android.widget.Toast.LENGTH_SHORT)
           .show();
       return;
     }
@@ -492,7 +493,9 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
       startActivityForResult(take, REQ_CAMERA);
     } catch (android.content.ActivityNotFoundException anf) {
       pendingCameraUri = null;
-      android.widget.Toast.makeText(this, "No camera app", android.widget.Toast.LENGTH_SHORT).show();
+      android.widget.Toast.makeText(
+              this, R.string.bmchat_gallery_picker_no_camera_app, android.widget.Toast.LENGTH_SHORT)
+          .show();
     }
   }
 
@@ -625,8 +628,10 @@ public class BMChatGalleryPickerActivity extends AppCompatActivity {
 
     void bind(MediaItem mi) {
       GlideApp.with(BMChatGalleryPickerActivity.this).load(mi.uri).centerCrop().into(thumb);
-      playOverlay.setVisibility(
-          mi.mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO ? View.VISIBLE : View.GONE);
+      boolean isVideo = mi.mediaType == MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+      playOverlay.setVisibility(isVideo ? View.VISIBLE : View.GONE);
+      itemView.setContentDescription(
+          getString(isVideo ? R.string.bmchat_gallery_tile_video : R.string.image));
 
       int idx = selectedOrder.indexOf(mi.uri);
       if (idx >= 0) {

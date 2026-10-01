@@ -75,6 +75,7 @@ public class BotChatPickerActivity extends PassphraseRequiredActionBarActivity {
     ListView list = findViewById(R.id.chat_list);
     Adapter adapter = new Adapter();
     list.setAdapter(adapter);
+    list.setEmptyView(findViewById(R.id.empty_view));
     list.setOnItemClickListener((parent, view, position, id) -> {
       Row r = rows.get(position);
       Intent data = new Intent();

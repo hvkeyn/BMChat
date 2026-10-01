@@ -47,12 +47,14 @@
 @use 'message/_metadata';
 @use 'message/_status-icon';
 @use 'message/_message-calls';
+@use 'message/_bmchat-bot-link';
 
 // misc
 @use 'misc/_avatar.scss';
 @use 'misc/_context_menu.scss';
 @use 'misc/_keyboard_hint_box.scss';
 @use 'misc/_search-input.scss';
+@use 'misc/_bmchat-dialog-input.scss';
 @use 'misc/react-window-list-reset.scss';
 
 // ConnectivityToast

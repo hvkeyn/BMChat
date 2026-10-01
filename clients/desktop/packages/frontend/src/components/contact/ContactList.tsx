@@ -5,7 +5,7 @@ import { BackendRemote, Type } from '../../backend-com'
 import { selectedAccountId } from '../../ScreenController'
 import { useFetch } from '../../hooks/useFetch'
 import { getLogger } from '@deltachat-desktop/shared/logger'
-import type { T } from '@deltachat/jsonrpc-client'
+import { C, type T } from '@deltachat/jsonrpc-client'
 
 const log = getLogger('ContactList')
 
@@ -150,6 +150,45 @@ export function useLazyLoadedContacts(
   }
 }
 
+async function fetchCombinedContactIds(
+  accountId: number,
+  listFlags: number,
+  query: string | null
+): Promise<number[]> {
+  const ids = new Set<number>()
+  try {
+    const primary = await BackendRemote.rpc.getContactIds(
+      accountId,
+      listFlags,
+      query
+    )
+    for (const id of primary) ids.add(id)
+  } catch (e) {
+    log.error('getContactIds primary failed', e)
+  }
+
+  if (query && query.trim().length > 0) {
+    const trimmed = query.trim()
+    try {
+      const addrIds = await BackendRemote.rpc.getContactIds(
+        accountId,
+        listFlags | C.DC_GCL_ADDRESS,
+        trimmed
+      )
+      for (const id of addrIds) ids.add(id)
+    } catch {}
+
+    try {
+      const directId = await BackendRemote.rpc.lookupContactIdByAddr(
+        accountId,
+        trimmed
+      )
+      if (directId && directId > 0) ids.add(directId)
+    } catch {}
+  }
+  return Array.from(ids)
+}
+
 function useContactIds(listFlags: number, queryStr: string | undefined) {
   const accountId = selectedAccountId()
 
@@ -158,7 +197,7 @@ function useContactIds(listFlags: number, queryStr: string | undefined) {
     useMemo(
       () =>
         asyncThrottle(
-          BackendRemote.rpc.getContactIds.bind(BackendRemote.rpc),
+          fetchCombinedContactIds,
           100
         ),
       []
@@ -166,7 +205,7 @@ function useContactIds(listFlags: number, queryStr: string | undefined) {
     [accountId, listFlags, trimmedQueryStr || null]
   )
   if (contactIdsFetch.result?.ok === false) {
-    log.error('Failed to fetch cotnact IDs', contactIdsFetch.result.err)
+    log.error('Failed to fetch contact IDs', contactIdsFetch.result.err)
   }
 
   const queryStrMayBeValidEmail =

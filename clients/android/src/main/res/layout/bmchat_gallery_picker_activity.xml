@@ -56,26 +56,26 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="top|start"
-            android:layout_margin="20dp"
+            android:layout_margin="16dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/cancel"
-            android:padding="14dp"
+            android:padding="16dp"
             android:src="@drawable/ic_close_white_24dp"
-            android:tint="#FFFFFFFF" />
+            android:tint="@color/core_white" />
 
         <TextView
             android:id="@+id/bmchat_gallery_camera_hint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_horizontal"
-            android:layout_marginTop="34dp"
-            android:background="#66000000"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:paddingTop="7dp"
-            android:paddingBottom="7dp"
+            android:layout_marginTop="32dp"
+            android:background="@color/bmchat_scrim"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:text="@string/bmchat_gallery_picker_camera_fullscreen_hint"
-            android:textColor="#FFFFFFFF"
+            android:textColor="@color/core_white"
             android:textSize="14sp" />
 
         <ImageButton
@@ -83,12 +83,12 @@
             android:layout_width="84dp"
             android:layout_height="84dp"
             android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="44dp"
+            android:layout_marginBottom="48dp"
             android:background="@drawable/bmchat_gallery_camera_capture_bg"
             android:contentDescription="@string/bmchat_gallery_picker_camera_capture"
-            android:padding="22dp"
+            android:padding="24dp"
             android:src="@drawable/ic_photo_camera_white_36dp"
-            android:tint="#FFFFFFFF" />
+            android:tint="@color/core_white" />
 
     </FrameLayout>
 

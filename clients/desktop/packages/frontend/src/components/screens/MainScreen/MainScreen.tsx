@@ -457,7 +457,9 @@ function ChatHeading({ chat }: { chat: T.FullChat }) {
       break
     }
     case 'OutBroadcast': {
-      buttonLabel = emailBotHomeName ? tx('menu_view_profile') : tx('edit_channel')
+      buttonLabel = emailBotHomeName
+        ? tx('menu_view_profile')
+        : tx('edit_channel')
       break
     }
     case 'InBroadcast': {
@@ -497,7 +499,7 @@ function ChatHeading({ chat }: { chat: T.FullChat }) {
         // because we display the chat name below.
         aria-hidden={true}
       />
-      <div style={{ marginInlineStart: '7px', overflow: 'hidden' }}>
+      <div style={{ marginInlineStart: '8px', overflow: 'hidden' }}>
         <div className='navbar-chat-name'>
           <h2 id='chat-section-heading' className='truncated'>
             {chat.name}

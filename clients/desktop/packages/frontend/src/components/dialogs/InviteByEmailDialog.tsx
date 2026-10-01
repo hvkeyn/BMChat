@@ -15,6 +15,7 @@ import { BackendRemote } from '../../backend-com'
 import { selectedAccountId } from '../../ScreenController'
 import { ScreenContext } from '../../contexts/ScreenContext'
 import { getLogger } from '../../../../shared/logger'
+import { textMessageData } from '../../bmchat/textMessage'
 
 import type { DialogProps } from '../../contexts/DialogContext'
 
@@ -26,6 +27,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 type Props = {
   /** The canonical BMChat invite link to send to the invited person. */
   inviteLink: string
+  initialEmail?: string
 }
 
 /**
@@ -35,6 +37,7 @@ type Props = {
  */
 export default function InviteByEmailDialog({
   inviteLink,
+  initialEmail,
   onClose,
 }: Props & DialogProps) {
   const tx = useTranslationFunction()
@@ -43,7 +46,7 @@ export default function InviteByEmailDialog({
   const { selectChat } = useChat()
   const { userFeedback } = useContext(ScreenContext)
 
-  const [email, setEmail] = useState('')
+  const [email, setEmail] = useState(initialEmail || '')
   const [error, setError] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
 
@@ -64,9 +67,11 @@ export default function InviteByEmailDialog({
         setBusy(false)
         return
       }
-      await BackendRemote.rpc.sendMsg(accountId, chatId, {
-        text: inviteLink,
-      })
+      await BackendRemote.rpc.sendMsg(
+        accountId,
+        chatId,
+        textMessageData(inviteLink)
+      )
       userFeedback({
         type: 'success',
         text: tx('bmchat_invite_by_email_sent'),
@@ -75,7 +80,8 @@ export default function InviteByEmailDialog({
       selectChat(accountId, chatId)
     } catch (err) {
       log.error('invite by email failed', err)
-      setError(err instanceof Error ? err.message : String(err))
+      const detail = err instanceof Error ? err.message : String(err)
+      setError(`${tx('error')}: ${detail}`)
       setBusy(false)
     }
   }
@@ -89,8 +95,15 @@ export default function InviteByEmailDialog({
             <p style={{ marginBottom: '12px' }}>
               {tx('bmchat_invite_by_email_explain')}
             </p>
+            <label
+              className='bmchat-dialog-label'
+              htmlFor='bmchat-invite-by-email-input'
+            >
+              {tx('email_address')}
+            </label>
             <input
-              className='search-input'
+              id='bmchat-invite-by-email-input'
+              className='bmchat-dialog-input'
               style={{ width: '100%' }}
               type='email'
               autoFocus
@@ -103,7 +116,11 @@ export default function InviteByEmailDialog({
               }}
               data-testid='invite-by-email-input'
             />
-            {error && <p className='input-error'>{error}</p>}
+            {error && (
+              <p className='bmchat-dialog-error' role='alert'>
+                {error}
+              </p>
+            )}
           </DialogContent>
         </DialogBody>
         <DialogFooter>

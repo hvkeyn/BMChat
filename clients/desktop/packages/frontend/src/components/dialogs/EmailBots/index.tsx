@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useId, useState } from 'react'
 
 import Dialog, {
   DialogBody,
@@ -14,10 +14,14 @@ import useConfirmationDialog from '../../../hooks/dialog/useConfirmationDialog'
 import { selectedAccountId } from '../../../ScreenController'
 import useChat from '../../../hooks/chat/useChat'
 import { C } from '@deltachat/jsonrpc-client'
-import { ensureEmailBotContact, openEmailBotChat } from '../../../bmchat/emailBots'
+import {
+  ensureEmailBotContact,
+  openEmailBotChat,
+} from '../../../bmchat/emailBots'
 import { getLogger } from '../../../../../shared/logger'
 import useDialog from '../../../hooks/dialog/useDialog'
 import SelectChat from '../SelectChat'
+import Button from '../../Button'
 
 import type { DialogProps } from '../../../contexts/DialogContext'
 
@@ -85,12 +89,18 @@ export default function EmailBots({ onClose }: DialogProps) {
 
   const [bots, setBots] = useState<EmailBot[]>([])
   const [editing, setEditing] = useState<Partial<EmailBot> | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [loadFailed, setLoadFailed] = useState(false)
 
   const refresh = useCallback(async () => {
     try {
       setBots(await EB.list())
+      setLoadFailed(false)
     } catch (err) {
       log.warn('list email bots failed', err)
+      setLoadFailed(true)
+    } finally {
+      setLoading(false)
     }
   }, [])
 
@@ -128,18 +138,28 @@ export default function EmailBots({ onClose }: DialogProps) {
       <DialogHeader title={tx('bmchat_email_bots_title')} />
       <DialogBody>
         <DialogContent>
-          <p style={{ marginBottom: 10 }}>{tx('bmchat_email_bots_explain')}</p>
-          {bots.length === 0 ? (
-            <p style={{ opacity: 0.7 }}>{tx('bmchat_email_bots_empty')}</p>
+          <p style={{ marginBottom: 8 }}>{tx('bmchat_email_bots_explain')}</p>
+          {loading ? (
+            <p className='bmchat-dialog-hint' role='status'>
+              {tx('loading')}
+            </p>
+          ) : loadFailed ? (
+            <p className='bmchat-dialog-error' role='alert'>
+              {tx('bmchat_bots_load_failed')}
+            </p>
+          ) : bots.length === 0 ? (
+            <p className='bmchat-dialog-hint'>
+              {tx('bmchat_email_bots_empty')}
+            </p>
           ) : (
             bots.map(bot => (
               <div
                 key={bot.id}
                 style={{
-                  border: '1px solid var(--separatorColor, #ddd)',
+                  border: '1px solid var(--separatorColor)',
                   borderRadius: 8,
-                  padding: '10px 12px',
-                  marginBottom: 10,
+                  padding: 12,
+                  marginBottom: 8,
                 }}
               >
                 <div style={{ fontWeight: 600 }}>
@@ -147,19 +167,24 @@ export default function EmailBots({ onClose }: DialogProps) {
                   {bot.enabled ? '' : ' · ⏸'}
                 </div>
                 {bot.description && (
-                  <div style={{ fontSize: 12, opacity: 0.7 }}>
-                    {bot.description}
-                  </div>
+                  <div className='bmchat-dialog-hint'>{bot.description}</div>
                 )}
-                <div style={{ fontSize: 12, opacity: 0.6, marginTop: 4 }}>
+                <div className='bmchat-dialog-hint' style={{ marginTop: 4 }}>
                   {tx('bmchat_email_bot_replies', String(bot.totalReplies))}
                   {(bot.attachedChatIds?.length ?? 0) > 0
                     ? ` · ${tx('bmchat_email_bot_attached_chats', String(bot.attachedChatIds!.length))}`
                     : ''}
                 </div>
-                <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-                  <button
-                    className='delta-button-round'
+                <div
+                  style={{
+                    display: 'flex',
+                    gap: 8,
+                    marginTop: 8,
+                    flexWrap: 'wrap',
+                  }}
+                >
+                  <Button
+                    className='bmchat-dialog-action'
                     disabled={!bot.enabled}
                     onClick={async () => {
                       const ensured = await ensureEmailBotContact(
@@ -170,7 +195,8 @@ export default function EmailBots({ onClose }: DialogProps) {
                         accountId,
                         bot.name,
                         chatId => selectChat(accountId, chatId),
-                        ensured?.chatId ?? (bot as { botChatId?: number }).botChatId
+                        ensured?.chatId ??
+                          (bot as { botChatId?: number }).botChatId
                       )
                       if (ok) {
                         onClose()
@@ -183,9 +209,9 @@ export default function EmailBots({ onClose }: DialogProps) {
                     }}
                   >
                     {tx('bmchat_email_bot_write')}
-                  </button>
-                  <button
-                    className='delta-button-round'
+                  </Button>
+                  <Button
+                    className='bmchat-dialog-action'
                     disabled={!bot.enabled}
                     onClick={async () => {
                       const res = await ensureEmailBotContact(accountId, bot.id)
@@ -204,10 +230,9 @@ export default function EmailBots({ onClose }: DialogProps) {
                     }}
                   >
                     {tx('bmchat_email_bot_add_contact')}
-                  </button>
-                  <button
-                    type='button'
-                    className='delta-button-round'
+                  </Button>
+                  <Button
+                    className='bmchat-dialog-action'
                     onClick={() =>
                       pickChat(
                         tx('bmchat_email_bot_attach_chat'),
@@ -230,15 +255,15 @@ export default function EmailBots({ onClose }: DialogProps) {
                     }
                   >
                     {tx('bmchat_email_bot_attach_chat')}
-                  </button>
-                  <button
-                    className='delta-button-round'
+                  </Button>
+                  <Button
+                    className='bmchat-dialog-action'
                     onClick={() => setEditing(bot)}
                   >
                     {tx('menu_edit_name')}
-                  </button>
-                  <button
-                    className='delta-button-round'
+                  </Button>
+                  <Button
+                    className='bmchat-dialog-action'
                     onClick={async () => {
                       await EB.setEnabled(bot.id, !bot.enabled)
                       await refresh()
@@ -247,14 +272,14 @@ export default function EmailBots({ onClose }: DialogProps) {
                     {bot.enabled
                       ? tx('bmchat_bots_pause')
                       : tx('bmchat_bots_resume')}
-                  </button>
-                  <button
-                    className='delta-button-round'
-                    style={{ color: 'var(--colorDanger, #d9534f)' }}
+                  </Button>
+                  <Button
+                    className='bmchat-dialog-action'
+                    styling='danger'
                     onClick={() => onRemove(bot)}
                   >
                     {tx('bmchat_bots_remove')}
-                  </button>
+                  </Button>
                 </div>
               </div>
             ))
@@ -270,8 +295,8 @@ export default function EmailBots({ onClose }: DialogProps) {
                 name: '',
                 enabled: true,
                 commands: [
-                  { k: 'start', v: 'Привет, {{from}}! Я бот @{{bot}}.' },
-                  { k: 'help', v: 'Команды: /start, /help' },
+                  { k: 'start', v: tx('bmchat_email_bot_default_start') },
+                  { k: 'help', v: tx('bmchat_email_bot_default_help') },
                 ],
               })
             }
@@ -363,15 +388,18 @@ function EmailBotEditor({
       }
     } catch (err) {
       log.warn('save email bot failed', err)
-      setError(String(err))
+      setError(`${tx('error')}: ${String(err)}`)
     } finally {
       setBusy(false)
     }
   }
 
+  const idPrefix = useId()
+  const fieldId = (field: string) => `${idPrefix}-${field}`
+
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    marginBottom: 10,
+    marginBottom: 8,
   }
 
   return (
@@ -381,39 +409,60 @@ function EmailBotEditor({
       />
       <DialogBody>
         <DialogContent>
-          <label>{tx('bmchat_email_bot_field_name')}</label>
+          <label className='bmchat-dialog-label' htmlFor={fieldId('name')}>
+            {tx('bmchat_email_bot_field_name')}
+          </label>
           <input
-            className='search-input'
+            id={fieldId('name')}
+            className='bmchat-dialog-input'
             style={inputStyle}
             spellCheck={false}
             placeholder='myhelperbot'
             value={name}
             onChange={e => setName(e.target.value)}
           />
-          <label>{tx('bmchat_email_bot_field_displayname')}</label>
+          <label
+            className='bmchat-dialog-label'
+            htmlFor={fieldId('displayname')}
+          >
+            {tx('bmchat_email_bot_field_displayname')}
+          </label>
           <input
-            className='search-input'
+            id={fieldId('displayname')}
+            className='bmchat-dialog-input'
             style={inputStyle}
             value={displayName}
             onChange={e => setDisplayName(e.target.value)}
           />
-          <label>{tx('bmchat_email_bot_field_description')}</label>
+          <label
+            className='bmchat-dialog-label'
+            htmlFor={fieldId('description')}
+          >
+            {tx('bmchat_email_bot_field_description')}
+          </label>
           <input
-            className='search-input'
+            id={fieldId('description')}
+            className='bmchat-dialog-input'
             style={inputStyle}
             value={description}
             onChange={e => setDescription(e.target.value)}
           />
-          <label>{tx('bmchat_email_bot_field_webhook')}</label>
+          <label className='bmchat-dialog-label' htmlFor={fieldId('webhook')}>
+            {tx('bmchat_email_bot_field_webhook')}
+          </label>
           <input
-            className='search-input'
+            id={fieldId('webhook')}
+            className='bmchat-dialog-input'
             style={inputStyle}
             spellCheck={false}
             placeholder='https://example.com/bot'
             value={webhookUrl}
             onChange={e => setWebhookUrl(e.target.value)}
           />
-          <p style={{ fontSize: 12, opacity: 0.7, marginTop: -6, marginBottom: 10 }}>
+          <p
+            className='bmchat-dialog-hint'
+            style={{ marginTop: 0, marginBottom: 12 }}
+          >
             {tx('bmchat_email_bot_field_webhook_hint')}
           </p>
 
@@ -433,37 +482,51 @@ function EmailBotEditor({
             />
             {tx('bmchat_email_bot_field_relay_from_chats')}
           </label>
-          <p style={{ fontSize: 12, opacity: 0.7, marginTop: -2, marginBottom: 10 }}>
+          <p
+            className='bmchat-dialog-hint'
+            style={{ marginTop: 0, marginBottom: 12 }}
+          >
             {tx('bmchat_email_bot_field_relay_from_chats_hint')}
           </p>
 
-          <label>{tx('bmchat_email_bot_field_developer_email')}</label>
+          <label
+            className='bmchat-dialog-label'
+            htmlFor={fieldId('developer-email')}
+          >
+            {tx('bmchat_email_bot_field_developer_email')}
+          </label>
           <input
-            className='search-input'
+            id={fieldId('developer-email')}
+            className='bmchat-dialog-input'
             style={inputStyle}
             spellCheck={false}
             placeholder='developer@example.com'
             value={developerEmail}
             onChange={e => setDeveloperEmail(e.target.value)}
           />
-          <p style={{ fontSize: 12, opacity: 0.7, marginTop: -6, marginBottom: 10 }}>
+          <p
+            className='bmchat-dialog-hint'
+            style={{ marginTop: 0, marginBottom: 12 }}
+          >
             {tx('bmchat_email_bot_field_developer_email_hint')}
           </p>
 
           {apiToken ? (
             <div style={{ marginBottom: 12 }}>
-              <label>{tx('bmchat_email_bot_token_label')}</label>
+              <label className='bmchat-dialog-label' htmlFor={fieldId('token')}>
+                {tx('bmchat_email_bot_token_label')}
+              </label>
               <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                 <input
-                  className='search-input'
+                  id={fieldId('token')}
+                  className='bmchat-dialog-input'
                   style={{ flex: 1, fontFamily: 'monospace', fontSize: 12 }}
                   readOnly
                   value={apiToken}
                   onChange={() => {}}
                 />
-                <button
-                  type='button'
-                  className='delta-button-round'
+                <Button
+                  className='bmchat-dialog-action'
                   onClick={async () => {
                     await runtime.writeClipboardText(apiToken)
                     setTokenCopied(true)
@@ -473,61 +536,86 @@ function EmailBotEditor({
                   {tokenCopied
                     ? tx('bmchat_email_bot_token_copied')
                     : tx('bmchat_email_bot_token_copy')}
-                </button>
+                </Button>
               </div>
-              <p style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>
+              <p className='bmchat-dialog-hint' style={{ marginTop: 4 }}>
                 {tx('bmchat_email_bot_token_hint')}
               </p>
             </div>
           ) : (
-            <p style={{ fontSize: 12, opacity: 0.7, marginBottom: 12 }}>
+            <p className='bmchat-dialog-hint' style={{ marginBottom: 12 }}>
               {tx('bmchat_email_bot_token_hint')}
             </p>
           )}
 
-          <div style={{ fontWeight: 600, margin: '12px 0 6px' }}>
+          <div style={{ fontWeight: 600, margin: '12px 0 8px' }}>
             {tx('bmchat_email_bot_field_commands')}
           </div>
           {commands.map((c, idx) => (
             <div
               key={idx}
-              style={{ display: 'flex', gap: 6, marginBottom: 6 }}
+              style={{
+                display: 'flex',
+                gap: 8,
+                marginBottom: 8,
+                alignItems: 'center',
+              }}
             >
+              <label
+                className='bmchat-visually-hidden'
+                htmlFor={fieldId(`cmd-k-${idx}`)}
+              >
+                {tx('bmchat_email_bot_command_key')}
+              </label>
               <input
-                className='search-input'
-                style={{ width: 110 }}
+                id={fieldId(`cmd-k-${idx}`)}
+                className='bmchat-dialog-input'
+                style={{ width: 112 }}
                 placeholder={tx('bmchat_email_bot_command_key')}
                 value={c.k}
                 onChange={e => updateCommand(idx, 'k', e.target.value)}
               />
+              <label
+                className='bmchat-visually-hidden'
+                htmlFor={fieldId(`cmd-v-${idx}`)}
+              >
+                {tx('bmchat_email_bot_command_value')}
+              </label>
               <input
-                className='search-input'
+                id={fieldId(`cmd-v-${idx}`)}
+                className='bmchat-dialog-input'
                 style={{ flex: 1 }}
                 placeholder={tx('bmchat_email_bot_command_value')}
                 value={c.v}
                 onChange={e => updateCommand(idx, 'v', e.target.value)}
               />
-              <button
-                className='delta-button-round'
+              <Button
+                className='bmchat-dialog-action'
+                aria-label={tx('delete')}
+                title={tx('delete')}
                 onClick={() =>
                   setCommands(cs => cs.filter((_, i) => i !== idx))
                 }
               >
-                ✕
-              </button>
+                <span aria-hidden='true'>✕</span>
+              </Button>
             </div>
           ))}
-          <button
-            className='delta-button-round'
+          <Button
+            className='bmchat-dialog-action'
             onClick={() => setCommands(cs => [...cs, { k: '', v: '' }])}
           >
             {tx('bmchat_email_bot_add_command')}
-          </button>
+          </Button>
 
-          <p style={{ fontSize: 12, opacity: 0.7, marginTop: 12 }}>
+          <p className='bmchat-dialog-hint' style={{ marginTop: 12 }}>
             {tx('bmchat_email_bot_placeholders_hint')}
           </p>
-          {error && <p className='input-error'>{error}</p>}
+          {error && (
+            <p className='bmchat-dialog-error' role='alert'>
+              {error}
+            </p>
+          )}
         </DialogContent>
       </DialogBody>
       <DialogFooter>

@@ -16,6 +16,11 @@ input.search-input {
   // A blinking cursor is enough in terms of visibility. Or is it??
   outline: none;
 
+  &:focus-visible {
+    outline: 2px solid var(--loginInputFocusColor, var(--colorPrimary));
+    outline-offset: 1px;
+  }
+
   &.wrap {
     margin-inline-start: 40px;
     padding: 10px 0px;

@@ -3,8 +3,25 @@ import React, { PropsWithChildren } from 'react'
 import { runtime } from '@deltachat-desktop/runtime-interface'
 import { getLogger } from '../../../../shared/logger'
 import { DialogContext } from '../../contexts/DialogContext'
+import type { TranslationKey } from '@deltachat-desktop/shared/translationKeyType'
+import type { getMessageFunction } from '@deltachat-desktop/shared/localize'
 
 const log = getLogger('renderer/react-crashhandler')
+
+// The crash screen can render before App has loaded the locale data.
+function crashText(
+  key: TranslationKey,
+  fallback: string,
+  substitutions?: string | string[]
+): string {
+  const translate = (
+    window as unknown as { static_translate?: getMessageFunction }
+  ).static_translate
+  if (typeof translate !== 'function') {
+    return fallback
+  }
+  return translate(key, substitutions)
+}
 
 interface CrashScreenState {
   hasError: boolean
@@ -45,16 +62,17 @@ export class CrashScreen extends React.Component<
       const { VERSION, GIT_REF } = runtime.getRuntimeInfo().buildInfo
       return (
         <div className='crash-screen'>
-          <h1>Ooops something crashed</h1>
+          <h1>{crashText('bmchat_crash_title', 'Oops, something crashed')}</h1>
           <h2>
-            Please restart BMChat, if this problem persists please notify the
-            developers on github issues (
+            {crashText(
+              'bmchat_crash_explain',
+              'Please restart BMChat. If the problem persists, please report it to the developers:'
+            )}{' '}
+            (
             <a
               href='#'
               onClick={_ =>
-                runtime.openLink(
-                  'https://github.com/hvkeyn/BMChat/issues'
-                )
+                runtime.openLink('https://github.com/hvkeyn/BMChat/issues')
               }
             >
               github.com/hvkeyn/BMChat/issues
@@ -63,23 +81,30 @@ export class CrashScreen extends React.Component<
           </h2>
           <p>
             <button type='button' onClick={_ => runtime.reloadWebContent()}>
-              Reload
+              {crashText('bmchat_crash_reload', 'Reload')}
             </button>
             <button type='button' onClick={_ => runtime.openLogFile()}>
-              Open Logfile
+              {crashText(
+                'menu.view.developer.open.current.log.file',
+                'Open Current Logfile'
+              )}
             </button>
           </p>
           <p>
             <pre className='error-details'>{this.state.error}</pre>
           </p>
           <p>
-            Full Log under{' '}
+            {crashText('bmchat_crash_full_log', 'Full log:')}{' '}
             <a href='#' onClick={_ => runtime.openLogFile()}>
               {runtime.getCurrentLogLocation()}
             </a>
           </p>
           <p>
-            BMChat Version: {VERSION} (git: {GIT_REF})
+            {crashText(
+              'bmchat_crash_version',
+              `BMChat version: ${VERSION} (git: ${GIT_REF})`,
+              [VERSION, GIT_REF]
+            )}
           </p>
         </div>
       )

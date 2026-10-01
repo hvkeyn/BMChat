@@ -9,35 +9,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="2dp"
-    android:background="#1F1F22"
+    android:background="@color/gray95"
+    android:contentDescription="@string/bmchat_gallery_picker_camera"
     android:foreground="?android:attr/selectableItemBackground">
 
     <androidx.camera.view.PreviewView
         android:id="@+id/bmchat_gallery_camera_preview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:importantForAccessibility="no" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#33000000" />
+        android:background="@color/transparent_black_30" />
 
     <ImageView
         android:id="@+id/bmchat_gallery_camera_icon"
-        android:layout_width="42dp"
-        android:layout_height="42dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="center"
         android:src="@drawable/ic_photo_camera_white_36dp"
-        android:tint="#FFFFFFFF"
+        android:tint="@color/core_white"
         android:contentDescription="@null"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="8dp"
         android:text="@string/bmchat_gallery_picker_camera"
-        android:textColor="#FFFFFFFF"
+        android:textColor="@color/core_white"
+        android:importantForAccessibility="no"
         android:textSize="12sp"/>
 
 </FrameLayout>

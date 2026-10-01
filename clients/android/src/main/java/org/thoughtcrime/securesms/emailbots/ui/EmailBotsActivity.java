@@ -14,6 +14,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -82,6 +85,22 @@ public class EmailBotsActivity extends PassphraseRequiredActionBarActivity {
 
     FloatingActionButton fab = findViewById(R.id.email_bots_add);
     fab.setOnClickListener(v -> openEditor(null));
+
+    // Edge-to-edge: keep the last row and the "+" FAB above the system navigation bar.
+    final int baseListPadding = list.getPaddingBottom();
+    final int baseFabMargin = ((ViewGroup.MarginLayoutParams) fab.getLayoutParams()).bottomMargin;
+    ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.email_bots_root), (v, windowInsets) -> {
+      Insets bars = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars());
+      list.setPadding(
+          list.getPaddingLeft(),
+          list.getPaddingTop(),
+          list.getPaddingRight(),
+          baseListPadding + bars.bottom);
+      ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams) fab.getLayoutParams();
+      lp.bottomMargin = baseFabMargin + bars.bottom;
+      fab.setLayoutParams(lp);
+      return windowInsets;
+    });
   }
 
   @Override

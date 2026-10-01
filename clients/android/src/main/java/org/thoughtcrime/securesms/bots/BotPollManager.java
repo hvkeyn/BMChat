@@ -21,6 +21,7 @@ import com.b44t.messenger.DcContext;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.connect.DcHelper;
 
 import java.io.IOException;
@@ -238,7 +239,7 @@ public final class BotPollManager {
       }
       final PollResult fres = res;
       MAIN.post(() -> {
-        try { Toast.makeText(appContext, formatToast(fres), Toast.LENGTH_LONG).show(); }
+        try { Toast.makeText(appContext, formatToast(appContext, fres), Toast.LENGTH_LONG).show(); }
         catch (Throwable ignored) {}
         try { onDone.run(); } catch (Throwable ignored) {}
       });
@@ -280,12 +281,15 @@ public final class BotPollManager {
     }
   }
 
-  private static String formatToast(@NonNull PollResult r) {
-    if (r.received == 0) return "Нет новых сообщений у ботов";
-    StringBuilder sb = new StringBuilder("Получено: ").append(r.received);
-    if (r.published > 0) sb.append(" · в чат: ").append(r.published);
-    if (r.queued > 0) sb.append(" · в очередь/журнал: ").append(r.queued);
-    if (r.dropped > 0) sb.append(" · пропущено: ").append(r.dropped);
+  private static String formatToast(@NonNull Context ctx, @NonNull PollResult r) {
+    if (r.received == 0) return ctx.getString(R.string.bmchat_bots_poll_nothing_new);
+    StringBuilder sb = new StringBuilder(
+        ctx.getString(R.string.bmchat_bots_poll_received_fmt, r.received));
+    if (r.published > 0) {
+      sb.append(ctx.getString(R.string.bmchat_bots_poll_published_fmt, r.published));
+    }
+    if (r.queued > 0) sb.append(ctx.getString(R.string.bmchat_bots_poll_queued_fmt, r.queued));
+    if (r.dropped > 0) sb.append(ctx.getString(R.string.bmchat_bots_poll_dropped_fmt, r.dropped));
     return sb.toString();
   }
 }

@@ -1,0 +1,70 @@
+// BMChat: shared form controls for BMChat-specific dialogs
+// (bots, invite by email, scheduled messages).
+
+input.bmchat-dialog-input,
+textarea.bmchat-dialog-input {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 8px 12px;
+  border: 1px solid var(--textLessContrast, var(--separatorColor));
+  border-radius: 8px;
+  background-color: var(--bgPrimary);
+  color: var(--bp4InputText, var(--textPrimary));
+  caret-color: var(--colorPrimary);
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+
+  &::placeholder {
+    color: var(--textLessContrast);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--loginInputFocusColor, var(--colorPrimary));
+    outline-offset: 1px;
+  }
+
+  &[readonly] {
+    background-color: var(--bgSecondary);
+  }
+}
+
+.bmchat-dialog-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--textPrimary);
+  font-size: 14px;
+}
+
+.bmchat-dialog-hint {
+  color: var(--textSecondary);
+  font-size: 12px;
+}
+
+.bmchat-dialog-error {
+  color: var(--colorDanger);
+  font-size: 14px;
+}
+
+// element + class beats the single-class CSS module rule of <Button>
+button.bmchat-dialog-action {
+  font-size: 14px;
+  padding: 4px 12px;
+
+  &:focus-visible {
+    outline: 2px solid var(--colorPrimary);
+    outline-offset: 2px;
+  }
+}
+
+.bmchat-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

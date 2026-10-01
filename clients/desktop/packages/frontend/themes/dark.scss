@@ -31,3 +31,13 @@
   --name: 'BMChat Dark';
   --description: 'Deep burgundy BMChat theme based on the B-mark identity.';
 }
+
+/* overwrite themedata */
+:root {
+  /* $colorPrimary is a light pink accent; filled buttons need a darker
+     burgundy so white labels keep >= 4.5:1 contrast. */
+  --buttonPrimaryBackground: #c62a48;
+  --buttonPrimaryHover: #a8213b;
+  --buttonPrimaryText: #fff;
+  --globalLinkColor: #f4a0af;
+}

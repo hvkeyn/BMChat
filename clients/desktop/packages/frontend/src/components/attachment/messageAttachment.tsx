@@ -156,6 +156,7 @@ export default function Attachment({
           })
         }}
         tabIndex={tabindexForInteractiveContents}
+        aria-label={tx('bmchat_play_video')}
         className={classNames(
           'message-attachment-media',
           'bmchat-tg-video-poster',

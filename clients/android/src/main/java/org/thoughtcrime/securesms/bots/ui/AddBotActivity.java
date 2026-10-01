@@ -157,14 +157,15 @@ public class AddBotActivity extends PassphraseRequiredActionBarActivity {
         TelegramApi api = new TelegramApi(token);
         JSONObject me = api.getMe();
         if (me == null) {
-          error = "Telegram отклонил токен.";
+          error = getString(R.string.bmchat_bots_invalid_token);
         } else {
           result = me.optJSONObject("result");
-          if (result == null) error = "Telegram отклонил токен.";
+          if (result == null) error = getString(R.string.bmchat_bots_invalid_token);
         }
       } catch (Throwable t) {
         Log.w(TAG, "verifyToken failed", t);
-        error = t.getMessage() == null ? "Ошибка сети." : t.getMessage();
+        error = t.getMessage() == null
+            ? getString(R.string.bmchat_bots_network_error) : t.getMessage();
       }
       final String fError = error;
       final JSONObject fResult = result;
@@ -207,8 +208,8 @@ public class AddBotActivity extends PassphraseRequiredActionBarActivity {
   private void showStatus(String text, boolean isError) {
     statusView.setVisibility(View.VISIBLE);
     statusView.setText(text);
-    statusView.setTextColor(getResources().getColor(
-        isError ? android.R.color.holo_red_dark : android.R.color.holo_green_dark));
+    statusView.setTextColor(androidx.core.content.ContextCompat.getColor(this,
+        isError ? R.color.bmchat_status_offline : R.color.bmchat_status_ok));
   }
 
   // ---------------------------------------------------------------------
@@ -230,10 +231,11 @@ public class AddBotActivity extends PassphraseRequiredActionBarActivity {
             getApplicationContext(), verifiedToken, verifiedMeResult);
       } catch (Throwable t) {
         Log.w(TAG, "buildContact failed", t);
-        error = t.getMessage() == null ? "Ошибка создания контакта бота." : t.getMessage();
+        error = t.getMessage() == null
+            ? getString(R.string.bmchat_bots_contact_create_error) : t.getMessage();
       }
       if (built == null && error == null) {
-        error = "Не удалось зарегистрировать бота. Попробуйте ещё раз.";
+        error = getString(R.string.bmchat_bots_register_failed);
       }
       final String fError = error;
       final BotContactFactory.Result fBuilt = built;

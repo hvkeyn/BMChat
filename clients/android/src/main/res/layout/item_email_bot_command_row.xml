@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:layout_marginBottom="10dp">
+    android:layout_marginBottom="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,10 +19,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="2dp"
+            android:layout_marginEnd="4dp"
             android:textColor="?android:attr/textColorPrimary"
             android:textSize="14sp"
-            android:text="/" />
+            android:importantForAccessibility="no"
+            android:text="@string/bmchat_email_bot_command_prefix" />
 
         <EditText
             android:id="@+id/email_bot_command_name"
@@ -35,8 +36,9 @@
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/email_bot_command_delete"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/bmchat_email_bot_remove_command"
             android:src="@drawable/ic_close_white_24dp"

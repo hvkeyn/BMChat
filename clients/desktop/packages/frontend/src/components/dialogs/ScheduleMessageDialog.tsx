@@ -69,18 +69,29 @@ export default function ScheduleMessageDialog({
       <DialogHeader title={tx('bmchat_schedule_message')} />
       <DialogBody>
         <DialogContent>
-          <p>{tx('bmchat_schedule_pick_time')}</p>
+          <label
+            className='bmchat-dialog-label'
+            htmlFor='bmchat-schedule-datetime-input'
+          >
+            {tx('bmchat_schedule_pick_time')}
+          </label>
           <input
+            id='bmchat-schedule-datetime-input'
+            className='bmchat-dialog-input'
             type='datetime-local'
             value={value}
             onChange={e => {
               setValue(e.currentTarget.value)
               setError(null)
             }}
-            style={{ width: '100%', padding: '6px 8px', marginTop: 8 }}
+            style={{ width: '100%', marginTop: 8 }}
           />
           {error && (
-            <p style={{ color: 'var(--colorDanger, #d33)', marginTop: 8 }}>
+            <p
+              className='bmchat-dialog-error'
+              role='alert'
+              style={{ marginTop: 8 }}
+            >
               {error}
             </p>
           )}
@@ -91,7 +102,9 @@ export default function ScheduleMessageDialog({
           <FooterActionButton onClick={onClose}>
             {tx('cancel')}
           </FooterActionButton>
-          <FooterActionButton onClick={submit}>{tx('ok')}</FooterActionButton>
+          <FooterActionButton styling='primary' onClick={submit}>
+            {tx('ok')}
+          </FooterActionButton>
         </FooterActions>
       </DialogFooter>
     </Dialog>

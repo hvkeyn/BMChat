@@ -26,8 +26,8 @@ $tab-height: 46px;
       padding-bottom: 6px;
       &.selected,
       &:hover {
-        color: var(--globalLinkColor);
-        border-bottom: 3px solid var(--globalLinkColor);
+        color: var(--colorPrimary);
+        border-bottom: 3px solid var(--colorPrimary);
         cursor: pointer;
       }
       &.big-date {

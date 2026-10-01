@@ -11,4 +11,7 @@
     <color name="dummy_avatar_color">#C62A48</color>
 
     <color name="delete_account_item_bg">#222222</color>
+
+    <color name="bmchat_surface_card">@color/bmchat_card_bg_dark</color>
+    <color name="bmchat_surface_card_stroke">@color/bmchat_card_stroke_dark</color>
 </resources>

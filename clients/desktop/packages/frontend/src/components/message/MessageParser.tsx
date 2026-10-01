@@ -147,7 +147,7 @@ function renderElement(
     default:
       log.error(`type ${elm.t} not known/implemented yet`, elm)
       return (
-        <span key={key} style={{ color: 'red' }}>
+        <span key={key} style={{ color: 'var(--colorDanger)' }}>
           {elm.v}
         </span>
       )
@@ -300,7 +300,11 @@ export function parseAndRenderMessage(
     const { attribution, body } = splitAttributionAndBody(message)
     const renderBody = (text: string, keyPrefix: string) => {
       if (messageLikelyFormatted(text)) {
-        return renderFormattedBlock(text, tabindexForInteractiveContents, keyPrefix)
+        return renderFormattedBlock(
+          text,
+          tabindexForInteractiveContents,
+          keyPrefix
+        )
       }
       const elements = parseElements(text)
       return (
@@ -446,16 +450,6 @@ function BmchatBotLink({
       className='bmchat-bot-inline-btn'
       onClick={onClick}
       tabIndex={tabIndex}
-      style={{
-        display: 'inline-block',
-        margin: '2px 4px 2px 0',
-        padding: '4px 10px',
-        borderRadius: 14,
-        background: 'var(--colorPrimary, #4a90d9)',
-        color: '#fff',
-        textDecoration: 'none',
-        fontSize: '0.92em',
-      }}
     >
       {label.replace(/^🔘\s*/, '')}
     </a>

@@ -3,10 +3,7 @@ import React, { useRef, useCallback, useEffect, useState } from 'react'
 import { DialogBody, DialogFooter, FooterActions } from '../../Dialog'
 import FooterActionButton from '../../Dialog/FooterActionButton'
 import { QrReader } from '../../QrReader'
-import {
-  fileToBase64,
-  base64ToImageData,
-} from '../../QrReader/helper'
+import { fileToBase64, base64ToImageData } from '../../QrReader/helper'
 // @ts-ignore: virtual import resolved by esbuild-plugin-inline-worker
 import QrWorker from '../../QrReader/qr.worker'
 import useProcessQr from '../../../hooks/useProcessQr'
@@ -98,7 +95,9 @@ export function ReceiveBackupDialog({ onClose }: Props & DialogProps) {
   const [relayStatus, setRelayStatus] = useState<RelayStatus | null>(null)
   const [relayCode, setRelayCode] = useState('')
   const [relayImporting, setRelayImporting] = useState(false)
-  const [relayImportProgress, setRelayImportProgress] = useState<number | null>(null)
+  const [relayImportProgress, setRelayImportProgress] = useState<number | null>(
+    null
+  )
 
   // BMChat: dedicated worker + hidden file input so the helper-QR view
   // can decode QR codes from clipboard / screenshots without spinning
@@ -317,7 +316,8 @@ export function ReceiveBackupDialog({ onClose }: Props & DialogProps) {
   }, [])
 
   const handleRelayImport = useCallback(async () => {
-    if (!relaySession || !relayStatus?.uploaded || !relayStatus.code_hash) return
+    if (!relaySession || !relayStatus?.uploaded || !relayStatus.code_hash)
+      return
     try {
       setRelayImporting(true)
       setRelayImportProgress(0)
@@ -381,10 +381,12 @@ export function ReceiveBackupDialog({ onClose }: Props & DialogProps) {
               <img
                 className={styles.helperQrImage}
                 src={helperQrUrl}
-                alt='QR'
+                alt={tx('qr_code')}
               />
             ) : (
-              <div className={styles.helperQrImage}>…</div>
+              <div className={styles.helperQrImage} role='status'>
+                {tx('loading')}
+              </div>
             )}
             <ol className={styles.helperQrSteps}>
               <li>{tx('bmchat_multidevice_helper_qr_step1')}</li>
@@ -398,14 +400,23 @@ export function ReceiveBackupDialog({ onClose }: Props & DialogProps) {
               </div>
               {relayStatus?.uploaded && (
                 <div className={styles.relayCodeRow}>
+                  <label
+                    className='bmchat-visually-hidden'
+                    htmlFor='bmchat-relay-code-input'
+                  >
+                    {tx('bmchat_multidevice_relay_code_label')}
+                  </label>
                   <input
+                    id='bmchat-relay-code-input'
                     className={styles.relayCodeInput}
                     value={relayCode}
                     inputMode='numeric'
                     maxLength={6}
                     placeholder='000000'
                     onChange={ev =>
-                      setRelayCode(ev.target.value.replace(/\D/g, '').slice(0, 6))
+                      setRelayCode(
+                        ev.target.value.replace(/\D/g, '').slice(0, 6)
+                      )
                     }
                     disabled={relayImporting}
                   />

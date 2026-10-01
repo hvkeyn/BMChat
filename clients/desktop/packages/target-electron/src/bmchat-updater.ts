@@ -39,7 +39,13 @@ import { BuildInfo } from './get-build-info.js'
 
 const log = getLogger('main/bmchat-updater')
 
-const UPDATE_MANIFEST_URL = 'http://5.187.4.132/desktop-update.json'
+const DEFAULT_HOSTS = [
+  'http://5.187.4.132',
+  'http://51.250.82.211:8080',
+  'http://158.160.104.107:8080',
+]
+const MANIFEST_PATH = '/desktop-update.json'
+const UPDATE_MANIFEST_URL = DEFAULT_HOSTS[0] + MANIFEST_PATH
 const FOREGROUND_DELAY_MS = 10_000
 const MIN_INTERVAL_MS = 12 * 60 * 60 * 1000 // 12 hours
 const REQUEST_TIMEOUT_MS = 8_000
@@ -57,6 +63,7 @@ interface PlatformVariant {
 interface DesktopManifest {
   version: string
   notes?: string
+  mirrors?: string[]
   platforms: Record<string, PlatformVariant>
 }
 
@@ -163,7 +170,23 @@ async function runCheck(): Promise<void> {
   }
 }
 
-function fetchManifest(): Promise<DesktopManifest | null> {
+async function fetchManifest(): Promise<DesktopManifest | null> {
+  for (const host of DEFAULT_HOSTS) {
+    const url = host.replace(/\/+$/, '') + MANIFEST_PATH
+    try {
+      const m = await fetchManifestFromUrl(url)
+      if (m) {
+        log.info(`fetched manifest from ${host} (v${m.version})`)
+        return m
+      }
+    } catch (err) {
+      log.debug(`fetch manifest failed from ${host}`, err)
+    }
+  }
+  return null
+}
+
+function fetchManifestFromUrl(url: string): Promise<DesktopManifest | null> {
   return new Promise(resolve => {
     let settled = false
     const finish = (value: DesktopManifest | null) => {
@@ -174,7 +197,7 @@ function fetchManifest(): Promise<DesktopManifest | null> {
     let req: http.ClientRequest | undefined
     try {
       req = http.get(
-        UPDATE_MANIFEST_URL,
+        url,
         {
           timeout: REQUEST_TIMEOUT_MS,
           headers: {
@@ -383,7 +406,8 @@ async function downloadAndInstall(
 
     progressWindow = createProgressWindow(m.version)
 
-    await downloadWithProgress(variant, dest, progressWindow)
+    const mirrors = Array.from(new Set([...(m.mirrors ?? []), ...DEFAULT_HOSTS]))
+    await downloadWithProgress(variant, dest, progressWindow, mirrors)
 
     // SHA-256 verification (best effort: only if manifest provided one).
     if (variant.sha256) {
@@ -503,7 +527,46 @@ function updateProgress(
   }
 }
 
-function downloadWithProgress(
+async function downloadWithProgress(
+  variant: PlatformVariant,
+  dest: string,
+  progressWindow: BrowserWindow,
+  mirrors: string[]
+): Promise<void> {
+  const urls: string[] = [variant.url]
+  let pathname = ''
+  try {
+    pathname = new URL(variant.url).pathname
+  } catch {}
+  if (pathname) {
+    for (const m of mirrors) {
+      const candidate = m.replace(/\/+$/, '') + pathname
+      if (!urls.includes(candidate)) {
+        urls.push(candidate)
+      }
+    }
+  }
+
+  let lastErr: Error | null = null
+  for (const tryUrl of urls) {
+    try {
+      log.info(`attempting download from: ${tryUrl}`)
+      await downloadSingleUrl(tryUrl, variant, dest, progressWindow)
+      log.info(`download complete from: ${tryUrl}`)
+      return
+    } catch (err) {
+      lastErr = err as Error
+      log.warn(`download failed from ${tryUrl}, will try next mirror if available:`, err)
+      try {
+        if (fs.existsSync(dest)) fs.unlinkSync(dest)
+      } catch {}
+    }
+  }
+  throw lastErr || new Error('download failed from all mirrors')
+}
+
+function downloadSingleUrl(
+  urlToDownload: string,
   variant: PlatformVariant,
   dest: string,
   progressWindow: BrowserWindow
@@ -601,7 +664,7 @@ function downloadWithProgress(
       }
     }
 
-    doRequest(variant.url, 5)
+    doRequest(urlToDownload, 5)
   })
 }
 

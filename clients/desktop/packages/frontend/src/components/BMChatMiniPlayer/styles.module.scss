@@ -9,22 +9,22 @@
   align-items: center;
   gap: 12px;
   padding: 8px 12px;
-  background: var(--bgPrimary, #1f1f24);
-  color: var(--textPrimary, #ffffff);
+  background: var(--bgPrimary);
+  color: var(--textPrimary);
   border-radius: 28px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.32);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.32);
   min-width: 280px;
   max-width: 420px;
   font-family: inherit;
 }
 
 .playPause {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: none;
-  background: var(--colorPrimary, #7b1226);
-  color: #ffffff;
+  background: var(--buttonPrimaryBackground);
+  color: var(--buttonPrimaryText);
   font-size: 14px;
   cursor: pointer;
   flex: 0 0 auto;
@@ -34,7 +34,7 @@
 }
 
 .playPause:hover {
-  background: var(--colorPrimaryHover, #8f1830);
+  background: var(--buttonPrimaryHover);
 }
 
 .body {
@@ -46,12 +46,12 @@
 }
 
 .title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: var(--textPrimary, #ffffff);
+  color: var(--textPrimary);
 }
 
 .row {
@@ -62,31 +62,41 @@
 
 .time {
   font-variant-numeric: tabular-nums;
-  font-size: 11px;
-  color: var(--textSecondary, #b6b6bb);
+  font-size: 12px;
+  color: var(--textSecondary);
   min-width: 32px;
 }
 
 .seek {
   flex: 1 1 auto;
-  accent-color: var(--colorPrimary, #7b1226);
+  accent-color: var(--colorPrimary);
 }
 
 .speed,
 .close {
   background: transparent;
   border: none;
-  color: var(--textSecondary, #b6b6bb);
+  color: var(--textSecondary);
   cursor: pointer;
   padding: 4px 8px;
-  font-size: 13px;
+  font-size: 12px;
   border-radius: 8px;
 }
 
 .speed:hover,
 .close:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: var(--textPrimary, #ffffff);
+  background: var(--globalHoverBg);
+  color: var(--textPrimary);
+}
+
+.playPause,
+.speed,
+.close,
+.seek {
+  &:focus-visible {
+    outline: 2px solid var(--colorPrimary);
+    outline-offset: 2px;
+  }
 }
 
 .speed {

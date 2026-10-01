@@ -46,6 +46,28 @@ public class DcContactsLoader extends AsyncLoader<DcContactsLoader.Ret> {
     }
 
     int[] contact_ids = dcContext.getContacts(listflags, query);
+    if (query != null && !query.trim().isEmpty()) {
+      java.util.LinkedHashSet<Integer> mergedContacts = new java.util.LinkedHashSet<>();
+      String trimmed = query.trim();
+      if (dcContext.mayBeValidAddr(trimmed)) {
+        int directId = dcContext.lookupContactIdByAddr(trimmed);
+        if (directId > 0) {
+          mergedContacts.add(directId);
+        }
+      }
+      for (int id : contact_ids) {
+        mergedContacts.add(id);
+      }
+      int[] addrContacts = dcContext.getContacts(listflags | DcContext.DC_GCL_ADDRESS, trimmed);
+      for (int id : addrContacts) {
+        mergedContacts.add(id);
+      }
+      contact_ids = new int[mergedContacts.size()];
+      int idx = 0;
+      for (int id : mergedContacts) {
+        contact_ids[idx++] = id;
+      }
+    }
     contact_ids = mergeEmailBotContacts(dcContext.getAccountId(), contact_ids, query);
     int[] additional_items = new int[0];
     if (query == null && addScanQRLink) {

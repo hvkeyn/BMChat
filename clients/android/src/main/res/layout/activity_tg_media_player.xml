@@ -11,7 +11,7 @@
     android:id="@+id/tg_player_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@android:color/black"
     android:fitsSystemWindows="false">
 
     <VideoView
@@ -33,7 +33,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"
-        android:textColor="#FFFFFFFF"
+        android:textColor="@color/core_white"
+        android:textSize="16sp"
         android:text="@string/bmchat_tg_media_player_error_explain"
         android:padding="16dp" />
 
@@ -42,7 +43,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:background="#99000000">
+        android:background="@color/bmchat_player_overlay">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -50,8 +51,8 @@
             android:layout_height="?attr/actionBarSize"
             android:minHeight="?attr/actionBarSize"
             android:background="@android:color/transparent"
-            app:contentInsetStart="14dp"
-            app:contentInsetLeft="14dp"
+            app:contentInsetStart="16dp"
+            app:contentInsetLeft="16dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -65,35 +66,36 @@
         android:gravity="center_vertical"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="10dp"
-        android:background="#99000000">
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@color/bmchat_player_overlay">
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/tg_player_play_pause"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/bmchat_tg_media_player_play_pause"
             android:src="@drawable/ic_pause_white_36dp"
-            app:tint="#FFFFFFFF" />
+            app:tint="@color/core_white" />
 
         <TextView
             android:id="@+id/tg_player_time_current"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FFFFFFFF"
+            android:textColor="@color/core_white"
             android:textSize="12sp"
             android:fontFamily="monospace"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
-            android:text="0:00" />
+            android:text="@string/bmchat_tg_media_player_time_zero" />
 
         <SeekBar
             android:id="@+id/tg_player_seek"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:minHeight="48dp"
             android:max="1000"
             android:progress="0" />
 
@@ -101,34 +103,35 @@
             android:id="@+id/tg_player_time_total"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#CCFFFFFF"
+            android:textColor="@color/bmchat_on_media_secondary"
             android:textSize="12sp"
             android:fontFamily="monospace"
             android:paddingStart="4dp"
             android:paddingEnd="4dp"
-            android:text="0:00" />
+            android:text="@string/bmchat_tg_media_player_time_zero" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/tg_player_speed"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
+            android:layout_height="48dp"
             android:gravity="center"
             android:minWidth="48dp"
             android:textStyle="bold"
-            android:textColor="#FFFFFFFF"
-            android:textSize="13sp"
-            android:padding="6dp"
+            android:textColor="@color/core_white"
+            android:textSize="14sp"
+            android:padding="8dp"
+            android:contentDescription="@string/bmchat_tg_media_player_speed"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:text="1x" />
+            android:text="@string/bmchat_tg_media_player_speed_default" />
 
         <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/tg_player_fullscreen"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/bmchat_tg_media_player_fullscreen"
             android:src="@drawable/ic_fullscreen_white_24dp"
-            app:tint="#FFFFFFFF" />
+            app:tint="@color/core_white" />
     </LinearLayout>
 
 </FrameLayout>
