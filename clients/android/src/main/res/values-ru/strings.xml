@@ -23,6 +23,13 @@
     <string name="open">Открыть</string>
     <string name="download">Загрузить</string>
     <string name="downloading">Загрузка…</string>
+    <string name="bmchat_transfer_receiving">Получение</string>
+    <string name="bmchat_transfer_sending">Отправка</string>
+    <string name="bmchat_transfer_preparing">Подготовка файла</string>
+    <string name="bmchat_transfer_not_downloaded">Не скачан</string>
+    <string name="bmchat_transfer_downloaded">Скачан</string>
+    <string name="bmchat_transfer_sent">Отправлен</string>
+    <string name="bmchat_transfer_send_failed">Не отправлен</string>
     <string name="open_attachment">Открыть вложение</string>
     <string name="join">Присоединиться</string>
     <string name="join_group">Вступить в группу</string>

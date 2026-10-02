@@ -9,6 +9,7 @@ import moment from 'moment'
 import useTranslationFunction from '../../../hooks/useTranslationFunction'
 import { useRpcFetch } from '../../../hooks/useFetch'
 import useOpenViewProfileDialog from '../../../hooks/dialog/useOpenViewProfileDialog'
+import { fileTransferDetails } from '../../message/FileTransferStatus'
 
 function useMessageReadReceipts(messageId: number) {
   const accountId = selectedAccountId()
@@ -59,6 +60,8 @@ export function BasicMessageInfo(props: BasicMessageInfoProps) {
     ? receivedTimestamp.format('lll')
     : null
 
+  const transfer = fileTransferDetails(key => tx(key as never), message)
+
   return (
     <div className={styles.formattedMessageInfo}>
       <div className={styles.infoRow}>
@@ -73,6 +76,26 @@ export function BasicMessageInfo(props: BasicMessageInfoProps) {
             {tx('message_detail_received_desktop')}
           </span>
           <span className={styles.infoValue}>{receivedFormatted}</span>
+        </div>
+      )}
+      {transfer?.name && (
+        <div className={styles.infoRow}>
+          <span className={styles.infoLabel}>{tx('file')}</span>
+          <span className={styles.infoValueWrap}>{transfer.name}</span>
+        </div>
+      )}
+      {transfer?.size && (
+        <div className={styles.infoRow}>
+          <span className={styles.infoLabel}>{tx('bmchat_transfer_size')}</span>
+          <span className={styles.infoValue}>{transfer.size}</span>
+        </div>
+      )}
+      {transfer?.status && (
+        <div className={styles.infoRow}>
+          <span className={styles.infoLabel}>
+            {tx('bmchat_transfer_status')}
+          </span>
+          <span className={styles.infoValue}>{transfer.status}</span>
         </div>
       )}
       {receipts.length > 0 && (

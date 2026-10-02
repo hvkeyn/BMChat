@@ -806,6 +806,7 @@ public class ConversationItem extends BaseConversationItem {
       audioViewStub.get().setOnActionListener(audioPlayPauseListener);
       audioViewStub.get().setAudio(new AudioSlide(context, messageRecord));
       audioViewStub.get().setDownloadState(computeDownloadOverlayState(messageRecord));
+      audioViewStub.get().setTransfer(messageRecord);
       audioViewStub
           .get()
           .setOnDownloadClickListener(
@@ -842,6 +843,7 @@ public class ConversationItem extends BaseConversationItem {
       documentViewStub.get().setDocument(new DocumentSlide(context, messageRecord));
       documentViewStub.get().setDocumentClickListener(new ThumbnailClickListener());
       documentViewStub.get().setDownloadState(computeDownloadOverlayState(messageRecord));
+      documentViewStub.get().setTransfer(messageRecord);
       documentViewStub
           .get()
           .setOnDownloadClickListener(
@@ -1032,6 +1034,7 @@ public class ConversationItem extends BaseConversationItem {
       mediaThumbnailStub
           .get()
           .setDownloadState(computeDownloadOverlayState(messageRecord));
+      mediaThumbnailStub.get().setTransfer(messageRecord);
       mediaThumbnailStub
           .get()
           .setOnDownloadClickListener(

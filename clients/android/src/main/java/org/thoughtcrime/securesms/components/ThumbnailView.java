@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+import androidx.core.content.ContextCompat;
+import com.b44t.messenger.DcMsg;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import androidx.annotation.NonNull;
 import androidx.annotation.UiThread;
 import chat.delta.util.ListenableFuture;
@@ -41,6 +45,9 @@ public class ThumbnailView extends FrameLayout {
   private final ImageView image;
   private final View playOverlay;
   private final BMChatDownloadOverlay downloadOverlay;
+  private final View transferRow;
+  private final TextView transferLabel;
+  private final LinearProgressIndicator transferProgress;
   /** When true, the play overlay is shown regardless of the slide
    *  type. Used by ConversationItem to mark "video poster" image
    *  bubbles (BMChat-specific Telegram-bot fallback for >20 MB
@@ -72,6 +79,9 @@ public class ThumbnailView extends FrameLayout {
     this.image = findViewById(R.id.thumbnail_image);
     this.playOverlay = findViewById(R.id.play_overlay);
     this.downloadOverlay = findViewById(R.id.bmchat_download_overlay);
+    this.transferRow = findViewById(R.id.bmchat_transfer_row);
+    this.transferLabel = findViewById(R.id.bmchat_transfer_label);
+    this.transferProgress = findViewById(R.id.bmchat_transfer_progress);
     super.setOnClickListener(new ThumbnailClickDispatcher());
 
     if (attrs != null) {
@@ -233,6 +243,17 @@ public class ThumbnailView extends FrameLayout {
    * The download overlay hides the play badge while it is visible so the
    * user never sees both glyphs at once.
    */
+  public void setTransfer(@NonNull DcMsg msg) {
+    BMChatTransferStatus.bind(
+        transferRow,
+        transferLabel,
+        transferProgress,
+        msg,
+        true,
+        ContextCompat.getColor(getContext(), R.color.core_white),
+        false);
+  }
+
   public void setDownloadState(int overlayState) {
     if (downloadOverlay == null) return;
     downloadOverlay.setState(overlayState);

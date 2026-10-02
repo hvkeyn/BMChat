@@ -35,6 +35,11 @@
   flex-shrink: 0;
 }
 
+.infoValueWrap {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
 .readByHeader {
   display: flex;
   align-items: center;

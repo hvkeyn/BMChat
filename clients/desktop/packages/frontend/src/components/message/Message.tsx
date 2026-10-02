@@ -35,6 +35,7 @@ import { runtime } from '@deltachat-desktop/runtime-interface'
 import { ConversationType } from './MessageList'
 import { getDirection } from '../../utils/getDirection'
 import { mapCoreMsgStatus2String } from '../helpers/MapMsgStatus'
+import FileTransferStatus from './FileTransferStatus'
 import { ContextMenuItem } from '../ContextMenu'
 import { onDCEvent, BackendRemote } from '../../backend-com'
 import { selectedAccountId } from '../../ScreenController'
@@ -847,33 +848,6 @@ export default function Message(props: {
 
   const { downloadState } = message
 
-  if (downloadState !== 'Done') {
-    content = (
-      <div className={'download'}>
-        {visibleText} {'- '}
-        {downloadState == 'Failure' && (
-          <span key='fail' className={'failed'}>
-            {tx('download_failed')}
-          </span>
-        )}
-        {downloadState == 'InProgress' && (
-          <span key='downloading'>{tx('downloading')}</span>
-        )}
-        {(downloadState == 'Failure' || downloadState === 'Available') && (
-          <button
-            type='button'
-            onClick={() =>
-              BackendRemote.rpc.downloadFullMessage(accountId, message.id)
-            }
-            tabIndex={tabindexForInteractiveContents}
-          >
-            {tx('download')}
-          </button>
-        )}
-      </div>
-    )
-  }
-
   /** Whether to show author name and avatar */
   const showAuthor =
     conversationType.hasMultipleParticipants ||
@@ -984,6 +958,10 @@ export default function Message(props: {
             ></VCardComponent>
           )}
           {content}
+          <FileTransferStatus
+            message={message}
+            tabindexForInteractiveContents={tabindexForInteractiveContents}
+          />
           {hasHtml && (
             <button
               type='button'

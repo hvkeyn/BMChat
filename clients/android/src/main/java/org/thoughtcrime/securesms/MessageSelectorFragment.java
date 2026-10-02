@@ -49,7 +49,9 @@ public abstract class MessageSelectorFragment extends Fragment
   protected void handleDisplayDetails(DcMsg dcMsg) {
     View view = View.inflate(getActivity(), R.layout.message_details_view, null);
     TextView detailsText = view.findViewById(R.id.details_text);
-    detailsText.setText(formatMessageDetails(DcHelper.getContext(getContext()).getMsgInfo(dcMsg.getId())));
+    detailsText.setText(
+        formatMessageDetails(
+            dcMsg, DcHelper.getContext(getContext()).getMsgInfo(dcMsg.getId())));
 
     AlertDialog d =
         new AlertDialog.Builder(getActivity())
@@ -57,6 +59,20 @@ public abstract class MessageSelectorFragment extends Fragment
             .setPositiveButton(android.R.string.ok, null)
             .create();
     d.show();
+  }
+
+  private CharSequence formatMessageDetails(DcMsg dcMsg, String rawInfo) {
+    CharSequence base = formatMessageDetails(rawInfo);
+    String transfer =
+        org.thoughtcrime.securesms.components.BMChatTransferStatus.details(getContext(), dcMsg);
+    if (transfer == null || transfer.isEmpty()) return base;
+    SpannableStringBuilder out = new SpannableStringBuilder();
+    appendBold(out, getString(R.string.file));
+    out.append('\n').append(transfer);
+    if (base != null && base.length() > 0) {
+      out.append("\n\n").append(base);
+    }
+    return out;
   }
 
   private CharSequence formatMessageDetails(String rawInfo) {

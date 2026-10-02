@@ -23,6 +23,13 @@
     <string name="open">Open</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading…</string>
+    <string name="bmchat_transfer_receiving">Receiving</string>
+    <string name="bmchat_transfer_sending">Sending</string>
+    <string name="bmchat_transfer_preparing">Preparing file</string>
+    <string name="bmchat_transfer_not_downloaded">Not downloaded</string>
+    <string name="bmchat_transfer_downloaded">Downloaded</string>
+    <string name="bmchat_transfer_sent">Sent</string>
+    <string name="bmchat_transfer_send_failed">Send failed</string>
     <string name="open_attachment">Open Attachment</string>
     <string name="join">Join</string>
     <string name="join_group">Join Group</string>

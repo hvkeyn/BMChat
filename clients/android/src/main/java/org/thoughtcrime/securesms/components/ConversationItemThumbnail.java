@@ -199,6 +199,10 @@ public class ConversationItemThumbnail extends FrameLayout {
     thumbnail.setDownloadState(overlayState);
   }
 
+  public void setTransfer(@NonNull com.b44t.messenger.DcMsg msg) {
+    thumbnail.setTransfer(msg);
+  }
+
   /** Forward click handler for the download glyph. */
   public void setOnDownloadClickListener(View.OnClickListener listener) {
     thumbnail.setOnDownloadClickListener(listener);

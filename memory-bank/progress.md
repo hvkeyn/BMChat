@@ -6,6 +6,7 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Completed
 
+- 2.50.41 (Oct 3, 2026): file transfer status on Desktop and Android (name, size, indeterminate send/receive bar, message details). Deployed to primary and mirror `51.250.82.211:8080`. No byte-level progress from core.
 - 2.50.40 (Oct 1, 2026): UI design-system pass across Desktop and Android (contrast, tokens, spacing, focus, labels, touch targets, states, EN/RU localization). Deployed to primary and mirror `51.250.82.211:8080`. iOS not built (Windows host).
 - 2.50.36–2.50.38: email-bot sender attribution and reply routing fixes (no duplicate posts into attached channels), Desktop + Android.
 - 2.49.76: Removed every Delta Chat brand mention from BMChat's user-visible UI across Android, Desktop, and iOS. ~9,000 substitutions in 237 locale/help/fastlane files plus narrow code rewrites (log tags, exported file names, crash screen text, App Clip, stdio server messages). Internal package names, license headers, the upstream core submodule, npm `@deltachat/*` deps, the AndroidManifest legacy host `i.delta.chat` and old `DeltaChat/` data-migration paths were intentionally preserved to keep upstream mergeability and prior-install compatibility. APK `BMChat-foss-debug-2.49.76.apk` (`versionCode 824`, 77,690,075 bytes, SHA-256 `f0491dd6caf428378edecaecd2400a727fa0b51a650df0d5b689b25c0bbdc623`) deployed to primary and mirror VPS; `update.json` repointed.

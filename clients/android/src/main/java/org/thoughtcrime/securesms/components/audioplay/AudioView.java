@@ -39,6 +39,10 @@ public class AudioView extends FrameLayout {
   private final @NonNull TextView playbackSpeedBadge;
   private final @NonNull View mask;
   private final @NonNull BMChatDownloadOverlay downloadOverlay;
+  private final @NonNull View transferRow;
+  private final @NonNull TextView transferLabel;
+  private final @NonNull com.google.android.material.progressindicator.LinearProgressIndicator
+      transferProgress;
   private OnActionListener listener;
   private @Nullable View.OnClickListener downloadClickListener;
 
@@ -70,6 +74,9 @@ public class AudioView extends FrameLayout {
     this.playbackSpeedBadge = findViewById(R.id.playback_speed);
     this.mask = findViewById(R.id.interception_mask);
     this.downloadOverlay = findViewById(R.id.audio_download_overlay);
+    this.transferRow = findViewById(R.id.bmchat_transfer_row);
+    this.transferLabel = findViewById(R.id.bmchat_transfer_label);
+    this.transferProgress = findViewById(R.id.bmchat_transfer_progress);
     this.downloadOverlay.setOnClickListener(
         v -> {
           if (downloadClickListener != null) {
@@ -275,6 +282,17 @@ public class AudioView extends FrameLayout {
    * {@code ConversationItem.setMediaAttributes} after {@link
    * #setAudio(AudioSlide)} on every bind.
    */
+  public void setTransfer(@NonNull com.b44t.messenger.DcMsg msg) {
+    org.thoughtcrime.securesms.components.BMChatTransferStatus.bind(
+        transferRow,
+        transferLabel,
+        transferProgress,
+        msg,
+        false,
+        title.getCurrentTextColor(),
+        true);
+  }
+
   public void setDownloadState(int overlayState) {
     downloadOverlay.setState(overlayState);
     boolean partial = overlayState != BMChatDownloadOverlay.STATE_HIDDEN;

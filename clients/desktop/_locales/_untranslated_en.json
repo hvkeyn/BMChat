@@ -1,4 +1,31 @@
 {
+  "bmchat_transfer_receiving": {
+    "message": "Receiving"
+  },
+  "bmchat_transfer_sending": {
+    "message": "Sending"
+  },
+  "bmchat_transfer_preparing": {
+    "message": "Preparing file"
+  },
+  "bmchat_transfer_not_downloaded": {
+    "message": "Not downloaded"
+  },
+  "bmchat_transfer_downloaded": {
+    "message": "Downloaded"
+  },
+  "bmchat_transfer_sent": {
+    "message": "Sent"
+  },
+  "bmchat_transfer_send_failed": {
+    "message": "Send failed"
+  },
+  "bmchat_transfer_status": {
+    "message": "Status"
+  },
+  "bmchat_transfer_size": {
+    "message": "Size"
+  },
   "bmchat_schedule_message": {
     "message": "Schedule message"
   },

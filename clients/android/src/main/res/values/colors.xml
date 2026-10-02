@@ -29,6 +29,9 @@
     <color name="bmchat_badge_scheduled">#FF1565C0</color>
     <color name="bmchat_badge_published">#FF2E7D32</color>
     <color name="bmchat_scrim">#66000000</color>
+    <!-- White caption on this strip is about 15:1. -->
+    <color name="bmchat_transfer_scrim">#E6000000</color>
+    <color name="bmchat_transfer_track">#66808080</color>
     <color name="bmchat_media_overlay">#88000000</color>
     <color name="bmchat_player_overlay">#99000000</color>
     <color name="bmchat_on_media_secondary">#CCFFFFFF</color>

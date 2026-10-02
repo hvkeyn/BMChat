@@ -5,6 +5,8 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import com.b44t.messenger.DcMsg;
+import com.google.android.material.progressindicator.LinearProgressIndicator;
 import androidx.annotation.AttrRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +22,9 @@ public class DocumentView extends FrameLayout {
   private final @NonNull TextView fileSize;
   private final @NonNull CircleColorImageView documentButton;
   private final @NonNull BMChatDownloadOverlay downloadOverlay;
+  private final @NonNull View transferRow;
+  private final @NonNull TextView transferLabel;
+  private final @NonNull LinearProgressIndicator transferProgress;
 
   private @Nullable SlideClickListener viewListener;
   private @Nullable View.OnClickListener downloadClickListener;
@@ -41,6 +46,9 @@ public class DocumentView extends FrameLayout {
     this.fileSize = findViewById(R.id.file_size);
     this.documentButton = findViewById(R.id.document_button);
     this.downloadOverlay = findViewById(R.id.document_download_overlay);
+    this.transferRow = findViewById(R.id.bmchat_transfer_row);
+    this.transferLabel = findViewById(R.id.bmchat_transfer_label);
+    this.transferProgress = findViewById(R.id.bmchat_transfer_progress);
     this.downloadOverlay.setOnClickListener(
         v -> {
           if (downloadClickListener != null) {
@@ -55,6 +63,18 @@ public class DocumentView extends FrameLayout {
    * file-name / file-size text stays visible so the user knows what they
    * are about to download.
    */
+  /** Name and size stay in the file row. This adds the verb and the bar. */
+  public void setTransfer(@NonNull DcMsg msg) {
+    BMChatTransferStatus.bind(
+        transferRow,
+        transferLabel,
+        transferProgress,
+        msg,
+        false,
+        fileSize.getCurrentTextColor(),
+        true);
+  }
+
   public void setDownloadState(int overlayState) {
     downloadOverlay.setState(overlayState);
     documentButton.setVisibility(
