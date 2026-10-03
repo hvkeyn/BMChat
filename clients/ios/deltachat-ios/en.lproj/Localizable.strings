@@ -21,6 +21,12 @@
 "open" = "Open";
 "download" = "Download";
 "downloading" = "Downloading…";
+"bmchat_transfer_bytes" = "%1$@ of %2$@";
+"bmchat_transfer_left_soon" = "about a minute left";
+"bmchat_transfer_left_min" = "about %d min left";
+"bmchat_transfer_elapsed" = "for %@";
+"bmchat_transfer_under_minute" = "less than a minute";
+"bmchat_transfer_minutes" = "%d min";
 "open_attachment" = "Open Attachment";
 "join" = "Join";
 "join_group" = "Join Group";

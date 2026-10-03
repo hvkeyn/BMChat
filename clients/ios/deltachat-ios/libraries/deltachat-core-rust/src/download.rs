@@ -2,15 +2,24 @@
 
 use std::collections::BTreeMap;
 
-use anyhow::{Result, anyhow, bail, ensure};
+use anyhow::{Context as _, Result, anyhow, bail, ensure};
+use async_imap::types::Flag;
 use deltachat_derive::{FromSql, ToSql};
+use futures::TryStreamExt;
 use serde::{Deserialize, Serialize};
 
+use crate::chat::add_device_msg;
+use crate::constants::DC_VERSION_STR;
 use crate::context::Context;
 use crate::imap::session::Session;
 use crate::log::warn;
 use crate::message::{self, Message, MsgId, rfc724_mid_exists};
+use crate::receive_imf::receive_imf_inner;
 use crate::{EventType, chatlist_events};
+
+/// Octets per IMAP `BODY.PEEK[]<offset.count>` while a partial message is
+/// downloaded. One FETCH of the whole file reports no progress until the end.
+const BMCHAT_FETCH_CHUNK: u32 = 4 * 1024 * 1024;
 
 pub(crate) mod post_msg_metadata;
 pub(crate) use post_msg_metadata::PostMsgMetadata;
@@ -201,16 +210,181 @@ impl Session {
         // we are connected, and the folder is selected
         info!(context, "Downloading message {}/{} fully...", folder, uid);
 
-        let mut uid_message_ids: BTreeMap<u32, String> = BTreeMap::new();
-        uid_message_ids.insert(uid, rfc724_mid);
-        let (sender, receiver) = async_channel::unbounded();
-        self.fetch_many_msgs(context, folder, vec![uid], &uid_message_ids, sender)
-            .await?;
-        if receiver.recv().await.is_err() {
-            bail!("Failed to fetch UID {uid}");
+        let msg_id = rfc724_mid_exists(context, &rfc724_mid).await?;
+        let file_bytes = if let Some(id) = msg_id {
+            if let Ok(msg) = Message::load_from_db(context, id).await {
+                msg.get_filebytes(context)
+                    .await
+                    .ok()
+                    .flatten()
+                    .unwrap_or(0)
+            } else {
+                0
+            }
+        } else {
+            0
+        };
+
+        let fetched = match self
+            .fetch_body_with_progress(context, uid, msg_id, file_bytes)
+            .await
+        {
+            Ok(fetched) => fetched,
+            Err(err) => {
+                warn!(
+                    context,
+                    "Chunked download of UID {uid} failed ({err:#}), falling back to one FETCH."
+                );
+                let mut uid_message_ids: BTreeMap<u32, String> = BTreeMap::new();
+                uid_message_ids.insert(uid, rfc724_mid);
+                let (sender, receiver) = async_channel::unbounded();
+                self.fetch_many_msgs(context, folder, vec![uid], &uid_message_ids, sender)
+                    .await?;
+                if receiver.recv().await.is_err() {
+                    bail!("Failed to fetch UID {uid}");
+                }
+                return Ok(());
+            }
+        };
+
+        if fetched.deleted {
+            info!(context, "Not processing deleted msg {uid}.");
+            return Ok(());
+        }
+
+        if let Err(err) =
+            receive_imf_inner(context, &rfc724_mid, &fetched.bytes, fetched.seen).await
+        {
+            warn!(context, "receive_imf error: {err:#}.");
+            let text = format!(
+                "❌ Failed to receive a message: {err:#}. Core version v{DC_VERSION_STR}. Please report this bug to delta@merlinux.eu or https://support.delta.chat/."
+            );
+            let mut msg = Message::new_text(text);
+            add_device_msg(context, None, Some(&mut msg)).await?;
         }
         Ok(())
     }
+
+    /// Downloads `BODY.PEEK[]` in 4 MiB slices and emits `bmchat-xfer <msg> <got> <total>`.
+    async fn fetch_body_with_progress(
+        &mut self,
+        context: &Context,
+        uid: u32,
+        msg_id: Option<MsgId>,
+        file_bytes: u64,
+    ) -> Result<FetchedBody> {
+        let uid_set = uid.to_string();
+        let mut size_stream = self
+            .uid_fetch(&uid_set, "(FLAGS RFC822.SIZE)")
+            .await
+            .context("RFC822.SIZE fetch")?;
+        let size_row = size_stream
+            .try_next()
+            .await
+            .context("RFC822.SIZE row")?
+            .context("RFC822.SIZE missing")?;
+        drain_fetch(&mut size_stream).await?;
+
+        let seen = size_row.flags().any(|flag| flag == Flag::Seen);
+        let deleted = size_row.flags().any(|flag| flag == Flag::Deleted);
+        let rfc822_size = u64::from(size_row.size.unwrap_or(0));
+        drop(size_row);
+        drop(size_stream);
+        if deleted {
+            return Ok(FetchedBody {
+                bytes: Vec::new(),
+                seen,
+                deleted: true,
+            });
+        }
+
+        let mut body = Vec::new();
+        if rfc822_size > 0 && rfc822_size <= 512 * 1024 * 1024 {
+            body.reserve(usize::try_from(rfc822_size).unwrap_or(0));
+        }
+        let mut offset: u64 = 0;
+        for _ in 0..2048 {
+            let query = format!("(BODY.PEEK[]<{offset}.{BMCHAT_FETCH_CHUNK}>)");
+            let mut stream = self
+                .uid_fetch(&uid_set, &query)
+                .await
+                .with_context(|| format!("partial BODY fetch at {offset}"))?;
+            let row = stream
+                .try_next()
+                .await
+                .context("partial BODY row")?
+                .context("partial BODY missing")?;
+            drain_fetch(&mut stream).await?;
+            let chunk = row.body().context("partial BODY had no bytes")?;
+            if chunk.is_empty() {
+                break;
+            }
+            let whole_message = offset == 0 && chunk.len() > BMCHAT_FETCH_CHUNK as usize;
+            body.extend_from_slice(chunk);
+            offset = body.len() as u64;
+            let wire_total = if rfc822_size > 0 {
+                rfc822_size
+            } else {
+                offset
+            };
+            emit_xfer(context, msg_id, file_bytes, offset, wire_total);
+            if whole_message || (chunk.len() as u32) < BMCHAT_FETCH_CHUNK {
+                break;
+            }
+            if rfc822_size > 0 && offset >= rfc822_size {
+                break;
+            }
+        }
+        if body.is_empty() {
+            bail!("Empty body for UID {uid}");
+        }
+        Ok(FetchedBody {
+            bytes: body,
+            seen,
+            deleted: false,
+        })
+    }
+}
+
+struct FetchedBody {
+    bytes: Vec<u8>,
+    seen: bool,
+    deleted: bool,
+}
+
+fn emit_xfer(
+    context: &Context,
+    msg_id: Option<MsgId>,
+    file_bytes: u64,
+    wire_got: u64,
+    wire_total: u64,
+) {
+    let Some(msg_id) = msg_id else {
+        return;
+    };
+    let (got, total) = if file_bytes > 0 && wire_total > 0 {
+        let scaled = file_bytes.saturating_mul(wire_got) / wire_total;
+        (scaled.min(file_bytes), file_bytes)
+    } else {
+        (wire_got, wire_total)
+    };
+    context.emit_event(EventType::Info(format!(
+        "bmchat-xfer {} {got} {total}",
+        msg_id.to_u32()
+    )));
+}
+
+async fn drain_fetch(
+    stream: &mut (impl TryStreamExt<Ok = async_imap::types::Fetch, Error = impl std::fmt::Display>
+             + Unpin),
+) -> Result<()> {
+    while stream
+        .try_next()
+        .await
+        .map_err(|err| anyhow!("{err}"))?
+        .is_some()
+    {}
+    Ok(())
 }
 
 async fn set_state_to_failure(context: &Context, rfc724_mid: &str) -> Result<()> {

@@ -15,9 +15,10 @@ import org.thoughtcrime.securesms.util.Util;
 
 /**
  * Human-readable file transfer state for chat bubbles and the message-details
- * dialog. Core does not report byte counts while SMTP/IMAP is in flight, so
- * the progress bar stays indeterminate and the text carries the details:
- * what is happening, the file name and the size.
+ * dialog. While IMAP downloads a file in slices, {@link BMChatTransferProgress}
+ * fills the bar and the line shows bytes done, the total and the time left.
+ * Until the first slice arrives the bar stays indeterminate and the line
+ * shows how long the transfer has already been running.
  */
 public final class BMChatTransferStatus {
 
@@ -109,19 +110,91 @@ public final class BMChatTransferStatus {
       label.setTextColor(normalColor);
     }
     row.setVisibility(View.VISIBLE);
+    int msgId = msg.getId();
     if (isBusy(phase)) {
       bar.setVisibility(View.VISIBLE);
-      bar.setContentDescription(text);
+      bar.setMax(1000);
+      applyProgress(context, label, bar, msg, phase, includeName, text);
+      BMChatTransferProgress.watch(
+          row,
+          msgId,
+          () ->
+              applyProgress(
+                  context,
+                  label,
+                  bar,
+                  msg,
+                  phase,
+                  includeName,
+                  oneLine(context, msg, phase, includeName)));
+    } else {
+      BMChatTransferProgress.clear(msgId);
+      bar.setVisibility(View.GONE);
+    }
+  }
+
+  private static void applyProgress(
+      @NonNull Context context,
+      @NonNull TextView label,
+      @NonNull LinearProgressIndicator bar,
+      @NonNull DcMsg msg,
+      @NonNull Phase phase,
+      boolean includeName,
+      @NonNull String fallback) {
+    BMChatTransferProgress.Sample sample = BMChatTransferProgress.get(msg.getId());
+    String text = fallback;
+    if (sample != null && sample.total > 0) {
+      String amount =
+          context.getString(
+              R.string.bmchat_transfer_bytes,
+              Util.getPrettyFileSize(sample.got),
+              Util.getPrettyFileSize(sample.total));
+      StringBuilder line = new StringBuilder(verb(context, phase));
+      if (includeName && !TextUtils.isEmpty(msg.getFilename())) {
+        line.append(" · ").append(msg.getFilename());
+      }
+      line.append(" · ").append(amount);
+      long left = sample.secondsLeft();
+      if (left >= 0) {
+        line.append(" · ");
+        if (left < 90) {
+          line.append(context.getString(R.string.bmchat_transfer_left_soon));
+        } else {
+          line.append(
+              context.getString(R.string.bmchat_transfer_left_min, (int) ((left + 30) / 60)));
+        }
+      }
+      text = line.toString();
+      bar.setIndeterminate(false);
+      int permille =
+          (int) Math.min(1000, Math.max(0, sample.got * 1000 / Math.max(1, sample.total)));
+      bar.setProgressCompat(permille, true);
+    } else {
+      long elapsed = BMChatTransferProgress.elapsedMs(msg.getId());
+      if (elapsed >= 5000) {
+        text =
+            fallback
+                + " · "
+                + context.getString(
+                    R.string.bmchat_transfer_elapsed, elapsedLabel(context, elapsed));
+      }
       if (AccessibilityUtil.areAnimationsDisabled(context)) {
         bar.setIndeterminate(false);
-        bar.setProgress(40);
+        bar.setProgressCompat(0, false);
       } else {
         bar.setIndeterminate(true);
         bar.show();
       }
-    } else {
-      bar.setVisibility(View.GONE);
     }
+    label.setText(text);
+    label.setContentDescription(text);
+    bar.setContentDescription(text);
+  }
+
+  private static @NonNull String elapsedLabel(@NonNull Context context, long elapsedMs) {
+    long seconds = elapsedMs / 1000;
+    if (seconds < 90) return context.getString(R.string.bmchat_transfer_under_minute);
+    return context.getString(R.string.bmchat_transfer_minutes, (int) ((seconds + 30) / 60));
   }
 
   /**

@@ -217,6 +217,11 @@ public class BaseMessageCell: UITableViewCell {
         clipsToBounds = false
         backgroundColor = .none
         setupSubviews()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(BaseMessageCell.onFileTransferProgress(_:)),
+            name: Event.fileTransferProgress,
+            object: nil)
     }
 
     required init?(coder: NSCoder) {
@@ -468,7 +473,7 @@ public class BaseMessageCell: UITableViewCell {
             isActionButtonHidden = false
         case DC_DOWNLOAD_IN_PROGRESS:
             actionButton.isEnabled = false
-            actionButton.setTitle(String.localized("downloading"), for: .normal)
+            actionButton.setTitle(Self.transferTitle(msgId: msg.id), for: .normal)
             isActionButtonHidden = false
         default:
             if hasHtml {
@@ -673,6 +678,59 @@ public class BaseMessageCell: UITableViewCell {
         timer = nil
         dcContextId = nil
         dcMsgId = nil
+    }
+
+    private struct TransferSample {
+        let got: Int64
+        let total: Int64
+        let at: Date
+        let firstAt: Date
+        let firstGot: Int64
+    }
+
+    private static var transferSamples: [Int: TransferSample] = [:]
+
+    @objc private func onFileTransferProgress(_ notification: Notification) {
+        func int64(_ value: Any?) -> Int64? {
+            if let number = value as? NSNumber { return number.int64Value }
+            return nil
+        }
+        guard let msgId64 = int64(notification.userInfo?["message_id"]),
+              let msgId = Int(exactly: msgId64),
+              let got = int64(notification.userInfo?["got"]),
+              let total = int64(notification.userInfo?["total"]) else { return }
+        let now = Date()
+        let prev = Self.transferSamples[msgId]
+        Self.transferSamples[msgId] = TransferSample(
+            got: got,
+            total: total,
+            at: now,
+            firstAt: prev?.firstAt ?? now,
+            firstGot: prev?.firstGot ?? got)
+        guard dcMsgId == msgId else { return }
+        actionButton.setTitle(Self.transferTitle(msgId: msgId), for: .normal)
+    }
+
+    private static func transferTitle(msgId: Int) -> String {
+        guard let sample = transferSamples[msgId], sample.total > 0 else {
+            return String.localized("downloading")
+        }
+        let gotText = ByteCountFormatter.string(fromByteCount: sample.got, countStyle: .file)
+        let totalText = ByteCountFormatter.string(fromByteCount: sample.total, countStyle: .file)
+        let amount = String.localizedStringWithFormat(
+            String.localized("bmchat_transfer_bytes"), gotText, totalText)
+        let elapsed = sample.at.timeIntervalSince(sample.firstAt)
+        let gained = sample.got - sample.firstGot
+        if gained <= 0 || elapsed < 0.5 || sample.got >= sample.total {
+            return amount
+        }
+        let seconds = (Double(sample.total - sample.got) / (Double(gained) / elapsed))
+        if seconds < 90 {
+            return amount + " · " + String.localized("bmchat_transfer_left_soon")
+        }
+        let minutes = Int((seconds + 30) / 60)
+        let left = String.localizedStringWithFormat(String.localized("bmchat_transfer_left_min"), minutes)
+        return amount + " · " + left
     }
 
     @objc func reactionsViewTapped(_ sender: Any?) {

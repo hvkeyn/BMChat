@@ -32,6 +32,12 @@
     <string name="bmchat_transfer_send_failed">Не отправлен</string>
     <string name="bmchat_transfer_status">Состояние</string>
     <string name="bmchat_transfer_size">Размер</string>
+    <string name="bmchat_transfer_bytes">%1$s из %2$s</string>
+    <string name="bmchat_transfer_left_soon">ещё около минуты</string>
+    <string name="bmchat_transfer_left_min">ещё около %1$d мин</string>
+    <string name="bmchat_transfer_elapsed">уже %1$s</string>
+    <string name="bmchat_transfer_under_minute">меньше минуты</string>
+    <string name="bmchat_transfer_minutes">%1$d мин</string>
     <string name="bmchat_invite_email_body">Привет! Я хочу пообщаться с тобой через BMChat. Открой ссылку ниже — если у тебя уже установлен BMChat, приглашение подхватится автоматически; иначе на странице по ссылке есть инструкция, как поставить приложение.\n\n%1$s</string>
     <string name="bmchat_wait_for_encryption">Чат ещё не защищён. Приглашение отправлено. Сообщение уйдёт, когда собеседник примет его в BMChat.</string>
     <string name="bmchat_sent_via_encrypted">Отправлено в защищённый чат с этим контактом.</string>

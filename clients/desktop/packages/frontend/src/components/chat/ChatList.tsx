@@ -39,6 +39,7 @@ import {
 import { KeybindAction } from '../../keybindings'
 import { useThemeCssVar } from '../../ThemeManager'
 import { BackendRemote, onDCEvent, Type } from '../../backend-com'
+import { installTransferProgress } from '../../bmchat/fileTransferProgress'
 import { flushPendingPlaintext } from '../../bmchat/peerChat'
 import { selectedAccountId } from '../../ScreenController'
 import CreateChat from '../dialogs/CreateChat'
@@ -208,9 +209,11 @@ export default function ChatList(props: {
     const onModified = onDCEvent(accountId, 'ChatModified', () => {
       void flushPendingPlaintext(accountId)
     })
+    const onTransfer = installTransferProgress(accountId)
     return () => {
       onIncoming()
       onModified()
+      onTransfer()
     }
   }, [accountId])
 

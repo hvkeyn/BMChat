@@ -1,6 +1,6 @@
 {
-  "version": "2.50.42",
-  "publishedAt": "2026-10-03T01:00:00Z",
+  "version": "2.50.43",
+  "publishedAt": "2026-10-03T03:10:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://51.250.82.211:8080",
@@ -11,16 +11,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.42-Portable.x64.exe",
-      "size": 126166705,
-      "sha256": "fabc0867520ac750665b92aadf232cd2f81a1cdd413b05375872ab5625775e73"
+      "versionedFile": "BMChat-2.50.43-Portable.x64.exe",
+      "size": 125836378,
+      "sha256": "3b34f6e6a7f66f4cfbb235ace4bb7ac260bb8d14d697f5dd9dd7c12f10fcd706"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.42-Setup.x64.exe",
-      "size": 126483113,
-      "sha256": "329e8c3a404ee8f9170979a5909f0f22f61eedc997b551aefa695bdeb396f0bd"
+      "versionedFile": "BMChat-2.50.43-Setup.x64.exe",
+      "size": 126152901,
+      "sha256": "6c189e171e1ed0643269b3d3839e651515095f84de631dab8e5d3f8e51368b23"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -37,5 +37,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat 2.50.42 — защищённый чат по адресу почты.\n\nНОВОЕ И ИСПРАВЛЕНИЯ:\n• Контакт, добавленный по почте, больше не получает обычное письмо.\n• Если защищённый чат с этим адресом уже есть, сообщение уходит туда.\n• Иначе отправляется приглашение BMChat, а текст ждёт, пока собеседник примет его.\n• На Android 16 больше нет предупреждения о страницах памяти 16 КБ."
+  "notes": "BMChat 2.50.43 — прогресс загрузки файла.\n\nНОВОЕ И ИСПРАВЛЕНИЯ:\n• При получении файла видно, сколько уже скачано и сколько примерно осталось.\n• Полоска заполняется по мере загрузки, а не стоит на месте.\n• Подписи состояния файла снова на русском."
 }

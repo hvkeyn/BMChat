@@ -3,6 +3,11 @@ import { C, T } from '@deltachat/jsonrpc-client'
 import { filesize } from 'filesize'
 
 import { BackendRemote } from '../../backend-com'
+import {
+  secondsLeft,
+  transferElapsedMs,
+  useTransferSample,
+} from '../../bmchat/fileTransferProgress'
 import { selectedAccountId } from '../../ScreenController'
 import useTranslationFunction from '../../hooks/useTranslationFunction'
 
@@ -125,16 +130,52 @@ export default function FileTransferStatus({
 }) {
   const tx = useTranslationFunction()
   const phase = fileTransferPhase(message)
-  if (!showFileTransferInBubble(phase) || phase == null) return null
-
   const busy =
     phase === 'preparing' || phase === 'sending' || phase === 'receiving'
+  const sample = useTransferSample(message.id, busy)
+  if (!showFileTransferInBubble(phase) || phase == null) return null
+
   const canDownload = phase === 'available' || phase === 'failed'
   const includeName = !message.file
   const parts = [phaseLabel(key => tx(key as never), phase)]
   if (includeName && message.fileName) parts.push(message.fileName)
-  if (message.fileBytes && message.fileBytes > 0) {
+  let percent: number | null = null
+  if (sample && sample.total > 0) {
+    parts.push(
+      tx(
+        'bmchat_transfer_bytes' as never,
+        String(filesize(sample.got)),
+        String(filesize(sample.total))
+      ) as unknown as string
+    )
+    const left = secondsLeft(sample)
+    if (left >= 0 && left < 90) {
+      parts.push(tx('bmchat_transfer_left_soon' as never) as unknown as string)
+    } else if (left >= 90) {
+      parts.push(
+        tx(
+          'bmchat_transfer_left_min' as never,
+          String(Math.round(left / 60))
+        ) as unknown as string
+      )
+    }
+    percent = Math.min(100, Math.max(0, (sample.got / sample.total) * 100))
+  } else if (message.fileBytes && message.fileBytes > 0) {
     parts.push(String(filesize(message.fileBytes)))
+    const elapsed = transferElapsedMs(message.id)
+    if (busy && elapsed >= 5000) {
+      const seconds = Math.round(elapsed / 1000)
+      const waited =
+        seconds < 90
+          ? (tx('bmchat_transfer_under_minute' as never) as unknown as string)
+          : (tx(
+              'bmchat_transfer_minutes' as never,
+              String(Math.round(seconds / 60))
+            ) as unknown as string)
+      parts.push(
+        tx('bmchat_transfer_elapsed' as never, waited) as unknown as string
+      )
+    }
   }
   const label = parts.join(' · ')
 
@@ -154,9 +195,23 @@ export default function FileTransferStatus({
       </div>
       {busy && (
         <div
-          className='bmchat-file-transfer-bar'
+          className={
+            percent == null
+              ? 'bmchat-file-transfer-bar'
+              : 'bmchat-file-transfer-bar is-determinate'
+          }
           role='progressbar'
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={percent == null ? undefined : Math.round(percent)}
           aria-valuetext={label}
+          style={
+            percent == null
+              ? undefined
+              : ({
+                  '--bmchat-transfer-pct': `${percent}%`,
+                } as React.CSSProperties)
+          }
         >
           <span />
         </div>

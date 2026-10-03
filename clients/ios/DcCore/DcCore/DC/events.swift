@@ -34,6 +34,7 @@ public enum Event {
     public static let callEnded = Notification.Name(rawValue: "callEnded")
     
     public static let relayHelperDidChange = Notification.Name(rawValue: "relayHelperDidChange")
+    public static let fileTransferProgress = Notification.Name(rawValue: "fileTransferProgress")
 }
 
 
@@ -55,7 +56,22 @@ public class DcEventHandler {
             logger.error("[\(accountId)] \(event.data2String)")
 
         case DC_EVENT_INFO:
-            logger.info("[\(accountId)] \(event.data2String)")
+            let info = event.data2String
+            if info.hasPrefix("bmchat-xfer ") {
+                let parts = info.split(separator: " ")
+                if parts.count >= 4,
+                   let msgId = Int(parts[1]),
+                   let got = Int64(parts[2]),
+                   let total = Int64(parts[3]) {
+                    NotificationCenter.default.post(name: Event.fileTransferProgress, object: nil, userInfo: [
+                        "message_id": msgId,
+                        "got": got,
+                        "total": total,
+                    ])
+                }
+            } else {
+                logger.info("[\(accountId)] \(info)")
+            }
 
         case DC_EVENT_WARNING:
             logger.warning("[\(accountId)] \(event.data2String)")

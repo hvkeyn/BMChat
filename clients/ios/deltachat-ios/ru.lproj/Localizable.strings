@@ -21,6 +21,12 @@
 "open" = "Открыть";
 "download" = "Загрузить";
 "downloading" = "Загрузка…";
+"bmchat_transfer_bytes" = "%1$@ из %2$@";
+"bmchat_transfer_left_soon" = "ещё около минуты";
+"bmchat_transfer_left_min" = "ещё около %d мин";
+"bmchat_transfer_elapsed" = "уже %@";
+"bmchat_transfer_under_minute" = "меньше минуты";
+"bmchat_transfer_minutes" = "%d мин";
 "open_attachment" = "Открыть вложение";
 "join" = "Присоединиться";
 "rejoin" = "Присоединиться снова";

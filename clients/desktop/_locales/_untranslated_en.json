@@ -1,31 +1,4 @@
 {
-  "bmchat_transfer_receiving": {
-    "message": "Receiving"
-  },
-  "bmchat_transfer_sending": {
-    "message": "Sending"
-  },
-  "bmchat_transfer_preparing": {
-    "message": "Preparing file"
-  },
-  "bmchat_transfer_not_downloaded": {
-    "message": "Not downloaded"
-  },
-  "bmchat_transfer_downloaded": {
-    "message": "Downloaded"
-  },
-  "bmchat_transfer_sent": {
-    "message": "Sent"
-  },
-  "bmchat_transfer_send_failed": {
-    "message": "Send failed"
-  },
-  "bmchat_transfer_status": {
-    "message": "Status"
-  },
-  "bmchat_transfer_size": {
-    "message": "Size"
-  },
   "bmchat_invite_email_body": {
     "message": "Hi! I would like to chat with you on BMChat. Just open the link below — if you already have BMChat installed it will pick this invitation up automatically; otherwise the link explains how to get the app.\n\n%1$s"
   },

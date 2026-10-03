@@ -30,6 +30,12 @@
     <string name="bmchat_transfer_downloaded">Downloaded</string>
     <string name="bmchat_transfer_sent">Sent</string>
     <string name="bmchat_transfer_send_failed">Send failed</string>
+    <string name="bmchat_transfer_bytes">%1$s of %2$s</string>
+    <string name="bmchat_transfer_left_soon">about a minute left</string>
+    <string name="bmchat_transfer_left_min">about %1$d min left</string>
+    <string name="bmchat_transfer_elapsed">for %1$s</string>
+    <string name="bmchat_transfer_under_minute">less than a minute</string>
+    <string name="bmchat_transfer_minutes">%1$d min</string>
     <string name="open_attachment">Open Attachment</string>
     <string name="join">Join</string>
     <string name="join_group">Join Group</string>

@@ -30,6 +30,12 @@
     <string name="bmchat_transfer_downloaded">Скачан</string>
     <string name="bmchat_transfer_sent">Отправлен</string>
     <string name="bmchat_transfer_send_failed">Не отправлен</string>
+    <string name="bmchat_transfer_bytes">%1$s из %2$s</string>
+    <string name="bmchat_transfer_left_soon">ещё около минуты</string>
+    <string name="bmchat_transfer_left_min">ещё около %1$d мин</string>
+    <string name="bmchat_transfer_elapsed">уже %1$s</string>
+    <string name="bmchat_transfer_under_minute">меньше минуты</string>
+    <string name="bmchat_transfer_minutes">%1$d мин</string>
     <string name="open_attachment">Открыть вложение</string>
     <string name="join">Присоединиться</string>
     <string name="join_group">Вступить в группу</string>

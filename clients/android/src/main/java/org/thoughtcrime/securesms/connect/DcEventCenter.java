@@ -174,7 +174,10 @@ public class DcEventCenter {
     final String logPrefix = "[accId=" + event.getAccountId() + "] ";
     switch (event.getId()) {
       case DcContext.DC_EVENT_INFO:
-        Log.i("BMChat", logPrefix + event.getData2Str());
+        String info = event.getData2Str();
+        if (info == null || !info.startsWith("bmchat-xfer ")) {
+          Log.i("BMChat", logPrefix + info);
+        }
         break;
 
       case DcContext.DC_EVENT_WARNING:
@@ -192,6 +195,10 @@ public class DcEventCenter {
     int id = event.getId();
 
     sendToMultiAccountObservers(event);
+
+    if (id == DcContext.DC_EVENT_INFO) {
+      org.thoughtcrime.securesms.components.BMChatTransferProgress.noteLine(event.getData2Str());
+    }
 
     switch (id) {
       case DcContext.DC_EVENT_INCOMING_MSG:
