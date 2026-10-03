@@ -1,6 +1,6 @@
 {
-  "version": "2.50.43",
-  "publishedAt": "2026-10-03T03:10:00Z",
+  "version": "2.50.45",
+  "publishedAt": "2026-10-03T22:35:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://51.250.82.211:8080",
@@ -11,16 +11,16 @@
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.43-Portable.x64.exe",
-      "size": 125836378,
-      "sha256": "3b34f6e6a7f66f4cfbb235ace4bb7ac260bb8d14d697f5dd9dd7c12f10fcd706"
+      "versionedFile": "BMChat-2.50.45-Portable.x64.exe",
+      "size": 125862211,
+      "sha256": "3dc2d06f9c2794ed14b2dccd8c48d0805231dccb1610856ae38910c5aede628d"
     },
     "win-x64-installer": {
       "label": "Setup x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.43-Setup.x64.exe",
-      "size": 126152901,
-      "sha256": "6c189e171e1ed0643269b3d3839e651515095f84de631dab8e5d3f8e51368b23"
+      "versionedFile": "BMChat-2.50.45-Setup.x64.exe",
+      "size": 126178617,
+      "sha256": "b037de53d36ad762d5bad0606080a9ae03e7901a380ed51e5699d96af07aecb3"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -37,5 +37,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat 2.50.43 — прогресс загрузки файла.\n\nНОВОЕ И ИСПРАВЛЕНИЯ:\n• При получении файла видно, сколько уже скачано и сколько примерно осталось.\n• Полоска заполняется по мере загрузки, а не стоит на месте.\n• Подписи состояния файла снова на русском."
+  "notes": "BMChat 2.50.45 — большие файлы по частям.\n\nНОВОЕ И ИСПРАВЛЕНИЯ:\n• Файл больше обычного письма уходит частями и собирается в один файл.\n• Видно, сколько уже передано.\n• Передачу можно отменить. Если отправка срывается, оставшиеся части не уходят."
 }

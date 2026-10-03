@@ -74,6 +74,21 @@
             app:trackThickness="4dp"
             app:trackCornerRadius="2dp"
             tools:visibility="visible" />
+
+        <Button
+            android:id="@+id/bmchat_transfer_cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="@string/bmchat_transfer_cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/core_white"
+            android:visibility="gone"
+            tools:visibility="visible" />
     </LinearLayout>
 
 </merge>

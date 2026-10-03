@@ -264,6 +264,9 @@ pub enum Param {
 
     /// For (pre-)Message: File byte size of Post-Message attachment
     PostMessageFileBytes = b'9',
+
+    /// For messages sent as several mail parts: how many parts were queued.
+    BmchatFileParts = b'Z',
 }
 
 /// An object for handling key=value parameter lists.

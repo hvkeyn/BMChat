@@ -157,6 +157,19 @@
             app:trackCornerRadius="2dp"
             tools:visibility="visible" />
 
+        <Button
+            android:id="@+id/bmchat_transfer_cancel"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="@string/bmchat_transfer_cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/audio_icon"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
         </LinearLayout>
 
     </LinearLayout>

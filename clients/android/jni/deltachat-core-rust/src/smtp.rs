@@ -415,6 +415,9 @@ pub(crate) async fn send_msg_to_smtp(
                 .sql
                 .execute("DELETE FROM smtp WHERE id=?", (rowid,))
                 .await?;
+            crate::bmchat_parts::note_smtp_progress(context, msg_id)
+                .await
+                .ok();
         }
         SendResult::Failure(ref err) => {
             if err
@@ -455,6 +458,9 @@ pub(crate) async fn send_msg_to_smtp(
                     .await?;
                 };
             }
+            crate::bmchat_parts::cancel_remaining_smtp(context, msg_id)
+                .await
+                .ok();
             context
                 .sql
                 .execute("DELETE FROM smtp WHERE id=?", (rowid,))

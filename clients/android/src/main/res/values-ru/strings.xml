@@ -36,6 +36,10 @@
     <string name="bmchat_transfer_elapsed">уже %1$s</string>
     <string name="bmchat_transfer_under_minute">меньше минуты</string>
     <string name="bmchat_transfer_minutes">%1$d мин</string>
+    <string name="bmchat_transfer_cancel">Отмена</string>
+    <string name="bmchat_transfer_cancel_title">Остановить передачу?</string>
+    <string name="bmchat_transfer_cancel_body">Файл не будет отправлен или скачан.</string>
+    <string name="bmchat_file_too_large">Файл больше 16 ГБ.</string>
     <string name="open_attachment">Открыть вложение</string>
     <string name="join">Присоединиться</string>
     <string name="join_group">Вступить в группу</string>

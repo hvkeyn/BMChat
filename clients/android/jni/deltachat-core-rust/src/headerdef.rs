@@ -122,6 +122,9 @@ pub enum HeaderDef {
     /// This is an unprotected header.
     ChatIsPostMessage,
 
+    /// BMChat file part. The value identifies one slice of a larger file.
+    ChatBmchatFilePart,
+
     /// [Autocrypt](https://autocrypt.org/) header.
     Autocrypt,
     AutocryptGossip,

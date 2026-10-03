@@ -38,6 +38,8 @@
     <string name="bmchat_transfer_elapsed">for %1$s</string>
     <string name="bmchat_transfer_under_minute">less than a minute</string>
     <string name="bmchat_transfer_minutes">%1$d min</string>
+    <string name="bmchat_transfer_cancel">Cancel</string>
+    <string name="bmchat_transfer_cancel_body">Stop this transfer? The file will not be sent or downloaded.</string>
     <string name="bmchat_invite_email_body">Hi! I would like to chat with you on BMChat. Just open the link below — if you already have BMChat installed it will pick this invitation up automatically; otherwise the link explains how to get the app.\n\n%1$s</string>
     <string name="bmchat_wait_for_encryption">This chat is not encrypted yet. An invitation was sent. Your message will be delivered after the contact accepts it in BMChat.</string>
     <string name="bmchat_sent_via_encrypted">Sent in the encrypted chat with this contact.</string>

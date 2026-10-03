@@ -266,12 +266,12 @@ public class AttachmentManager {
         if (slide == null) {
           setAttachmentPresent(false);
           result.set(false);
-        } else if (slide.getFileSize() > 1024 * 1024 * 1024) {
-          // this is only a rough check, videos and images may be recoded
-          // and the core checks more carefully later.
+        } else if (slide.getFileSize() > 16L * 1024 * 1024 * 1024) {
+          // Larger files are split into mail parts by the core. 16 GB is the
+          // cap of that split.
           setAttachmentPresent(false);
           Log.w(TAG, "File too large.");
-          Toast.makeText(slide.context, "File too large.", Toast.LENGTH_LONG).show();
+          Toast.makeText(slide.context, R.string.bmchat_file_too_large, Toast.LENGTH_LONG).show();
           result.set(false);
         } else {
           setSlide(slide);

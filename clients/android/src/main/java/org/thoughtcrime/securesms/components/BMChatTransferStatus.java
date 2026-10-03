@@ -6,10 +6,12 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import com.b44t.messenger.DcMsg;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.util.AccessibilityUtil;
 import org.thoughtcrime.securesms.util.Util;
 
@@ -110,6 +112,7 @@ public final class BMChatTransferStatus {
       label.setTextColor(normalColor);
     }
     row.setVisibility(View.VISIBLE);
+    bindCancel(row, msg, phase);
     int msgId = msg.getId();
     if (isBusy(phase)) {
       bar.setVisibility(View.VISIBLE);
@@ -131,6 +134,31 @@ public final class BMChatTransferStatus {
       BMChatTransferProgress.clear(msgId);
       bar.setVisibility(View.GONE);
     }
+  }
+
+  private static void bindCancel(@NonNull View row, @NonNull DcMsg msg, @NonNull Phase phase) {
+    View cancel = row.findViewById(R.id.bmchat_transfer_cancel);
+    if (cancel == null) return;
+    boolean show =
+        isBusy(phase) || phase == Phase.FAILED || phase == Phase.SEND_FAILED;
+    cancel.setVisibility(show ? View.VISIBLE : View.GONE);
+    if (!show) {
+      cancel.setOnClickListener(null);
+      return;
+    }
+    cancel.setOnClickListener(
+        v -> {
+          Context context = v.getContext();
+          new AlertDialog.Builder(context)
+              .setTitle(R.string.bmchat_transfer_cancel_title)
+              .setMessage(R.string.bmchat_transfer_cancel_body)
+              .setNegativeButton(android.R.string.cancel, null)
+              .setPositiveButton(
+                  R.string.bmchat_transfer_cancel,
+                  (dialog, which) ->
+                      DcHelper.getContext(context).deleteMsgs(new int[] {msg.getId()}))
+              .show();
+        });
   }
 
   private static void applyProgress(

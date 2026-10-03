@@ -1655,6 +1655,9 @@ pub(crate) async fn get_mime_headers(context: &Context, msg_id: MsgId) -> Result
 /// Delete a single message from the database, including references in other tables.
 /// This may be called in batches; the final events are emitted in delete_msgs_locally_done() then.
 pub(crate) async fn delete_msg_locally(context: &Context, msg: &Message) -> Result<()> {
+    if let Err(err) = crate::bmchat_parts::forget(context, &msg.rfc724_mid).await {
+        warn!(context, "Could not remove file parts: {err:#}.");
+    }
     if msg.location_id > 0 {
         delete_poi_location(context, msg.location_id).await?;
     }

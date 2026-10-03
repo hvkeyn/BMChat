@@ -745,7 +745,16 @@ impl Imap {
                     }
                 } else {
                     info!(context, "{message_id:?} is not a post-message.");
-                    if download_limit.is_none_or(|download_limit| size <= download_limit) {
+                    // A file slice is only useful together with the other slices,
+                    // so download it even when it is over the normal size limit.
+                    // 12 MiB is above one BMChat part and below an unbounded fetch.
+                    let file_part = headers
+                        .get_header_value(HeaderDef::ChatBmchatFilePart)
+                        .is_some()
+                        && size <= 12 * 1024 * 1024;
+                    if file_part
+                        || download_limit.is_none_or(|download_limit| size <= download_limit)
+                    {
                         uids_fetch.push(uid);
                         uid_message_ids.insert(uid, message_id);
                     } else {

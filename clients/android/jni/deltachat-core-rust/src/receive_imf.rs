@@ -1794,6 +1794,18 @@ async fn add_parts(
     mut chat_id_blocked: Blocked,
     is_dc_message: MessengerMessage,
 ) -> Result<ReceivedMsg> {
+    if let Some(received) = crate::bmchat_parts::ingest(
+        context,
+        mime_parser,
+        chat_id,
+        from_id,
+        rfc724_mid,
+    )
+    .await?
+    {
+        return Ok(received);
+    }
+
     let to_id = if mime_parser.incoming {
         ContactId::SELF
     } else {

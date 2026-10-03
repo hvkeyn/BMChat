@@ -178,7 +178,7 @@ impl FolderMeaning {
     pub fn to_config(self) -> Option<Config> {
         match self {
             FolderMeaning::Unknown => None,
-            FolderMeaning::Spam => None,
+            FolderMeaning::Spam => Some(Config::ConfiguredSpamFolder),
             FolderMeaning::Inbox => Some(Config::ConfiguredInboxFolder),
             FolderMeaning::Mvbox => Some(Config::ConfiguredMvboxFolder),
             FolderMeaning::Trash => None,
@@ -745,7 +745,16 @@ impl Imap {
                     }
                 } else {
                     info!(context, "{message_id:?} is not a post-message.");
-                    if download_limit.is_none_or(|download_limit| size <= download_limit) {
+                    // A file slice is only useful together with the other slices,
+                    // so download it even when it is over the normal size limit.
+                    // 12 MiB is above one BMChat part and below an unbounded fetch.
+                    let file_part = headers
+                        .get_header_value(HeaderDef::ChatBmchatFilePart)
+                        .is_some()
+                        && size <= 12 * 1024 * 1024;
+                    if file_part
+                        || download_limit.is_none_or(|download_limit| size <= download_limit)
+                    {
                         uids_fetch.push(uid);
                         uid_message_ids.insert(uid, message_id);
                     } else {
@@ -2444,6 +2453,14 @@ pub(crate) async fn get_watched_folder_configs(context: &Context) -> Result<Vec<
     let mut res = vec![Config::ConfiguredInboxFolder];
     if context.should_watch_mvbox().await? {
         res.push(Config::ConfiguredMvboxFolder);
+    }
+    if context.get_config_bool(Config::FetchSpam).await?
+        && context
+            .get_config(Config::ConfiguredSpamFolder)
+            .await?
+            .is_some()
+    {
+        res.push(Config::ConfiguredSpamFolder);
     }
     Ok(res)
 }

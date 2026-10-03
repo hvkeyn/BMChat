@@ -2832,7 +2832,7 @@ pub(crate) async fn create_send_msg_jobs(context: &Context, msg: &mut Message) -
     }
 
     let needs_encryption = msg.param.get_bool(Param::GuaranteeE2ee).unwrap_or_default();
-    let mimefactory = match MimeFactory::from_msg(context, msg.clone()).await {
+    let mut mimefactory = match MimeFactory::from_msg(context, msg.clone()).await {
         Ok(mf) => mf,
         Err(err) => {
             // Mark message as failed
@@ -2864,6 +2864,12 @@ pub(crate) async fn create_send_msg_jobs(context: &Context, msg: &mut Message) -
         msg.id.set_delivered(context).await?;
         msg.state = MessageState::OutDelivered;
         return Ok(Vec::new());
+    }
+
+    if let Some(row_ids) =
+        crate::bmchat_parts::queue_large_file(context, msg, &mut mimefactory, &recipients).await?
+    {
+        return Ok(row_ids);
     }
 
     let (rendered_pre_msg, rendered_msg) =
@@ -3059,7 +3065,10 @@ pub(crate) async fn save_text_edit_to_db(
 
 async fn donation_request_maybe(context: &Context) -> Result<()> {
     context
-        .set_config_internal(Config::DonationRequestNextCheck, Some(&i64::MAX.to_string()))
+        .set_config_internal(
+            Config::DonationRequestNextCheck,
+            Some(&i64::MAX.to_string()),
+        )
         .await
 }
 

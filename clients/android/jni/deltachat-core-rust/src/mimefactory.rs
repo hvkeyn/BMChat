@@ -161,6 +161,9 @@ pub struct MimeFactory {
 
     /// Pre-message / post-message / atomic message.
     pre_message_mode: PreMessageMode,
+
+    /// When set, this mail is one slice of a larger BMChat file.
+    bmchat_part_header: Option<String>,
 }
 
 /// Result of rendering a message, ready to be submitted to a send job.
@@ -564,6 +567,7 @@ impl MimeFactory {
             attach_selfavatar,
             webxdc_topic,
             pre_message_mode: PreMessageMode::None,
+            bmchat_part_header: None,
         };
         Ok(factory)
     }
@@ -615,6 +619,7 @@ impl MimeFactory {
             attach_selfavatar: false,
             webxdc_topic: None,
             pre_message_mode: PreMessageMode::None,
+            bmchat_part_header: None,
         };
 
         Ok(res)
@@ -936,6 +941,12 @@ impl MimeFactory {
             "Chat-Version",
             mail_builder::headers::raw::Raw::new("1.0").into(),
         ));
+        if let Some(header) = &self.bmchat_part_header {
+            headers.push((
+                HeaderDef::ChatBmchatFilePart.get_headername(),
+                mail_builder::headers::raw::Raw::new(header.clone()).into(),
+            ));
+        }
 
         if self.req_mdn {
             // we use "Chat-Disposition-Notification-To"
@@ -1943,6 +1954,17 @@ impl MimeFactory {
         self.pre_message_mode = PreMessageMode::Post;
     }
 
+    /// Render `msg` as one slice of a larger file. `index` 0 keeps the caption.
+    pub(crate) fn load_file_part(&mut self, msg: Message, header: String, index: u32) {
+        if let Loaded::Message { msg: slot, .. } = &mut self.loaded {
+            *slot = msg;
+        }
+        self.bmchat_part_header = Some(header);
+        if index > 0 {
+            self.attach_selfavatar = false;
+        }
+    }
+
     pub fn set_as_pre_message_for(&mut self, post_message: &RenderedEmail) {
         self.pre_message_mode = PreMessageMode::Pre {
             post_msg_rfc724_mid: post_message.rfc724_mid.clone(),
@@ -2182,6 +2204,14 @@ fn group_headers_by_confidentiality(
                 }
                 "chat-version" | "autocrypt-setup-message" | "chat-is-post-message" => {
                     unprotected_headers.push(header.clone());
+                }
+                "chat-bmchat-file-part" => {
+                    // The full part description stays in the encrypted header.
+                    // The outside only says that this mail must be downloaded.
+                    unprotected_headers.push((
+                        "Chat-BMChat-File-Part",
+                        mail_builder::headers::raw::Raw::new("1").into(),
+                    ));
                 }
                 _ => {
                     // Other headers are removed from unprotected part.

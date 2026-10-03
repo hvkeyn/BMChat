@@ -230,6 +230,23 @@ export default function FileTransferStatus({
           {tx('download')}
         </button>
       )}
+      {(busy || phase === 'failed' || phase === 'send_failed') && (
+        <button
+          type='button'
+          tabIndex={tabindexForInteractiveContents}
+          onClick={() => {
+            const question = tx(
+              'bmchat_transfer_cancel_body' as never
+            ) as unknown as string
+            if (!window.confirm(question)) return
+            void BackendRemote.rpc.deleteMessages(selectedAccountId(), [
+              message.id,
+            ])
+          }}
+        >
+          {tx('bmchat_transfer_cancel' as never) as unknown as string}
+        </button>
+      )}
     </div>
   )
 }

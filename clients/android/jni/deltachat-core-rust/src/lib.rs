@@ -67,6 +67,7 @@ mod decrypt;
 pub mod download;
 mod e2ee;
 pub mod ephemeral;
+mod bmchat_parts;
 mod imap;
 pub mod imex;
 pub mod key;
