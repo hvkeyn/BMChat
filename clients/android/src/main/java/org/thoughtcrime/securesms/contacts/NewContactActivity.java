@@ -134,7 +134,9 @@ public class NewContactActivity extends PassphraseRequiredActionBarActivity {
         intent.putExtra(CONTACT_ID_EXTRA, contactId);
         setResult(RESULT_OK, intent);
       } else {
-        int chatId = dcContext.createChatByContactId(contactId);
+        int chatId =
+            org.thoughtcrime.securesms.connect.BMChatPeerChat.openSingleChat(
+                this, dcContext, contactId);
         Intent intent = new Intent(this, ConversationActivity.class);
         intent.putExtra(ConversationActivity.CHAT_ID_EXTRA, chatId);
         startActivity(intent);

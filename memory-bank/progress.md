@@ -6,6 +6,7 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Completed
 
+- 2.50.42 (Oct 3, 2026): address contacts go through an encrypted 1:1 or a single SecureJoin invite with the user's text held until encryption. Android foss debug APK is 16 KB aligned (uncompressed native libs). versionCode 876, APK 135,659,985 bytes, SHA-256 `f9d877d68f7ed5a37001d9c9ff258f41231a40bee89cb249eef5722f021476de`. Desktop Setup SHA-256 `329e8c3a404ee8f9170979a5909f0f22f61eedc997b551aefa695bdeb396f0bd`, Portable `fabc0867520ac750665b92aadf232cd2f81a1cdd413b05375872ab5625775e73`. Linux artifacts remain 2.50.25. Deployed to primary and mirror `51.250.82.211:8080`. iOS source included, not built.
 - 2.50.41 (Oct 3, 2026): file transfer status on Desktop and Android (name, size, indeterminate send/receive bar, message details). Deployed to primary and mirror `51.250.82.211:8080`. No byte-level progress from core.
 - 2.50.40 (Oct 1, 2026): UI design-system pass across Desktop and Android (contrast, tokens, spacing, focus, labels, touch targets, states, EN/RU localization). Deployed to primary and mirror `51.250.82.211:8080`. iOS not built (Windows host).
 - 2.50.36–2.50.38: email-bot sender attribution and reply routing fixes (no duplicate posts into attached channels), Desktop + Android.

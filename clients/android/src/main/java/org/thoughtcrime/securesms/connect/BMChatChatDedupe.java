@@ -115,10 +115,18 @@ public final class BMChatChatDedupe {
     for (Map.Entry<String, List<Integer>> e : byAddr.entrySet()) {
       List<Integer> ids = e.getValue();
       if (ids.size() < 2) continue;
-      // chatlist is ordered newest-first, so ids.get(0) is the freshest chat -> kept.
+      // Newest-first. Prefer the newest encrypted chat: an unencrypted
+      // e-mail twin must not hide the messenger chat for the same address.
       int keep = ids.get(0);
-      for (int j = 1; j < ids.size(); j++) {
-        int dup = ids.get(j);
+      for (int id : ids) {
+        DcChat candidate = dcContext.getChat(id);
+        if (candidate != null && candidate.isEncrypted()) {
+          keep = id;
+          break;
+        }
+      }
+      for (int dup : ids) {
+        if (dup == keep) continue;
         try {
           dcContext.setChatVisibility(dup, DcChat.DC_CHAT_VISIBILITY_ARCHIVED);
           archived++;

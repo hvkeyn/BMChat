@@ -1587,12 +1587,22 @@ class ChatViewController: UIViewController, UITableViewDelegate, UITableViewData
     private func sendTextMessage(text: String, quoteMessage: DcMsg?) {
         DispatchQueue.global().async { [weak self] in
             guard let self else { return }
+            let target = BMChatPeerChat.preferEncrypted(self.dcContext, self.chatId)
+            if target == self.chatId && BMChatPeerChat.holdUntilEncrypted(self.dcContext, self.chatId, text) {
+                DispatchQueue.main.async {
+                    let alert = UIAlertController(title: nil, message: BMChatPeerChat.waitingText(), preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: String.localized("ok"), style: .default))
+                    self.present(alert, animated: true)
+                }
+                return
+            }
             let message = self.dcContext.newMessage(viewType: DC_MSG_TEXT)
             message.text = text
             if let quoteMessage {
                 message.quoteMessage = quoteMessage
             }
-            self.dcContext.sendMessage(chatId: self.chatId, message: message)
+            self.dcContext.sendMessage(chatId: target, message: message)
+            BMChatPeerChat.flushPending(self.dcContext)
         }
     }
 

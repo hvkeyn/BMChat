@@ -28,8 +28,8 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        versionCode 875
-        versionName "2.50.41"
+        versionCode 876
+        versionName "2.50.42"
 
         applicationId "chat.bromore.bmchat.foss"
         multiDexEnabled true
@@ -61,6 +61,10 @@ android {
     }
     packagingOptions {
         jniLibs {
+            // Uncompressed and 16 KB zip-aligned. Compressed .so files fail
+            // Android 16's page-size check ("unknown error") even when the
+            // ELF itself is already aligned.
+            useLegacyPackaging = false
             keepDebugSymbols += [
                 '*/mips/*.so',
                 '*/mips64/*.so'
@@ -137,6 +141,27 @@ android {
     android.applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "BMChat-${variant.flavorName}-${variant.buildType.name}-${variant.versionName}.apk"
+        }
+    }
+
+    tasks.configureEach { task ->
+        if (task.name.startsWith("strip") && task.name.endsWith("DebugSymbols")) {
+            task.doLast {
+                def script = file("scripts/align_elf_16k.py")
+                def variantDir = task.name
+                    .replaceFirst(/^strip/, "")
+                    .replaceFirst(/DebugSymbols$/, "")
+                variantDir = variantDir.substring(0, 1).toLowerCase() + variantDir.substring(1)
+                def libs = fileTree(
+                    dir: "${buildDir}/intermediates/stripped_native_libs/${variantDir}",
+                    include: "**/*.so"
+                )
+                libs.files.each { so ->
+                    exec {
+                        commandLine "python", script.absolutePath, so.absolutePath
+                    }
+                }
+            }
         }
     }
 

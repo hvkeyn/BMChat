@@ -77,7 +77,9 @@ public class NewConversationActivity extends ContactSelectionActivity {
             .setPositiveButton(
                 android.R.string.ok,
                 (dialog, which) -> {
-                  openConversation(dcContext.createChatByContactId(contactId));
+                  openConversation(
+                      org.thoughtcrime.securesms.connect.BMChatPeerChat.openSingleChat(
+                          NewConversationActivity.this, dcContext, contactId));
                 })
             .show();
       }

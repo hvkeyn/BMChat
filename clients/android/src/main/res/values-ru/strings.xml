@@ -344,6 +344,8 @@
     <string name="bmchat_check_for_updates">Проверить обновления</string>
     <string name="bmchat_check_for_updates_summary">Текущая сборка: %1$s %2$s</string>
     <string name="bmchat_resend_invite_title">Повторно отправить приглашение?</string>
+    <string name="bmchat_wait_for_encryption">Чат ещё не защищён. Приглашение отправлено. Сообщение уйдёт, когда собеседник примет его в BMChat.</string>
+    <string name="bmchat_sent_via_encrypted">Отправлено в защищённый чат с этим контактом.</string>
     <string name="bmchat_resend_invite_explain">BMChat отправит письмо с приглашением на %1$s через ваш SMTP. Получатель сможет открыть его в BMChat и автоматически установить защищённый канал — стороннние серверы не задействуются.</string>
     <string name="bmchat_resend_invite_done">Приглашение отправлено повторно.</string>
     <string name="bmchat_resend_invite_menu">Повторно пригласить по e-mail</string>

@@ -296,7 +296,13 @@ public class DcContext {
 
     @discardableResult
     public func createChatByContactId(contactId: Int) -> Int {
-        return Int(dc_create_chat_by_contact_id(contextPointer, UInt32(contactId)))
+        if contactId > Int(DC_CHAT_ID_LAST_SPECIAL) {
+            let encrypted = BMChatPeerChat.encryptedChatId(self, getContact(id: contactId).email)
+            if encrypted != 0 { return encrypted }
+        }
+        let chatId = Int(dc_create_chat_by_contact_id(contextPointer, UInt32(contactId)))
+        BMChatPeerChat.ensureInvite(self, chatId)
+        return chatId
     }
 
     public func createGroupChat(verified: Bool, name: String) -> Int {

@@ -26,6 +26,15 @@
   "bmchat_transfer_size": {
     "message": "Size"
   },
+  "bmchat_invite_email_body": {
+    "message": "Hi! I would like to chat with you on BMChat. Just open the link below — if you already have BMChat installed it will pick this invitation up automatically; otherwise the link explains how to get the app.\n\n%1$s"
+  },
+  "bmchat_wait_for_encryption": {
+    "message": "This chat is not encrypted yet. An invitation was sent. Your message will be delivered after the contact accepts it in BMChat."
+  },
+  "bmchat_sent_via_encrypted": {
+    "message": "Sent in the encrypted chat with this contact."
+  },
   "bmchat_schedule_message": {
     "message": "Schedule message"
   },

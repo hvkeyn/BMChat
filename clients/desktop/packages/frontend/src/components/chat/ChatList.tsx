@@ -39,6 +39,7 @@ import {
 import { KeybindAction } from '../../keybindings'
 import { useThemeCssVar } from '../../ThemeManager'
 import { BackendRemote, onDCEvent, Type } from '../../backend-com'
+import { flushPendingPlaintext } from '../../bmchat/peerChat'
 import { selectedAccountId } from '../../ScreenController'
 import CreateChat from '../dialogs/CreateChat'
 import useChat from '../../hooks/chat/useChat'
@@ -198,6 +199,20 @@ export default function ChatList(props: {
   onChatClick: (chatId: number) => void
 }) {
   const accountId = selectedAccountId()
+
+  useEffect(() => {
+    void flushPendingPlaintext(accountId)
+    const onIncoming = onDCEvent(accountId, 'IncomingMsg', () => {
+      void flushPendingPlaintext(accountId)
+    })
+    const onModified = onDCEvent(accountId, 'ChatModified', () => {
+      void flushPendingPlaintext(accountId)
+    })
+    return () => {
+      onIncoming()
+      onModified()
+    }
+  }, [accountId])
 
   const {
     selectedChatId: activeChatId,

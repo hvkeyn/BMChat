@@ -5,7 +5,13 @@ import { BackendRemote } from '../../backend-com'
 import { getLogger } from '../../../../shared/logger'
 import { notifyWebxdcMessageSent } from '../useWebxdcMessageSent'
 import { dispatchEmailBotCommand } from '../../bmchat/emailBots'
+import {
+  flushPendingPlaintext,
+  HeldForEncryptionError,
+  prepareOutgoingChat,
+} from '../../bmchat/peerChat'
 import { runtime } from '@deltachat-desktop/runtime-interface'
+import useTranslationFunction from '../useTranslationFunction'
 
 import type { T } from '@deltachat/jsonrpc-client'
 
@@ -78,6 +84,7 @@ const MESSAGE_DEFAULT: T.MessageData = {
 
 export default function useMessage() {
   const { chatId, selectChat } = useChat()
+  const tx = useTranslationFunction()
 
   const jumpToMessage = useCallback<JumpToMessage>(
     async ({
@@ -133,6 +140,20 @@ export default function useMessage() {
       chatId: number,
       message: Partial<T.MessageData>
     ) => {
+      void flushPendingPlaintext(accountId)
+      const prepared = await prepareOutgoingChat(
+        accountId,
+        chatId,
+        message.text ?? null,
+        link => tx('bmchat_invite_email_body', link)
+      )
+      if (prepared.held) {
+        throw new HeldForEncryptionError(tx('bmchat_wait_for_encryption'))
+      }
+      if (prepared.chatId !== chatId) {
+        selectChat(accountId, prepared.chatId)
+        chatId = prepared.chatId
+      }
       const msgId = await BackendRemote.rpc.sendMsg(accountId, chatId, {
         ...MESSAGE_DEFAULT,
         ...message,
@@ -159,7 +180,7 @@ export default function useMessage() {
         focus: false,
       })
     },
-    [jumpToMessage]
+    [jumpToMessage, selectChat, tx]
   )
 
   const deleteMessage = useCallback<DeleteMessage>(

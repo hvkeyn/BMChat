@@ -325,6 +325,8 @@
     <string name="bmchat_check_for_updates">Check for updates</string>
     <string name="bmchat_check_for_updates_summary">Current build: %1$s %2$s</string>
     <string name="bmchat_resend_invite_title">Resend invite to this contact?</string>
+    <string name="bmchat_wait_for_encryption">This chat is not encrypted yet. An invitation was sent. Your message will be delivered after the contact accepts it in BMChat.</string>
+    <string name="bmchat_sent_via_encrypted">Sent in the encrypted chat with this contact.</string>
     <string name="bmchat_resend_invite_explain">Sends a fresh BMChat invitation by e-mail to %1$s using your own SMTP. They can open it with BMChat to start a verified chat — no third-party server is involved.</string>
     <string name="bmchat_resend_invite_done">Invitation re-sent.</string>
     <string name="bmchat_resend_invite_menu">Re-send invite by e-mail</string>

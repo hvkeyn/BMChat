@@ -32,5 +32,7 @@ LOCAL_CFLAGS 	+= -DANDROID_NDK -DDISABLE_IMPORTGL -fno-strict-aliasing -DAVOID_T
 
 LOCAL_SRC_FILES := dc_wrapper.c
 LOCAL_LDFLAGS += -Wl,--build-id=none
+# Android 16 rejects 4 KB LOAD alignment. Keep future ndk-make links at 16 KB.
+LOCAL_LDFLAGS += -Wl,-z,max-page-size=16384
 
 include $(BUILD_SHARED_LIBRARY)

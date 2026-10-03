@@ -1812,7 +1812,36 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
               }
 
               if (doSend) {
-                int sentMsgId = dcContext.sendMsg(currentChatId, msg);
+                int targetChatId =
+                    org.thoughtcrime.securesms.connect.BMChatPeerChat.preferEncrypted(
+                        dcContext, currentChatId);
+                if (targetChatId == currentChatId
+                    && org.thoughtcrime.securesms.connect.BMChatPeerChat.holdUntilEncrypted(
+                        context, dcContext, currentChatId, msg.getText())) {
+                  dcContext.setDraft(currentChatId, msg);
+                  Util.runOnMain(
+                      () -> {
+                        if (isFinishing()) return;
+                        composeText.setText(body);
+                        Toast.makeText(
+                                ConversationActivity.this,
+                                R.string.bmchat_wait_for_encryption,
+                                Toast.LENGTH_LONG)
+                            .show();
+                      });
+                  future.set(currentChatId);
+                  return;
+                }
+                int sentMsgId = dcContext.sendMsg(targetChatId, msg);
+                if (targetChatId != currentChatId) {
+                  Util.runOnMain(
+                      () ->
+                          Toast.makeText(
+                                  ConversationActivity.this,
+                                  R.string.bmchat_sent_via_encrypted,
+                                  Toast.LENGTH_LONG)
+                              .show());
+                }
                 if (sentMsgId == 0) {
                   String lastError = dcContext.getLastError();
                   if (!"".equals(lastError)) {
@@ -1824,7 +1853,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
                   future.set(currentChatId);
                   return;
                 }
-                maybeDispatchEmailBotCommand(dcContext, currentChatId, sentMsgId);
+                maybeDispatchEmailBotCommand(dcContext, targetChatId, sentMsgId);
               }
 
               if (currentChatId == this.chatId) {

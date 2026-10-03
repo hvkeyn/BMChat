@@ -25,6 +25,7 @@ import { confirmDialog, isMessageEditable } from '../message/messageFunctions'
 import useDialog from '../../hooks/dialog/useDialog'
 import useTranslationFunction from '../../hooks/useTranslationFunction'
 import useMessage from '../../hooks/chat/useMessage'
+import { HeldForEncryptionError } from '../../bmchat/peerChat'
 import useChat from '../../hooks/chat/useChat'
 import { useDraft, type DraftObject } from '../../hooks/chat/useDraft'
 
@@ -268,6 +269,11 @@ const Composer = forwardRef<
             sentSuccessfully = true
           } catch (err) {
             sentSuccessfully = false
+            if (err instanceof HeldForEncryptionError) {
+              openDialog(AlertDialog, { message: err.message })
+              props.setDraftState(preSendDraftState)
+              return
+            }
             openDialog(AlertDialog, {
               message:
                 tx('systemmsg_failed_sending_to', selectedChat.name) +

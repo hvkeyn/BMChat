@@ -180,6 +180,7 @@
 		AE9DAF0F22C278C6004C9591 /* ChatTitleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE9DAF0E22C278C6004C9591 /* ChatTitleView.swift */; };
 		AEACE2E31FB32B5C00DCDD78 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEACE2E21FB32B5C00DCDD78 /* Constants.swift */; };
 		AEACE2E51FB32E1900DCDD78 /* Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEACE2E41FB32E1900DCDD78 /* Utils.swift */; };
+		BEEF0001PEERCHAT00000001 /* BMChatPeerChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEF0001PEERCHAT00000002 /* BMChatPeerChat.swift */; };
 		AEC67A1C241CE9E4007DDBE1 /* AppStateRestorer.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEC67A1B241CE9E4007DDBE1 /* AppStateRestorer.swift */; };
 		AEC67A1E241FCFE0007DDBE1 /* ChatListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEC67A1D241FCFE0007DDBE1 /* ChatListViewModel.swift */; };
 		AECEF03E244F2D55006C90DA /* QrPageController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AECEF03D244F2D55006C90DA /* QrPageController.swift */; };
@@ -555,6 +556,7 @@
 		AE9DAF0E22C278C6004C9591 /* ChatTitleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatTitleView.swift; sourceTree = "<group>"; };
 		AEACE2E21FB32B5C00DCDD78 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		AEACE2E41FB32E1900DCDD78 /* Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Utils.swift; sourceTree = "<group>"; };
+		BEEF0001PEERCHAT00000002 /* BMChatPeerChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BMChatPeerChat.swift; sourceTree = "<group>"; };
 		AEC67A1B241CE9E4007DDBE1 /* AppStateRestorer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStateRestorer.swift; sourceTree = "<group>"; };
 		AEC67A1D241FCFE0007DDBE1 /* ChatListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatListViewModel.swift; sourceTree = "<group>"; };
 		AECEF03D244F2D55006C90DA /* QrPageController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QrPageController.swift; sourceTree = "<group>"; };
@@ -1161,6 +1163,7 @@
 				305702A024C6453700D84EFC /* TypeAlias.swift */,
 				AEACE2E21FB32B5C00DCDD78 /* Constants.swift */,
 				AEACE2E41FB32E1900DCDD78 /* Utils.swift */,
+				BEEF0001PEERCHAT00000002 /* BMChatPeerChat.swift */,
 				AE851AC4227C755A00ED86F0 /* Protocols.swift */,
 				3095A350237DD1F700AB07F7 /* MediaPicker.swift */,
 				5F153E992CC38BAA00871ABE /* GiveBackMyFirstResponder.swift */,
@@ -1918,6 +1921,7 @@
 				302B84C72396770B001C261F /* RelayHelper.swift in Sources */,
 				B2172F3C29C125F2002C289E /* AdvancedViewController.swift in Sources */,
 				AEACE2E51FB32E1900DCDD78 /* Utils.swift in Sources */,
+				BEEF0001PEERCHAT00000001 /* BMChatPeerChat.swift in Sources */,
 				3052C60E253F088E007D13EA /* DetectorType.swift in Sources */,
 				30349291256441E200A523D0 /* QuotePreview.swift in Sources */,
 				AEC67A1E241FCFE0007DDBE1 /* ChatListViewModel.swift in Sources */,

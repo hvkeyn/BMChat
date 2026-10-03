@@ -1,5 +1,6 @@
 import { BackendRemote } from '../backend-com'
 import { clearNotificationsForChat } from '../system-integration/notifications'
+import { encryptedChatForAddress, ensureInvite } from '../bmchat/peerChat'
 
 import { C, type T } from '@deltachat/jsonrpc-client'
 
@@ -17,14 +18,17 @@ export async function getChatInfoByEmail(
   chatId: number | null
   contactId: number | null
 }> {
+  const encryptedChatId = await encryptedChatForAddress(accountId, email)
   const contactId = await BackendRemote.rpc.lookupContactIdByAddr(
     accountId,
     email
   )
 
-  const chatId = contactId
-    ? await BackendRemote.rpc.getChatIdByContactId(accountId, contactId)
-    : null
+  const chatId =
+    encryptedChatId ??
+    (contactId
+      ? await BackendRemote.rpc.getChatIdByContactId(accountId, contactId)
+      : null)
 
   return {
     contactId,
@@ -90,7 +94,22 @@ export async function createChatByContactId(
     }
   }
 
-  return await BackendRemote.rpc.createChatByContactId(accountId, contactId)
+  let addr = email
+  if (!addr) {
+    const contact = await BackendRemote.rpc.getContact(accountId, contactId)
+    addr = contact.address
+  }
+  if (addr) {
+    const encryptedChatId = await encryptedChatForAddress(accountId, addr)
+    if (encryptedChatId) return encryptedChatId
+  }
+
+  const chatId = await BackendRemote.rpc.createChatByContactId(
+    accountId,
+    contactId
+  )
+  await ensureInvite(accountId, chatId, link => link)
+  return chatId
 }
 
 /**

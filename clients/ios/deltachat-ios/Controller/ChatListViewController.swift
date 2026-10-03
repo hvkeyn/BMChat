@@ -235,6 +235,10 @@ class ChatListViewController: UITableViewController {
     }
 
     @objc private func handleIncomingMessage(_ notification: Notification) {
+        let dc = dcContext
+        DispatchQueue.global().async {
+            BMChatPeerChat.flushPending(dc)
+        }
         refreshInBg()
     }
 

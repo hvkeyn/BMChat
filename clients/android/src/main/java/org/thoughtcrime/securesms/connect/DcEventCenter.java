@@ -282,11 +282,13 @@ public class DcEventCenter {
       // BMChat: a freshly modified chat may be a brand-new mirror of an
       // existing 1:1 conversation -> archive the older duplicates.
       BMChatChatDedupe.scheduleScan(context, context.getDcContext());
+      BMChatPeerChat.flushPending(context.getDcContext());
     } else if (id == DcContext.DC_EVENT_CONTACTS_CHANGED
         || id == DcContext.DC_EVENT_MSGS_CHANGED) {
       // Same idea for any contact/message churn that might have introduced
       // a new key-contact for an e-mail we already track.
       BMChatChatDedupe.scheduleScan(context, context.getDcContext());
+      BMChatPeerChat.flushPending(context.getDcContext());
     }
 
     // BMChat: keep the launcher icon unread badge in sync with the core's
