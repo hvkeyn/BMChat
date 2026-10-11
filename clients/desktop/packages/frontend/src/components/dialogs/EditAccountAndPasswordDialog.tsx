@@ -21,6 +21,8 @@ import { getLogger } from '@deltachat-desktop/shared/logger'
 
 type AccountAndPasswordDialogProps = DialogProps & {
   addr?: string
+  /** Empty form that adds another mailbox on the current account. */
+  adding?: boolean
 }
 
 const log = getLogger('renderer/EditAccountAndPasswordDialog')
@@ -32,6 +34,7 @@ const log = getLogger('renderer/EditAccountAndPasswordDialog')
 export default function EditAccountAndPasswordDialog({
   onClose,
   addr,
+  adding,
 }: AccountAndPasswordDialogProps) {
   const tx = useTranslationFunction()
 
@@ -42,10 +45,14 @@ export default function EditAccountAndPasswordDialog({
     <Dialog canOutsideClickClose={false} onClose={onClose}>
       <DialogHeader
         title={
-          isChatmail ? tx('edit_transport') : tx('manual_account_setup_option')
+          adding
+            ? tx('add_transport')
+            : isChatmail
+              ? tx('edit_transport')
+              : tx('manual_account_setup_option')
         }
       />
-      <EditAccountInner {...{ onClose, addr }} />
+      <EditAccountInner {...{ onClose, addr, adding }} />
     </Dialog>
   )
 }
@@ -53,9 +60,11 @@ export default function EditAccountAndPasswordDialog({
 function EditAccountInner({
   onClose,
   addr,
+  adding,
 }: {
   onClose: DialogProps['onClose']
   addr?: string
+  adding?: boolean
 }) {
   const [initialSettings, setInitialAccountSettings] =
     useState<Credentials>(defaultCredentials())
@@ -70,6 +79,9 @@ function EditAccountInner({
     let cancelled = false
 
     const loadSettings = async () => {
+      if (adding) {
+        return
+      }
       if (window.__selectedAccountId === undefined) {
         throw new Error('can not load settings when no account is selected')
       }
@@ -102,7 +114,7 @@ function EditAccountInner({
     return () => {
       cancelled = true
     }
-  }, [addr])
+  }, [addr, adding])
 
   const onUpdate = useCallback(async () => {
     const onSuccess = () => onClose()
@@ -117,12 +129,16 @@ function EditAccountInner({
       })
     }
 
-    if (initialSettings.addr !== accountSettings.addr) {
+    if (!adding && initialSettings.addr !== accountSettings.addr) {
       log.error('changing email addres of transport is not allowed')
       return
     }
+    if (adding && (!accountSettings.addr || !accountSettings.password)) {
+      openDialog(AlertDialog, { message: tx('login_error_required_fields') })
+      return
+    }
     update()
-  }, [accountSettings, initialSettings, onClose, openDialog])
+  }, [accountSettings, adding, initialSettings, onClose, openDialog, tx])
 
   const onOk = useCallback(async () => {
     await onUpdate()
@@ -137,7 +153,7 @@ function EditAccountInner({
             <LoginForm
               credentials={accountSettings}
               setCredentials={setAccountSettings}
-              isEdit
+              isEdit={adding ? undefined : true}
             />
           )}
         </DialogContent>

@@ -16,7 +16,7 @@ pub(crate) mod server_params;
 use anyhow::{Context as _, Result, bail, ensure, format_err};
 use auto_mozilla::moz_autoconfigure;
 use auto_outlook::outlk_autodiscover;
-use deltachat_contact_tools::{EmailAddress, addr_normalize};
+use deltachat_contact_tools::{EmailAddress, addr_cmp, addr_normalize};
 use futures::FutureExt;
 use futures_lite::FutureExt as _;
 use percent_encoding::utf8_percent_encode;
@@ -134,6 +134,9 @@ impl Context {
             "cannot configure, database not opened."
         );
         param.addr = addr_normalize(&param.addr);
+        if email_claimed_by_other_account(self, &param.addr)? {
+            bail!("This email is already connected to another account.");
+        }
         let cancel_channel = self.alloc_ongoing().await?;
 
         let res = self
@@ -805,6 +808,62 @@ pub enum Error {
 
     #[error("{0:#}")]
     Other(#[from] anyhow::Error),
+}
+
+/// Another profile on this device already uses this address as its own mailbox.
+fn email_claimed_by_other_account(context: &Context, addr: &str) -> Result<bool> {
+    if addr.is_empty() {
+        return Ok(false);
+    }
+    let dbfile = context.get_dbfile();
+    let Some(account_dir) = dbfile.parent() else {
+        return Ok(false);
+    };
+    let Some(accounts_dir) = account_dir.parent() else {
+        return Ok(false);
+    };
+    let my_dir = account_dir.file_name().map(|name| name.to_os_string());
+    let db_name = dbfile.file_name().unwrap_or_default();
+    let entries = match std::fs::read_dir(accounts_dir) {
+        Ok(entries) => entries,
+        Err(_) => return Ok(false),
+    };
+    for entry in entries.flatten() {
+        if my_dir.as_ref().is_some_and(|name| entry.file_name() == *name) {
+            continue;
+        }
+        let other = entry.path().join(db_name);
+        if !other.is_file() {
+            continue;
+        }
+        let Ok(conn) = rusqlite::Connection::open_with_flags(
+            &other,
+            rusqlite::OpenFlags::SQLITE_OPEN_READ_ONLY | rusqlite::OpenFlags::SQLITE_OPEN_NO_MUTEX,
+        ) else {
+            continue;
+        };
+        let in_transports: i64 = conn
+            .query_row(
+                "SELECT COUNT(*) FROM transports WHERE addr=? COLLATE NOCASE",
+                [addr],
+                |row| row.get(0),
+            )
+            .unwrap_or(0);
+        if in_transports > 0 {
+            return Ok(true);
+        }
+        let configured: String = conn
+            .query_row(
+                "SELECT value FROM config WHERE keyname='configured_addr'",
+                [],
+                |row| row.get(0),
+            )
+            .unwrap_or_default();
+        if addr_cmp(&configured, addr) {
+            return Ok(true);
+        }
+    }
+    Ok(false)
 }
 
 #[cfg(test)]

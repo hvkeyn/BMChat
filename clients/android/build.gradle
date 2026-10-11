@@ -28,8 +28,8 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        versionCode 879
-        versionName "2.50.45"
+        versionCode 883
+        versionName "2.50.49"
 
         applicationId "chat.bromore.bmchat.foss"
         multiDexEnabled true
@@ -91,6 +91,9 @@ android {
             }
         }
         release {
+            enableV1Signing true
+            enableV2Signing true
+            enableV3Signing true
             // can be defined at `~/.gradle/gradle.properties` or at "Build/Generate signed APK"
             if(project.hasProperty("DC_RELEASE_STORE_FILE")) {
                 storeFile file(DC_RELEASE_STORE_FILE)

@@ -6,7 +6,9 @@ pub mod send;
 use anyhow::{Context as _, Error, Result, bail, format_err};
 use async_smtp::response::{Category, Code, Detail};
 use async_smtp::{EmailAddress, SmtpTransport};
+use deltachat_contact_tools::addr_cmp;
 use tokio::task;
+use tokio::time::timeout;
 
 use crate::chat::{ChatId, add_info_msg_with_cmd};
 use crate::config::Config;
@@ -89,20 +91,96 @@ impl Smtp {
         }
 
         self.connectivity.set_connecting(context);
-        let (_transport_id, lp) = ConfiguredLoginParam::load(context)
+        let mut mailboxes = ConfiguredLoginParam::load_all(context).await?;
+        if mailboxes.is_empty() {
+            bail!("Not configured");
+        }
+        let prefer = context
+            .sql
+            .get_raw_config("bmchat_smtp_prefer")
             .await?
-            .context("Not configured")?;
+            .unwrap_or_default();
+        let mut down = context
+            .sql
+            .get_raw_config("bmchat_smtp_down")
+            .await?
+            .unwrap_or_default();
+        let now = tools::time();
+        let recently_down = |addr: &str, down: &str| -> bool {
+            down.lines().any(|line| {
+                let mut parts = line.split('\t');
+                let marked = parts.next().unwrap_or("");
+                let at = parts.next().unwrap_or("0").parse::<i64>().unwrap_or(0);
+                addr_cmp(marked, addr) && now.saturating_sub(at) < 180
+            })
+        };
+        if mailboxes.iter().any(|(_, lp)| !recently_down(&lp.addr, &down)) {
+            mailboxes.retain(|(_, lp)| !recently_down(&lp.addr, &down));
+        }
+        mailboxes.sort_by(|(_, a), (_, b)| {
+            addr_cmp(&b.addr, &prefer).cmp(&addr_cmp(&a.addr, &prefer))
+        });
         let proxy_config = ProxyConfig::load(context).await?;
-        self.connect(
-            context,
-            &lp.smtp,
-            &lp.smtp_password,
-            &proxy_config,
-            &lp.addr,
-            lp.strict_tls(proxy_config.is_some()),
-            lp.oauth2,
-        )
-        .await
+        let mut first_error = None;
+        for (_id, lp) in mailboxes {
+            info!(context, "SMTP trying mailbox {}.", lp.addr);
+            let attempt = self.connect(
+                context,
+                &lp.smtp,
+                &lp.smtp_password,
+                &proxy_config,
+                &lp.addr,
+                lp.strict_tls(proxy_config.is_some()),
+                lp.oauth2,
+            );
+            let connected = match timeout(std::time::Duration::from_secs(15), attempt).await {
+                Ok(Ok(())) => true,
+                Ok(Err(err)) => {
+                    warn!(context, "Mailbox {} did not accept SMTP: {err:#}.", lp.addr);
+                    first_error.get_or_insert(err);
+                    self.disconnect();
+                    false
+                }
+                Err(_) => {
+                    warn!(context, "Mailbox {} did not answer SMTP in time.", lp.addr);
+                    self.disconnect();
+                    false
+                }
+            };
+            if connected {
+                context
+                    .sql
+                    .set_raw_config("bmchat_smtp_prefer", Some(&lp.addr))
+                    .await
+                    .ok();
+                info!(context, "bmchat-mailbox {}", lp.addr);
+                return Ok(());
+            }
+            let mut next_down = String::new();
+            for line in down.lines() {
+                let marked = line.split('\t').next().unwrap_or("");
+                if addr_cmp(marked, &lp.addr) {
+                    continue;
+                }
+                if !next_down.is_empty() {
+                    next_down.push('\n');
+                }
+                next_down.push_str(line);
+            }
+            if !next_down.is_empty() {
+                next_down.push('\n');
+            }
+            next_down.push_str(&lp.addr);
+            next_down.push('\t');
+            next_down.push_str(&now.to_string());
+            down = next_down;
+            context
+                .sql
+                .set_raw_config("bmchat_smtp_down", Some(&down))
+                .await
+                .ok();
+        }
+        Err(first_error.unwrap_or_else(|| format_err!("No mailbox accepted SMTP")))
     }
 
     /// Connect using the provided login params.

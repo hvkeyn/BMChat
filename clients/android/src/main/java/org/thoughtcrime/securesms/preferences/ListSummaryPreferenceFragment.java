@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import org.thoughtcrime.securesms.R;
+import org.thoughtcrime.securesms.bmchat.BMChatAccountCopy;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.connect.DcHelper;
 import org.thoughtcrime.securesms.service.GenericForegroundService;
@@ -104,15 +105,27 @@ public abstract class ListSummaryPreferenceFragment extends CorrectedPreferenceF
     imexProgress = new HashMap<>();
     accountsDone = 0;
     showProgressDialog();
-    String path = DcHelper.getImexDir().getAbsolutePath();
+    DcContext[] exporting = new DcContext[imexAccounts.length];
     for (int i = 0; i < imexAccounts.length; i++) {
-      startImexInner(imexAccounts[i], what, path, path);
+      exporting[i] = DcHelper.getAccounts(getActivity()).getAccount(imexAccounts[i]);
+    }
+    pathAsDisplayedToUser = BMChatAccountCopy.DISPLAY_PATH;
+    if (!BMChatAccountCopy.beginExport(getActivity(), exporting)) {
+      finishProgressDialog();
+      Toast.makeText(getActivity(), R.string.bmchat_account_copy_busy, Toast.LENGTH_LONG).show();
     }
   }
 
   protected void startImexOne(int what) {
-    String path = DcHelper.getImexDir().getAbsolutePath();
-    startImexOne(what, path, path);
+    imexAccounts = new int[] {dcContext.getAccountId()};
+    imexProgress = new HashMap<>();
+    accountsDone = 0;
+    showProgressDialog();
+    pathAsDisplayedToUser = BMChatAccountCopy.DISPLAY_PATH;
+    if (!BMChatAccountCopy.beginExport(getActivity(), new DcContext[] {dcContext})) {
+      finishProgressDialog();
+      Toast.makeText(getActivity(), R.string.bmchat_account_copy_busy, Toast.LENGTH_LONG).show();
+    }
   }
 
   protected void startImexOne(int what, String imexPath, String pathAsDisplayedToUser) {
@@ -138,6 +151,17 @@ public abstract class ListSummaryPreferenceFragment extends CorrectedPreferenceF
   private void stopOngoingProcess() {
     for (int accId : imexAccounts) {
       DcHelper.getAccounts(requireActivity()).getAccount(accId).stopOngoingProcess();
+    }
+  }
+
+  private void finishProgressDialog() {
+    if (notificationController != null) {
+      notificationController.close();
+      notificationController = null;
+    }
+    if (progressDialog != null) {
+      progressDialog.dismiss();
+      progressDialog = null;
     }
   }
 

@@ -280,24 +280,27 @@ export async function init(cwd: string, logHandler: LogHandler) {
         }
       )
 
-      if (!canceled && filePath) {
-        try {
-          await copyFile(pathToSource, filePath)
-        } catch (error: any) {
-          if (error.code == 'EACCES') {
-            dialog.showErrorBox(
-              'Permission Error',
-              `Cannot write in this folder. You don't have write permission`
-            )
-          } else {
-            dialog.showErrorBox(
-              'Unhandled Error',
-              `Cannot copy file. Error: ${error}`
-            )
-          }
-        }
-        lastSaveDialogLocation = path.dirname(filePath)
+      if (canceled || !filePath) {
+        return false
       }
+      try {
+        await copyFile(pathToSource, filePath)
+      } catch (error: any) {
+        if (error.code == 'EACCES') {
+          dialog.showErrorBox(
+            'Permission Error',
+            `Cannot write in this folder. You don't have write permission`
+          )
+        } else {
+          dialog.showErrorBox(
+            'Unhandled Error',
+            `Cannot copy file. Error: ${error}`
+          )
+        }
+        return false
+      }
+      lastSaveDialogLocation = path.dirname(filePath)
+      return true
     }
   )
 

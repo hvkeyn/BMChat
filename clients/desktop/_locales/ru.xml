@@ -889,6 +889,13 @@
     <!-- "Relay" refers to the relay servers used; please chose a common term in your language, no need to be literal. If in doubt, stay with "Relay" -->
     <string name="transports">Релеи</string>
     <string name="add_transport">Добавить релей</string>
+    <string name="bmchat_mailbox_backup">Резервный. Берётся, если предыдущий ящик не отвечает.</string>
+    <string name="bmchat_mailbox_config_export">Экспорт конфига</string>
+    <string name="bmchat_mailbox_config_import">Импорт конфига</string>
+    <string name="bmchat_mailbox_config_exported">Конфиг ящиков сохранён. В файле есть пароли. Удалите его в файловом менеджере, когда он больше не нужен.</string>
+    <string name="bmchat_mailbox_config_imported">Импортировано ящиков: %1$s.</string>
+    <string name="bmchat_mailbox_config_invalid">Этот файл не является конфигом ящиков BMChat.</string>
+    <string name="bmchat_mailbox_config_empty">В конфиге нет ящиков.</string>
     <string name="remove_transport">Удалить релей</string>
     <string name="edit_transport">Редактировать релей</string>
     <string name="used_for_sending">Используется для отправки</string>

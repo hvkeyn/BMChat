@@ -987,6 +987,8 @@
     <string name="remove_transport">Remove Relay</string>
     <string name="edit_transport">Edit Relay</string>
     <string name="used_for_sending">Used for sending</string>
+    <string name="bmchat_mailbox_backup">Backup. Used when the previous mailbox does not answer.</string>
+    <string name="bmchat_mailbox_email_taken">This email is already connected to another account.</string>
     <string name="hide_from_contacts">Hide from Contacts</string>
     <string name="hidden_from_contacts">Hidden from contacts</string>
     <!-- Hint for the list of relays -->
@@ -1107,6 +1109,13 @@
     <string name="pref_backup_export_all">Export all %1$d profiles</string>
     <string name="pref_backup_export_start_button">Start Backup</string>
     <string name="pref_backup_written_to_x">Backup written successfully to \"%1$s\".</string>
+    <string name="bmchat_account_copy_title">Save a copy</string>
+    <string name="bmchat_account_copy_summary">Stored in Download/BMChat. Stays after the app is removed.</string>
+    <string name="bmchat_account_copy_explain">The copy is written to Download/BMChat. It stays on the phone after this app is removed, and you can delete that folder in the file manager.\n\nIt contains messages, contacts, mailboxes and the encryption keys. Keep it private.</string>
+    <string name="bmchat_account_copy_restore">If a copy was saved earlier, it is in Download/BMChat. Choose the file to restore it. You can delete that folder in the file manager.</string>
+    <string name="bmchat_account_copy_choose">Choose file</string>
+    <string name="bmchat_account_copy_busy">A copy is already being saved.</string>
+    <string name="bmchat_account_copy_failed">Could not save the copy to Download/BMChat.</string>
     <!-- No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color. -->
     <string name="pref_background">Wallpaper</string>
     <string name="pref_background_btn_default">Use Default Image</string>

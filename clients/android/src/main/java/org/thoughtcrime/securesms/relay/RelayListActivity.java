@@ -20,15 +20,12 @@ import chat.delta.rpc.RpcException;
 import chat.delta.rpc.types.TransportListEntry;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcEvent;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 import java.util.List;
 import org.thoughtcrime.securesms.BaseActionBarActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.registration.PulsingFloatingActionButton;
 import org.thoughtcrime.securesms.connect.DcEventCenter;
 import org.thoughtcrime.securesms.connect.DcHelper;
-import org.thoughtcrime.securesms.qr.QrActivity;
 import org.thoughtcrime.securesms.qr.QrCodeHandler;
 import org.thoughtcrime.securesms.util.ScreenLockUtil;
 import org.thoughtcrime.securesms.util.Util;
@@ -51,7 +48,6 @@ public class RelayListActivity extends BaseActionBarActivity
   private String qrData = null;
 
   private ActivityResultLauncher<Intent> screenLockLauncher;
-  private ActivityResultLauncher<Intent> qrScannerLauncher;
 
   /** Relay selected for context menu via onRelayLongClick() */
   private TransportListEntry contextMenuRelay = null;
@@ -61,16 +57,6 @@ public class RelayListActivity extends BaseActionBarActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_relay_list);
 
-    qrScannerLauncher =
-        registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-              if (result.getResultCode() == RESULT_OK) {
-                IntentResult scanResult =
-                    IntentIntegrator.parseActivityResult(result.getResultCode(), result.getData());
-                new QrCodeHandler(this).handleOnlyAddRelayQr(scanResult.getContents(), null);
-              }
-            });
     screenLockLauncher =
         registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -119,15 +105,7 @@ public class RelayListActivity extends BaseActionBarActivity
       }
     }
 
-    fabAdd.setOnClickListener(
-        v -> {
-          Intent intent =
-              new IntentIntegrator(this)
-                  .setCaptureActivity(QrActivity.class)
-                  .addExtra(QrActivity.EXTRA_SCAN_RELAY, true)
-                  .createScanIntent();
-          qrScannerLauncher.launch(intent);
-        });
+    fabAdd.setOnClickListener(v -> startActivity(new Intent(this, EditRelayActivity.class)));
 
     LinearLayoutManager layoutManager = new LinearLayoutManager(this);
     // Add the default divider (uses the theme’s `android.R.attr.listDivider`)

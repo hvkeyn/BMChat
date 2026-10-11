@@ -11,7 +11,7 @@ use async_channel::{self as channel, Receiver, Sender};
 use base64::Engine as _;
 pub use deltachat_contact_tools::may_be_valid_addr;
 use deltachat_contact_tools::{
-    self as contact_tools, ContactAddress, VcardContact, addr_normalize, sanitize_name,
+    self as contact_tools, ContactAddress, VcardContact, addr_cmp, addr_normalize, sanitize_name,
     sanitize_name_and_addr,
 };
 use deltachat_derive::{FromSql, ToSql};
@@ -820,27 +820,35 @@ impl Contact {
         self.is_bot
     }
 
+    async fn lookup_bmchat_alias(context: &Context, addr: &str) -> Result<Option<ContactId>> {
+        if addr.is_empty() {
+            return Ok(None);
+        }
+        context
+            .sql
+            .execute(
+                "CREATE TABLE IF NOT EXISTS bmchat_contact_alias (
+                    addr TEXT PRIMARY KEY COLLATE NOCASE,
+                    contact_id INTEGER NOT NULL
+                )",
+                (),
+            )
+            .await?;
+        let id: Option<u32> = context
+            .sql
+            .query_get_value(
+                "SELECT contact_id FROM bmchat_contact_alias WHERE addr=? COLLATE NOCASE",
+                (addr,),
+            )
+            .await?;
+        Ok(id.map(ContactId::new))
+    }
+
     /// Looks up a known and unblocked contact with a given e-mail address.
-    /// To get a list of all known and unblocked contacts, use contacts_get_contacts().
     ///
-    ///
-    /// **POTENTIAL SECURITY ISSUE**: If there are multiple contacts with this address
-    /// (e.g. an address-contact and a key-contact),
-    /// this looks up the most recently seen contact,
-    /// i.e. which contact is returned depends on which contact last sent a message.
-    /// If the user just clicked on a mailto: link, then this is the best thing you can do.
-    /// But **DO NOT** internally represent contacts by their email address
-    /// and do not use this function to look them up;
-    /// otherwise this function will sometimes look up the wrong contact.
-    /// Instead, you should internally represent contacts by their ids.
-    ///
-    /// Known and unblocked contacts will be returned by `get_contacts()`.
-    ///
-    /// To validate an e-mail address independently of the contact database
-    /// use `may_be_valid_addr()`.
-    ///
-    /// Returns the contact ID of the contact belonging to the e-mail address or 0 if there is no
-    /// contact that is or was introduced by an accepted contact.
+    /// To get a list of all known and unblocked contacts, use `get_contacts()`.
+    /// If several contacts share the address, the most recently seen one is returned.
+    /// Represent contacts by their ids. Validate addresses with `may_be_valid_addr()`.
     pub async fn lookup_id_by_addr(
         context: &Context,
         addr: &str,
@@ -865,6 +873,10 @@ impl Contact {
 
         if context.is_configured().await? && context.is_self_addr(addr).await? {
             return Ok(Some(ContactId::SELF));
+        }
+
+        if let Some(alias_id) = Self::lookup_bmchat_alias(context, &addr_normalized).await? {
+            return Ok(Some(alias_id));
         }
 
         let id = context
@@ -955,6 +967,12 @@ impl Contact {
             return Ok((ContactId::SELF, sth_modified));
         }
 
+        if fingerprint.is_empty()
+            && let Some(alias_id) = Self::lookup_bmchat_alias(context, addr).await?
+        {
+            return Ok((alias_id, sth_modified));
+        }
+
         if !fingerprint.is_empty() && context.is_configured().await? {
             let fingerprint_self = self_fingerprint(context)
                 .await
@@ -1026,7 +1044,19 @@ impl Contact {
                             || row_authname.is_empty());
 
                     row_id = id;
-                    if origin >= row_origin && addr != row_addr {
+                    if !fingerprint.is_empty() && !addr_cmp(addr, &row_addr) {
+                        transaction.execute(
+                            "CREATE TABLE IF NOT EXISTS bmchat_contact_alias (
+                                addr TEXT PRIMARY KEY COLLATE NOCASE,
+                                contact_id INTEGER NOT NULL
+                            )",
+                            [],
+                        )?;
+                        transaction.execute(
+                            "INSERT OR REPLACE INTO bmchat_contact_alias (addr, contact_id) VALUES (?, ?)",
+                            (addr, row_id),
+                        )?;
+                    } else if origin >= row_origin && addr != row_addr {
                         update_addr = true;
                     }
                     if update_name || update_authname || update_addr || origin > row_origin {

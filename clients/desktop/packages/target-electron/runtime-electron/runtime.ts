@@ -324,8 +324,11 @@ class ElectronRuntime implements Runtime {
   ): Promise<string> {
     return app_getPath(name)
   }
-  async downloadFile(pathToSource: string, filename: string): Promise<void> {
-    await ipcBackend.invoke('saveFile', pathToSource, filename)
+  async downloadFile(
+    pathToSource: string,
+    filename: string
+  ): Promise<boolean> {
+    return ipcBackend.invoke('saveFile', pathToSource, filename)
   }
   async downloadUrl(url: string, filename: string): Promise<void> {
     await ipcBackend.invoke('saveUrl', url, filename)

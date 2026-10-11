@@ -218,8 +218,20 @@ public class WelcomeActivity extends BaseActionBarActivity
             () -> {
               File imexDir = DcHelper.getImexDir();
               if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                AttachmentManager.selectMediaType(
-                    this, "application/x-tar", null, PICK_BACKUP, StorageUtil.getDownloadUri());
+                new AlertDialog.Builder(this)
+                    .setTitle(R.string.import_backup_title)
+                    .setMessage(R.string.bmchat_account_copy_restore)
+                    .setNegativeButton(android.R.string.cancel, null)
+                    .setPositiveButton(
+                        R.string.bmchat_account_copy_choose,
+                        (dialog, which) ->
+                            AttachmentManager.selectMediaType(
+                                this,
+                                "application/x-tar",
+                                null,
+                                PICK_BACKUP,
+                                StorageUtil.getDownloadUri()))
+                    .show();
               } else {
                 final String backupFile = dcContext.imexHasBackup(imexDir.getAbsolutePath());
                 if (backupFile != null) {

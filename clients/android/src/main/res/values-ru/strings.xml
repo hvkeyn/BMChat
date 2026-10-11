@@ -972,6 +972,8 @@
     <string name="remove_transport">Удалить релей</string>
     <string name="edit_transport">Редактировать релей</string>
     <string name="used_for_sending">Используется для отправки</string>
+    <string name="bmchat_mailbox_backup">Резервный. Берётся, если предыдущий ящик не отвечает.</string>
+    <string name="bmchat_mailbox_email_taken">Этот адрес уже подключён к другому аккаунту.</string>
     <string name="hide_from_contacts">Скрыть из контактов</string>
     <string name="hidden_from_contacts">Скрыт из контактов</string>
     <!-- Hint for the list of relays -->
@@ -1092,6 +1094,13 @@
     <string name="pref_backup_export_all">Экспорт всех %1$d профилей</string>
     <string name="pref_backup_export_start_button">Начать резервное копирование</string>
     <string name="pref_backup_written_to_x">Резервная копия успешно записана в \"%1$s\".</string>
+    <string name="bmchat_account_copy_title">Сохранить копию</string>
+    <string name="bmchat_account_copy_summary">Лежит в Download/BMChat и остаётся после удаления приложения.</string>
+    <string name="bmchat_account_copy_explain">Копия записывается в Download/BMChat. Она остаётся на телефоне после удаления приложения, и эту папку можно удалить в файловом менеджере.\n\nВ ней сообщения, контакты, почтовые ящики и ключи шифрования. Храните её у себя.</string>
+    <string name="bmchat_account_copy_restore">Если копия уже сохранялась, она лежит в Download/BMChat. Выберите файл, чтобы восстановить данные. Папку можно удалить в файловом менеджере.</string>
+    <string name="bmchat_account_copy_choose">Выбрать файл</string>
+    <string name="bmchat_account_copy_busy">Копия уже сохраняется.</string>
+    <string name="bmchat_account_copy_failed">Не удалось сохранить копию в Download/BMChat.</string>
     <!-- No need to translate "Wallpaper" literally. Chose what is common in your language for a "Wallpaper" or a "Background". Avoid adding the term "image" here, as the "Wallpaper" may also be just a single color. -->
     <string name="pref_background">Обои для чатов</string>
     <string name="pref_background_btn_default">Использовать изображение по умолчанию</string>

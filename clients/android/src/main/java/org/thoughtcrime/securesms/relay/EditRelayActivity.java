@@ -29,6 +29,7 @@ import chat.delta.rpc.Rpc;
 import chat.delta.rpc.RpcException;
 import chat.delta.rpc.types.EnteredCertificateChecks;
 import chat.delta.rpc.types.EnteredLoginParam;
+import chat.delta.rpc.types.TransportListEntry;
 import chat.delta.rpc.types.Socket;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcEvent;
@@ -79,6 +80,8 @@ public class EditRelayActivity extends BaseActionBarActivity
 
   Rpc rpc;
   int accId;
+  /** Adding a mailbox beside ones that already exist: return to the relay list after save. */
+  private boolean closeAfterSave;
 
   @Override
   public void onCreate(Bundle bundle) {
@@ -114,30 +117,36 @@ public class EditRelayActivity extends BaseActionBarActivity
 
     String addr = getIntent().getStringExtra(EXTRA_ADDR);
     EnteredLoginParam config = null;
+    boolean hasRelays = false;
     try {
       List<EnteredLoginParam> relays = rpc.listTransports(accId);
-      for (EnteredLoginParam relay : relays) {
-        if (addr != null && addr.equals(relay.addr)) {
-          config = relay;
-          break;
+      hasRelays = relays != null && !relays.isEmpty();
+      if (relays != null) {
+        for (EnteredLoginParam relay : relays) {
+          if (addr != null && addr.equals(relay.addr)) {
+            config = relay;
+            break;
+          }
         }
       }
-      if (config == null && !relays.isEmpty()) {
+      if (addr != null && config == null && hasRelays) {
         Log.e(TAG, "Error got unknown address: " + addr);
         finish();
         return;
       }
-      ;
     } catch (RpcException e) {
       Log.e(TAG, "Error calling Rpc.listTransports()", e);
       finish();
       return;
     }
 
+    closeAfterSave = config == null && hasRelays;
     ActionBar actionBar = getSupportActionBar();
     if (actionBar != null) {
       actionBar.setTitle(
-          config != null ? R.string.edit_transport : R.string.manual_account_setup_option);
+          config != null
+              ? R.string.edit_transport
+              : (closeAfterSave ? R.string.add_transport : R.string.manual_account_setup_option));
       actionBar.setDisplayHomeAsUpEnabled(true);
       actionBar.setHomeAsUpIndicator(R.drawable.ic_close_white_24dp);
     }
@@ -456,6 +465,13 @@ public class EditRelayActivity extends BaseActionBarActivity
     }
 
     cancelled = false;
+    if (emailUsedByAnotherAccount(getParam(R.id.email_text, true))) {
+      new AlertDialog.Builder(this)
+          .setMessage(R.string.bmchat_mailbox_email_taken)
+          .setPositiveButton(android.R.string.ok, null)
+          .show();
+      return;
+    }
     setupConfig();
 
     if (progressDialog != null) {
@@ -539,6 +555,38 @@ public class EditRelayActivity extends BaseActionBarActivity
     }
   }
 
+  private boolean emailUsedByAnotherAccount(@Nullable String addr) {
+    if (addr == null || addr.isEmpty()) {
+      return false;
+    }
+    int[] ids = DcHelper.getAccounts(this).getAll();
+    for (int id : ids) {
+      if (id == accId) {
+        continue;
+      }
+      try {
+        String configured = rpc.getConfig(id, DcHelper.CONFIG_CONFIGURED_ADDRESS);
+        if (configured != null && configured.equalsIgnoreCase(addr)) {
+          return true;
+        }
+        List<TransportListEntry> transports = rpc.listTransportsEx(id);
+        if (transports == null) {
+          continue;
+        }
+        for (TransportListEntry entry : transports) {
+          if (entry.param != null
+              && entry.param.addr != null
+              && entry.param.addr.equalsIgnoreCase(addr)) {
+            return true;
+          }
+        }
+      } catch (RpcException e) {
+        Log.w(TAG, "Could not compare mailboxes", e);
+      }
+    }
+    return false;
+  }
+
   private void setupConfig() {
     DcHelper.getEventCenter(this).captureNextError();
 
@@ -562,9 +610,11 @@ public class EditRelayActivity extends BaseActionBarActivity
                 rpc.addOrUpdateTransport(accId, param);
                 DcHelper.getEventCenter(this).endCaptureNextError();
                 progressDialog.dismiss();
-                Intent conversationList =
-                    new Intent(getApplicationContext(), ConversationListActivity.class);
-                startActivity(conversationList);
+                if (!closeAfterSave) {
+                  Intent conversationList =
+                      new Intent(getApplicationContext(), ConversationListActivity.class);
+                  startActivity(conversationList);
+                }
                 finish();
               } catch (RpcException e) {
                 DcHelper.getEventCenter(this).endCaptureNextError();

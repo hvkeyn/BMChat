@@ -413,6 +413,11 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
       LocationStreamingService.ensureRunning(this);
     }
     org.thoughtcrime.securesms.update.BMChatUpdater.scheduleForActivity(this);
+    try {
+      org.thoughtcrime.securesms.bmchat.BMChatAccountCopy.maybeStart(this);
+    } catch (Throwable t) {
+      Log.w("ConvListAct", "account copy skipped", t);
+    }
 
     // BMChat: reopening the chat list is the user's signal that they
     // are reviewing their mail; clear out any system notifications and

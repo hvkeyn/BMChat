@@ -868,6 +868,13 @@
     <!-- "Relay" refers to the relay servers used; please chose a common term in your language, no need to be literal. If in doubt, stay with "Relay" -->
     <string name="transports">Relays</string>
     <string name="add_transport">Add Relay</string>
+    <string name="bmchat_mailbox_backup">Backup. Used when the previous mailbox does not answer.</string>
+    <string name="bmchat_mailbox_config_export">Export config</string>
+    <string name="bmchat_mailbox_config_import">Import config</string>
+    <string name="bmchat_mailbox_config_exported">Mailbox config saved. The file contains passwords. Delete it in the file manager when you no longer need it.</string>
+    <string name="bmchat_mailbox_config_imported">Imported %1$s mailboxes.</string>
+    <string name="bmchat_mailbox_config_invalid">This file is not a BMChat mailbox config.</string>
+    <string name="bmchat_mailbox_config_empty">The config has no mailboxes.</string>
     <string name="remove_transport">Remove Relay</string>
     <string name="edit_transport">Edit Relay</string>
     <string name="used_for_sending">Used for sending</string>

@@ -80,6 +80,10 @@ public class RelayListAdapter extends RecyclerView.Adapter<RelayListAdapter.Rela
       String subtitle = parts.length == 2 ? parts[0] : "";
       if (isMain) {
         subtitle += " · " + context.getString(R.string.used_for_sending);
+      } else if (!subtitle.isEmpty()) {
+        subtitle += " · " + context.getString(R.string.bmchat_mailbox_backup);
+      } else {
+        subtitle = context.getString(R.string.bmchat_mailbox_backup);
       }
       if (relay.isUnpublished) {
         subtitle += " · " + context.getString(R.string.hidden_from_contacts);

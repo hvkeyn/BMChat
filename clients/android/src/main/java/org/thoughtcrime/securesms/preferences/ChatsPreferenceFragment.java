@@ -310,7 +310,7 @@ public class ChatsPreferenceFragment extends ListSummaryPreferenceFragment {
               AlertDialog.Builder builder =
                   new AlertDialog.Builder(requireActivity())
                       .setTitle(R.string.pref_backup)
-                      .setMessage(R.string.pref_backup_export_explain)
+                      .setMessage(R.string.bmchat_account_copy_explain)
                       .setNeutralButton(android.R.string.cancel, null)
                       .setPositiveButton(
                           R.string.pref_backup_export_this,

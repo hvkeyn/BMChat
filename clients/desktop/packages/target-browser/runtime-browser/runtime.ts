@@ -546,7 +546,10 @@ class BrowserRuntime implements Runtime {
     this.log.critical('Method not implemented.')
     return 'not-implemented'
   }
-  async downloadFile(pathToSource: string, filename: string): Promise<void> {
+  async downloadFile(
+    pathToSource: string,
+    filename: string
+  ): Promise<boolean> {
     if (pathToSource.includes('dc.db-blobs')) {
       window
         .open(
@@ -556,6 +559,7 @@ class BrowserRuntime implements Runtime {
           '_blank'
         )
         ?.focus()
+      return true
     } else {
       throw new Error(
         'Browser does not support opening urls outside of blob directory'

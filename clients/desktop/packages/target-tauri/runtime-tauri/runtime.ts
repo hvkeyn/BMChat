@@ -440,8 +440,12 @@ class TauriRuntime implements Runtime {
       // buttonLabel: options.buttonLabel, // not supported by tauri
     })
   }
-  async downloadFile(pathToSource: string, filename: string): Promise<void> {
+  async downloadFile(
+    pathToSource: string,
+    filename: string
+  ): Promise<boolean> {
     await invoke('download_file', { pathToSource, filename })
+    return true
   }
   async downloadUrl(url: string, filename: string): Promise<void> {
     await invoke('download_file', { pathToSource: url, filename })

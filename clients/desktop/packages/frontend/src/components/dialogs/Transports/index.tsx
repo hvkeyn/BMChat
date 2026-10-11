@@ -12,16 +12,15 @@ import { BackendRemote, onDCEvent } from '../../../backend-com'
 
 import useTranslationFunction from '../../../hooks/useTranslationFunction'
 import useAlertDialog from '../../../hooks/dialog/useAlertDialog'
-import BasicQrScanner from '../BasicScanner'
 import EditAccountAndPasswordDialog from '../EditAccountAndPasswordDialog'
 import Button from '../../Button'
+import { runtime } from '@deltachat-desktop/runtime-interface'
 
 import styles from './styles.module.scss'
 
 import { TransportListEntry } from '@deltachat/jsonrpc-client/dist/generated/types'
 import classNames from 'classnames'
 import useDialog from '../../../hooks/dialog/useDialog'
-import useAddTransportDialog from '../../../hooks/dialog/useAddTransportDialog'
 
 /**
  * Dialog for transports configuration
@@ -35,8 +34,6 @@ export default function TransportsDialog(
   const tx = useTranslationFunction()
   const openAlertDialog = useAlertDialog()
   const { accountId, onClose } = props
-  const addTransportDialog = useAddTransportDialog()
-
   // used in  new transport form
   const [transports, setTransports] = useState<
     (TransportListEntry & { isDefault: boolean })[]
@@ -88,40 +85,86 @@ export default function TransportsDialog(
     [accountId, getTransports]
   )
 
-  const openQrScanner = useCallback(async () => {
-    const multiDeviceMode = await BackendRemote.rpc.getConfig(
-      accountId,
-      'bcc_self'
-    )
-    openDialog(BasicQrScanner, {
-      onSuccess: async (result: string) => {
-        const qr = await BackendRemote.rpc.checkQr(accountId, result)
-        if (qr.kind === 'account' || qr.kind === 'login') {
-          const transportAdded = await addTransportDialog(
-            accountId,
-            result,
-            qr.kind === 'account' ? qr.domain : qr.address,
-            multiDeviceMode === '1'
-          )
-          if (transportAdded) {
-            // refresh transport list
-            getTransports()
-          }
-        } else {
-          openAlertDialog({
-            message: tx('invalid_transport_qr'),
-          })
+  const openAddForm = useCallback(() => {
+    openDialog(EditAccountAndPasswordDialog, { adding: true })
+  }, [openDialog])
+
+  const exportConfig = useCallback(async () => {
+    try {
+      const mailboxes = await BackendRemote.rpc.listTransports(accountId)
+      const json = JSON.stringify(
+        { bmchatMailboxConfig: 1, mailboxes },
+        null,
+        2
+      )
+      const tempPath = await runtime.writeTempFile(
+        'bmchat-mailboxes.json',
+        json
+      )
+      const saved = await runtime.downloadFile(tempPath, 'bmchat-mailboxes.json')
+      if (!saved) {
+        return
+      }
+      window.__userFeedback?.({
+        type: 'success',
+        text: tx('bmchat_mailbox_config_exported'),
+      })
+    } catch (error) {
+      openAlertDialog({
+        message: (error as Error).message || String(error),
+      })
+    }
+  }, [accountId, openAlertDialog, tx])
+
+  const importConfig = useCallback(async () => {
+    const text = await pickMailboxConfigText()
+    if (text == null) {
+      return
+    }
+    let mailboxes: unknown
+    try {
+      const parsed = JSON.parse(text) as {
+        bmchatMailboxConfig?: number
+        mailboxes?: unknown
+      }
+      if (parsed.bmchatMailboxConfig !== 1 || !Array.isArray(parsed.mailboxes)) {
+        throw new Error(tx('bmchat_mailbox_config_invalid'))
+      }
+      mailboxes = parsed.mailboxes
+    } catch {
+      openAlertDialog({ message: tx('bmchat_mailbox_config_invalid') })
+      return
+    }
+    const entries = mailboxes as { addr?: string; password?: string }[]
+    if (entries.length === 0) {
+      openAlertDialog({ message: tx('bmchat_mailbox_config_empty') })
+      return
+    }
+    let imported = 0
+    try {
+      for (const mailbox of entries) {
+        if (!mailbox.addr || !mailbox.password) {
+          throw new Error(tx('bmchat_mailbox_config_invalid'))
         }
-      },
-    })
-  }, [
-    openDialog,
-    accountId,
-    getTransports,
-    openAlertDialog,
-    tx,
-    addTransportDialog,
-  ])
+        await BackendRemote.rpc.addOrUpdateTransport(
+          accountId,
+          mailbox as Parameters<
+            typeof BackendRemote.rpc.addOrUpdateTransport
+          >[1]
+        )
+        imported += 1
+      }
+      window.__userFeedback?.({
+        type: 'success',
+        text: tx('bmchat_mailbox_config_imported', String(imported)),
+      })
+    } catch (error) {
+      openAlertDialog({
+        message: (error as Error).message || String(error),
+      })
+    }
+    getTransports()
+  }, [accountId, getTransports, openAlertDialog, tx])
 
   useEffect(() => {
     getTransports()
@@ -185,10 +228,15 @@ export default function TransportsDialog(
                     <strong>{transport.param.addr.split('@')[1]}</strong>
                     <br />
                     {transport.param.addr.split('@')[0]}
-                    {transport.isDefault && (
+                    {transport.isDefault ? (
                       <>
                         {' · '}
                         {tx('used_for_sending')}
+                      </>
+                    ) : (
+                      <>
+                        {' · '}
+                        {tx('bmchat_mailbox_backup')}
                       </>
                     )}
                     {transport.isUnpublished && (
@@ -242,14 +290,31 @@ export default function TransportsDialog(
         </div>
       </DialogBody>
       <DialogFooter>
-        <Button
-          className={styles.addTransportButton}
-          onClick={() => openQrScanner()}
-          aria-label={tx('add_transport')}
-          title={tx('add_transport')}
-        >
-          {tx('add_transport')}
-        </Button>
+        <div className={styles.footerButtons}>
+          <Button
+            className={styles.addTransportButton}
+            styling='primary'
+            onClick={openAddForm}
+            aria-label={tx('add_transport')}
+            title={tx('add_transport')}
+          >
+            {tx('add_transport')}
+          </Button>
+          <Button
+            className={styles.addTransportButton}
+            onClick={exportConfig}
+            aria-label={tx('bmchat_mailbox_config_export')}
+          >
+            {tx('bmchat_mailbox_config_export')}
+          </Button>
+          <Button
+            className={styles.addTransportButton}
+            onClick={importConfig}
+            aria-label={tx('bmchat_mailbox_config_import')}
+          >
+            {tx('bmchat_mailbox_config_import')}
+          </Button>
+        </div>
       </DialogFooter>
     </Dialog>
   )
@@ -310,4 +375,25 @@ function RemoveOrHideTransportDialog(
       </DialogFooter>
     </Dialog>
   )
+}
+
+function pickMailboxConfigText(): Promise<string | null> {
+  return new Promise(resolve => {
+    const input = document.createElement('input')
+    input.type = 'file'
+    input.accept = '.json,application/json'
+    input.onchange = () => {
+      const file = input.files?.[0]
+      if (!file) {
+        resolve(null)
+        return
+      }
+      const reader = new FileReader()
+      reader.onload = () => resolve(String(reader.result ?? ''))
+      reader.onerror = () => resolve(null)
+      reader.readAsText(file)
+    }
+    input.addEventListener('cancel', () => resolve(null))
+    input.click()
+  })
 }

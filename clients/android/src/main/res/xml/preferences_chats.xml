@@ -49,7 +49,8 @@
     <PreferenceCategory android:title="@string/pref_backup">
         <Preference
             android:key="pref_backup"
-            android:title="@string/export_backup_desktop" />
+            android:title="@string/bmchat_account_copy_title"
+            android:summary="@string/bmchat_account_copy_summary" />
     </PreferenceCategory>
 
 </PreferenceScreen>
