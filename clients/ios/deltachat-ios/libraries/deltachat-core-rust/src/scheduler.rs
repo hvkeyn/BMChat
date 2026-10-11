@@ -680,6 +680,8 @@ async fn smtp_loop(
             return;
         }
 
+        connection.probe_mailboxes(&ctx).await.log_err(&ctx).ok();
+
         let mut timeout = None;
         loop {
             if let Err(err) = send_smtp_messages(&ctx, &mut connection).await {

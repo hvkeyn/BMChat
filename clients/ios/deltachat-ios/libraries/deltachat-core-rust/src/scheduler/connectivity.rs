@@ -3,6 +3,7 @@ use std::cmp::min;
 use std::{iter::once, ops::Deref, sync::Arc};
 
 use anyhow::Result;
+use base64::Engine;
 use humansize::{BINARY, format_size};
 
 use crate::events::EventType;
@@ -12,6 +13,50 @@ use crate::stock_str;
 use crate::{context::Context, log::LogExt};
 
 use super::InnerSchedulerState;
+
+/// IMAP folder names are stored in modified UTF-7. Show the readable name.
+fn decode_imap_utf7(input: &str) -> String {
+    let mut out = String::new();
+    let mut rest = input;
+    while let Some(start) = rest.find('&') {
+        out.push_str(&rest[..start]);
+        rest = &rest[start + 1..];
+        let Some(end) = rest.find('-') else {
+            out.push('&');
+            out.push_str(rest);
+            return out;
+        };
+        let enc = &rest[..end];
+        rest = &rest[end + 1..];
+        if enc.is_empty() {
+            out.push('&');
+            continue;
+        }
+        let b64 = enc.replace(',', "/");
+        let pad = (4 - b64.len() % 4) % 4;
+        let padded = format!("{b64}{}", "=".repeat(pad));
+        let decoded = base64::engine::general_purpose::STANDARD
+            .decode(padded)
+            .ok()
+            .and_then(|bytes| {
+                let units: Vec<u16> = bytes
+                    .chunks_exact(2)
+                    .map(|chunk| u16::from_be_bytes([chunk[0], chunk[1]]))
+                    .collect();
+                String::from_utf16(&units).ok()
+            });
+        match decoded {
+            Some(text) => out.push_str(&text),
+            None => {
+                out.push('&');
+                out.push_str(enc);
+                out.push('-');
+            }
+        }
+    }
+    out.push_str(rest);
+    out
+}
 
 /// Rough connectivity status for display in the status bar in the UI.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumProperty, PartialOrd, Ord)]
@@ -424,10 +469,12 @@ impl Context {
             })
             .await?;
         let quota = self.quota.read().await;
+        let transport_rows = transports.clone();
         for (transport_id, transport_addr) in transports {
             let domain = &deltachat_contact_tools::EmailAddress::new(&transport_addr)
                 .map_or(transport_addr.clone(), |email| email.domain);
             let domain_escaped = escaper::encode_minimal(domain);
+            let addr_escaped = escaper::encode_minimal(&transport_addr);
 
             ret += "<li class=\"transport\">";
             let folders = folders_states
@@ -444,9 +491,9 @@ impl Context {
                         ret += &*detailed.to_icon();
                         ret += " <b>";
                         if folder == &FolderMeaning::Inbox {
-                            ret += &*domain_escaped;
+                            ret += &*addr_escaped;
                         } else {
-                            ret += &*escaper::encode_minimal(&foldername);
+                            ret += &*escaper::encode_minimal(&decode_imap_utf7(&foldername));
                         }
                         ret += ":</b> ";
                         ret += &*escaper::encode_minimal(&detailed.to_string_imap(self));
@@ -565,12 +612,58 @@ impl Context {
         // =============================================================================================
 
         let outgoing_messages = stock_str::outgoing_messages(self);
-        ret += &format!("<h3>{outgoing_messages}</h3><ul><li>");
-        let detailed = smtp.get_detailed();
-        ret += &*detailed.to_icon();
-        ret += " ";
-        ret += &*escaper::encode_minimal(&detailed.to_string_smtp(self));
-        ret += "</li></ul>";
+        ret += &format!("<h3>{outgoing_messages}</h3><ul>");
+        let report = self
+            .sql
+            .get_raw_config("bmchat_smtp_status")
+            .await?
+            .unwrap_or_default();
+        if transport_rows.is_empty() {
+            let detailed = smtp.get_detailed();
+            ret += "<li>";
+            ret += &*detailed.to_icon();
+            ret += " ";
+            ret += &*escaper::encode_minimal(&detailed.to_string_smtp(self));
+            ret += "</li>";
+        }
+        for (_transport_id, addr) in &transport_rows {
+            let mut known = false;
+            let mut ok = false;
+            let mut detail = String::new();
+            for line in report.lines() {
+                let mut parts = line.split('\t');
+                let marked = parts.next().unwrap_or("");
+                if deltachat_contact_tools::addr_cmp(marked, addr) {
+                    known = true;
+                    ok = parts.next().unwrap_or("") == "ok";
+                    detail = parts.next().unwrap_or("").to_string();
+                    break;
+                }
+            }
+            let addr_html = escaper::encode_minimal(addr);
+            ret += "<li>";
+            if !known {
+                let detailed = smtp.get_detailed();
+                ret += &*detailed.to_icon();
+                ret += &format!(" <b>{addr_html}:</b> ");
+                ret += &*escaper::encode_minimal(&detailed.to_string_smtp(self));
+            } else if ok {
+                ret += "<span class=\"green dot\"></span> ";
+                ret += &format!("<b>{addr_html}:</b> ");
+                ret += &*escaper::encode_minimal(&stock_str::connected(self));
+            } else {
+                ret += "<span class=\"red dot\"></span> ";
+                ret += &format!("<b>{addr_html}:</b> ");
+                let text = if detail.is_empty() {
+                    stock_str::error(self, "SMTP")
+                } else {
+                    stock_str::error(self, &detail)
+                };
+                ret += &*escaper::encode_minimal(&text);
+            }
+            ret += "</li>";
+        }
+        ret += "</ul>";
 
         // =============================================================================================
 

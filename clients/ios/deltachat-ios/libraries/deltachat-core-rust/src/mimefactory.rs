@@ -204,7 +204,7 @@ impl MimeFactory {
         let attach_profile_data = Self::should_attach_profile_data(&msg);
         let undisclosed_recipients = should_hide_recipients(&msg, &chat);
 
-        let from_addr = context.get_primary_self_addr().await?;
+        let from_addr = crate::smtp::bmchat_send_addr(context).await?;
         let config_displayname = context
             .get_config(Config::Displayname)
             .await?

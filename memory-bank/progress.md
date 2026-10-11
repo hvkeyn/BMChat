@@ -6,6 +6,7 @@ BMChat is now an e-mail-first messenger. The user's VPS at `5.187.4.132` is used
 
 ## Completed
 
+- 2.50.50 (Oct 12, 2026): per-mailbox incoming and outgoing status. Yandex SMTP closes during TLS, so new mail is sent through the next working mailbox with the same account key and a matching From. versionCode 884, release APK 132,049,832 bytes, SHA-256 `1d060ba5dfe9d60543e2e59967803e0176208703f6ee808b2005ab294018e6c8`. Phone beta updated in place. Desktop installer not packed; the running Windows core was replaced. Other ABIs unchanged. iOS source included, not built.
 - 2.50.49 (Oct 11, 2026): release APK for a clean phone. versionCode 883, 132,017,058 bytes, SHA-256 `3cda01c6728d7f8648b89a876bd89d4dde2617794f1a5f2fa89ae81d94fc134b`. On the primary server. Mirror was unreachable.
 - Desktop relays (Oct 11, 2026): add opens the mailbox form, and the dialog can export or import a JSON mailbox config. Not packed into the installer. Not committed.
 - 2.50.48 (Oct 11, 2026): account copy in Download/BMChat survives uninstall and can be deleted in the file manager. versionCode 882. Built, phone was not attached. Not committed.

@@ -28,6 +28,170 @@ use crate::transport::{
     ConfiguredLoginParam, ConfiguredServerLoginParam, prioritize_server_login_params,
 };
 
+/// How long a mailbox that failed to connect stays out of the normal rotation.
+/// Long enough that the sender address does not flip on every letter.
+const SMTP_DOWN_SECS: i64 = 1800;
+
+fn mailbox_recently_down(addr: &str, down: &str, now: i64) -> bool {
+    down.lines().any(|line| {
+        let mut parts = line.split('\t');
+        let marked = parts.next().unwrap_or("");
+        let at = parts.next().unwrap_or("0").parse::<i64>().unwrap_or(0);
+        addr_cmp(marked, addr) && now.saturating_sub(at) < SMTP_DOWN_SECS
+    })
+}
+
+fn sender_rejected(err: &str) -> bool {
+    let err = err.to_lowercase();
+    err.contains("from:")
+        && (err.contains("must match") || err.contains("must m") || err.contains("invalid header"))
+}
+
+fn mime_from_addr(message: &str) -> Option<String> {
+    for line in message.lines() {
+        if line.is_empty() {
+            break;
+        }
+        let Some(rest) = line.split_once(':') else {
+            continue;
+        };
+        if !rest.0.eq_ignore_ascii_case("from") {
+            continue;
+        }
+        let value = rest.1.trim();
+        let addr = if let (Some(start), Some(end)) = (value.rfind('<'), value.rfind('>'))
+            && end > start
+        {
+            value[start + 1..end].trim()
+        } else {
+            value.trim()
+        };
+        if addr.contains('@') {
+            return Some(addr.to_string());
+        }
+    }
+    None
+}
+
+async fn mark_mailbox_down(context: &Context, addr: &str) {
+    let now = tools::time();
+    let down = context
+        .sql
+        .get_raw_config("bmchat_smtp_down")
+        .await
+        .ok()
+        .flatten()
+        .unwrap_or_default();
+    let mut next = String::new();
+    for line in down.lines() {
+        let marked = line.split('\t').next().unwrap_or("");
+        if line.is_empty() || addr_cmp(marked, addr) {
+            continue;
+        }
+        if !next.is_empty() {
+            next.push('\n');
+        }
+        next.push_str(line);
+    }
+    if !next.is_empty() {
+        next.push('\n');
+    }
+    next.push_str(addr);
+    next.push('\t');
+    next.push_str(&now.to_string());
+    context
+        .sql
+        .set_raw_config("bmchat_smtp_down", Some(&next))
+        .await
+        .ok();
+}
+
+async fn clear_mailbox_down(context: &Context, addr: &str) {
+    let down = context
+        .sql
+        .get_raw_config("bmchat_smtp_down")
+        .await
+        .ok()
+        .flatten()
+        .unwrap_or_default();
+    let mut next = String::new();
+    for line in down.lines() {
+        let marked = line.split('\t').next().unwrap_or("");
+        if line.is_empty() || addr_cmp(marked, addr) {
+            continue;
+        }
+        if !next.is_empty() {
+            next.push('\n');
+        }
+        next.push_str(line);
+    }
+    context
+        .sql
+        .set_raw_config("bmchat_smtp_down", Some(&next))
+        .await
+        .ok();
+}
+
+async fn note_mailbox_smtp(context: &Context, addr: &str, ok: bool, detail: &str) {
+    let detail: String = detail
+        .split('\n')
+        .next()
+        .unwrap_or("")
+        .replace(['\r', '\t'], " ")
+        .chars()
+        .take(160)
+        .collect();
+    let mut lines = Vec::new();
+    if let Ok(Some(existing)) = context.sql.get_raw_config("bmchat_smtp_status").await {
+        for line in existing.lines() {
+            let marked = line.split('\t').next().unwrap_or("");
+            if !line.is_empty() && !addr_cmp(marked, addr) {
+                lines.push(line.to_string());
+            }
+        }
+    }
+    if ok {
+        lines.push(format!("{addr}\tok"));
+    } else {
+        lines.push(format!("{addr}\tdown\t{detail}"));
+    }
+    context
+        .sql
+        .set_raw_config("bmchat_smtp_status", Some(&lines.join("\n")))
+        .await
+        .ok();
+}
+
+/// Address to put in From when building a letter.
+/// The primary mailbox is used while its SMTP answers.
+/// If that server has just failed to connect, the next mailbox is used
+/// so the signature, the From header and the SMTP login stay the same address.
+pub(crate) async fn bmchat_send_addr(context: &Context) -> Result<String> {
+    let primary = context.get_primary_self_addr().await?;
+    let down = context
+        .sql
+        .get_raw_config("bmchat_smtp_down")
+        .await?
+        .unwrap_or_default();
+    let now = tools::time();
+    if !mailbox_recently_down(&primary, &down, now) {
+        return Ok(primary);
+    }
+    let addrs = context
+        .sql
+        .query_map_vec("SELECT addr FROM transports ORDER BY id", (), |row| {
+            let addr: String = row.get(0)?;
+            Ok(addr)
+        })
+        .await?;
+    for addr in addrs {
+        if !mailbox_recently_down(&addr, &down, now) {
+            return Ok(addr);
+        }
+    }
+    Ok(primary)
+}
+
 #[derive(Default)]
 pub(crate) struct Smtp {
     /// SMTP connection.
@@ -35,6 +199,17 @@ pub(crate) struct Smtp {
 
     /// Email address we are sending from.
     from: Option<EmailAddress>,
+
+    /// Same address as `from`, kept as text so a later message can
+    /// reconnect when its From header belongs to another mailbox.
+    connected_addr: Option<String>,
+
+    /// Mailbox that should carry the message currently being sent.
+    /// It matches the From header, so the encrypted letter and the SMTP login stay one address.
+    preferred_from: Option<String>,
+
+    /// The provider rejected another mailbox's From. Keep the queued letter.
+    hold_retry: bool,
 
     /// Timestamp of last successful send/receive network interaction
     /// (eg connect or send succeeded). On initialization and disconnect
@@ -62,6 +237,7 @@ impl Smtp {
             task::spawn(async move { transport.quit().await });
         }
         self.last_success = None;
+        self.connected_addr = None;
     }
 
     /// Return true if smtp was connected but is not known to
@@ -95,9 +271,9 @@ impl Smtp {
         if mailboxes.is_empty() {
             bail!("Not configured");
         }
-        let prefer = context
-            .sql
-            .get_raw_config("bmchat_smtp_prefer")
+        let want = self.preferred_from.clone().unwrap_or_default();
+        let primary = context
+            .get_config(Config::ConfiguredAddr)
             .await?
             .unwrap_or_default();
         let mut down = context
@@ -106,19 +282,24 @@ impl Smtp {
             .await?
             .unwrap_or_default();
         let now = tools::time();
-        let recently_down = |addr: &str, down: &str| -> bool {
-            down.lines().any(|line| {
-                let mut parts = line.split('\t');
-                let marked = parts.next().unwrap_or("");
-                let at = parts.next().unwrap_or("0").parse::<i64>().unwrap_or(0);
-                addr_cmp(marked, addr) && now.saturating_sub(at) < 180
-            })
-        };
-        if mailboxes.iter().any(|(_, lp)| !recently_down(&lp.addr, &down)) {
-            mailboxes.retain(|(_, lp)| !recently_down(&lp.addr, &down));
+        if mailboxes.iter().any(|(_, lp)| {
+            addr_cmp(&lp.addr, &want) || !mailbox_recently_down(&lp.addr, &down, now)
+        }) {
+            mailboxes.retain(|(_, lp)| {
+                addr_cmp(&lp.addr, &want) || !mailbox_recently_down(&lp.addr, &down, now)
+            });
         }
         mailboxes.sort_by(|(_, a), (_, b)| {
-            addr_cmp(&b.addr, &prefer).cmp(&addr_cmp(&a.addr, &prefer))
+            let rank = |addr: &str| -> u8 {
+                if !want.is_empty() && addr_cmp(addr, &want) {
+                    0
+                } else if !primary.is_empty() && addr_cmp(addr, &primary) {
+                    1
+                } else {
+                    2
+                }
+            };
+            rank(&a.addr).cmp(&rank(&b.addr))
         });
         let proxy_config = ProxyConfig::load(context).await?;
         let mut first_error = None;
@@ -136,13 +317,16 @@ impl Smtp {
             let connected = match timeout(std::time::Duration::from_secs(15), attempt).await {
                 Ok(Ok(())) => true,
                 Ok(Err(err)) => {
-                    warn!(context, "Mailbox {} did not accept SMTP: {err:#}.", lp.addr);
+                    let msg = format!("{err:#}");
+                    warn!(context, "Mailbox {} did not accept SMTP: {msg}.", lp.addr);
+                    note_mailbox_smtp(context, &lp.addr, false, &msg).await;
                     first_error.get_or_insert(err);
                     self.disconnect();
                     false
                 }
                 Err(_) => {
                     warn!(context, "Mailbox {} did not answer SMTP in time.", lp.addr);
+                    note_mailbox_smtp(context, &lp.addr, false, "SMTP did not answer").await;
                     self.disconnect();
                     false
                 }
@@ -153,6 +337,7 @@ impl Smtp {
                     .set_raw_config("bmchat_smtp_prefer", Some(&lp.addr))
                     .await
                     .ok();
+                note_mailbox_smtp(context, &lp.addr, true, "").await;
                 info!(context, "bmchat-mailbox {}", lp.addr);
                 return Ok(());
             }
@@ -183,6 +368,46 @@ impl Smtp {
         Err(first_error.unwrap_or_else(|| format_err!("No mailbox accepted SMTP")))
     }
 
+    /// Try every mailbox once so the connection screen can show which address sends.
+    pub async fn probe_mailboxes(&mut self, context: &Context) -> Result<()> {
+        let mailboxes = ConfiguredLoginParam::load_all(context).await?;
+        let proxy_config = ProxyConfig::load(context).await?;
+        for (_id, lp) in mailboxes {
+            self.disconnect();
+            info!(context, "SMTP probing mailbox {}.", lp.addr);
+            let attempt = self.connect(
+                context,
+                &lp.smtp,
+                &lp.smtp_password,
+                &proxy_config,
+                &lp.addr,
+                lp.strict_tls(proxy_config.is_some()),
+                lp.oauth2,
+            );
+            match timeout(std::time::Duration::from_secs(12), attempt).await {
+                Ok(Ok(())) => {
+                    note_mailbox_smtp(context, &lp.addr, true, "").await;
+                    clear_mailbox_down(context, &lp.addr).await;
+                    self.disconnect();
+                }
+                Ok(Err(err)) => {
+                    let msg = format!("{err:#}");
+                    warn!(context, "Mailbox {} did not accept SMTP: {msg}.", lp.addr);
+                    note_mailbox_smtp(context, &lp.addr, false, &msg).await;
+                    mark_mailbox_down(context, &lp.addr).await;
+                    self.disconnect();
+                }
+                Err(_) => {
+                    warn!(context, "Mailbox {} did not answer SMTP in time.", lp.addr);
+                    note_mailbox_smtp(context, &lp.addr, false, "SMTP did not answer").await;
+                    mark_mailbox_down(context, &lp.addr).await;
+                    self.disconnect();
+                }
+            }
+        }
+        Ok(())
+    }
+
     /// Connect using the provided login params.
     #[expect(clippy::too_many_arguments)]
     pub async fn connect(
@@ -203,6 +428,7 @@ impl Smtp {
         let from = EmailAddress::new(addr.to_string())
             .with_context(|| format!("Invalid address {addr:?}"))?;
         self.from = Some(from);
+        self.connected_addr = Some(addr.to_string());
 
         let login_params =
             prioritize_server_login_params(&context.sql, login_params, "smtp").await?;
@@ -270,6 +496,19 @@ pub(crate) async fn smtp_send(
     }
 
     smtp.connectivity.set_working(context);
+    smtp.hold_retry = false;
+
+    let from_addr = mime_from_addr(message);
+    if let (Some(connected), Some(want)) = (&smtp.connected_addr, &from_addr)
+        && !addr_cmp(connected, want)
+    {
+        info!(
+            context,
+            "SMTP is logged in as {connected}, this letter is from {want}."
+        );
+        smtp.disconnect();
+    }
+    smtp.preferred_from = from_addr;
 
     if let Err(err) = smtp
         .connect_configured(context)
@@ -317,6 +556,14 @@ pub(crate) async fn smtp_send(
                             context,
                             "Permanent error that is likely to actually be transient, postponing retry for later."
                         );
+                        SendResult::Retry
+                    } else if sender_rejected(&err.to_string()) {
+                        info!(
+                            context,
+                            "Mailbox refused this From header. The letter stays queued for its own mailbox."
+                        );
+                        smtp.last_send_error = None;
+                        smtp.hold_retry = true;
                         SendResult::Retry
                     } else {
                         info!(context, "Permanent error, message sending failed.");
@@ -487,7 +734,18 @@ pub(crate) async fn send_msg_to_smtp(
     let status = smtp_send(context, &recipients_list, body.as_str(), smtp, Some(msg_id)).await;
 
     match status {
-        SendResult::Retry => {}
+        SendResult::Retry => {
+            if smtp.hold_retry {
+                context
+                    .sql
+                    .execute(
+                        "UPDATE smtp SET retries=MAX(retries-1, 0) WHERE id=?",
+                        (rowid,),
+                    )
+                    .await
+                    .ok();
+            }
+        }
         SendResult::Success => {
             context
                 .sql
