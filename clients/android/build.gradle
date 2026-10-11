@@ -28,8 +28,8 @@ android {
     useLibrary 'org.apache.http.legacy'
 
     defaultConfig {
-        versionCode 884
-        versionName "2.50.50"
+        versionCode 885
+        versionName "2.50.51"
 
         applicationId "chat.bromore.bmchat.foss"
         multiDexEnabled true
@@ -109,7 +109,6 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             testProguardFiles 'test-proguard-rules.pro'
-            applicationIdSuffix ".beta"
         }
         release {
             // minification and proguard disabled for now.

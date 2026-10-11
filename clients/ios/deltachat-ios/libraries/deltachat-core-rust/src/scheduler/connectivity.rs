@@ -58,6 +58,52 @@ fn decode_imap_utf7(input: &str) -> String {
     out
 }
 
+fn report_for_addr(addr: &str, report: &str) -> Option<(bool, String)> {
+    for line in report.lines() {
+        let mut parts = line.split('\t');
+        let marked = parts.next().unwrap_or("");
+        if deltachat_contact_tools::addr_cmp(marked, addr) {
+            let ok = parts.next().unwrap_or("") == "ok";
+            let detail = parts.next().unwrap_or("").to_string();
+            return Some((ok, detail));
+        }
+    }
+    None
+}
+
+fn mailbox_outgoing_line(
+    context: &Context,
+    status: &Option<(bool, String)>,
+    smtp: &ConnectivityStore,
+) -> String {
+    let label = stock_str::outgoing_messages(context);
+    match status {
+        Some((true, _)) => format!(
+            "<span class=\"green dot\"></span> {label}: {}",
+            escaper::encode_minimal(&stock_str::connected(context))
+        ),
+        Some((false, detail)) => {
+            let text = if detail.is_empty() {
+                stock_str::error(context, "SMTP")
+            } else {
+                stock_str::error(context, detail)
+            };
+            format!(
+                "<span class=\"red dot\"></span> {label}: {}",
+                escaper::encode_minimal(&text)
+            )
+        }
+        None => {
+            let detailed = smtp.get_detailed();
+            format!(
+                "{} {label}: {}",
+                detailed.to_icon(),
+                escaper::encode_minimal(&detailed.to_string_smtp(context))
+            )
+        }
+    }
+}
+
 /// Rough connectivity status for display in the status bar in the UI.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, EnumProperty, PartialOrd, Ord)]
 pub enum Connectivity {
@@ -469,7 +515,11 @@ impl Context {
             })
             .await?;
         let quota = self.quota.read().await;
-        let transport_rows = transports.clone();
+        let smtp_report = self
+            .sql
+            .get_raw_config("bmchat_smtp_status")
+            .await?
+            .unwrap_or_default();
         for (transport_id, transport_addr) in transports {
             let domain = &deltachat_contact_tools::EmailAddress::new(&transport_addr)
                 .map_or(transport_addr.clone(), |email| email.domain);
@@ -477,45 +527,54 @@ impl Context {
             let addr_escaped = escaper::encode_minimal(&transport_addr);
 
             ret += "<li class=\"transport\">";
+            ret += &format!("<b>{addr_escaped}</b><br />");
+            let mut inbox_line = String::new();
+            let mut folder_names = Vec::new();
             let folders = folders_states
                 .iter()
                 .filter(|(folder_addr, ..)| *folder_addr == transport_addr);
             for (_addr, folder, state) in folders {
-                let mut folder_added = false;
-
-                if let Some(config) = folder.to_config().filter(|c| watched_folders.contains(c)) {
-                    let f = self.get_config(config).await.log_err(self).ok().flatten();
-
-                    if let Some(foldername) = f {
-                        let detailed = &state.get_detailed();
-                        ret += &*detailed.to_icon();
-                        ret += " <b>";
-                        if folder == &FolderMeaning::Inbox {
-                            ret += &*addr_escaped;
-                        } else {
-                            ret += &*escaper::encode_minimal(&decode_imap_utf7(&foldername));
-                        }
-                        ret += ":</b> ";
-                        ret += &*escaper::encode_minimal(&detailed.to_string_imap(self));
-                        ret += "<br />";
-
-                        folder_added = true;
+                if let Some(config) = folder.to_config().filter(|c| watched_folders.contains(c))
+                    && let Some(foldername) = self.get_config(config).await.log_err(self).ok().flatten()
+                {
+                    if folder == &FolderMeaning::Inbox {
+                        let detailed = state.get_detailed();
+                        inbox_line = format!(
+                            "{} {}: {}",
+                            detailed.to_icon(),
+                            stock_str::incoming_messages(self),
+                            escaper::encode_minimal(&detailed.to_string_imap(self))
+                        );
+                    } else {
+                        folder_names.push(decode_imap_utf7(&foldername));
                     }
-                }
-
-                if !folder_added && folder == &FolderMeaning::Inbox {
-                    let detailed = &state.get_detailed();
+                } else if folder == &FolderMeaning::Inbox {
+                    let detailed = state.get_detailed();
                     if let DetailedConnectivity::Error(_) = detailed {
-                        // On the inbox thread, we also do some other things like scan_folders and run jobs
-                        // so, maybe, the inbox is not watched, but something else went wrong
-
-                        ret += &*detailed.to_icon();
-                        ret += " ";
-                        ret += &*escaper::encode_minimal(&detailed.to_string_imap(self));
-                        ret += "<br />";
+                        inbox_line = format!(
+                            "{} {}: {}",
+                            detailed.to_icon(),
+                            stock_str::incoming_messages(self),
+                            escaper::encode_minimal(&detailed.to_string_imap(self))
+                        );
                     }
                 }
             }
+            if inbox_line.is_empty() {
+                inbox_line = format!(
+                    "<span class=\"grey dot\"></span> {}",
+                    stock_str::incoming_messages(self)
+                );
+            }
+            ret += &inbox_line;
+            ret += "<br />";
+            ret += &mailbox_outgoing_line(self, &report_for_addr(&transport_addr, &smtp_report), &smtp);
+            if !folder_names.is_empty() {
+                ret += "<br /><span style=\"font-size:14px\">";
+                ret += &escaper::encode_minimal(&folder_names.join(", "));
+                ret += "</span>";
+            }
+            ret += "<br />";
 
             let Some(quota) = quota.get(&transport_id) else {
                 ret += "</li>";
@@ -600,66 +659,6 @@ impl Context {
                         ret += "</ul>";
                     }
                 }
-            }
-            ret += "</li>";
-        }
-        ret += "</ul>";
-
-        // =============================================================================================
-        // Add e.g.
-        //                              Outgoing messages
-        //                                Your last message was sent successfully
-        // =============================================================================================
-
-        let outgoing_messages = stock_str::outgoing_messages(self);
-        ret += &format!("<h3>{outgoing_messages}</h3><ul>");
-        let report = self
-            .sql
-            .get_raw_config("bmchat_smtp_status")
-            .await?
-            .unwrap_or_default();
-        if transport_rows.is_empty() {
-            let detailed = smtp.get_detailed();
-            ret += "<li>";
-            ret += &*detailed.to_icon();
-            ret += " ";
-            ret += &*escaper::encode_minimal(&detailed.to_string_smtp(self));
-            ret += "</li>";
-        }
-        for (_transport_id, addr) in &transport_rows {
-            let mut known = false;
-            let mut ok = false;
-            let mut detail = String::new();
-            for line in report.lines() {
-                let mut parts = line.split('\t');
-                let marked = parts.next().unwrap_or("");
-                if deltachat_contact_tools::addr_cmp(marked, addr) {
-                    known = true;
-                    ok = parts.next().unwrap_or("") == "ok";
-                    detail = parts.next().unwrap_or("").to_string();
-                    break;
-                }
-            }
-            let addr_html = escaper::encode_minimal(addr);
-            ret += "<li>";
-            if !known {
-                let detailed = smtp.get_detailed();
-                ret += &*detailed.to_icon();
-                ret += &format!(" <b>{addr_html}:</b> ");
-                ret += &*escaper::encode_minimal(&detailed.to_string_smtp(self));
-            } else if ok {
-                ret += "<span class=\"green dot\"></span> ";
-                ret += &format!("<b>{addr_html}:</b> ");
-                ret += &*escaper::encode_minimal(&stock_str::connected(self));
-            } else {
-                ret += "<span class=\"red dot\"></span> ";
-                ret += &format!("<b>{addr_html}:</b> ");
-                let text = if detail.is_empty() {
-                    stock_str::error(self, "SMTP")
-                } else {
-                    stock_str::error(self, &detail)
-                };
-                ret += &*escaper::encode_minimal(&text);
             }
             ret += "</li>";
         }
