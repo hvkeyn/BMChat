@@ -1,6 +1,6 @@
 {
-  "version": "2.50.45",
-  "publishedAt": "2026-10-03T22:35:00Z",
+  "version": "2.50.52",
+  "publishedAt": "2026-10-21T20:27:00Z",
   "releaseChannel": "stable",
   "mirrors": [
     "http://51.250.82.211:8080",
@@ -8,19 +8,19 @@
     "http://158.160.104.107:8080"
   ],
   "platforms": {
+    "win-x64": {
+      "label": "Portable x64 (.exe)",
+      "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
+      "versionedFile": "BMChat-2.50.52-Portable.x64.exe",
+      "size": 123531830,
+      "sha256": "9730c8ee2b05659db52be1e101c9fda84abd4bcc68d257aca209bc256169011d"
+    },
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
       "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.45-Portable.x64.exe",
-      "size": 125862211,
-      "sha256": "3dc2d06f9c2794ed14b2dccd8c48d0805231dccb1610856ae38910c5aede628d"
-    },
-    "win-x64-installer": {
-      "label": "Setup x64 (.exe)",
-      "url": "http://5.187.4.132/desktop/BMChat-Setup-x64.exe",
-      "versionedFile": "BMChat-2.50.45-Setup.x64.exe",
-      "size": 126178617,
-      "sha256": "b037de53d36ad762d5bad0606080a9ae03e7901a380ed51e5699d96af07aecb3"
+      "versionedFile": "BMChat-2.50.52-Portable.x64.exe",
+      "size": 123531830,
+      "sha256": "9730c8ee2b05659db52be1e101c9fda84abd4bcc68d257aca209bc256169011d"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -37,5 +37,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat 2.50.45 — большие файлы по частям.\n\nНОВОЕ И ИСПРАВЛЕНИЯ:\n• Файл больше обычного письма уходит частями и собирается в один файл.\n• Видно, сколько уже передано.\n• Передачу можно отменить. Если отправка срывается, оставшиеся части не уходят."
+  "notes": "BMChat 2.50.52 — исправлен приём почты на десктопе.\n\nНОВОЕ И ИСПРАВЛЕНИЯ:\n• Ядро замечает оборванное соединение с почтовым сервером и переподключается само, а не ждёт перезапуска приложения.\n• Письма из дополнительных папок на сервере (например, после фильтров) снова подхватываются.\n• Windows-сборка в этом релизе поставляется как Portable: распакуйте и запустите, профиль и переписка остаются на месте.\n• Инсталлятор Setup для 2.50.52 будет собран отдельно."
 }
