@@ -1,12 +1,15 @@
 package org.thoughtcrime.securesms.relay;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ScrollView;
+import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
@@ -17,10 +20,23 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import chat.delta.rpc.Rpc;
 import chat.delta.rpc.RpcException;
+import chat.delta.rpc.types.EnteredLoginParam;
 import chat.delta.rpc.types.TransportListEntry;
 import com.b44t.messenger.DcContext;
 import com.b44t.messenger.DcEvent;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import org.thoughtcrime.securesms.BaseActionBarActivity;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.components.registration.PulsingFloatingActionButton;
@@ -37,6 +53,9 @@ public class RelayListActivity extends BaseActionBarActivity
   private static final String TAG = "RelayListActivity";
   public static final String EXTRA_QR_DATA = "qr_data";
 
+  /** Same format as the Desktop "Export connection data" file. */
+  private static final int MAILBOX_CONFIG_VERSION = 1;
+
   private RelayListAdapter adapter;
   private Rpc rpc;
   private int accId;
@@ -48,6 +67,8 @@ public class RelayListActivity extends BaseActionBarActivity
   private String qrData = null;
 
   private ActivityResultLauncher<Intent> screenLockLauncher;
+  private ActivityResultLauncher<String> exportLauncher;
+  private ActivityResultLauncher<String[]> importLauncher;
 
   /** Relay selected for context menu via onRelayLongClick() */
   private TransportListEntry contextMenuRelay = null;
@@ -70,6 +91,23 @@ public class RelayListActivity extends BaseActionBarActivity
               if (qrData != null) {
                 new QrCodeHandler(this).handleOnlyAddRelayQr(qrData, null);
                 qrData = null;
+              }
+            });
+
+    exportLauncher =
+        registerForActivityResult(
+            new ActivityResultContracts.CreateDocument("application/json"),
+            uri -> {
+              if (uri != null) {
+                writeConnectionBackup(uri);
+              }
+            });
+
+    importLauncher =
+        registerForActivityResult(
+            new ActivityResultContracts.OpenDocument(), uri -> {
+              if (uri != null) {
+                readConnectionBackup(uri);
               }
             });
 
@@ -128,6 +166,12 @@ public class RelayListActivity extends BaseActionBarActivity
   public void onDestroy() {
     super.onDestroy();
     DcHelper.getEventCenter(this).removeObservers(this);
+  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.relay_list, menu);
+    return true;
   }
 
   private void loadRelays() {
@@ -212,6 +256,165 @@ public class RelayListActivity extends BaseActionBarActivity
     return super.onContextItemSelected(item);
   }
 
+  /**
+   * Re-runs configuration for every mailbox of this account. Chat history, keys and the database
+   * stay untouched: only the IMAP/SMTP connection data is applied again, which is what is needed
+   * after a password change or when the server dropped the account.
+   */
+  private void reconnectAccount() {
+    Toast.makeText(this, R.string.bmchat_relay_reconnect_started, Toast.LENGTH_SHORT).show();
+    Util.runOnAnyBackgroundThread(
+        () -> {
+          int done = 0;
+          try {
+            List<EnteredLoginParam> relays = rpc.listTransports(accId);
+            if (relays != null) {
+              for (EnteredLoginParam relay : relays) {
+                if (relay == null || relay.addr == null) continue;
+                rpc.addOrUpdateTransport(accId, relay);
+                done++;
+              }
+            }
+          } catch (RpcException e) {
+            Log.e(TAG, "reconnect failed", e);
+            final String reason = e.getMessage() == null ? "" : e.getMessage();
+            Util.runOnMain(
+                () ->
+                    Toast.makeText(
+                            this,
+                            getString(R.string.bmchat_relay_reconnect_failed) + " " + reason,
+                            Toast.LENGTH_LONG)
+                        .show());
+            return;
+          }
+
+          final int count = done;
+          Util.runOnMain(
+              () -> {
+                Toast.makeText(
+                        this,
+                        getString(R.string.bmchat_relay_reconnect_done, count),
+                        Toast.LENGTH_SHORT)
+                    .show();
+                loadRelays();
+              });
+        });
+  }
+
+  private void confirmExportConnectionData() {
+    new AlertDialog.Builder(this)
+        .setTitle(R.string.bmchat_relay_export)
+        .setMessage(R.string.bmchat_relay_export_warning)
+        .setPositiveButton(
+            R.string.bmchat_relay_export,
+            (d, which) -> {
+              String stamp =
+                  new SimpleDateFormat("yyyyMMdd-HHmm", Locale.US).format(new Date());
+              exportLauncher.launch("bmchat-connection-" + stamp + ".json");
+            })
+        .setNegativeButton(R.string.cancel, null)
+        .show();
+  }
+
+  private void writeConnectionBackup(Uri uri) {
+    Util.runOnAnyBackgroundThread(
+        () -> {
+          try {
+            List<EnteredLoginParam> mailboxes = rpc.listTransports(accId);
+            ObjectMapper mapper = new ObjectMapper();
+            ObjectNode root = mapper.createObjectNode();
+            root.put("bmchatMailboxConfig", MAILBOX_CONFIG_VERSION);
+            root.set(
+                "mailboxes",
+                mapper.valueToTree(mailboxes == null ? new ArrayList<EnteredLoginParam>() : mailboxes));
+            String json = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root);
+
+            OutputStream out = getContentResolver().openOutputStream(uri);
+            if (out == null) throw new IOException("cannot open output stream");
+            try {
+              out.write(json.getBytes(StandardCharsets.UTF_8));
+              out.flush();
+            } finally {
+              out.close();
+            }
+
+            Util.runOnMain(
+                () ->
+                    Toast.makeText(this, R.string.bmchat_relay_export_done, Toast.LENGTH_SHORT)
+                        .show());
+          } catch (Exception e) {
+            Log.e(TAG, "export connection data failed", e);
+            Util.runOnMain(
+                () ->
+                    Toast.makeText(this, R.string.bmchat_relay_export_failed, Toast.LENGTH_LONG)
+                        .show());
+          }
+        });
+  }
+
+  private void readConnectionBackup(Uri uri) {
+    Util.runOnAnyBackgroundThread(
+        () -> {
+          try {
+            InputStream in = getContentResolver().openInputStream(uri);
+            if (in == null) throw new IOException("cannot open input stream");
+            String text;
+            try {
+              ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+              byte[] chunk = new byte[8192];
+              int read;
+              while ((read = in.read(chunk)) != -1) {
+                buffer.write(chunk, 0, read);
+              }
+              text = buffer.toString(StandardCharsets.UTF_8.name());
+            } finally {
+              in.close();
+            }
+
+            ObjectMapper mapper = new ObjectMapper();
+            JsonNode root = mapper.readTree(text);
+            if (root == null
+                || root.path("bmchatMailboxConfig").asInt(-1) != MAILBOX_CONFIG_VERSION
+                || !root.path("mailboxes").isArray()) {
+              throw new IllegalArgumentException("not a BMChat connection backup");
+            }
+
+            List<EnteredLoginParam> mailboxes = new ArrayList<>();
+            for (JsonNode node : root.path("mailboxes")) {
+              EnteredLoginParam param = mapper.treeToValue(node, EnteredLoginParam.class);
+              if (param == null || param.addr == null || param.password == null) {
+                throw new IllegalArgumentException("mailbox without address or password");
+              }
+              mailboxes.add(param);
+            }
+            if (mailboxes.isEmpty()) throw new IllegalArgumentException("no mailboxes");
+
+            int imported = 0;
+            for (EnteredLoginParam param : mailboxes) {
+              rpc.addOrUpdateTransport(accId, param);
+              imported++;
+            }
+
+            final int count = imported;
+            Util.runOnMain(
+                () -> {
+                  Toast.makeText(
+                          this,
+                          getString(R.string.bmchat_relay_import_done, count),
+                          Toast.LENGTH_SHORT)
+                      .show();
+                  loadRelays();
+                });
+          } catch (Exception e) {
+            Log.e(TAG, "import connection data failed", e);
+            Util.runOnMain(
+                () ->
+                    Toast.makeText(this, R.string.bmchat_relay_import_invalid, Toast.LENGTH_LONG)
+                        .show());
+          }
+        });
+  }
+
   private void onRelayEdit(TransportListEntry relay) {
     Intent intent = new Intent(this, EditRelayActivity.class);
     intent.putExtra(EditRelayActivity.EXTRA_ADDR, relay.param.addr);
@@ -250,8 +453,18 @@ public class RelayListActivity extends BaseActionBarActivity
 
   @Override
   public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-    if (item.getItemId() == android.R.id.home) {
+    int itemId = item.getItemId();
+    if (itemId == android.R.id.home) {
       finish();
+      return true;
+    } else if (itemId == R.id.menu_reconnect_account) {
+      reconnectAccount();
+      return true;
+    } else if (itemId == R.id.menu_export_connection) {
+      confirmExportConnectionData();
+      return true;
+    } else if (itemId == R.id.menu_import_connection) {
+      importLauncher.launch(new String[] {"*/*"});
       return true;
     }
     return super.onOptionsItemSelected(item);

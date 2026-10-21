@@ -1749,4 +1749,15 @@
     <string name="bmchat_bots_poll_queued_fmt">" · в очередь/журнал: %1$d"</string>
     <string name="bmchat_bots_poll_dropped_fmt">" · пропущено: %1$d"</string>
     <string name="bmchat_email_bot_default_start_reply">Привет! Я бот.</string>
+    <string name="bmchat_relay_reconnect">Переподключить аккаунт</string>
+    <string name="bmchat_relay_reconnect_started">Переподключаем ящики...</string>
+    <string name="bmchat_relay_reconnect_done">Ящиков переподключено: %1$d</string>
+    <string name="bmchat_relay_reconnect_failed">Не удалось переподключиться:</string>
+    <string name="bmchat_relay_export">Экспорт данных подключения</string>
+    <string name="bmchat_relay_export_warning">В файле будут пароли от почтовых ящиков открытым текстом. Храните его в надёжном месте и удалите, когда он больше не нужен.</string>
+    <string name="bmchat_relay_export_done">Данные подключения сохранены</string>
+    <string name="bmchat_relay_export_failed">Не удалось сохранить данные подключения</string>
+    <string name="bmchat_relay_import">Импорт данных подключения</string>
+    <string name="bmchat_relay_import_done">Ящиков импортировано: %1$d</string>
+    <string name="bmchat_relay_import_invalid">Это не файл настроек подключения BMChat</string>
 </resources>

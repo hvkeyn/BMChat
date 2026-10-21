@@ -1772,4 +1772,15 @@
     <string name="bmchat_status_last_sync_line">Last sync: %1$s</string>
     <string name="bmchat_status_unread_line">Unread: %1$d</string>
     <string name="bmchat_status_accounts_line">Accounts: %1$d</string>
+    <string name="bmchat_relay_reconnect">Reconnect account</string>
+    <string name="bmchat_relay_reconnect_started">Reconnecting mailboxes...</string>
+    <string name="bmchat_relay_reconnect_done">Mailboxes reconnected: %1$d</string>
+    <string name="bmchat_relay_reconnect_failed">Reconnect failed:</string>
+    <string name="bmchat_relay_export">Export connection data</string>
+    <string name="bmchat_relay_export_warning">The file contains the passwords of your mailboxes in plain text. Keep it safe and delete it when it is no longer needed.</string>
+    <string name="bmchat_relay_export_done">Connection data saved</string>
+    <string name="bmchat_relay_export_failed">Could not save connection data</string>
+    <string name="bmchat_relay_import">Import connection data</string>
+    <string name="bmchat_relay_import_done">Mailboxes imported: %1$d</string>
+    <string name="bmchat_relay_import_invalid">This is not a BMChat connection backup</string>
 </resources>
