@@ -499,12 +499,15 @@ async fn inbox_fetch_idle(ctx: &Context, imap: &mut Imap, mut session: Session) 
     // Runs before the Inbox idle so each push / idle-timeout also picks
     // up changes outside the watched folders.
     if ctx.get_config_bool(Config::ScanAllFolders).await? {
-        if let Err(err) = sweep_extra_folders(ctx, imap, &mut session).await {
-            warn!(
-                ctx,
-                "Transport {transport_id}: ScanAllFolders sweep failed: {err:#}."
-            );
-        }
+        // A failed sweep means the session is usually broken: `LIST` is the
+        // first command issued after the fake idle and it is the one that
+        // notices a connection closed by the server. Swallowing the error here
+        // leaves the loop polling a dead session forever (the folder stays
+        // selected, so no further command is issued and `new_mail` stays
+        // false), so return it and let `inbox_loop` prepare a fresh session.
+        sweep_extra_folders(ctx, imap, &mut session)
+            .await
+            .with_context(|| format!("Transport {transport_id}: ScanAllFolders sweep failed"))?;
     }
 
     let session = fetch_idle(ctx, imap, session, FolderMeaning::Inbox).await?;
@@ -615,6 +618,12 @@ async fn fetch_idle(
             ctx,
             "Transport {transport_id}: IMAP session does not support IDLE, going to fake idle."
         );
+        // Fake idle receives no server notifications, so the next iteration
+        // must poll the folder explicitly. Otherwise `new_mail` stays false,
+        // `select_with_uidvalidity` returns early because the folder is still
+        // selected and no IMAP command is issued at all: a connection dropped
+        // by the server is never noticed and no mail is fetched until restart.
+        session.new_mail = true;
         connection.fake_idle(ctx, watch_folder).await?;
         return Ok(session);
     }
@@ -630,6 +639,7 @@ async fn fetch_idle(
             ctx,
             "Transport {transport_id}: IMAP IDLE is disabled, going to fake idle."
         );
+        session.new_mail = true;
         connection.fake_idle(ctx, watch_folder).await?;
         return Ok(session);
     }
