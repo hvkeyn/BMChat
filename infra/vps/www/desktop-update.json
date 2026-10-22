@@ -9,6 +9,13 @@
     "http://158.160.104.107:8080"
   ],
   "platforms": {
+    "win-x64-installer": {
+      "label": "Установщик x64 (.exe)",
+      "url": "https://github.com/hvkeyn/BMChat/releases/download/v2.50.60/BMChat-2.50.53-Setup.x64.exe",
+      "versionedFile": "BMChat-2.50.53-Setup.x64.exe",
+      "size": 137803037,
+      "sha256": "32f4271047fe69411ca00d53b6037ff0759a1cdf4816061574121ae6bb372224"
+    },
     "win-x64": {
       "label": "Portable x64 (.exe)",
       "url": "https://github.com/hvkeyn/BMChat/releases/download/v2.50.56/BMChat-2.50.53-Portable.x64.exe",
