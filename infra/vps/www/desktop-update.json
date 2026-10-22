@@ -1,26 +1,27 @@
 {
-  "version": "2.50.52",
-  "publishedAt": "2026-10-21T20:27:00Z",
+  "version": "2.50.53",
+  "publishedAt": "2026-10-22T18:35:00Z",
   "releaseChannel": "stable",
   "mirrors": [
-    "http://51.250.82.211:8080",
+    "https://github.com/hvkeyn/BMChat/releases/latest/download",
     "http://5.187.4.132",
+    "http://51.250.82.211:8080",
     "http://158.160.104.107:8080"
   ],
   "platforms": {
     "win-x64": {
       "label": "Portable x64 (.exe)",
-      "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.52-Portable.x64.exe",
-      "size": 123531830,
-      "sha256": "9730c8ee2b05659db52be1e101c9fda84abd4bcc68d257aca209bc256169011d"
+      "url": "https://github.com/hvkeyn/BMChat/releases/download/v2.50.56/BMChat-2.50.53-Portable.x64.exe",
+      "versionedFile": "BMChat-2.50.53-Portable.x64.exe",
+      "size": 123532280,
+      "sha256": "bd4a00c4beaeb561c1dd586ef36ed4364025d9b7520dec48527930eb50e43575"
     },
     "win-x64-portable": {
       "label": "Portable x64 (.exe)",
-      "url": "http://5.187.4.132/desktop/BMChat-portable-x64.exe",
-      "versionedFile": "BMChat-2.50.52-Portable.x64.exe",
-      "size": 123531830,
-      "sha256": "9730c8ee2b05659db52be1e101c9fda84abd4bcc68d257aca209bc256169011d"
+      "url": "https://github.com/hvkeyn/BMChat/releases/download/v2.50.56/BMChat-2.50.53-Portable.x64.exe",
+      "versionedFile": "BMChat-2.50.53-Portable.x64.exe",
+      "size": 123532280,
+      "sha256": "bd4a00c4beaeb561c1dd586ef36ed4364025d9b7520dec48527930eb50e43575"
     },
     "linux-x64-appimage": {
       "label": "AppImage x86_64",
@@ -37,5 +38,5 @@
       "sha256": "d7ca55bb829b37fba4d361273b1fae8847d038aec3eb3873888d11479f39deb7"
     }
   },
-  "notes": "BMChat 2.50.52 — исправлен приём почты на десктопе.\n\nНОВОЕ И ИСПРАВЛЕНИЯ:\n• Ядро замечает оборванное соединение с почтовым сервером и переподключается само, а не ждёт перезапуска приложения.\n• Письма из дополнительных папок на сервере (например, после фильтров) снова подхватываются.\n\nВАЖНО ПРО WINDOWS:\n• В этом релизе Windows-сборка выложена как Portable. Portable хранит свой профиль рядом с exe (папка BMChatData), поэтому переписка из установленной версии в неё не переносится.\n• Чтобы обновить установленную программу с сохранением профиля, дождитесь отдельного Setup для 2.50.52."
+  "notes": "BMChat 2.50.53 для Windows — обновления теперь с GitHub.\n\nНОВОЕ:\n• Приложение проверяет новые версии в GitHub Releases, поэтому обновления приходят, даже когда VPS недоступен.\n• Старые зеркала остаются запасным вариантом.\n\nУСТАНОВКА:\n• Windows-сборка поставляется как Portable: распакуйте и запустите, профиль хранится рядом с exe (папка BMChatData).\n• Чтобы обновить установленную версию с сохранением профиля, используйте её собственный апдейтер."
 }
