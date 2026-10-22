@@ -98,6 +98,9 @@ public final class BMChatUpdater {
      *
      * <p>Order matters:
      *   <ol>
+     *     <li>{@code github.com/hvkeyn/BMChat} — release assets, the
+     *         primary channel: every release carries an {@code update.json}
+     *         asset, so the updater keeps working while the VPS is down.
      *     <li>{@code 5.187.4.132} — primary (Fornex / EU).
      *     <li>{@code 51.250.82.211:8080} — WhiteBlade mirror
      *         (Yandex Cloud / RU). Often reachable when the primary
@@ -106,6 +109,7 @@ public final class BMChatUpdater {
      *   </ol>
      */
     static final String[] DEFAULT_HOSTS = new String[] {
+        "https://github.com/hvkeyn/BMChat/releases/latest/download",
         "http://5.187.4.132",
         "http://51.250.82.211:8080",
         "http://158.160.104.107:8080"

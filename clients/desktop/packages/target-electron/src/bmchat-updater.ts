@@ -40,6 +40,7 @@ import { BuildInfo } from './get-build-info.js'
 const log = getLogger('main/bmchat-updater')
 
 const DEFAULT_HOSTS = [
+  'https://github.com/hvkeyn/BMChat/releases/latest/download',
   'http://5.187.4.132',
   'http://51.250.82.211:8080',
   'http://158.160.104.107:8080',
