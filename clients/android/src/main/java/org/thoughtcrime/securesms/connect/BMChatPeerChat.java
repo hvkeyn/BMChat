@@ -120,7 +120,7 @@ public final class BMChatPeerChat {
     if (context == null || dc == null || !isPlainSingle(dc, chatId)) return;
     String key = "ui.bmchat.invited." + chatId;
     if ("1".equals(dc.getConfig(key))) return;
-    String invite = Util.rewriteInviteLink(dc.getSecurejoinQr(0));
+    String invite = Util.toPortableInvite(dc.getSecurejoinQr(0));
     if (invite == null || invite.isEmpty()) return;
     try {
       DcMsg msg = new DcMsg(dc, DcMsg.DC_MSG_TEXT);
