@@ -185,6 +185,11 @@ public final class BMChatUpdater {
      *  declines or installs. */
     private static volatile @Nullable Manifest pendingManifest;
 
+    /** APK that is already downloaded and waits for the "install unknown
+     *  apps" permission. Kept across the trip to the system settings so the
+     *  update can continue without downloading the file again. */
+    private static volatile @Nullable File pendingInstallApk;
+
     private static final ExecutorService EXEC = Executors.newSingleThreadExecutor(r -> {
         Thread t = new Thread(r, "bmchat-updater");
         t.setDaemon(true);
@@ -601,12 +606,28 @@ public final class BMChatUpdater {
                 + "\n" + activity.getString(R.string.bmchat_update_size_fmt,
                         Formatter.formatShortFileSize(activity, m.size))
                 + (m.notes != null && !m.notes.isEmpty() ? "\n\n" + m.notes : "");
+        // If the APK was already downloaded on a previous attempt (for example
+        // the user went to the "install unknown apps" settings and came back),
+        // offer to install it instead of downloading it all over again.
+        final File ready = findDownloadedApk(activity, m);
+        if (ready != null) {
+            body += "\n\n" + activity.getString(R.string.bmchat_update_already_downloaded);
+        }
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setTitle(R.string.bmchat_update_dialog_title)
                 .setMessage(body)
                 .setCancelable(true)
-                .setPositiveButton(R.string.bmchat_update_download_and_install,
-                        (d, w) -> beginDownload(activity, m))
+                .setPositiveButton(
+                        ready != null
+                                ? R.string.bmchat_update_dl_install_action
+                                : R.string.bmchat_update_download_and_install,
+                        (d, w) -> {
+                            if (ready != null) {
+                                launchInstaller(activity, ready);
+                            } else {
+                                beginDownload(activity, m);
+                            }
+                        })
                 .setNegativeButton(R.string.bmchat_update_later, (d, w) -> {})
                 .setNeutralButton(R.string.bmchat_update_skip_version, (d, w) -> {
                     activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -775,6 +796,10 @@ public final class BMChatUpdater {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             PackageManager pm = activity.getPackageManager();
             if (pm != null && !pm.canRequestPackageInstalls()) {
+                // Remember the already downloaded APK: after the user grants
+                // the permission and returns, retry the install right away
+                // instead of asking to download everything again.
+                pendingInstallApk = apk;
                 try {
                     activity.startActivity(new Intent(
                             Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
@@ -786,6 +811,7 @@ public final class BMChatUpdater {
                 return;
             }
         }
+        pendingInstallApk = null;
         try {
             installViaPackageInstaller(activity.getApplicationContext(), apk);
         } catch (Throwable t) {
@@ -804,6 +830,62 @@ public final class BMChatUpdater {
                 android.util.Log.w(TAG, "fallback installer also failed", t2);
             }
         }
+    }
+
+    /**
+     * Returns the already downloaded APK for {@code m} if it is still on disk
+     * and was verified when it was written, {@code null} otherwise. Uses the
+     * sidecar hash marker so the main thread never has to hash 130 MB.
+     */
+    @AnyThread
+    private static @Nullable File findDownloadedApk(@NonNull Context ctx, @NonNull Manifest m) {
+        try {
+            File out = new File(new File(ctx.getFilesDir(), "updates"),
+                    "bmchat-" + m.versionCode + ".apk");
+            if (!out.exists()) return null;
+            String stored = readHashMarker(out);
+            if (stored.equalsIgnoreCase(m.sha256)) return out;
+        } catch (Throwable ignored) {}
+        return null;
+    }
+
+    /** Remembers which hash was verified when a download finished. */
+    private static void writeHashMarker(@NonNull File apk, @NonNull String sha256) {
+        try (java.io.FileWriter w = new java.io.FileWriter(apk.getPath() + ".sha256")) {
+            w.write(sha256);
+        } catch (Throwable ignored) {}
+    }
+
+    @AnyThread
+    private static @NonNull String readHashMarker(@NonNull File apk) {
+        try (java.io.BufferedReader r =
+                     new java.io.BufferedReader(new java.io.FileReader(apk.getPath() + ".sha256"))) {
+            String line = r.readLine();
+            return line == null ? "" : line.trim();
+        } catch (Throwable ignored) {
+            return "";
+        }
+    }
+
+    /**
+     * Continues a pending install after the user returned from the
+     * "install unknown apps" settings screen. Safe to call from any
+     * {@code onResume()}.
+     */
+    @MainThread
+    public static void resumePendingInstall(@NonNull Activity activity) {
+        final File apk = pendingInstallApk;
+        if (apk == null) return;
+        if (!apk.exists()) {
+            pendingInstallApk = null;
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PackageManager pm = activity.getPackageManager();
+            if (pm != null && !pm.canRequestPackageInstalls()) return;
+        }
+        pendingInstallApk = null;
+        launchInstaller(activity, apk);
     }
 
     /**
@@ -1060,7 +1142,10 @@ public final class BMChatUpdater {
      */
     private static File downloadApk(Context ctx, Manifest m,
                                     @Nullable ProgressListener progress) throws Exception {
-        File dir = new File(ctx.getCacheDir(), "updates");
+        // filesDir, not cacheDir: the downloaded APK must survive the trip to
+        // the "install unknown apps" settings screen and process restarts,
+        // otherwise the user is asked to download the whole APK again.
+        File dir = new File(ctx.getFilesDir(), "updates");
         if (!dir.exists() && !dir.mkdirs()) throw new IOException("mkdir failed");
         File out = new File(dir, "bmchat-" + m.versionCode + ".apk");
         if (out.exists() && verifyHash(out, m.sha256)) {
@@ -1130,6 +1215,7 @@ public final class BMChatUpdater {
                 }
                 // Success path — promote .part to final, return.
                 if (!tmp.renameTo(out)) throw new IOException("rename failed");
+                writeHashMarker(out, m.sha256);
                 return out;
             } catch (IOException e) {
                 lastErr = e;

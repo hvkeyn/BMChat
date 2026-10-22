@@ -396,6 +396,9 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
   protected void onResume() {
     super.onResume();
 
+    // Continue an update once the "install unknown apps" permission is granted.
+    org.thoughtcrime.securesms.update.BMChatUpdater.resumePendingInstall(this);
+
     initializeEnabledCheck();
     composeText.setTransport(sendButton.getSelectedTransport());
 

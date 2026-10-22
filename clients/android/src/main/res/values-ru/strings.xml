@@ -1738,6 +1738,7 @@
     <string name="bmchat_update_title_fmt">Обновление BMChat %1$s</string>
     <string name="bmchat_update_channel_name">Обновления BMChat</string>
     <string name="bmchat_update_channel_desc">Уведомление, когда вышла новая версия мессенджера BMChat.</string>
+    <string name="bmchat_update_already_downloaded">Обновление уже скачано — нажмите «Установить».</string>
     <string name="bmchat_update_allow_install">Разрешите установку обновлений BMChat и снова откройте приложение.</string>
 
     <string name="bmchat_bots_network_error">Ошибка сети.</string>

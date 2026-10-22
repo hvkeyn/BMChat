@@ -413,6 +413,9 @@ public class ConversationListActivity extends PassphraseRequiredActionBarActivit
       LocationStreamingService.ensureRunning(this);
     }
     org.thoughtcrime.securesms.update.BMChatUpdater.scheduleForActivity(this);
+    // If the user just granted "install unknown apps", finish the update
+    // with the APK that is already on disk instead of downloading it again.
+    org.thoughtcrime.securesms.update.BMChatUpdater.resumePendingInstall(this);
     try {
       org.thoughtcrime.securesms.bmchat.BMChatAccountCopy.maybeStart(this);
     } catch (Throwable t) {

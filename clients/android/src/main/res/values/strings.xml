@@ -520,6 +520,7 @@
     <string name="bmchat_update_title_fmt">BMChat update %1$s</string>
     <string name="bmchat_update_channel_name">BMChat updates</string>
     <string name="bmchat_update_channel_desc">Notifies you when a new BMChat version is released.</string>
+    <string name="bmchat_update_already_downloaded">The update is already downloaded — tap "Install".</string>
     <string name="bmchat_update_allow_install">Allow BMChat to install updates, then reopen the app.</string>
     <!-- Telegram-style quote-fragment screen (2.49.37). -->
     <string name="bmchat_quote_selector_title">Reply to message</string>
