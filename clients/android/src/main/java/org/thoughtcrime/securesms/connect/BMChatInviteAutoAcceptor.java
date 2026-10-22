@@ -56,6 +56,11 @@ public final class BMChatInviteAutoAcceptor {
         Pattern.CASE_INSENSITIVE);
   }
 
+  /** Matches the self-contained {@code OPENPGP4FPR:...} invite code. */
+  private static final Pattern OPENPGP_PATTERN =
+      Pattern.compile("(OPENPGP4FPR:[0-9A-Fa-f]{16,64}#[^\\s\"'<>]+)",
+          Pattern.CASE_INSENSITIVE);
+
   private static final Set<String> seenLinks = new HashSet<>();
   private static final ExecutorService worker = Executors.newSingleThreadExecutor(r -> {
     Thread t = new Thread(r, "bmchat-invite-auto");
@@ -82,12 +87,16 @@ public final class BMChatInviteAutoAcceptor {
     synchronized (seenLinks) {
       if (!seenLinks.add(link)) return;
     }
-    final String canonicalLink = Util.rewriteInviteLink(link);
+    final String canonicalLink = link.regionMatches(true, 0, "OPENPGP4FPR:", 0, 12)
+        ? link
+        : Util.rewriteInviteLink(link);
     final Context ctxRef = appContext.getApplicationContext();
     worker.submit(() -> processLink(ctxRef, dcContext, canonicalLink));
   }
 
   private static String findInviteLink(String text) {
+    Matcher portable = OPENPGP_PATTERN.matcher(text);
+    if (portable.find()) return portable.group(1);
     Matcher m = INVITE_PATTERN.matcher(text);
     return m.find() ? m.group(1) : null;
   }

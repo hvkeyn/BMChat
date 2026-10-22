@@ -174,7 +174,7 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
     try {
       Intent intent = new Intent(Intent.ACTION_SEND);
       intent.setType("text/plain");
-      String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
+      String inviteURL = Util.toPortableInvite(dcContext.getSecurejoinQr(chatId));
       intent.putExtra(Intent.EXTRA_TEXT, inviteURL);
       startActivity(Intent.createChooser(intent, getString(R.string.chat_share_with_title)));
     } catch (Exception e) {
@@ -191,7 +191,7 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
   public void shareQrImage() {
     final Activity activity = getActivity();
     if (activity == null) return;
-    final String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
+    final String inviteURL = Util.toPortableInvite(dcContext.getSecurejoinQr(chatId));
     try {
       String rawSvg = dcContext.getSecurejoinQrSvg(chatId);
       if (rawSvg == null || rawSvg.isEmpty()) {
@@ -249,7 +249,7 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
   }
 
   public void copyQrData() {
-    String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
+    String inviteURL = Util.toPortableInvite(dcContext.getSecurejoinQr(chatId));
     Util.writeTextToClipboard(getActivity(), inviteURL);
     Toast.makeText(getActivity(), getString(R.string.copied_to_clipboard), Toast.LENGTH_SHORT)
         .show();
@@ -285,7 +285,7 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
 
   public void showInviteLinkDialog() {
     View view = View.inflate(getActivity(), R.layout.dialog_share_invite_link, null);
-    String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
+    String inviteURL = Util.toPortableInvite(dcContext.getSecurejoinQr(chatId));
     ((TextView) view.findViewById(R.id.invite_link)).setText(inviteURL);
     AlertDialog dialog = new AlertDialog.Builder(getActivity())
         .setView(view)
@@ -323,7 +323,7 @@ public class QrShowFragment extends Fragment implements DcEventCenter.DcEventDel
   public void showSendByEmailDialog() {
     final Activity activity = getActivity();
     if (activity == null) return;
-    final String inviteURL = Util.rewriteInviteLink(dcContext.getSecurejoinQr(chatId));
+    final String inviteURL = Util.toPortableInvite(dcContext.getSecurejoinQr(chatId));
     if (inviteURL == null || inviteURL.isEmpty()) {
       Toast.makeText(activity, R.string.error, Toast.LENGTH_SHORT).show();
       return;

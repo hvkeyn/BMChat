@@ -1051,7 +1051,7 @@ public class ConversationActivity extends PassphraseRequiredActionBarActivity
       Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
       return;
     }
-    final String inviteUrl = Util.rewriteInviteLink(dcCtx.getSecurejoinQr(0));
+    final String inviteUrl = Util.toPortableInvite(dcCtx.getSecurejoinQr(0));
     if (inviteUrl == null || inviteUrl.isEmpty()) {
       Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
       return;

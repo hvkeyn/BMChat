@@ -133,6 +133,27 @@ public class Util {
     return link;
   }
 
+  /**
+   * Converts a BMChat/Delta-Chat invite link into a self-contained
+   * {@code OPENPGP4FPR:} code. The code is understood by BMChat without any
+   * HTTP request, so invitations can travel purely by e-mail and never depend
+   * on the landing page on the VPS.
+   */
+  public static String toPortableInvite(String link) {
+    if (link == null) return null;
+    String canonical = rewriteInviteLink(link);
+    String prefix = INVITE_LINK_PREFIX + "#";
+    if (canonical != null && canonical.startsWith(prefix)) {
+      String payload = canonical.substring(prefix.length());
+      int amp = payload.indexOf('&');
+      if (amp > 0) {
+        payload = payload.substring(0, amp) + '#' + payload.substring(amp + 1);
+      }
+      return "OPENPGP4FPR:" + payload;
+    }
+    return canonical;
+  }
+
   public static CharSequence getBoldedString(String value) {
     SpannableString spanned = new SpannableString(value);
     spanned.setSpan(

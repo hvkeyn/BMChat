@@ -336,10 +336,10 @@
     <string name="menu_delete_location">Удалить местоположение?</string>
     <string name="menu_message_details">Информация о сообщении</string>
     <string name="menu_copy_to_clipboard">Копировать в буфер обмена</string>
-    <string name="share_invite_link">Поделиться ссылкой-приглашением</string>
-    <string name="share_invite_link_explain">Кто угодно, у кого есть эта ссылка, сможет просмотреть ваш профиль и начать с вами беседу. Делитесь ею только с теми людьми, которым вы доверяете.</string>
+    <string name="share_invite_link">Поделиться кодом-приглашением</string>
+    <string name="share_invite_link_explain">Кто угодно, у кого есть этот код, сможет просмотреть ваш профиль и начать с вами беседу. Делитесь им только с теми людьми, которым вы доверяете.</string>
     <string name="invite_friends">Пригласить друзей</string>
-    <!-- %1$s is replaced by the user's invitation link ("http://5.187.4.132/i#...") -->
+    <!-- %1$s is replaced by the self-contained OPENPGP4FPR invitation code -->
     <string name="invite_friends_text">Свяжитесь со мной через BMChat:\n%1$s</string>
 
     <!-- BMChat: отправка инвайт-ссылки на e-mail через SMTP пользователя -->
@@ -347,7 +347,7 @@
     <string name="bmchat_send_invite_by_email_explain">BMChat отправит инвайт-ссылку получателю через ваш почтовый ящик. Если у него установлен BMChat — переписка подхватится автоматически.</string>
     <string name="bmchat_send_invite_by_email_sent">Приглашение поставлено в очередь отправки. Чат уже открыт — можно писать дальше.</string>
     <!-- %1$s is replaced by the invite link -->
-    <string name="bmchat_invite_email_body">Привет! Я хочу пообщаться с тобой через BMChat. Открой ссылку ниже — если у тебя уже установлен BMChat, приглашение подхватится автоматически; иначе на странице по ссылке есть инструкция, как поставить приложение.\n\n%1$s</string>
+    <string name="bmchat_invite_email_body">Привет! Я хочу пообщаться с тобой через BMChat. Код приглашения ниже — если у тебя уже установлен BMChat, приглашение подхватится автоматически; если нет, установи BMChat и вставь этот код.\n\n%1$s</string>
     <string name="bmchat_invite_email_auto_accepted">Получено приглашение BMChat по e-mail — принято автоматически.</string>
     <string name="bmchat_send_invite_qr_image">Отправить QR картинкой</string>
     <string name="bmchat_signin_with_email">Войти через свою почту</string>
