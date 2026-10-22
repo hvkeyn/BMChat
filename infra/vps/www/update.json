@@ -1,17 +1,17 @@
 {
-  "versionCode": 890,
-  "versionName": "2.50.56",
+  "versionCode": 891,
+  "versionName": "2.50.57",
   "releaseChannel": "stable",
-  "url": "https://github.com/hvkeyn/BMChat/releases/download/v2.50.56/BMChat-foss-release-2.50.56.apk",
-  "sha256": "627597322cd2b7b06663a7e46f4f953ef27988e1f1656c08599afdd90c011c1d",
-  "size": 131777990,
+  "url": "https://github.com/hvkeyn/BMChat/releases/download/v2.50.57/BMChat-foss-release-2.50.57.apk",
+  "sha256": "93d7842aaedade059939c4784019701634524a0c5ccd7067c5405d79ee0633ba",
+  "size": 131778002,
   "minSdkVersion": 21,
-  "publishedAt": "2026-10-22T18:30:00Z",
+  "publishedAt": "2026-10-22T18:45:00Z",
   "mirrors": [
     "https://github.com/hvkeyn/BMChat/releases/latest/download",
     "http://5.187.4.132",
     "http://51.250.82.211:8080",
     "http://158.160.104.107:8080"
   ],
-  "notes": "BMChat 2.50.56 — обновления теперь с GitHub.\n\nНОВОЕ:\n• BMChat проверяет новые версии на GitHub Releases, а не на VPS: обновления продолжают приходить, даже когда сервер лежит.\n• Манифест и APK лежат в самом релизе GitHub, хеш проверяется по данным релиза.\n• Прежние зеркала остаются запасным вариантом.\n\nВАЖНО: это первая версия с GitHub-обновлениями, поэтому её нужно один раз поставить вручную — дальше обновления приходят сами."
+  "notes": "BMChat 2.50.57 — обновления с GitHub действительно работают.\n\nИСПРАВЛЕНО:\n• 2.50.56 не принимала манифест из GitHub: проверка «адрес обновления с доверенного хоста» отбрасывала ссылку на файл релиза (она лежит в /releases/download/, а манифест — в /releases/latest/download/). Теперь оба префикса доверенные.\n• Манифест, APK и хеш берутся из GitHub Releases; зеркала VPS остаются запасными.\n\nУСТАНОВКА: эта версия ставится один раз вручную — дальше обновления приходят сами."
 }

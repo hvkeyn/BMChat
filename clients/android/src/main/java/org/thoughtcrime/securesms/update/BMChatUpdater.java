@@ -117,6 +117,17 @@ public final class BMChatUpdater {
 
     private static final String MANIFEST_PATH = "/update.json";
 
+    /**
+     * Prefixes that may serve the update binaries themselves. The manifest
+     * is fetched from {@code .../releases/latest/download/}, while the APK of
+     * a concrete release lives under {@code .../releases/download/<tag>/}, so
+     * the manifest host alone would reject every GitHub-hosted download.
+     */
+    private static final String[] TRUSTED_ASSET_PREFIXES = new String[] {
+        "https://github.com/hvkeyn/BMChat/releases/download/",
+        "https://github.com/hvkeyn/BMChat/releases/latest/download/"
+    };
+
     /** Legacy: keep the original constant pointing at the primary so
      *  any external caller that still resolves it (logs, error
      *  messages) keeps working. New code must go through
@@ -1208,10 +1219,14 @@ public final class BMChatUpdater {
     }
 
     /** Returns true iff {@code url} starts with one of the built-in
-     *  default hosts or one of the manifest-supplied mirrors. */
+     *  default hosts, a trusted release-asset prefix, or one of the
+     *  manifest-supplied mirrors. */
     @AnyThread
     private static boolean isUrlOnTrustedHost(@NonNull String url,
                                               @NonNull List<String> mirrors) {
+        for (String p : TRUSTED_ASSET_PREFIXES) {
+            if (url.startsWith(p)) return true;
+        }
         for (String h : DEFAULT_HOSTS) {
             if (url.startsWith(h + "/")) return true;
         }
