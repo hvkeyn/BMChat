@@ -13,8 +13,8 @@
       "label": "Установщик x64 (.exe)",
       "url": "https://github.com/hvkeyn/BMChat/releases/download/v2.50.60/BMChat-2.50.53-Setup.x64.exe",
       "versionedFile": "BMChat-2.50.53-Setup.x64.exe",
-      "size": 137803037,
-      "sha256": "32f4271047fe69411ca00d53b6037ff0759a1cdf4816061574121ae6bb372224"
+      "size": 137802996,
+      "sha256": "97bc6fc225d2b78d797248a9f922209c9bb467f2c3093985c20b904276b6293a"
     },
     "win-x64": {
       "label": "Portable x64 (.exe)",

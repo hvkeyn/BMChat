@@ -1,4 +1,4 @@
-; BMChat Windows Setup — standalone NSIS installer.
+﻿; BMChat Windows Setup — standalone NSIS installer.
 ;
 ; electron-builder's own NSIS target cannot build the uninstaller on this
 ; machine (its BUILD_UNINSTALLER pass exits with code 2), so the installer is
@@ -73,7 +73,9 @@ Section "BMChat" SEC_MAIN
 
   CreateDirectory "$SMPROGRAMS\${APPNAME}"
   CreateShortCut "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk" "$INSTDIR\${APPEXE}"
-  CreateShortCut "$SMPROGRAMS\${APPNAME}\Удалить ${APPNAME}.lnk" "$INSTDIR\Uninstall.exe"
+  ; Latin file name on purpose: makensis reads scripts without a BOM as ANSI,
+  ; so a Cyrillic shortcut name would come out as mojibake.
+  CreateShortCut "$SMPROGRAMS\${APPNAME}\Uninstall ${APPNAME}.lnk" "$INSTDIR\Uninstall.exe"
   CreateShortCut "$DESKTOP\${APPNAME}.lnk" "$INSTDIR\${APPEXE}"
 
   WriteRegStr HKCU "${UNINST_KEY}" "DisplayName" "${APPNAME}"
@@ -95,7 +97,7 @@ Section "Uninstall"
   RMDir /r "$INSTDIR"
 
   Delete "$SMPROGRAMS\${APPNAME}\${APPNAME}.lnk"
-  Delete "$SMPROGRAMS\${APPNAME}\Удалить ${APPNAME}.lnk"
+  Delete "$SMPROGRAMS\${APPNAME}\Uninstall ${APPNAME}.lnk"
   RMDir "$SMPROGRAMS\${APPNAME}"
   Delete "$DESKTOP\${APPNAME}.lnk"
 
